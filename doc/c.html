@@ -1,0 +1,653 @@
+<HTML>
+<HEAD>
+    <META http-equiv="content-type" content="text/html;charset=iso-8859-1">
+    <META name="AUTHOR" content="Luc Hermitte">
+    <META name="GENERATOR" content="VIM/5.7 [VI iMproved]">
+    <META name="KeyWords" content="vim,macro,c,java,c++,accessor">
+
+    <title>Luc Hermitte's VIM C/C++ ftplugins</title>
+</HEAD>
+
+<BODY bgcolor="#ffffff">
+
+  <table border=0 width=100% cellpadding=2 cellspacing=0 BGCOLOR="#6996e0">
+    <tr>
+      <td><FONT SIZE=-1 COLOR=#ffffff>Luc Hermitte's VIM C/C++ ftplugins</FONT></td>
+      <td align=right><FONT SIZE=-1 COLOR=#ffffff>Saturday  30th  November  2002</FONT></td>
+    </tr>
+  </table>
+ 
+
+
+
+<html></html>
+<!-- (c) By Luc Hermitte <hermitte@free.fr>
+  -  Last Update: 30th nov 2002
+  -->
+
+<!-- --------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------- -->
+<A NAME="c_cpp">
+  <h2><FONT COLOR=#6996e0>VIM ftplugins for editing C &amp; C++ files</FONT></h2>
+</A>
+
+<ul> <!-- Indentation -->
+<p>
+    I propose/present here a set of VIM ftplugins designed for editing C++
+    files and C files. 
+<p>
+    You will found all the links for downloading the described files <A
+    HREF="#cpp_downloads">at the end</A> of this part.
+</ul>
+
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="c_set">
+<h3><FONT COLOR=#6996e0>ftplugin for C programming</FONT></h3></A>
+<ul> <!-- Indentation -->
+<p>
+    The script that follow is meant to be placed into one of your <code><FONT
+    COLOR=#6a5acd><em>{rtp}</em></FONT>/ftplugin/c/</code> directories.
+</ul>
+
+
+<ul> <!-- Indentation -->
+<p>
+    <code>c_set.vim</code> defines many things that I found useful when programming
+    in C.  They could be used for C++ and Java programming as well.
+
+<A NAME="expl_c"><h4>Features and Originalities</h4></A>
+<ul>
+    <li> Well there exist, over the WWW, a lot of configurations and mappings
+	regarding C programming.  Once again you will find in this file
+	shortcuts for <code><FONT COLOR=#804040><b>if</b></FONT></code>,
+	<code><FONT COLOR=#804040><b>else</b></FONT></code>, <code>elif</code>
+	(I know it is not a C keyword, but <code><FONT COLOR=#804040><b>else
+	if</b></FONT></code> are), <code><FONT
+	COLOR=#804040><b>for</b></FONT></code>, <code><FONT
+	COLOR=#804040><b>while</b></FONT></code>, <code><FONT
+	COLOR=#804040><b>switch</b></FONT></code> and <code><FONT
+	COLOR=#804040><b>main</b></FONT></code>. <br>
+
+	What is <em>unique</em> is the fact that if you type <code>if </code>
+	in insert mode, it will automatically expand into ...
+<pre>
+    <FONT COLOR=#804040><b>if</b></FONT> () {
+    } </pre> 
+	<U> ... in respect of the context</U>. <em>I.e.:</em> within comments
+	or strings (delimited by single or double quotes) <code>if </code> is
+	not expanded. If <em>keyword characters</em> precede the typing,
+	<code>if </code> is not expanded as well. Thus variables like
+	<code>tarif</code> can be used without getting any headache.<br>
+	In visual mode, <code>,if</code> wraps the selection within the curly
+	brackets and inserts <code><FONT COLOR=#804040><b>if</b></FONT>
+	()</code> just before. In normal mode <code>,if</code> does the same
+	thing under the consideration that the selection is considered to be
+	the current line under the cursor. Actually, it is not <code>,if</code>
+	but <code><FONT COLOR=#6a5acd>&lt;LocalLeader&gt;</FONT>if</code>,
+	with <code><FONT COLOR=#ff00ff>maplocalleader</FONT></code> assigned by
+	default to <code><FONT COLOR=#ff00ff>,</FONT></code>.<br>
+	
+
+	All the three mode oriented mappings <U>respect</U> and force the
+	<U>indentation</U> regarding the current setting and what was typed.
+<p>
+	More precisely, regarding the value of the buffer relative option
+	<code><FONT COLOR=#ff00ff>b:usemarks</FONT></code> (<em>cf.</em> <A TARGET=_top HREF='../vim/settings.php#common_brackets_vim'><code>common_brackets.vim</code></A>),
+	<code>if</code> could be expanded into : 
+<pre>
+    <FONT COLOR=#804040><b>if</b></FONT> () {
+	«»
+    }«»
+</pre> 
+
+    <p> I do not present more precisely the other mappings alike. There are
+	twin mappings !
+
+    <li> Some other abbreviations ease the insertion of some formatted
+	comments.
+
+    <li> And of course there are some very classical settings for C editing.
+</ul>
+
+<h4>Dependencies :</h4>
+<ul>
+    <li> VIM 6.0+
+    <li> <A TARGET=_top HREF='../vim/general.php#misc_map_vim'><code>misc_map.vim</code></A> 
+	defines two functions used in every mapping and abbreviation of the
+	language keywords ; it enables to define context dependent macros.
+    <li> <A TARGET=_top HREF='../vim/settings.php#common_bracket_vim'><code>common_bracket.vim</code></A>	defines a set of mappings that ease the management of brackets, quotes,
+	parenthesis, <em>etc.</em>. These mappings are customized for C &amp;
+	C++ programming.
+    <li> <code>a.vim</code> very nice when we want to swap between .h, .inl and
+	.c and .cpp files. Could be found of <A TARGET=_top
+	HREF="http://vim.sf.net/scripts/script.php?script_id=31">sourceforge</A>
+	-- not critical regarding the mappings defined.
+    <li> <code>LoadHeaderFile.vim</code> very nice in order to go to included
+	files.  Could be found of <A TARGET=_top
+	HREF="http://vim.sf.net/scripts/script.php?script_id=24">sourceforge</A>
+	-- not critical regarding the mappings defined.
+</ul>
+
+</ul> <!-- Indentation -->
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="cpp_set">
+<h3><FONT COLOR=#6996e0>ftplugins for C++ programming</FONT></h3></A>
+<ul> <!-- Indentation -->
+<p>
+    The script that follow is meant to be placed into one of your <code><FONT
+    COLOR=#6a5acd><em>{rtp}</em></FONT>/ftplugin/cpp/</code> directories.
+<p>
+<A NAME="expl_cpp"><h4>Classical features : <code>cpp_set.vim</code></h4></A>
+    <code>cpp_set.vim</code> :
+    <ul>
+	<li> sources <code>c_set.vim</code>,
+	<li> specializes some settings like the format of comments ;
+	<li> adds 2-3 new mappings for <code><FONT
+	    COLOR=#804040><b>try</b></FONT></code> &amp; <code><FONT
+	    COLOR=#804040><b>catch</b></FONT></code> ;
+	<li> adds shortcuts for <code><FONT
+	    COLOR=#804040><b>public</b></FONT>:</code>, 
+	    <code><FONT COLOR=#804040><b>protected</b></FONT>:</code>,
+	    <code><FONT COLOR=#804040><b>private</b></FONT>:</code>,
+	    <code><FONT COLOR=#2e8b57><b>template</b></FONT>&lt;&gt;</code>,
+	    <code><FONT COLOR=#2e8b57><b>virtual</b></FONT></code> and
+	    <code>std::</code> ;
+	<li> defines <code>/*&lt;space&gt;</code> that expands into :<code><FONT
+	    COLOR=#0000ff>/** */«»</FONT></code>
+	    <br> and <code>/**</code> that expands into :
+	    <pre>
+	<FONT COLOR=#0000ff>/**
+	 */«»</FONT> </pre>
+	<li> proposes the insert-mode mapping <code><FONT
+	    COLOR=#6a5acd>&lt;c-x&gt;</FONT>be</code> that expands 
+	    <code>algo(container_expr§)</code> into
+	    <code>algo(container_expr.begin(), container_expr.end()§)</code>,
+	    where <code>§</code> represents the current cursor position.
+    </ul>
+
+    <h4>Enhanced features</h4>
+    The more interesting part comes with four new files full of functions and
+    commands : <ul>
+	<li> <A HREF='#expl_cpp_options'><code>cpp_options.vim</code></A> that
+	    is the ideal place for custom C++ preferences.
+	<li> <A HREF='#expl_cpp_BuildTemplates'><code>cpp_BuildTemplates.vim</code></A> defines my own
+	    template preferences regarding the format of comments and classes
+	    -- many headers plus some doxygen constructs. 	
+	<li> <A HREF='#expl_cpp_FindContextClass'><code>cpp_FindContextClass.vim</code></A> extracts the name
+	    of the class the cursor is within.
+	<li> <A HREF='#expl_cpp_InsertAccessors'><code>cpp_InsertAccessors.vim</code></A> defines certainly
+	    one of the two most useful features : an easy way to add (to a
+	    class) new attributes and their accessors and mutators (get and set
+	    methods). 
+	<li> <A HREF='#expl_cpp_GotoFunctionImpl'><code>cpp_GotoFunctionImpl.vim</code></A> defines the second
+	    most useful feature : a way to jump from the prototype to the
+	    implementation of a function, and if the implementation has not
+	    beeing defined yet, an empty implementation is inserted in the
+	    <code>.cpp</code> file.
+    </ul>
+</ul>
+
+
+<!-- --------------------------------------------------------------------- -->
+<!-- --------------------------------------------------------------------- -->
+<h3><FONT COLOR=#6996e0>Some explanations about the enhanced C++
+ftplugins</FONT></h3>
+<p>
+<ul> <!-- Indentation -->
+<p>
+    All the scripts that follow are meant to be placed into one of your
+    <code><FONT COLOR=#6a5acd><em>{rtp}</em></FONT>/ftplugin/cpp/</code>
+    directories.
+</ul>
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="expl_cpp_options">
+<h4><FONT COLOR=#6996e0><code>cpp_options-commands.vim</code> &amp;
+<code>cpp_options.vim</code></FONT></h4></A>
+<ul> <!-- Indentation -->
+<p>
+    <code>cpp_options.vim</code> is the ideal place for custom C++ preferences
+    like the prefix and postfix notations used for member data and their
+    accessors, the file where inlines should go, if accessors must be inlined,
+    <em>etc.</em> ; this file is used to configure
+    <code>cpp_BuildTemplates.vim</code>, <code>cpp_InsertAccessors.vim</code>
+    and <code>cpp_GotoFunctionImpl.vim</code>.
+<p>
+    Drop it into your <code><FONT
+    COLOR=#6a5acd><em>{rtp}</em></FONT>/ftplugin/cpp/</code> directory ; it
+    will be shared by all your projects. And if for a particular project other
+    rules are required, copy and specialize this file into every directory
+    containing the C++ source files.
+<p>
+    <code>cpp_options-commands.vim</code> only defines the command
+    <code>:CheckOptions</code> that is used by the other scripts to load the
+    correct options (<em>i.e. </em> <code>cpp_options.vim</code>).
+</ul>
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="expl_cpp_BuildTemplates">
+<h4><FONT COLOR=#6996e0><code>cpp_BuildTemplates.vim</code></FONT></h4></A>
+<ul> <!-- Indentation -->
+<p>
+    This file defines my own template preferences regarding the format of
+    comments and classes -- many "rulers" plus some doxygen constructs. You may
+    not be directly interested in this file ; moreover, it will evolve to take
+    advantage of <A HREF="#mu_template_vim">Gergely Kontra's mu-template</A>. 
+    The commands are : <ul>
+    <li> <A TARGET=_top HREF='../vim/ex_cpp_HE_h.html'><code>;HE <em>&lt;main class name&gt;</em></code></A> which produces
+	a template for the header file dedicated to the specified class name.
+    <li> <A TARGET=_top HREF='../vim/ex_cpp_CL.html'><code>;CL <em>&lt;main class name&gt;</em></code></A> which produces a
+	class template for specified class name.
+    <li> <A TARGET=_top HREF='../vim/ex_cpp_BL.html'><code>;BL <em>&lt;title&gt;</em></code></A> which produces three lines
+	of <code>'='</code> around the title -- <em>BigLines</em>.
+    <li> <A TARGET=_top HREF='../vim/ex_cpp_GR.html'><code>;GR <em>&lt;group title&gt;</em></code></A> which inserts  a
+	Doc++/Doxygen group -- <em>GRoup</em>.
+    <li> <A TARGET=_top HREF='../vim/ex_cpp_GR.html'><code>;MGR <em>&lt;group title&gt;</em></code></A> which inserts  a
+	Doc++/Doxygen group plus a comment line -- <em>MegaGRoup</em>.
+    <li> <code>;RI <em>&lt;class name&gt;</em></code> which moves the cursor to
+	the desired (regarding <code>cpp_options.vim::<FONT
+	COLOR=#ff00ff>g:inlinesPlace</FONT></code>) location for the
+	implementation of the inlines of the current class --
+	<em>ReachInlines</em>. The functions that the command calls are quite
+	complex and heavily rely on the <em>Big Line</em> format. So if you
+	want to change the format, you will have to adapt the function
+	<code>Cpp_search4line()</code> and some other script variables. All the
+	underlying functions used by this command are very important for the
+	<code>cpp_InsertAccessors.vim::AddAccessor</code> command. So, be very
+	careful in your customizations.
+    </ul>
+
+    <code>cpp_BuildTemplates.vim</code> needs an old version of <code>a.vim</code>.
+    <p>
+</ul>
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="expl_cpp_FindContextClass">
+<h4><FONT COLOR=#6996e0><code>cpp_FindContextClass.vim</code></FONT></h4></A>
+<ul> <!-- Indentation -->
+<p>
+    Given a line number, the function (in this ftplugin) extracts the name of
+    the most embedded class around the specified line.
+<p>    
+    A this time, the template are not managed. 
+<p>
+    For something like :
+<pre>
+<FONT COLOR=#6a5acd> 1:</FONT>
+<FONT COLOR=#6a5acd> 2:</FONT>    <FONT COLOR=#804040><B>class</B></FONT> A
+<FONT COLOR=#6a5acd> 3:</FONT>    {
+<FONT COLOR=#6a5acd> 4:</FONT>        <FONT COLOR=#0000ff>// ... </FONT>
+<FONT COLOR=#6a5acd> 5:</FONT>        <FONT COLOR=#804040><B>class</B></FONT> B {
+<FONT COLOR=#6a5acd> 6:</FONT>            <FONT COLOR=#0000ff>// ... </FONT>
+<FONT COLOR=#6a5acd> 7:</FONT>        };
+<FONT COLOR=#6a5acd> 8:</FONT>        <FONT COLOR=#0000ff>// ... </FONT>
+<FONT COLOR=#6a5acd> 9:</FONT>        <FONT COLOR=#804040><B>class</B></FONT> C {
+<FONT COLOR=#6a5acd>10:</FONT>            <FONT COLOR=#0000ff>// ... </FONT>
+<FONT COLOR=#6a5acd>11:</FONT>        };
+<FONT COLOR=#6a5acd>12:</FONT>    };
+<FONT COLOR=#6a5acd>13:</FONT>
+</pre>
+    The possible retrieved class names are : <FONT COLOR=#ff00ff>""</FONT>
+    <FONT SIZE=-1>[1, 13]</FONT>, <FONT COLOR=#ff00ff>"A"</FONT> <FONT
+    SIZE=-1>[2-4,8,12]</FONT>, <FONT COLOR=#ff00ff>"A::B"</FONT> <FONT
+    SIZE=-1>[5-7]</FONT> and <FONT COLOR=#ff00ff>"A::C"</FONT> <FONT
+    SIZE=-1>[9-11]</FONT>.
+<p>
+    This script is required by <code>cpp_InsertAccessors.vim</code> and
+    <code>cpp_GotoFunctionImpl.vim</code>.
+</ul>
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="expl_cpp_InsertAccessors">
+<h4><FONT COLOR=#6996e0><code>cpp_InsertAccessors.vim</code></FONT></h4></A>
+<ul> <!-- Indentation -->
+<p>
+    This file defines an easy way to add new attributes, their accessors (get
+    methods) and their mutators (set methods) to a class. <br> 
+    <em>I may use "accessor" to also designate the "mutator"</em>.
+    
+<p>
+    The built accessors are moreover <U>const and ref. correct</U> in the
+    sense of the item 43 of Herb Sutter's <em>Exceptional C++</em>. BTW, if you
+    extend (with typedefs) the list of base types, you will have to extend the
+    function <code>Cpp_IsBaseType()</code>.
+<p>
+    To use this feature, place the cursor where you want your attributes
+    (internal data members) to be written to, then press <code>;AA</code>. Then
+    first, you will be asked for the type of the new attribute and its name.
+    And then, you will be asked whether you want : <ul>
+	<li> a get accessor or may be a proxy-get accessor -- <em>cf.</em>
+	    Scott Meyer's More Effective C++ for instance ;
+	<li> a set mutator -- may be a proxy-set one ;
+	<li> a reference accessor -- may be a proxy-ref one ;
+    </ul> 
+    Finally, you will have to move the accessors to their desired location.
+<p> 
+    Regarding the customization facilities, through
+    <code>cpp_options.vim</code> you can : <ul>
+	<li> specify the notation you want to use for the internal data member
+	    ; for instance here are some common notations :
+	    <code>m_<em>Foo</em></code> (Microsoft's one),
+	    <code><em>Foo</em>_</code> (Herb Sutter's one),
+	    <code>_<em>Foo</em></code> (the one you should forget about),
+	    <code><em>Foo</em></code> (the very lazy one), <em>etc.</em>.
+	<li> specify the notation you want to use for the accessors ;
+	    for instance the get accessor to the attribute
+	    <code><em>Foo</code></em> could be
+	    "<code>Get<em>Foo</em>()</code>", or
+	    "<code>get<em>Foo</em>()</code>", or
+	    "<code>get_<em>Foo</em>()</code>" and so on. And the same for the
+	    set and the reference accessors.
+	<li> specify how you want the implementation of the accessors
+	    to appear : <ul>
+		<li> within the declaration of the class -- lazy behavior
+		    that should disappear thanks to this VIM script ;
+		<li> as inlines : either at the end of the header file
+		    containing the class declaration or in a separate inline
+		    file ;
+		<li> as non-inlines in the implementation file (.cpp).
+	    </ul>
+    </ul>
+<p>
+    Here is a little example of <A HREF='ex_cpp_AA_h.html'>header file</A> and
+    the corresponding <A HREF='ex_cpp_AA_inl.html'>inline file</A>
+    generated for : <ul>
+	<li> <code><FONT COLOR=#ff00ff>g:implPlace=1</FONT></code> --
+	    implemented as inlines ;
+	<li> <code><FONT COLOR=#ff00ff>g:inlinesPlace=1</FONT></code> --
+	    inlines in a separate file ;
+	<li> an <code><FONT COLOR=#2e8b57><B>int</B></FONT></code> attribute
+	    named <code>AnInteger</code> for which I asked for a get, a set and
+	    a reference accessor.
+	<li> an <code>CComplexThing</code> attribute named
+	    <code>AComplexThing</code> for which I asked for a proxy-get (of
+	    type <code>CT_Proxy</code>), a set and a reference accessor ;
+    </ul>
+    As you can, see, the declarations have to be moved !
+<p>
+    Note : the inline and the definition files don't need to exist. They are
+    generated <U>automatically</U>.
+</ul>
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="expl_cpp_GotoFunctionImpl">
+<h4><FONT COLOR=#6996e0><code>cpp_GotoFunctionImpl.vim</code></FONT></h4></A>
+<ul> <!-- Indentation -->
+<p>
+    This file defines an easy way to jump from a function-prototype to its
+    implementation ; if the implementation does exist yet, a default one is
+    generated on the fly.
+<p>
+    This ftplugin has been first inspired by <A TARGET=_top
+    HREF="http://vim.sf.net/tips/tip.php?tip_id=335">Leif Wickland's VIM
+    TIP#335</A> (on sourceforge) and Robert Kelly IV's improvments. Then I
+    added what I've been waiting to do for a longtime: a way to jump the
+    implementation of a function.
+<p>
+    Some other features : <ul>
+    <li> Works with member and non-member functions. If the class is nested
+	into other classes, the real class name will be used ;
+    <li> Accepts prototypes written on several lines, but it won't be able to
+	detect the return type if it is not written on the same line as the
+	function's name.<br>
+	If you get a message saying you're not within a function-prototype, may
+	be it comes from your cursor placement : it must be between the line of
+	the function's name and before the closing parenthesis.
+    <li> Any comment ending a line (within the function-prototype) will be
+	trimmed.
+    <li> Compatible with <code>mu-template</code> : <em>i.e.</em> it won't
+	complains or do any weird and undesired thing.
+    <li> Options are set into <code>cpp_options.vim</code> and can be overriden
+	when invoking the command.
+    </ul>
+<p>
+    The ftplugin defines : <ul>
+	<li> the command <code>:GIMPL</code> (<code><em>GOTO_IMPL</em></code>)
+	    that will provoke the jump ; The cursor must be placed between the
+	    line of the function's name and the corresponding closing
+	    parenthesis.
+	<li> the INSERT mode mapping <code><FONT
+	    COLOR=#6a5acd>&lt;C-X&gt;</FONT>i</code> ;
+	<li> the normal mode mappings <code>;GI</code> and <code><FONT
+	    COLOR=#6a5acd>&lt;C-W&gt;</FONT>i</code>.
+    </ul> The mappings can be overrided by adding, in a file loaded before this
+	ftplugin, something like : <pre>
+	<FONT COLOR=#804040><b>imap</b></FONT> <FONT COLOR=#6a5acd>&lt;buffer&gt;</FONT> whateverIWant <FONT COLOR=#6a5acd>&lt;Plug&gt;</FONT>GotoImpl
+	<FONT COLOR=#804040><b>nmap</b></FONT> <FONT COLOR=#6a5acd>&lt;buffer&gt;</FONT> whateverIWant <FONT COLOR=#6a5acd>&lt;Plug&gt;</FONT>GotoImpl
+	</pre>
+<p>
+    Several options are available (idea from Robert Kelly IV) : <ul>
+    <li> <code>ShowVirtual</code> (0/1) : determines whether we want the
+	<em>virtuality</em> of the member function to be reminded along with
+	the implementation ;
+    <li> <code>ShowStatic</code> (0/1) : determines whether we want the
+	<em>staticity</em> of the function to be reminded ;
+    <li> <code>ShowDefaultParam</code> (0/1/2) : determines whether we want the
+	default value of the parameters to be remininded to us.
+    </ul> 
+    <FONT SIZE=-1>[0: no reminder ; 1: text with comments ; 2: like 1, but the
+    spaces are trimmed]</FONT> <br>
+
+    The default values for these options are taken into
+    <code>cpp_options.vim</code> that can define the variables: <code><FONT
+    COLOR=#ff00ff>g:cpp_ShowVirtual</FONT></code><FONT COLOR=#ff00ff>,
+    <code><FONT COLOR=#ff00ff>g:cpp_ShowStatic</FONT></FONT></code> and
+    <code><FONT COLOR=#ff00ff>g:cpp_ShowDefaultParams</FONT></code>. <br>
+
+    However, when using the command <code>:GIMPL</code>, we can specify values
+    for these different options. The format beeing :
+    <code><em>&lt;name_of_the_option&gt;</em>(\d\+\|on\|off)</code>. For
+    instance : <br>
+	<code>    :GIMPL ShowVirtualoff ShowDefaultParams2</code>.
+    
+<p>
+
+</ul>
+
+<!-- --------------------------------------------------------------------- -->
+<A NAME="cpp_downloads"><h3><FONT COLOR=#6996e0>Downloads</FONT></h3></A>
+<ul> <!-- Indentation -->
+    <table BORDERCOLOR=#6996e0 border=1 cellspacing=0 cellpadding=2>
+	<tr><td><A NAME="lh_cpp_tar_gz">
+		<A HREF='../vim/ressources//lh-cpp_tar.gz.html'><code>lh-cpp.tar.gz</code></A><br><A HREF='../vim/ressources//lh-cpp.tar.gz'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>30th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A></td>
+	    <td COLSPAN=2> This tarball contains all the following files and a
+		copy of all the files they rely on. <br>
+		So, if you plan to have a complete and easy installation of my
+		C &amp; C++ ftplugins, unpack this tarball archive into one
+		directory from your <code><b><FONT
+		COLOR=#2e8b57>'runtimepath'</FONT></b></code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="c_set">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/c/c_set_vim.html'><code>c_set.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/c/c_set.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> The main C ftplugin. It defines several settings plus a lot
+		of mappings for C keywords.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_c">more info...</A></FONT></td>
+		    </tr>
+		</table>
+	    </td>
+	    <td> Requires : 
+		<A TARGET=_top HREF='../vim/general.php#misc_map_vim'><code>misc_map.vim</code></A>,
+		<A TARGET=_top HREF='../vim/settings.php#common_bracket_vim'><code>common_bracket.vim</code></A>. Wants <code>a.vim</code> and
+		<code>LoadHeaderFile.vim</code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="cpp_set">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_set_vim.html'><code>cpp_set.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_set.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> The main C++ ftplugin. It defines some new mappings for C++
+		keywords, enhanced the comments management and loads all the
+		other C++ plugins.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp">more info...</A></FONT></td>
+		    </tr>
+		</table>
+	    </td>
+	    <td> Requires : 
+		<A HREF='#c_set'><code>c_set.vim</code></A>, and every following
+		<code>cpp_<em>.*</em>.vim</code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="cpp_options_commands_vim">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_options-commands_vim.html'><code>cpp_options-commands.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_options-commands.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A></td>
+	    <td> Script in charge of the management of the options. <br>
+		<em>I.e.</em> it loads the appropriate
+		<A HREF="#cpp_options_vim">options-file</A>.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp_options">more info...</A></FONT></td>
+		    </tr>
+		</table>
+	    </td>
+	    <td> Needed by : <code>cpp_BuildTemplates.vim</code>,
+		<code>cpp_GotoFunctionImpl.vim</code> and
+		<code>cpp_InsertAccessors.vim</code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="cpp_options_vim">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_options_vim.html'><code>cpp_options.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_options.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A></td>
+	    <td> The options-file, designated place for customizing the
+		policies of the following files. It is meant to be overriden
+		into your current working directory.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp_options">more info...</A></FONT></td>
+		    </tr>
+		</table>
+	    </td>
+	    <td> Needed by : <code>cpp_BuildTemplates.vim</code>,
+		<code>cpp_GotoFunctionImpl.vim</code> and
+		<code>cpp_InsertAccessors.vim</code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="cpp_BuildTemplates_vim">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_BuildTemplates_vim.html'><code>cpp_BuildTemplates.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_BuildTemplates.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> Defines some template preference for the formats of comments
+		and classes.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp_BuildTemplates">more info...</A>
+		    </FONT></td></tr>
+		</table>
+	    </td>
+	    <td> Requires : <code>a.vim</code></td>
+	</tr>
+	<tr><td><A NAME="parse-class_sed">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/parse-class_sed.html'><code>parse-class.sed</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/parse-class.sed'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>15th&nbsp;&nbsp;March&nbsp;&nbsp;2002</FONT></center></A>
+	    </td>
+	    <td> Multi-line extraction of class names.</td>
+	    <td> Depreciated ; Used to be required by
+		<code>cpp_FindContextClass.vim</code> </td>
+	</tr>
+	<tr><td><A NAME="cpp_FindContextClass_vim">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_FindContextClass_vim.html'><code>cpp_FindContextClass.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_FindContextClass.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> Extracts name of classes.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp_FindContextClass">more info...</A>
+		    </FONT></td></tr>
+		</table>
+	    </td>
+	    <td> <br></td>
+	</tr>
+	<tr><td><A NAME="cpp_InsertAccessors_vim">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_InsertAccessors_vim.html'><code>cpp_InsertAccessors.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_InsertAccessors.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> Enables to easily add attributes and their accessors.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp_InsertAccessors">more info...</A>
+		    </FONT></td></tr>
+		</table>
+	    </td>
+	    <td> Requires : <code>cpp_options.vim</code>,
+		<code>cpp_BuildTemplates.vim</code>,
+		<code>cpp_FindContextClass.vim</code>, <code>a.vim</code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="cpp_GotoFunctionImpl.vim">
+		<A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_GotoFunctionImpl_vim.html'><code>cpp_GotoFunctionImpl.vim</code></A><br><A HREF='../vim/ressources/vimfiles/ftplugin/cpp/cpp_GotoFunctionImpl.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>12th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> Defines a command and some mappings to jump from a function
+		prototype to its implementation ; if the implementation does
+		exist yet, a default one is generated on the fly.
+		<table width=100%>
+		    <tr><td ALIGN=right><FONT SIZE=-1 COLOR=#808080>
+			<A HREF="#expl_cpp_GotoFunctionImpl">more info...</A>
+		    </FONT></td></tr>
+		</table>
+	    </td>
+	    <td> Requires : <code>cpp_options.vim</code>,
+		<code>cpp_FindContextClass.vim</code>, <code>a.vim</code>.
+	    </td>
+	</tr>
+	<tr><td><A NAME="lh_cpp_readme_txt"><A 
+		HREF="ressources/vimfiles/ftplugin/c/doc/lh-cpp-readme.txt"
+		>lh-cpp-readme.txt</A></A></td>
+	    <td> The VIM documentation for all these scripts. </td>
+	    <td> Written as a part of the tarball archive. </td>
+	</tr>
+	<tr><td><A NAME="a_vim"><A TARGET=_top
+		HREF="http://vim.sf.net/scripts/script.php?script_id=31"
+		>a.vim</A></A></td>
+	    <td> Commands to switch between source files and header files.</td>
+	    <td> Maintained on sourceforce.</td>
+	</tr>
+	<tr><td><A NAME="LoadHeaderFile_vim"><A TARGET=_top
+		HREF="http://vim.sf.net/scripts/script.php?script_id=24"
+		>LoadHeaderFile.vim</A></A></td>
+	    <td> Loads a file from a <code>#include</code> line.
+	    </td>
+	    <td> Maintained on sourceforce.</td>
+	</tr>
+	<tr><td><A NAME="mu_template_vim"><A TARGET=_top
+		HREF="http://vim.sf.net/scripts/script.php?script_id=222"
+		>mu-template.vim</A> <br>
+		<FONT SIZE=-1>Local copy:
+		<A HREF='../vim/ressources/vimfiles/after/plugin/mu-template_vim.html'><code>mu-template.vim</code></A><br><A HREF='../vim/ressources/vimfiles/after/plugin/mu-template.vim'>&lt;raw file&gt;</A><br><center><FONT SIZE=-1 COLOR=#a0a0a0>30th&nbsp;&nbsp;November&nbsp;&nbsp;2002</FONT></center></A></FONT><br>
+		<FONT SIZE=-1>Archive with some templates:
+		<A HREF="ressources/mu-template.tar.gz">mu-template.tar.gz</A></FONT>
+		<br><center><FONT SIZE=-2>VIM 6.x only</FONT></center>
+	    </td>
+	    <td> Gergely Kontra's script. It permits to (automatically) load
+		template files. Little to little, I will use this plugin to
+		replace some of my <code>cpp_BuildTemplates.vim</code>'s
+		functions. <br>
+		The version I propose here has been enhanced to support many
+		other things and to be compatible with my other scripts.
+	    </td>.
+	    <td> Initial version maintained on sourceforce; <br>
+		 Can takes advantage of 
+		<A TARGET=_top HREF='../vim/general.php#searchInRuntime_vim'><code>searchInRuntime.vim</code></A> 
+	    </td>
+	</tr>
+    </table>
+</ul>
+
+
+<!-- --------------------------------------------------------------------- -->
+<p>
+  <table border=0 width=100% cellpadding=2 cellspacing=0 BGCOLOR="#6996e0">
+    <tr>
+      <td><A HREF='http://hermitte.free.fr/vim/settings.php' TARGET='_top']><FONT SIZE=-1 COLOR=#ffffff>Back to the ftplugings page</FONT></A><FONT SIZE=-1 COLOR=#ffffff></FONT></td>
+      <td align=right><A HREF='mailto:hermitte@free.fr']><FONT SIZE=-1 COLOR=#ffffff>hermitte@free.fr</FONT></A><FONT SIZE=-1 COLOR=#ffffff></FONT></td>
+    </tr>
+  </table>
+ 
+</BODY>
+
+</HTML>

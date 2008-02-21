@@ -1,0 +1,6 @@
+VimL:" $Id$
+VimL:" C++ stream-inserter (operator<<) Template, Luc Hermitte, 04th Jun 2004
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:direction   = 'o'
+VimL: call s:Include('stream-common', 'cpp/internals')

@@ -1,0 +1,3 @@
+VimL:" $Id$
+VimL:" «stream-signature» File Template, Luc Hermitte, 04th Jun 2004
+¡s:friend.s:type¡ & operator¡s:op¡(¡s:type.' & '.s:direction¡s, ¡s:const.s:clsname¡ & v)

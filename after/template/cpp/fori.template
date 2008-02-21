@@ -1,0 +1,10 @@
+VimL:" $Id$
+VimL:"{for int i=0...} Template-File, Luc Hermitte
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1 
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+for¡C_nl_before_bracket()¡(int i=0; i!=<+MAX+> ; ++i)¡C_nl_before_curlyB()¡{
+    <+code+>
+}<++>

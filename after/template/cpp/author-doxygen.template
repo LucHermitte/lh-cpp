@@ -1,0 +1,6 @@
+VimL:" $Id$
+VimL:" C++ Doxygen snippet for authors, Luc Hermitte
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = '¡'
+VimL: let s:reindent = 1
+¡CppDox_author()¡

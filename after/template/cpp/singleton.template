@@ -1,0 +1,60 @@
+VimL:" $Id$
+VimL:" C++ Singleton-Class Template, Luc Hermitte
+VimL:" «Meyers singleton», cf. More Effective C++ Item 26
+VimL:" For a more precise definition, cf. A. Alexandrescu's Modern C++ Design
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:clsname = inputdialog("singleton name ?")
+VimL: call CppDox_SingletonWizard(s:clsname)
+VimL:"
+/*===========================================================================*/
+/*===============================[ Class ¡s:clsname¡ ]==============================*/
+/*===========================================================================*/
+/**
+ * @brief <+brief+>
+ *
+ * <+doc+>
+ *
+ * <+@invariants+>
+ *
+ * <p><b>Semantics</b><br>
+ ¡g:CppDox_semantics¡
+ * <+ <li> sem+>
+ *
+ * @version ¡'$'¡revision$
+ * ¡CppDox_author()¡
+ */
+class ¡s:clsname¡
+¡g:CppDox_inherits¡
+{
+    /** @name Singleton related functions */
+    //@{ 
+private:
+    /** Constructor */
+    ¡g:CppDox_constructors¡
+    /** Destructor */
+    ¡g:CppDox_isVirtualDest¡ ~¡s:clsname¡() ;
+
+    ¡g:CppDox_instance¡
+    //@}
+
+
+    /** @name Public functions */
+    //@{
+public:
+    <+Public functions+>;
+    //@}
+
+private:
+    ¡g:CppDox_forbidden_members¡
+
+	<+Private functions+>;
+
+    ¡g:CppDox_private_members¡
+};<++>
+
+¡g:CppDox_stuff_for_cpp_file¡
+

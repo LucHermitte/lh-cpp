@@ -1,0 +1,247 @@
+[08 Dec 2005] {{{1
+(*) cpp_set.vim {{{2
+    (*) mapping to <m-t> => insert "typename" (after a '<', or after
+    "typedef"), or "typedef"
+
+[26 Aug 2005] {{{1
+(*) cpp_set.vim {{{2
+    (*) New visual mode mappings to convert C-style casts into C++
+        style casts
+       => ,,sc  ,,rc  ,,cc  ,,dc
+(*) todo {{{2
+    (*) Merge ,sc and ,,sc => auto detect a C-style cast to apply
+        translation ; hint: looks like (.*).*
+
+[14th Apr 2005] {{{1
+(*) common_brackets.vim
+    (*) Triggers.vim can be installed into {rtp}/macros
+
+[02nd Feb 2005] {{{1
+(*) ftplugin/cpp/cpp_set.vim
+    (*) Does not expand `namespace' if there is a `using' on the same
+        line
+    (*) New vmappings for the vaious C++ castings -> ,dc ,sc ,rc ,sc
+        ,,dc ,,sc ,,rc ,,sc
+(*) ftplugin/c/c_set.vim
+    (*) New N&V mappings, on <M-v>, that surround a selection (/word)
+        with a C-comment (/*...*/)
+
+[31st Jan 2005] {{{1
+(*) after/ftplugin/c/c_brackets.vim
+    (*) `<' expands into `<!cursorhere!>!mark!' after a `#include',
+    `template', `typename', or a `xxxx_cast'
+
+[16th Jan 2005] {{{1
+(*) ftplugin/c/c_set.vim
+    (*) Don't expand «#if» anymore
+
+[22nd Nov 2004] {{{1
+(*) plugin/bracketing_base.vim
+    (*) New behaviour for !mark! in visual mode: 
+        If a marker is selected, then the marker is replaced by its
+	contents. Otherwise the visual slection is wrapped into a
+	marker.
+    (*) New mappings !mark! and <Plug>MarkersMark added to the normal
+        mode.
+
+[25th Jul 2004] {{{1
+(*) macros/options.vim {{{2
+    (*) New plugin: Fatorizes a very common function: LHOption()
+(*) ftplugin/c/c_compile.vim {{{2
+    (*) Requires: macros/options.vim
+    (*) New Options: [bg]:key_make, key_execute and key_config
+        -> override the default keybindings to <F7>, <C-F5>, <M-F7>
+(*) ftplugin/c/c_set.vim {{{2
+    (*) <localleader>while: changed into <localleader>wh
+(*) ftplugin/cpp/cpp_set.vim {{{2
+    (*) New mapping: "<c-x>rbe" : reverse version of "<c-x>be"
+    (*) New abbreviation: "namespace" that expands into "namespace | {\n«»\n}«»"
+    (*) Bug fix: <localleader>namespace is correctly expanded when we select a
+        marker.
+    (*) Bug Fix: "<localleader>try" is correctly expanded when
+        c_nl_before_curlyB == 1
+    (*) Behaviour change: c_nl_before_curlyB also applies with '}'
+        Modification noticeable with the abbreviation "try".
+
+[16th Jun 2004] {{{1
+(*) ftpugin/c/c_compile.vim {{{2
+    (*) New ftplugin: Defines helper mappings to compile, execute
+        and configure projects
+    (*) Requires: ui-functions.vim
+    (*) Takes advantage of: let-modeline.vim (not shipped)
+(*) mu-template {{{2
+    (*) Little improvements: with the function s:Include()
+    (*) New templates: C++'s operators >> and <<
+
+(*) misc_map.vim {{{2
+    (*) Bug fix in BuildMapSeq: the function was not compatible with
+        LaTeX-Suite ; as LS mapped '!' in order to protect ``!, \`! and "`!
+        => s/mapcheck/maparg/
+
+[07th May 2004] {{{1
+(*) misc_map.vim {{{2
+    (*) New function: Map4TheseContexts()
+    (*) The default value for: the parameter {default_value} of MapContext()
+        is now {key}
+    (*) New function: Surround()
+        Aimed to replace InsertAroundVisual() in the definition of mappings.
+	This new function emulates :smap-pings :
+	- when a marker/placeholder is selected, an insert mode
+	mapping/abbreviation is used,
+	- otherwise, a visual-mode mapping (that inserts text arround
+	the selection) is used.
+(*) common_brackets.vim {{{2
+    (*) now compatible with Srinath Avadhanula's IMAP.vim
+    (*) smarter: 
+	The behaviour of '\(' and '\%(' for Vim buffers has been changed.
+(*) c_set.vim & cpp_set.vim {{{2
+    (*) Rewritten: to use Surround() instead of InsertAroundVisual()
+
+[16th Mar 2004] {{{1
+(*) cpp_set {{{2
+    (*) imap:   <m-b> -> boost::
+    (*) imap:   <m-l> -> luc_lib::
+    (*) n/vmap: <localleader>ns -> "namespace{\n}" around bloc/line
+
+[13th Jan 2004] {{{1
+(*) c_sep, cpp_set {{{2
+    (*) Def_Abbr_C() simplified => only two parameters now
+       => Bug happening when loading the control-structure abbreviations fixed
+    (*) Using InsertAroundVisual() instead of the old MapAroundVisualLine
+(*) cpp_set        {{{2
+    (*) the abbreviations (try, catch) don't mess the search history anymore.
+
+[25th Sep 2003] {{{1
+(*) c_set {{{2
+    (*) the abbreviations (if, for, switch, while) don't mess the search
+        history anymore.
+
+[26th Aug 2003] {{{1
+(*) c_set, cpp_set {{{2
+    (*) visual mappings behave correctly, even in select-mode (:h gV)
+(*) bracketing.base.vim {{{2
+    (*) New option: [bg]:marker_center
+    (*) New mappings: !jump-and-del! !bjump-and-del!
+        -> Always jump and delete the next/previous markers, whatever the
+	options are.
+
+[28th Jul 2003] {{{1
+(*) cpp_options, c_set {{{2
+    (*) b:nl_before_xxx changed into g:c_nl_before_xxx
+(*) cpp_InsertAccessors {{{2
+    (*) respects g:c_nl_before_curlyB
+	But the definition of g:c_nl_before_curlyB must be done into
+	./cpp_options.vim.
+    (*) new option: g:accessorCap that enables to tune the capitalization of
+        the first letter of the attribute within accessor-names.
+	-1 (lowcase), 0 (no change), 1 (upcase)
+    (*) new options: g:accessor_comment_{get,set,ref},
+                     g:accessor_comment_proxy_{get,set,ref}
+	=> customize the comments written for the various accessors.
+	Note: the comment may be an empty string
+
+(*) cpp_InsertAccessors, cpp_BuildTemplate, cpp_GotoFunctionImpl {{{2
+    (*) bug fixed regarding automatic !jump! and µTemplate
+
+[20th Jul 2003] {{{1
+(*) misc_map.vim {{{2
+    (*) doxygen comments are correctly recognized as comments.
+
+[12th Jul 2003] {{{1
+(*) doxygen.vim {{{2
+    (*) Michael Geddes's syntax file has been move to: {rtp}/syntax/
+(*) c_set.vim {{{2
+    (*) Loads: doxygen.vim
+(*) cpp_options.vim {{{2
+    (*) comments added regarding b:nl_before_bracket
+        [I know, it is not unique to C++ but concerns C as well]
+
+[03rd Jul 2003 -- 04th Jul 2003] {{{1
+(*) c_set {{{2
+    (*) fix: the documentation wasn't find-able anymore
+    (*) Two new boolean options : b:nl_before_bracket and b:nl_before_curlyB
+        that specify wheither we require a newline character before the '('
+        and the '{' of the various control statements (if, for, while, ...)
+	default values: false (0)
+(*) cpp_set {{{2
+    (*) Small changes in consequence
+(*) common_brackets.vim 4.0:  {{{2
+    (*) New option: b:cb_jump_on_close that specify weither the mappings for
+         the closing brackets are defined or not ; [default: true (1)]
+(*) Documentation {{{2
+    (*) Updated and minor changes.
+
+(*) todo {{{2
+    (*) "imap }" does not work correctly
+    (*) the control statements should not mess up the search history
+    (*) mutemplate... utf-8 & doc
+
+[... -- 09th Apr 2003] {{{1
+(*) Mu-template 0.31 {{{2
+
+(*) Documentation {{{2
+    (*) Little changes
+
+[10th oct 2002 -- 18th oct 2002] {{{1
+(*) cpp_FindContextClass.vim {{{2
+    (*) Cpp_CurrentScope(l,'class') supports: 
+	- inheritance -> 'class A : xx B, xx C ... {'
+	- and declaration on several lines of the previous inheritance text.
+    (*) Cpp_SearchClassDefinition becomes obsolete. Instead, use
+	Cpp_CurrentScope(lineNo, scope_type) to search for a namespace::class
+	scope.
+    (*) Functions that will return the list of the direct base classes of the
+	current class.
+    (*) Able to handle C-definitions like:
+	    "typedef struct foo{...} *PFoo,Foo;"
+    (*) An inversion problem, with nested classes, fixed.
+
+(*) cpp_GotoFunctionImpl 0.6 {{{2
+    (*) Supports destructors
+    (*) Supports namespaces: 
+	+ If the zone where the function implementation is going to be
+	  inserted is within a namespace, then the scope of the function
+	  will be corrected.
+	+ The |search-implementation| feature is able to differentiate
+	  functions according to the namespace they are within, and thus
+	  it is able to jump to the right function. For instance:
+	    int NS::CL::FN(int i) {}		// is NS::CL::FN
+	    namespace NS0 {
+		int NS::CL::FN(int i) {}	// is NS0::NS::CL:FN
+	    }
+    (*) Checks whether the function is a pure virtual method and refuse to
+	define an implementation in such cases ...
+    (*) When searching for the implementation of a function within the
+	.cpp file, comments before the signature will be ignored ; i.e.
+	the cursor will move to the return-type. The difference is
+	noticeable on virtual or static functions.
+(*) cpp_GotoFunctionImpl 0.5 {{{2
+    (*) The management of cpp_options.vim has been moved to another file.  
+    (*) Comments are completly ignored when searching for the implementation
+	of a function. Actually, the match is done according to the list of
+	type only -- even parameter names will be ignored.
+    (*) Inlines functions (within the class def) (ie not prototypes) will be
+        ignored
+    (*) Enhancements and little bug corrections regaring default parameters
+    (*) We can specify where we want the default implementation code to be
+	written ; cf cpp_options.vim and g:cpp_FunctionPosition.
+
+(*) cpp_InsertAccessors.vim {{{2
+    (*) The management of cpp_options.vim has been moved to another file.  
+
+(*) cpp_options-commands.vim 1.0 {{{2
+    (*) New file that will centralize options management
+
+(*) Mu-template 0.23 {{{2
+    (*) New global boolean ([0]/1) option:
+	g:mt_IDontWantTemplatesAutomaticallyInserted that forbids mu-template
+	to automatically insert templates when opening new files.
+	Must be set once before mu-template.vim is sourced -> .vimrc
+
+(*) Documentation {{{2
+    (*) Updated
+    (*) New sections: first steps, C++-options, ...
+
+}}}1
+==================================================================
+vim600: set fdm=marker:
