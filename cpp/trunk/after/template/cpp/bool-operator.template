@@ -1,0 +1,23 @@
+VimL:" $Id$
+VimL:" bool-operator Template, Luc Hermitte
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL:"
+VimL:" @pre must be within a class/struct context
+VimL:" @todo propose other approaches (Don Box's, safe_bool, void*, ...)
+
+struct boolean{ int i;};
+/** Is the data <+valid+> ?.
+ * 
+ * Hack to provide a boolean operator that is convertible only to a
+ * boolean expression to be used in \c if tests.
+ * @see <em>Imperfect C++</em>, Matthew Wilson, Addisson-Welsey, �24.6
+ * <+@since +>
+ */
+operator int boolean ::* () const {
+    return <+isValid()+> ? &boolean::i : 0;
+}
+

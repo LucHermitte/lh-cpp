@@ -1,0 +1,18 @@
+VimL:" $Id$
+VimL:" C++ for-loop on iterators Template, Luc Hermitte
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL:"
+VimL: let s:cont  = INPUT('Contrainer name: ')
+VimL: let s:begin = INPUT('Iterator variable: ', 'b')
+VimL: let s:end   = INPUT('Iterator end variable: ', 'e')
+VimL:"
+VimL:" Note: The "const" can be deleted or kept thanks to <Plug>MarkersMark
+for (<+container-type+>::<+const_+>iterator ¡s:begin¡ = ¡s:cont¡.begin(), ¡s:end¡ = ¡s:cont¡.end()
+    ; ¡s:begin¡ != ¡s:end¡
+    ; ++¡s:begin¡
+    )
+{<+code+>}<++>

@@ -1,0 +1,17 @@
+VimL:" $Id$
+VimL:" dox-file Template, Luc Hermitte
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL:"
+
+/**@ingroup g<+Projet+>
+ * @file    ¡expand('%:t')¡
+ * ¡CppDox_author()¡
+ * @version ¡'$'¡Revision$
+ * @since   Version <+1.0+>
+ */
+
+

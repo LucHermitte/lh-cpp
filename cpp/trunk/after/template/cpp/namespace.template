@@ -1,0 +1,16 @@
+VimL:" $Id$
+VimL:" C++ namespace Template, Luc Hermitte
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL:"
+VimL: let s:namespace = INPUT('Namespace name: ')
+VimL: let s:ns_close  = IF(strlen(s:namespace), s:namespace, 'Anonymous')
+VimL: let s:ns_open   = IF(!strlen(s:namespace), '// Anonymous namespace', '')
+namespace ¡s:namespace¡ { ¡s:ns_open¡
+<++>
+} // ¡s:ns_close¡ namespace 
+<++>
+

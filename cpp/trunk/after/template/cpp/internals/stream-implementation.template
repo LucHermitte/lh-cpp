@@ -1,0 +1,6 @@
+VimL:" $Id$
+VimL:" «stream-implementation» File Template, Luc Hermitte
+{
+VimL: " The space for the second argument is obligatory at the moment.
+    return ¡s:direction.'s '.s:op¡ <+fields+>;
+}

@@ -1,0 +1,19 @@
+VimL:" $Id$
+VimL:" «stream-common» File Template, Luc Hermitte
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:type = 'std::'.s:direction.'stream'
+VimL: let s:op = IF(s:direction=='o', '<<', '>>')
+VimL: let s:const = IF(s:direction=='o', 'const ', ' ')
+VimL: let s:clsname0 = Cpp_SearchClassDefinition(line('.'))
+VimL: let s:friend = IF(strlen(s:clsname0), 'friend ', ' ')
+VimL: let s:clsname  = INPUT("Template\noperator".s:op." for the class:", s:clsname0)
+VimL: call s:Include('stream-signature', 'cpp/internals')
+VimL: call s:Include('stream-implementation', 'cpp/internals')
+<++>
+VimL: " Todo: check for context-namespaces and trim them from s:clsname
+VimL: " Todo: check for the previous class if s:clsname0 isempty
+VimL: " Todo: options for inline or not ; -> g:implPlace, ...
+VimL: " Todo: ask for simple or complex (Langer/Roguewave) inserter
+VimL: " Todo: Try to detect The attributes of the objet in order to generate the instruction. ; option: separator
