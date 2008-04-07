@@ -235,7 +235,7 @@ function! CppDox_SingletonWizard(clsname)
     let g:CppDox_isVirtualDest      = ""
     let g:CppDox_inherits           = ": private boost::non_copyable"
     let g:CppDox_private_members    = 
-          \ a:clsname." *ms_instance;\n"
+          \ "static ".a:clsname." *ms_instance;\n"
           \.g:CppDox_private_members
     let g:CppDox_semantics          =
 	  \ " * <li> Explicitly initialized\n"
