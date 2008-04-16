@@ -281,13 +281,14 @@ function! lh#cpp#AnalysisLib_Class#GetClassTag(id)
   return class_tags
 endfunction
 
-function! s:BaseClasses(id, resultSet)
+" todo: order by dependies
+function! s:BaseClasses(id, resultSet, resultList)
   if has_key(a:resultSet, a:id) && a:resultSet[a:id] == 1
     " echomsg "[".a:id.']'."done"
     return 
   endif
   let classes = lh#cpp#AnalysisLib_Class#GetClassTag('^'.a:id.'$')
-  let a:resultSet[a:id] = 1
+  " let a:resultSet[a:id] = 1
   let newParents = []
   for class in classes
     if has_key(class, 'inherits')
@@ -298,6 +299,7 @@ function! s:BaseClasses(id, resultSet)
 	if !has_key(a:resultSet, parent)
 	  call add(newParents, parent)
 	  let a:resultSet[parent] = 0
+	  call add(a:resultList, parent)
 	endif
       endfor
     else
@@ -306,16 +308,17 @@ function! s:BaseClasses(id, resultSet)
   endfor
 
   for parent in newParents
-    call s:BaseClasses(parent, a:resultSet)
+    call s:BaseClasses(parent, a:resultSet, a:resultList)
+    let a:resultSet[parent] = 1
   endfor
 endfunction
 
 function! lh#cpp#AnalysisLib_Class#Ancestors(id)
   let classesSet = {}
-  call s:BaseClasses(a:id, classesSet)
-  echomsg string(classesSet)
-  let result = sort(keys(classesSet))
-  return result
+  let classesList = []
+  call s:BaseClasses(a:id, classesSet, classesList)
+  " echomsg string(classesSet)
+  return classesList
 endfunction
 " }}}
 " ==========================================================================

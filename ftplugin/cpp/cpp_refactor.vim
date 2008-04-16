@@ -56,6 +56,8 @@ command! -buffer -range ToInitList
       \ |<line1>s#^,#:#
       \ |<line1>,<line2>normal! ==
 
+
+command! -b -nargs=* Parents :call <sid>ShowParents(<f-args>)
  
 " Commands and mappings }}}1
 "=============================================================================
@@ -69,6 +71,14 @@ let g:loaded_cpp_refactor = 1
 " Avoid global reinclusion }}}1
 "------------------------------------------------------------------------
 " Functions {{{1
+
+function! s:ShowParents(...)
+  let classname = (a:0 == 0)
+	\ ? lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
+	\ : a:1
+  let ancestors = lh#cpp#AnalysisLib_Class#Ancestors(classname)
+  echo string(ancestors)
+endfunction
 
 
 " Functions }}}1

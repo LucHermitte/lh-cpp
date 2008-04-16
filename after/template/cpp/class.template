@@ -34,7 +34,7 @@ public:
     /**
      * ¡g:CppDox_isVirtualDest¡ Destructor.
      *
-     ¡IF(strlen(g:CppDox_isVirtualDest), '', '* @warning this class is not meant to be publically inherited')¡
+     ¡IF(strlen(g:CppDox_isVirtualDest), '', '* @warning this class is not meant to be publicly inherited')¡
      * @throw Nothing
      */
     ¡g:CppDox_isVirtualDest¡ ~¡s:clsname¡() ;
