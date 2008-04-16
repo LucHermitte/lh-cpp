@@ -120,9 +120,6 @@ endfunction
 " Active HL in buffers where there are unmatched functions decl/def
 "
 "------------------------------------------------------------------------
-let s:cpo_save=&cpo
-set cpo&vim
-"------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
 " vim600: set fdm=marker:

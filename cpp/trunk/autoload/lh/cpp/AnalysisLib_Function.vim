@@ -286,6 +286,9 @@ function! lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
     call add(params, s:ParamToString(param))
   endfor
   let sig = a:fn.name.'(' . join(params, ', ') .')'
+  if a:fn.const 
+    let sig .= ' const'
+  endif
   return sig
 endfunction
 " }}}2
@@ -304,10 +307,13 @@ endfunction
 " Function: lh#cpp#AnalysisLib_Function#LoadTags(id) {{{2
 function! s:ConvertTag(t)
   let fn_data = {
-	\ 'name': a:t.name,
-	\ 'parameters': lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature),
-	\ 'filename': a:t.filename,
-	\ 'cmd':a:t.cmd }
+	\ 'name'          : a:t.name,
+	\ 'parameters'    : lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature),
+	\ 'const'         : match(a:t.signature, s:re_const_member_fn) != -1,
+	\ 'filename'      : a:t.filename,
+	\ 'implementation': (has_key(a:t, 'implementation') ? (a:t.implementation) : ''),
+	\ 'class': (has_key(a:t, 'class') ? (a:t.class) : ''),
+	\ 'cmd'           :a:t.cmd }
   return fn_data
 endfunction
 
@@ -367,6 +373,26 @@ function! lh#cpp#AnalysisLib_Function#SearchUnmatched(what)
   endif
 endfunction
 
+"------------------------------------------------------------------------
+" Function: lh#cpp#AnalysisLib_Function#SearchAllDeclarations(fn) {{{2
+" inline member function are seen as "p" (instead of "f") by ctags, hence this
+" function
+function! lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
+  let declarations = deepcopy(a:functions.declarations)
+  let unmatched_def = copy(a:functions.definitions)
+
+  for f in declarations
+    let idx = lh#list#Find_if(unmatched_def, 'lh#cpp#AnalysisLib_Function#IsSame(v:val,v:1_)', [f], 0)
+    if idx != -1
+      call remove(unmatched_def, idx)
+    endif
+  endfor
+
+  " That is not a very good way to identify inline functions, at least all
+  " inline function are still kept
+  call extend(declarations, unmatched_def)
+  return declarations
+endfunction
 "------------------------------------------------------------------------
 " }}}2
 
