@@ -85,7 +85,12 @@ function! s:OverrideableFunctions(classname)
       endfor
     endif
   endfor
-  return values(result)
+
+  let flattened = []
+  for decl in values(result)
+    call extend(flattened, decl)
+  endfor
+  return flattened
 endfunction
 
 " # Main {{{2
@@ -94,6 +99,7 @@ function! lh#cpp#override#Main()
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   " 2- Obtain overrideable functions
   let virtual_fcts = s:OverrideableFunctions(classname)
+  let g:decls = virtual_fcts
 
   " 3- Propose to select the functions to override
   call s:Display(classname, virtual_fcts)
@@ -122,15 +128,16 @@ function! s:AddToMenu(lines, fns)
   " 1- Compute max function length
   let max_length = 0
   let fns=[]
-  for overloads in a:fns
-    for fn in overloads
+  " for overloads in a:fns
+    " for fn in overloads
+    for fn in a:fns
       let signature = lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
       let fn['fullsignature' ] = signature
       let length = strlen(signature)
       if length > max_length | let max_length = length | endif
       call add(fns, fn)
     endfor
-  endfor
+  " endfor
 
   " 2- Build the result
   for fn in fns
@@ -150,6 +157,8 @@ endfunction
 function! s:Display(className, declarations)
   let choices = s:BuildMenu(a:declarations)
   " return
+  let where_it_started = getpos('.')
+  let where_it_started[0] = bufnr('%')
   let b_id = lh#buffer#dialog#new(
 	\ 'C++Override('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
 	\ 'Overrideable functions for '.a:className,
@@ -162,6 +171,7 @@ function! s:Display(className, declarations)
   call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in one of the ancestor class', 'long')
   " Added the lonely functions to the b_id
   let b_id['declarations'] = a:declarations
+  let b_id.where_it_started = where_it_started
   " Syntax and co
   call s:PostInitDialog()
   return ''
@@ -205,24 +215,25 @@ function! lh#cpp#override#select(results)
   " let cmd = b:cmd
 
   let choices = a:results.dialog.choices
+  let lines = []
   for selection in a:results.selection
-    echomsg '-> '.choices[selection]
+    " echomsg '-> '.choices[selection]
     " echomsg '-> '.info[selection-1].filename . ": ".info[selection-1].cmd
     " 
     let selected_virt = a:results.dialog.declarations[selection-1]
-    echomsg string(selected_virt)
-    continue
-    call lh#buffer#Find(selected_virt.filename)
-    normal! gg
-    try
-      " todo: save history and @/
-      let save_magic = &magic
-      set nomagic
-      exe selected_virt.cmd
-    finally
-      let &magic = save_magic
-    endtry
+    " echomsg string(selected_virt)
+    " todo: open all the related files in a scratch buffer, et fetch the exact
+    " signatures + the comments
+    call add(lines, selected_virt.fullsignature.';') " where is the return type ?
+    call add(lines, '')
   endfor
+  " Go back to the original buffer, and insert the built lines
+  let where_it_started = a:results.dialog.where_it_started
+  call lh#buffer#Find(where_it_started[0])
+  if 0==append(where_it_started[1]-1, lines)
+    exe (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
+    echo (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
+  endif
 endfunction
 
 

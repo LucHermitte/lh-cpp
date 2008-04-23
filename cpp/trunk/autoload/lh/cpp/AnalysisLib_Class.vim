@@ -30,6 +30,8 @@
 " Dependencies:	VIM 7.0+
 
 " History:	{{{2
+" 	23rd Apr 2008
+" 	(*) #Ancestors() return the list of base classes (topologicaly sorted)
 " 	13th Feb 2008
 " 	(*) new option [bg]:cpp_defines_to_ignore
 " 	12th Sep 2007 
@@ -71,9 +73,8 @@
 "
 " TODO: {{{2
 " (*) Support templates -> A<T>::B, etc
-" (*) Find the list of every base class ; aim: be able to retrieve the list of
-"     every virtual function available to the class.
 " (*) Must we differentiate anonymous namespaces from the global namespace ?
+" (*) reinject implicit context in #Ancestors
 " }}}1
 " ==========================================================================
 let s:cpo_save = &cpo
@@ -277,49 +278,48 @@ endfunction
 
 function! lh#cpp#AnalysisLib_Class#GetClassTag(id)
   let tags = taglist(a:id)
-  let class_tags = filter(copy(tags), 'v:val.kind=="c"')
+  " In C++, a struct is a class, but with different default access rights
+  let class_tags = filter(copy(tags), 'v:val.kind=~"[sc]"')
   return class_tags
 endfunction
 
-" todo: order by dependies
-function! s:BaseClasses(id, resultSet, resultList)
-  if has_key(a:resultSet, a:id) && a:resultSet[a:id] == 1
-    " echomsg "[".a:id.']'."done"
-    return 
-  endif
+function! lh#cpp#AnalysisLib_Class#FetchDirectParents(id)
+  let parents = []
   let classes = lh#cpp#AnalysisLib_Class#GetClassTag('^'.a:id.'$')
-  " let a:resultSet[a:id] = 1
-  let newParents = []
   for class in classes
+    " todo: select the class that better matches the current context (imported
+    " namespaces, and current namespace)
     if has_key(class, 'inherits')
       let sParents = class.inherits
-      " echomsg "[".a:id.']'.class.name . " inherits " . sParents
+      echomsg "[".a:id.']'.class.name . " inherits " . sParents
       let lParents = split(sParents, ',')
-      for parent in lParents
-	if !has_key(a:resultSet, parent)
-	  call add(newParents, parent)
-	  let a:resultSet[parent] = 0
-	  call add(a:resultList, parent)
-	endif
-      endfor
-    else
-      " echomsg "[".a:id.']'.class.name . " does not inherit from anything "
+      call extend(parents, lParents)
     endif
   endfor
-
-  for parent in newParents
-    call s:BaseClasses(parent, a:resultSet, a:resultList)
-    let a:resultSet[parent] = 1
-  endfor
+  return parents
 endfunction
 
 function! lh#cpp#AnalysisLib_Class#Ancestors(id)
-  let classesSet = {}
-  let classesList = []
-  call s:BaseClasses(a:id, classesSet, classesList)
-  " echomsg string(classesSet)
-  return classesList
+  try
+    let parents = lh#graph#tsort#depth(function('lh#cpp#AnalysisLib_Class#FetchDirectParents'), [a:id])
+    " and then remove the first node: a:id
+    call remove(parents, 0)
+    " echomsg string(parents)
+    return parents
+  catch /Tsort.*/
+    let cycle = matchstr(v:exception, '.*: \zs.*')
+    throw "Cycle in ".a:id." inheritance tree detected: ".cycle
+  endtry
 endfunction
+
+" With:
+"   struct V {};
+"   struct C1 : virtual V {};
+"   struct C2 : virtual V {};
+"   struct C3 : C2{};
+"   struct D : C1, C3 {};
+" ":Parent D" must return: [C1, C3, C2, V] 
+" (at least, we must see: C1 < V, and C3 < C2 < V)
 " }}}
 " ==========================================================================
 let &cpo = s:cpo_save
