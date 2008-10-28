@@ -24,10 +24,23 @@
 
 let s:cpo_save=&cpo
 set cpo&vim
+
 "------------------------------------------------------------------------
 
 " ## Functions {{{1
+" # Debug {{{2
+function! lh#cpp#override#verbose(level)
+  let s:verbose = a:level
+endfunction
+
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
 " # API {{{2
+" Function: s:OverrideableFunctions(classname) {{{3
 function! s:OverrideableFunctions(classname)
   let result = {}
   " todo: do not sort ancestors (find the inheritance (tree) order) because
@@ -93,12 +106,43 @@ function! s:OverrideableFunctions(classname)
   return flattened
 endfunction
 
+" Function: s:OverrideFunction(function_tag) {{{3
+function! s:OverrideFunction(function_tag)
+  " a- open the related file in a new window
+  let filename = a:function_tag.filename
+  exe 'sp '.filename
+  try 
+    " b- search the exact signature
+    let signature = a:function_tag.fullsignature
+    let g:signature = signature
+    let regex_signature = lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature, '').regex
+    let regex_signature = regex_signature . '\s*;' 
+    let lineno = search(regex_signature)
+    if lineno <= 0
+      throw "Override: cannot find ".signature." declaration in ".filename
+    endif
+    " c- extract all the relevant text (beware of =0)
+    let code = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, 1)
+  finally
+    " quit the split-opened window
+    :q
+  endtry
+    " d- copy the function back.
+    " todo: open all the related files in a scratch buffer, and fetch the exact
+    " signatures + the comments
+    let lines = []
+    call add(lines, code.';') " where is the return type ?
+    call add(lines, '')
+    return lines
+endfunction
 " # Main {{{2
 function! lh#cpp#override#Main()
   " 1- Obtain current class name
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
+  call s:Verbose ("classname=".classname)
   " 2- Obtain overrideable functions
   let virtual_fcts = s:OverrideableFunctions(classname)
+  call s:Verbose ("virtual fct=".string(virtual_fcts))
   let g:decls = virtual_fcts
 
   " 3- Propose to select the functions to override
@@ -109,6 +153,7 @@ endfunction
 
 " # GUI {{{2
 " ==========================[ Menu ]====================================
+" Function: s:Access(fn) {{{3
 function! s:Access(fn)
   if has_key(a:fn, 'access')
     if     a:fn.access == 'public'    | return '+'
@@ -124,6 +169,7 @@ function! s:Overriden(fn)
   return has_key(a:fn, 'overriden') ? '!' : ' '
 endfunction
 
+" Function: s:AddToMenu(lines, fns) {{{3
 function! s:AddToMenu(lines, fns)
   " 1- Compute max function length
   let max_length = 0
@@ -148,17 +194,17 @@ function! s:AddToMenu(lines, fns)
   endfor
 endfunction
 
+" Function: s:BuildMenu(declarations) {{{3
 function! s:BuildMenu(declarations)
   let res = ['--abort--']
   call s:AddToMenu(res, a:declarations)
   return res
 endfunction
 
+" Function: s:Display(className, declarations) {{{3
 function! s:Display(className, declarations)
   let choices = s:BuildMenu(a:declarations)
   " return
-  let where_it_started = getpos('.')
-  let where_it_started[0] = bufnr('%')
   let b_id = lh#buffer#dialog#new(
 	\ 'C++Override('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
 	\ 'Overrideable functions for '.a:className,
@@ -171,12 +217,12 @@ function! s:Display(className, declarations)
   call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in one of the ancestor class', 'long')
   " Added the lonely functions to the b_id
   let b_id['declarations'] = a:declarations
-  let b_id.where_it_started = where_it_started
   " Syntax and co
   call s:PostInitDialog()
   return ''
 endfunction
 
+" Function: s:PostInitDialog() {{{3
 function! s:PostInitDialog()
   if has("syntax")
     syn clear
@@ -204,6 +250,7 @@ function! s:PostInitDialog()
   endif
 endfunction
 
+" Function: lh#cpp#override#select(results) {{{3
 function! lh#cpp#override#select(results)
   if len(a:results.selection)==1 && a:results.selection[0]==0
     call lh#buffer#dialog#Quit()
@@ -222,10 +269,7 @@ function! lh#cpp#override#select(results)
     " 
     let selected_virt = a:results.dialog.declarations[selection-1]
     " echomsg string(selected_virt)
-    " todo: open all the related files in a scratch buffer, et fetch the exact
-    " signatures + the comments
-    call add(lines, selected_virt.fullsignature.';') " where is the return type ?
-    call add(lines, '')
+    call extend(lines, s:OverrideFunction(selected_virt))
   endfor
   " Go back to the original buffer, and insert the built lines
   let where_it_started = a:results.dialog.where_it_started
@@ -236,7 +280,7 @@ function! lh#cpp#override#select(results)
   endif
 endfunction
 
-
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

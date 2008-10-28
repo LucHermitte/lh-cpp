@@ -30,6 +30,7 @@ if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_sni
 endif
 let s:cpo_save=&cpo
 set cpo&vim
+let b:loaded_ftplug_c_snippets = 100
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -37,6 +38,12 @@ set cpo&vim
 runtime! ftplugin/c/c_localleader.vim
 
 " Local mappings {{{2
+
+" Some C++ abbreviated Keywords {{{3
+" ------------------------------------------------------------------------
+" Are you also dyslexic ?
+inoreab <buffer> ocnst      const
+inoreab <buffer> earse      erase
 
 " C keywords {{{3
 " ------------------------------------------------------------------------
@@ -137,13 +144,20 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> do <C-R>=Def_AbbrC('do ',
 	\ '\<c-f\>do {\n!cursorhere!\n} while (!mark!) ;!mark!')<cr><c-f>
 "--,do insert "do" statement
-  vnoremap <buffer> <silent> <localleader>do
+  vnoremap <buffer> <silent> <localleader>do 
 	\ <c-\><c-n>@=Surround('do {', '!cursorhere!} while (!mark!);!mark!',
+	\ 1, 1, '', 1, 'do ')<cr>
+  vnoremap <buffer> µ 
+	\ <c-\><c-n>@=SurroundBySubstitute('do {', '!cursorhere!} while (!mark!);!mark!',
 	\ 1, 1, '', 1, 'do ')<cr>
   " problem here with fix_indent !!!
 
-  vnoremap <buffer> <silent> <localleader><localleader>do
+  vnoremap <buffer> <silent> <localleader><localleader>do 
 	\ <c-\><c-n>@=Surround('do {\n!cursorhere!\n}\nwhile (', 
+	\ ');!mark!',
+	\ 0, 1, '', 1, 'do ')<cr>
+  vnoremap <buffer> <localleader><localleader>d2 
+	\ <c-\><c-n>@=SurroundBySubstitute('do {\n!cursorhere!\n}\nwhile (', 
 	\ ');!mark!',
 	\ 0, 1, '', 1, 'do ')<cr>
   " Note: \<esc\>lcw is used to strip every spaces at the beginning of the
