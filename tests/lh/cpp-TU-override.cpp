@@ -1,5 +1,10 @@
 // Vim: let b:tags_dirname = '.'
 //
+namespace nZ { 
+    class B {};
+} // nZ namespace 
+
+
 namespace foo { 
     class A0
     {
@@ -47,16 +52,18 @@ namespace foo {
 
 ['A0', 'A1', 'A2', 'C1']
     };
+    class B : A0{};
 } // foo namespace 
 
 namespace bar { 
+    using namespace nZ;
     struct V {};
     struct Z {};
     struct C1 : virtual V {};
     struct C2 : virtual V, Z {};
     struct C3 : C2{};
-    struct D : C1, C3 {};
-// echo lh#cpp#AnalysisLib_Class#Ancestors('D')
+    struct D : C1, C3, B {};
+// echo lh#cpp#AnalysisLib_Class#Ancestors('bar::D')
 } // bar namespace 
 
 

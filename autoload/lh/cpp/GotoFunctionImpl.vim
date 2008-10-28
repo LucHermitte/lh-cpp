@@ -16,16 +16,21 @@
 " 	Use Vim 7+
 " History:	
 " 	12th Sep 2007:
-" 	(*) accepts spaces between "~" and class name (destructors)
+" 	(*) Accepts spaces between "~" and class name (destructors)
 " 	v1.0.0:
-" 		code moved from ftplugin/cpp/cpp_GotoFunctionImpl.vim
-" 	v1.0.1: 13th Feb 2008
+" 	(*) Code moved from ftplugin/cpp/cpp_GotoFunctionImpl.vim
 " 	(*) Fixes issues with g:alternateSearchPath in order to open the .cpp
 " 	in the correct subdirectory
 " 	(*) Don't escape '&' (from parameter's type) to build search regex 
-"	v1.0.1:
 "	(*) Preserve line breaks between parameters
+"	(*) A message is displayed if the position of the function definition
+"	    cannot be found.
+"	v1.1.0
+"	(*) two functions moved to autoload/lh/cpp/AnalysisLib_Function
 " TODO:		«missing features»
+" 	(*) add knowledge about C99/C++0x new numeric types
+" 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
+" 	    line as the function signature.
 " }}}1
 "=============================================================================
 
@@ -103,7 +108,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
 
   " 2- Build the result strings {{{3
   let impl2search = s:BuildRegexFromImpl(proto,className)
-  if "#pure#" == impl2search 
+  if impl2search.ispure
     call lh#common#ErrorMsg("cpp#GotoFunctionImpl.vim:\n\n".
 	  \ "Pure virtual functions don't have an implementation!")
     return
@@ -134,7 +139,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   endif
   call s:DoSplit(' '.split_opt, use_alternate)
   " Search or insert the C++ implementation
-  if !s:Search4Impl(impl2search, className)
+  if !s:Search4Impl('^'.(impl2search.regex).'\_s*{', className)
     " Todo: Support looking into other files like the .inl file
 
     " Insert the C++ code at the end of the file
@@ -147,6 +152,9 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
       " We store the text to insert in a specific variable and wait for manual
       " insertion of the text.
       let s:FunctionImpl = impl
+      call lh#common#WarningMsg(":GOTOIMPL cannot determine where the function definition should be inserted."
+	    \ ."\nUse :PASTEIMPL to paste the code prepared."
+	    \ ."\nSee ftplugin/cpp/cpp_options.vim to tune the placement heuristic")
     endif
   endif
 
@@ -161,138 +169,13 @@ endfunction
 " }}}2
 
 "------------------------------------------------------------------------
-" Function: s:TrimParametersNames(str) {{{2
-" Some constant regexes {{{3
-let s:type_sign = 'unsigned\|signed'
-let s:type_size = 'short\|long'
-let s:type_main = 'void\|char\|int\|float'
-let s:type_simple = s:type_sign.'\|'.s:type_size.'\|'.s:type_main
-let s:type_scope1 = '\%(::\s*\)\=\<\I\i*\>'
-let s:type_scope2 = '\s*::\s*\<\I\i*\>'
-let s:type_scope  = s:type_scope1.'\%('.s:type_scope2.'\)*'
-let s:re = '^\s*\%(\<const\>\s*\)\='.
-      \ '\%(\%('.s:type_simple.'\|\s\+\)\+\|'.s:type_scope.'\)'.
-      \ '\%(\<const\>\|\*\|&\|\s\+\)*'
-" }}}
-function! s:TrimParametersNames(str) " {{{3
-  " Stuff Supported: {{{4
-  " - Simple parameters		 : "T p"
-  " - Arrays			 : "T p[][n]"
-  " - Arrays of pointers	 : "T (*p)[n]"
-  " - Scopes within complex types: "T1::T2"
-    " Todo: support templates like "A<B,C>"
-    " Todo: support functions like "T (*NameF)(P1, P2, ...)" , 
-    " 				   "T (CL::* pmf)(params)"
-  " }}}4
-  " Cut the signature in order to concentrate on the most outer parenthesis
-  let head = matchstr(a:str, '^[^(]*(')
-  let tail = matchstr(a:str, ')[^)]*$')
-  let params = matchstr(a:str, '^[^(]*(\zs.*\ze)[^)]*$')
-  let params_types = ''
-  " Loop on the parameters
-  while '' != params
-    " Get the parameter field
-    let field  = matchstr(params, '^[^,]*')
-    let params = matchstr(params, ',\zs.*$')
-
-    " Handle case of arrays {{{4
-    let p = 0
-    let array = ''
-    while -1 != p
-      let p = match(field, '\[.\{-}\]', p)
-      if -1 == p | break | endif
-      let array = array . escape(matchstr(field, '\[.\{-}\]', p), '[]')
-      let p = p + 1 
-    endwhile " }}}4
-    " Extract the type of the parameter and only the type
-    let type = matchstr(field, s:re)
-    " let type = matchstr(field, '^\s*\(\<const\>\s*\)\='.
-	  " \ '\(\('.s:type_simple.'\|\s\+\)\+\|\<\I\i*\>\)'.
-	  " \ '\(\<const\>\|\*\|&\|\s\+\)*')
-    " Check for special pointers stuff "T (*p_id)"
-    let ptr = matchstr(field, '(\s*\*\s*\(\<\I\i*\>\)\=\s*)')
-    let id = (""!=ptr) ? ' ( \* \%(\<\I\i*\>\)\= ) ' : ' \%(\<\I\i*\>\)\= '
-    " Build the regex containing the parameter type, spaces, etc
-    let params_types = params_types.','.
-	  \ escape(type, '*')
-	  \ . id
-	  \ . array
-	  " \ type.'\%(\<\I\i*\>\)\= '
-  endwhile
-
-  " Return the final regex to search.
-  return substitute(head . strpart(params_types,1) . tail, '\s\s\+', ' ', 'g')
-endfunction
-" }}}2
-"------------------------------------------------------------------------
 " Function: s:BuildRegexFromImpl(impl,className) {{{2
 " Build the regex that will be used to search the signature in the
 " implementations file
 function! s:BuildRegexFromImpl(impl,className)
-  " trim spaces {{{3
-  let impl2search = substitute(a:impl, "\\(\\s\\|\n\\)\\+", ' ', 'g')
-  " trim comments {{{3
-  let impl2search = substitute(impl2search, '/\*.\{-}\*/\|//.*$', '', 'g')
-  " destructor ? {{{3
-  let impl2search = substitute(impl2search, '\~', '\\\0', 'g')
-  " '[,' '],' pointers {{{3
-    " let impl2search = substitute(impl2search, '\s*\([[\]*]\)\s*', ' \\\1 ', 'g')
-    " Note: these characters will be backspaced into s:TrimParametersNames
-  echo impl2search
-  let impl2search = substitute(impl2search, '\s*\([[\]*]\)\s*', ' \1 ', 'g')
-    " However returned pointers must be backspaced
-    let retTypePos = matchend(impl2search, '.\{-}\s\+\ze\i\{-}\s*(\|\ze\<operator\>')
-    let retType       = strpart(impl2search, 0, retTypePos)
-    let func_n_params = strpart(impl2search, retTypePos)
-    let retType = substitute(retType, '\s*\([[\]*]\)\s*', ' \\\1 ', 'g')
-    let impl2search = retType . func_n_params
-  " operator* {{{3
-  let impl2search = substitute(impl2search, 'operator\s*\*', 'operator \\*', '')
-  "  <, >, =, (, ), ',' and references {{{3
-  let impl2search = substitute(impl2search, '\s*\([<>=(),&]\)\s*', ' \1 ', 'g')
-  " Check pure virtual functions: {{{3
-  if impl2search =~ '=\s*0\s*;\s*$' | return '#pure#' | endif
-  " Start and end {{{3
-  let impl2search = substitute(impl2search, '^\s*\|\s*;\s*$', '', 'g')
-  " Default parameters -> comment => ignored along with spaces {{{3
-  let impl2search = substitute(impl2search, '\%(\<operator\>\s*\)\@<!=[^,)]\+', '', 'g')
-  " virtual, static and explicit -> comment => ignored along with spaces {{{3
-  let impl2search = substitute(impl2search, 
-	\ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
-  " Trim the variables names {{{3
-  " Todo: \(un\)signed \(short\|long\) \(int\|float\|double\)
-  "       const, *
-  "       First non spaced type + exceptions like: scope\s*::\s*type ,
-  "       class<xxx,yyy> (scope or type)
-  let impl2search = s:TrimParametersNames(impl2search)
-  " class name {{{3
-  let className = a:className . (""!=a:className ? '::' : '')
-  if className =~ '#::#'
-    let ns = matchstr(className, '^.*\ze#::#') . '::'
-    let b = substitute(ns, '[^:]', '', 'g')
-    let b = substitute(b, '::', '\\%(', 'g')
-    let ns_re = b.substitute(ns, '\<\I\i*\>::', '\0\\)\\=', 'g')
-    let cl_re = matchstr(className, '#::#\zs.*$')
-    let className = ns_re.cl_re
-  endif
-  let className   = substitute(className, '\s*::\s*', ' :: ', 'g')
-  " let g:className = className
-  " and finally inject the class name patten in the search pattern
-  " NB: operators have a special treatment
-  let impl2search = substitute(impl2search,
-	\ '\%(\\\~\)\=\<\I\i*\>\_s*(\|\<operator\>', 
-	\ escape(className, '\' ) .'\0', '')
-  echo impl2search
-
-  " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{3
-  let impl2search = substitute(' \zs'.impl2search, ' ', 
-	\ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
-  " Note: \%(\) is like \(\) but the subexpressions are not counted.
-  " Note: ' \zs' inserted at the start of the regex helps ignore any comments
-  " before the signature of the function.
-  " Return the regex built {{{3
-  let g:impl2search=impl2search
-  return '^'.impl2search.'\_s*{'
+  let impl2search=lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(a:impl,a:className)
+  let g:impl2search2 = impl2search
+  return impl2search
   " }}}3
 endfunction
 " }}}2

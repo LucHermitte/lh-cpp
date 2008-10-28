@@ -111,6 +111,7 @@ if exists('g:force_load_cpp_FindContextClass')
 endi
 
 
+" ==========================================================================
 " Search for current and most nested namespace/class <internal> {{{
 
 let s:skip_comments = 'synIDattr(synID(line("."), col("."), 0), "name") =~?'
@@ -236,7 +237,7 @@ function! s:TemplateSpecs()
 endfunction
 " }}}
 " ==========================================================================
-" Search for the direct base classes <internal>{{{
+" Search for the direct base classes <internal> <deprecated> {{{
 function! s:BaseClasses0(pos)
   " a- Retrieve the declaration: 'class xxx : yyy {' zone limits {{{
   let pos = a:pos
@@ -268,7 +269,7 @@ function! lh#cpp#AnalysisLib_Class#BaseClasses0(lineNo)
 endfunction
 " }}}
 " ==========================================================================
-" Search for the direct base classes {{{
+" Search for the base classes {{{
 " @todo determine the access rigths
 " @todo get children
 " @todo get all public functions
@@ -283,24 +284,53 @@ function! lh#cpp#AnalysisLib_Class#GetClassTag(id)
   return class_tags
 endfunction
 
+" Return the information already known, or do fetch it in CTags base
+function! s:DoFetchClasses(id, instance)
+  if has_key(a:instance, a:id)
+    return a:instance[a:id]
+  else
+    let classes = lh#cpp#AnalysisLib_Class#GetClassTag('^'.a:id.'$')
+    let a:instance[a:id] = classes
+    return classes
+  endif
+endfunction
+
 function! lh#cpp#AnalysisLib_Class#FetchDirectParents(id)
   let parents = []
-  let classes = lh#cpp#AnalysisLib_Class#GetClassTag('^'.a:id.'$')
+  if !exists('s:instance')
+    let s:instance = {}
+  endif
+  " 1- Fetch the tags associated to classes names a:id
+  let classes = s:DoFetchClasses(a:id, s:instance)
+  " select the classes that inherit from another ... in order to found their parents
+  call filter(classes, 'has_key(v:val, "inherits")')
+  " 2- Select the best match for the a:id class
+  if len(classes) > 1
+    echomsg "Warning lh#cpp#AnalysisLib_Class#FetchDirectParents: has detected several classes named `".a:id."'"
+  endif
   for class in classes
+    " 3- Look at its parents
+    let sParents = class.inherits
+    " echomsg "[".a:id.']'.class.name . " inherits " . sParents
+    let lParents = split(sParents, ',')
+    " 4- Keep the best candidates as parents
     " todo: select the class that better matches the current context (imported
     " namespaces, and current namespace)
-    if has_key(class, 'inherits')
-      let sParents = class.inherits
-      echomsg "[".a:id.']'.class.name . " inherits " . sParents
-      let lParents = split(sParents, ',')
-      call extend(parents, lParents)
-    endif
+    "    -> omni#cpp#namespaces#GetContexts()
+    "    How can we obtain the exact parent names without fetching them ahead ?
+    "    Or may be we need to fetch (and cache them ahead)... <-------- GO for this one!
+    "
+    " 4.a- open a scratch buffer, goto class definition, check its context
+    " 4.b- compare each parent with the context
+    " 4.c- save the exact good parents
+    call extend(parents, lParents)
   endfor
   return parents
 endfunction
 
 function! lh#cpp#AnalysisLib_Class#Ancestors(id)
   try
+    let s:instance = {}
     let parents = lh#graph#tsort#depth(function('lh#cpp#AnalysisLib_Class#FetchDirectParents'), [a:id])
     " and then remove the first node: a:id
     call remove(parents, 0)
@@ -309,6 +339,8 @@ function! lh#cpp#AnalysisLib_Class#Ancestors(id)
   catch /Tsort.*/
     let cycle = matchstr(v:exception, '.*: \zs.*')
     throw "Cycle in ".a:id." inheritance tree detected: ".cycle
+  finally
+    unlet s:instance
   endtry
 endfunction
 
@@ -320,6 +352,26 @@ endfunction
 "   struct D : C1, C3 {};
 " ":Parent D" must return: [C1, C3, C2, V] 
 " (at least, we must see: C1 < V, and C3 < C2 < V)
+" }}}
+" ==========================================================================
+" Search for the child classes {{{
+" a:namespace_where_to_search is a hack because listing all element to extract
+" classes is very slow!
+" lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search [, recheck_namespace])
+function! lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search, ...)
+  let children = []
+  if !exists('s:instance') || (a:0 > 0 && a:1)
+    let s:instance = {}
+  endif
+  " 1- Fetch the tags associated to classes names a:id
+  let classes = s:DoFetchClasses(a:namespace_where_to_search.'::.*', s:instance)
+  " select the classes that inherit from another ... in order to found their parents
+  call filter(classes, 'has_key(v:val, "inherits") && v:val.inherits=~'.string(a:id))
+  " 2- Select the best match for the a:id class
+  let children = lh#list#Transform(classes, [], 'v:val.name')
+  return children
+endfunction
+
 " }}}
 " ==========================================================================
 let &cpo = s:cpo_save

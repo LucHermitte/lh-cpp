@@ -69,7 +69,8 @@ Titi * Toto::f()
 Toto& Toto::operator=(Toto const& rhs)
 {
     while (toto = 42) {
-    if (toto = 42) {
+    if (toto = 42) 
+	foo == 42;
 	
     }«»
 }

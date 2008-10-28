@@ -4,9 +4,9 @@
 "		<URL:http://hermitte.free.fr/vim>
 " Version:	2.0.0
 " Created:	23rd mar 2002
-" Last Update:	07th Nov 2005
+" Last Update:	06th Jun 2008
 "------------------------------------------------------------------------
-" Description:	Makes <Home> behaves like it does with Ms-VC++. 
+" Description:	Makes <Home> behave like it does with Ms-VC++. 
 " -> Hitting <Home> once moves the cursor to the first non blank character of
 "  the line, twice: to the first column of the line.
 " -> <end> once moves the cursor at the last non blank character, then at the
@@ -56,7 +56,7 @@
 if exists("g:loaded_homeLikeVC") && !exists('g:force_reload_homelikeVC')
   finish 
 endif
-let g:loaded_homeLikeVC = 1
+let g:loaded_homeLikeVC = '2.0.0'
 
 "------------------------------------------------------------------------
 inoremap <Home> <c-o>@=<SID>HomeLikeVCpp()<cr>

@@ -1,10 +1,10 @@
 "=============================================================================
 " $Id$
-" File:		cpp_Override.vim                                           {{{1
+" File:		ftplugin.vim                                           {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://hermitte.free.fr/vim/>
 " Version:	1.0.0
-" Created:	15th Apr 2008
+" Created:	11th Sep 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	«description»
@@ -16,22 +16,25 @@
 " }}}1
 "=============================================================================
 
-" Buffer-local Definitions {{{1
-" Avoid local reinclusion {{{2
-if exists("b:loaded_ftplug_cpp_Override") && !exists('g:force_reload_ftplug_cpp_Override')
-  finish
-endif
-let b:loaded_ftplug_cpp_Override = 100
 let s:cpo_save=&cpo
 set cpo&vim
-" Avoid local reinclusion }}}2
-
 "------------------------------------------------------------------------
-" Local commands {{{2
 
-command! -b -nargs=? Override :call lh#cpp#override#Main(<f-args>)
+function! lh#cpp#ftplugin#OptionalClass(...)
+  if a:0 != 0
+    if     type(a:1) == type("") && strlen(a:1)>0
+      return a:1
+    elseif type(a:1) == type([])
+      if len(a:1) > 0 && strlen(a:1[0]) > 0
+	return a:1[0]
+      endif
+    endif
+  endif
 
-"=============================================================================
+  let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'class')
+  return classname
+endfunction
+
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
