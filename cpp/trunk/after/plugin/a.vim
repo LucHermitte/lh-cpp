@@ -16,9 +16,12 @@
 " Soeren Sonnenburg)
 
 " 24th Jan 2008: Non official patches by Luc Hermitte
+" 21st Apr 2010: Other non official patches by Luc Hermitte
+"                -> introduces dependendy to autoplugin/lh/path.vim
 
 " Do not load a.vim if is has already been loaded.
-if exists("loaded_alternateFile")
+if &cp || (exists("loaded_alternateFile")
+      \ && !exists('g:force_load_alternateFile'))
     finish
 endif
 if (v:progname == "ex")
@@ -757,6 +760,10 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
 
   let splitType = a:doSplit[0]
   let bang = a:doSplit[1]
+  " LH, 21st Apr 2010 -> simplify the filename to be sure to use the best
+  " relative path from getcwd()
+  let FILENAME = lh#path#simplify(FILENAME)
+
   if (bufNr == -1)
      " Buffer did not exist....create it
      let v:errmsg=""
