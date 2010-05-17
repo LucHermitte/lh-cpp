@@ -2,9 +2,9 @@
 " $Id$
 " File:		omap-param.vim                                           {{{1
 " Maintainer:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
+"		<URL:http://code.google.com/p/lh-vim/>
 " Other Contributors:	A.Politz
-" Version:	0.9.4
+" Version:	1.0.0
 " Created:	03rd Sep 2007
 " Last Update:	$Date$ (05th Sep 2007)
 "------------------------------------------------------------------------
@@ -66,11 +66,11 @@ xnoremap <silent> a, :<c-u>call <sid>SelectParam(0,1)<cr><esc>gv
 " Private Functions {{{1
 function! s:SelectParam(inner, visual)
   let saved_pos = getpos('.')
-  if a:visual ==1 && lh#position#CharAtMark("'>") =~ '[(,]'  
-	\ && !lh#syntax#SkipAtMark("'>")
+  if a:visual ==1 && lh#position#char_at_mark("'>") =~ '[(,]'  
+	\ && !lh#syntax#skip_at_mark("'>")
     normal! gv
-  elseif searchpair('(',',',')','bcW','lh#syntax#Skip()') > 0 ||
-	\ searchpair('(',',',')','bW','lh#syntax#Skip()') > 0
+  elseif searchpair('(',',',')','bcW','lh#syntax#skip()') > 0 ||
+	\ searchpair('(',',',')','bW','lh#syntax#skip()') > 0
     " Test necessary because 'c' flag and Skip() don't always work well together
     call search('.')
     normal! v
@@ -82,8 +82,8 @@ function! s:SelectParam(inner, visual)
 
   while cnt > 0
     let cnt -= 1
-    if 0 == searchpair('(', ',',')', 'W','lh#syntax#Skip()')
-      if lh#position#IsBefore(getpos('.'), saved_pos)
+    if 0 == searchpair('(', ',',')', 'W','lh#syntax#skip()')
+      if lh#position#is_before(getpos('.'), saved_pos)
 	" no "vi," when starting from the last parameter
 	exe "normal! \<esc>"
 	call setpos('.', saved_pos)
@@ -96,7 +96,7 @@ function! s:SelectParam(inner, visual)
     endif
   endwhile
   " Don't include the last closing paren
-  if a:inner == 1 || searchpair('(',',',')','n','lh#syntax#Skip()') <= 0
+  if a:inner == 1 || searchpair('(',',',')','n','lh#syntax#skip()') <= 0
     call search('.','b')
   endif
 endfunction

@@ -1,12 +1,12 @@
 "=============================================================================
 " File:		homeLikeVC++.vim
 " Author:	Luc Hermitte <EMAIL:hermitte at free.fr>
-"		<URL:http://hermitte.free.fr/vim>
-" Version:	2.0.0
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.0.0
 " Created:	23rd mar 2002
 " Last Update:	06th Jun 2008
 "------------------------------------------------------------------------
-" Description:	Makes <Home> behave like it does with Ms-VC++. 
+" Description:	Makes <Home> behaves like it does with Ms-VC++. 
 " -> Hitting <Home> once moves the cursor to the first non blank character of
 "  the line, twice: to the first column of the line.
 " -> <end> once moves the cursor at the last non blank character, then at the
