@@ -2,7 +2,7 @@
 " $Id$
 " File:		syntax/cpp.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.0.0
 " Last Update:	$Date$
 "

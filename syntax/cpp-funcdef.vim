@@ -4,7 +4,7 @@
 " Author:	Olivier Teuliere
 " 		<URL:http://vim.wikia.com/wiki/Highlighting_of_method_names_in_the_definition>
 " Maintainer:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.0.0
 " Created:	23rd Jul 2007
 " Last Update:	$Date$
@@ -14,21 +14,13 @@
 "
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
-" 	Installation Method 1:
-"		Need to manualy patch $VIMRUNTIME/syntax/cpp.vim.
-"		Add
-"		    runtime! syntax/cpp-funcdef.vim
-"		or
-"		    runtime! syntax/cpp-*.vim syntax/cpp_*.vim
-"		after the call to
-"		    runtime! syntax/c.vim
-" 	Installation Method 2: (prefer this one)
-" 		Define a {rtp}/syntax/cpp.vim (where {rtp} < $VIMRUNTIME) that
+" 	Installation Method:
+" 		Define a {rtp}/syntax/c.vim (where {rtp} < $VIMRUNTIME) that
 " 		contains:
 "		    " This is the only valid way to load the C++ and C default syntax file.
-"		    so $VIMRUNTIME/syntax/cpp.vim
-"		    " Source C++ hooks
-"		    runtime! syntax/cpp-*.vim syntax/cpp_*.vim
+"		    so $VIMRUNTIME/syntax/c.vim
+"		    " Source C hooks
+"		    runtime! syntax/c-*.vim syntax/c_*.vim
 "
 " Option:
 " 	- |cpp_no_hl_funcdef| to disable the highlight

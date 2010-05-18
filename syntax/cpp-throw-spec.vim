@@ -1,8 +1,8 @@
 "=============================================================================
 " $Id$
-" File:		cpp-throw-spec.vim                                           {{{1
+" File:		syntax/cpp-throw-spec.vim                                 {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.0.0
 " Created:	06th Sep 2007
 " Last Update:	$Date$
@@ -14,21 +14,13 @@
 " 
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
-" 	Installation Method 1:
-"		Need to manualy patch $VIMRUNTIME/syntax/cpp.vim.
-"		Add
-"		    runtime! syntax/cpp-throw-spec.vim
-"		or
-"		    runtime! syntax/cpp-*.vim syntax/cpp_*.vim
-"		after the call to
-"		    runtime! syntax/c.vim
-" 	Installation Method 2: (prefer this one)
-" 		Define a {rtp}/syntax/cpp.vim (where {rtp} < $VIMRUNTIME) that
+" 	Installation Method:
+" 		Define a {rtp}/syntax/c.vim (where {rtp} < $VIMRUNTIME) that
 " 		contains:
 "		    " This is the only valid way to load the C++ and C default syntax file.
-"		    so $VIMRUNTIME/syntax/cpp.vim
-"		    " Source C++ hooks
-"		    runtime! syntax/cpp-*.vim syntax/cpp_*.vim
+"		    so $VIMRUNTIME/syntax/c.vim
+"		    " Source C hooks
+"		    runtime! syntax/c-*.vim syntax/c_*.vim
 "
 " Requirements:
 " 	word_tools.vim::GetCurrentKeyword()	-- unchecked
