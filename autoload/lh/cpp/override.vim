@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		override.vim                                           {{{1
+" File:		autoload/lh/cpp/override.vim                              {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	15th Apr 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -253,7 +253,7 @@ endfunction
 " Function: lh#cpp#override#select(results) {{{3
 function! lh#cpp#override#select(results)
   if len(a:results.selection)==1 && a:results.selection[0]==0
-    call lh#buffer#dialog#Quit()
+    call lh#buffer#dialog#quit()
     return
   endif
   if exists('s:quit') | :quit | endif
@@ -273,7 +273,7 @@ function! lh#cpp#override#select(results)
   endfor
   " Go back to the original buffer, and insert the built lines
   let where_it_started = a:results.dialog.where_it_started
-  call lh#buffer#Find(where_it_started[0])
+  call lh#buffer#find(where_it_started[0])
   if 0==append(where_it_started[1]-1, lines)
     exe (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
     echo (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
