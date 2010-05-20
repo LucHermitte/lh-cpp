@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		c_snippets.vim                                           {{{1
+" File:		ftplugin/c/c_snippets.vim                               {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	14th Apr 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -25,7 +25,7 @@
 
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
-if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_snippets')) || lh#option#Get("lh_cpp_snippets", 1, "g") == 0
+if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_snippets')) || lh#option#get("lh_cpp_snippets", 1, "g") == 0
   finish
 endif
 let s:cpo_save=&cpo
@@ -200,9 +200,10 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 "--- Commentaires automatiques -----------------------------------{{{4
 "--/* insert /* <curseur>
 "             */
-  if &syntax !~ "^\(cpp\|java\)$"
-    inoreab <buffer> /*  <c-r>=Def_AbbrC('/*',
-	  \ '/*\<cr\>\<BS\>/!mark!\<up\>\<end\>')<cr>
+  if &ft !~ '^\(cpp\|java\)$'
+    " inoremap <buffer> /*<space> <c-r>=Def_AbbrC('/*',
+	  " \ '/*\<cr\>\<BS\>/!mark!\<up\>\<end\>')<cr>
+    inoreab <buffer> /* <c-r>=Def_AbbrC('/*', '/*!cursorhere!\n/!mark!')<cr>
   endif
 
 "--/*- insert /*-----[  ]-------*/
@@ -221,8 +222,6 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 
 "------------------------------------------------------------------------
 " Local commands {{{2
-
-command! PopSearch :call histdel('search', -1)| let @/=histget('search',-1)
 
 
 "=============================================================================
