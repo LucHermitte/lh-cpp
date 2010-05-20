@@ -1,16 +1,17 @@
 "=============================================================================
 " $Id$
-" File:		file.vim                                           {{{1
+" File:		autoload/lh/cpp/file.vim                           {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	«version»
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	12th Feb 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	«description»
 " 
 "------------------------------------------------------------------------
-" Installation:	«install details»
+" Installation:	
+" 	drop into {rtp}/autoload/lh/cpp
 " History:	«history»
 " TODO:		«missing features»
 " }}}1
@@ -19,9 +20,28 @@
 let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
+" ## Functions {{{1
+" # Debug {{{2
+function! lh#cpp#file#verbose(level)
+  let s:verbose = a:level
+endfunction
 
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
+function! lh#cpp#file#debug(expr)
+  return eval(a:expr)
+endfunction
+
+"------------------------------------------------------------------------
+" # Public {{{2
 function! lh#cpp#file#IncludedPaths()
-  return lh#option#Get("cpp_included_paths", '.', 'bg')
+  let paths = copy(lh#option#get("cpp_included_paths", [], 'bg'))
+  call add(paths, '.')
+  return paths
 endfunction
 
 function! s:ValidFile(filename)
@@ -40,11 +60,13 @@ function! lh#cpp#file#HeaderName(file)
 
     let l_allfiles = split(allfiles, ',')
     let l_matches  = filter(l_allfiles, 'filereadable(v:val) || bufexists(v:val)')
+    call map(l_matches, 'lh#path#simplify(v:val)')
+    let l_matches = lh#list#unique_sort(l_matches)
+    let inc_paths = lh#cpp#file#IncludedPaths()
+    call map(l_matches, 'lh#path#strip_start(v:val, inc_paths)')
     if len(l_matches) > 1
       call map(l_matches, 'Marker_Txt(v:val)')
     endif
-    let inc_paths = lh#cpp#file#IncludedPaths()
-    call map(l_matches, 'lh#path#StripStart(v:val, inc_paths)')
     return join(l_matches,'')
   else " a.vim is not installed
     let base = fnamemodify(a:file, ":r")
