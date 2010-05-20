@@ -1,0 +1,44 @@
+VimL:" $Id$
+VimL:" Shared definition for Absolute and relative Classes Template, Luc Hermitte
+VimL:" Used to define Date and Duration, Point and Distance, ... 
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = '¡'
+VimL: let s:reindent = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL:"
+namespace DETAILS
+{
+    class ¡s:sharedclsname¡
+    {
+    public:
+	typedef <+scalar_type+> scalar_type;
+	friend class ¡s:absclsname¡;
+	friend class ¡s:relclsname¡;
+    protected:
+	/**@name Construction/destruction
+	 */
+	//@{
+	/** Initialisation constructor.
+	 */
+	¡s:sharedclsname¡(<+parameters+>);
+	¡IF(s:issharingimpl, '~'.s:sharedclsname.'();', '')¡
+	¡lh#cpp#abs_rel#canonicalortodoxform(s:absclsname, ! s:defaultisenough)¡
+	//@}
+
+	/**@name Operations
+	 */
+	//@{
+	void add(¡s:sharedclsname¡ const& rhs_);
+	void dec(¡s:sharedclsname¡ const& rhs_);
+	void mult(scalar_type coeff_);
+	void div(scalar_type coeff_);
+	static bool isEqual(
+		¡s:sharedclsname¡ const& rhs_,
+		¡s:sharedclsname¡ const& lhs_);
+	//@}
+    private:
+	<+representation+>;
+    };
+}
+
