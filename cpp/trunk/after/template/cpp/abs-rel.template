@@ -1,0 +1,159 @@
+VimL:" $Id$
+VimL:" Absolute and relative Classes Template, Luc Hermitte
+VimL:" Used to define Date and Duration, Point and Distance, ... 
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = '¡'
+VimL: let s:reindent = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:absclsname = inputdialog('Name of the "absolute" class ?')
+VimL: let s:relclsname = inputdialog('Name of the "relative" class ?')
+VimL: let s:sharedclsname = inputdialog('Name of the "shared" class ? (empty=none)', s:absclsname . "Impl_")
+VimL: let s:issharingimpl = ! empty(s:sharedclsname)
+VimL: let s:defaultisenough = CONFIRM( "Are the implicitly generated default constructor, copy-constructor, destructor, and assignement operatror enough?", "&Yes\n&No", 1) == 1
+VimL:"
+VimL: call CppDox_set_brief_snippet()
+VimL:"
+class ¡s:absclsname¡;
+class ¡s:relclsname¡;
+VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | endif
+/**
+ * ¡g:CppDox_brief_snippet¡
+ *
+ * <+doc+>
+ *
+ * <+@invariants+>
+ *
+ * <p><b>Semantics</b><br>
+ * <li> Value, mathematical: it's an absolute position
+ * <li> <+absolute position+>
+ * <+ <li> sem+>
+ *
+ * @version ¡'$'¡revision$
+ * ¡CppDox_author()¡
+ */
+class ¡s:absclsname.IF(s:issharingimpl, ' : DETAILS::' . s:sharedclsname, '')¡
+{
+public:
+    /**@name Construction/destruction
+     */
+    //@{
+    /** Initialisation constructor.
+     */
+    ¡s:absclsname¡(<+parameters+>);
+    ¡lh#cpp#abs_rel#canonicalortodoxform(s:absclsname, ! s:defaultisenough)¡
+    //@}
+
+    /**@name Operators
+     */
+    //@{
+    ¡s:absclsname¡ & operator+=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { add(rhs_); return *this; }', ';')¡
+    ¡s:absclsname¡ & operator-=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { dec(rhs_); return *this; }', ';')¡
+
+    friend bool operator==(¡s:absclsname¡ const& rhs_, ¡s:absclsname¡ const& lhs_)¡IF(s:issharingimpl, "\n".'{ return isEqual(rhs_, lhs_); }', ';')¡
+    //@}
+};
+
+/**
+ * ¡g:CppDox_brief_snippet¡
+ *
+ * <+doc+>
+ *
+ * <+@invariants+>
+ *
+ * <p><b>Semantics</b><br>
+ * <li> Value, mathematical: it's relative position
+ * <li> <+relative position+>
+ * <+ <li> sem+>
+ *
+ * @version ¡'$'¡revision$
+ * ¡CppDox_author()¡
+ */
+class ¡s:relclsname.IF(s:issharingimpl, ' : DETAILS::' . s:sharedclsname, '')¡
+{
+public:
+
+    /**@name Construction/destruction
+     */
+    //@{
+    /** Initialisation constructor.
+     */
+    ¡s:relclsname¡(<+parameters+>);
+    ¡lh#cpp#abs_rel#canonicalortodoxform(s:relclsname, ! s:defaultisenough)¡
+    //@}
+
+    /**@name Operators
+     */
+    //@{
+    typedef ¡IF(s:issharingimpl, s:sharedclsname.'::scalar_type', '<+scalar_type+>')¡ scalar_type;
+    ¡s:relclsname¡ & operator+=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { add(rhs_); return *this; }', ';')¡
+    ¡s:relclsname¡ & operator-=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { dec(rhs_); return *this; }', ';')¡
+    ¡s:relclsname¡ & operator*=(scalar_type coeff_)¡IF(s:issharingimpl, '{ mult(coeff_); return *this; }', ';')¡
+    ¡s:relclsname¡ & operator/=(scalar_type coeff_)¡IF(s:issharingimpl, '{ div(coeff_); return *this; }', ';')¡
+
+    friend bool operator==(¡s:relclsname¡ const& rhs_, ¡s:relclsname¡ const& lhs_)¡IF(s:issharingimpl, "\n".'{ return isEqual(rhs_, lhs_); }', ';')¡
+    //@}
+};
+
+inline
+¡s:absclsname¡ const operator+(
+	¡s:absclsname¡ const& lhs_,
+	¡s:relclsname¡ const& rhs_) 
+{ return ¡s:absclsname¡(lhs_) += rhs_; }
+
+inline
+¡s:absclsname¡ const operator+(
+	¡s:relclsname¡ const& lhs_,
+	¡s:absclsname¡ const& rhs_)
+{ return ¡s:absclsname¡(rhs_) += lhs_; }
+
+inline
+¡s:absclsname¡ const operator-(
+	¡s:absclsname¡ const& lhs_,
+	¡s:relclsname¡ const& rhs_)
+{ return ¡s:absclsname¡(lhs_) -= rhs_; }
+
+#if 0
+// Makes no sense
+inline
+¡s:absclsname¡ const operator-(
+	¡s:relclsname¡ const& lhs_,
+	¡s:absclsname¡ const& rhs_);
+#endif
+
+inline
+¡s:relclsname¡ const operator+(
+	¡s:relclsname¡ const& lhs_,
+	¡s:relclsname¡ const& rhs_) 
+{ return ¡s:relclsname¡(lhs_) += rhs_; }
+
+inline
+¡s:relclsname¡ const operator-(
+	¡s:relclsname¡ const& lhs_,
+	¡s:relclsname¡ const& rhs_)
+{ return ¡s:relclsname¡(lhs_) -= rhs_; }
+
+inline
+¡s:relclsname¡ const operator*(
+	¡s:relclsname¡       const& lhs_,
+	¡s:relclsname¡::scalar_type rhs_) 
+{ return ¡s:relclsname¡(lhs_) *= rhs_; }
+
+inline
+¡s:relclsname¡ const operator*(
+	¡s:relclsname¡::scalar_type lhs_,
+	¡s:relclsname¡       const& rhs_)
+{ return ¡s:relclsname¡(rhs_) *= lhs_; }
+
+inline
+¡s:relclsname¡ const operator/(
+	¡s:relclsname¡       const& lhs_,
+	¡s:relclsname¡::scalar_type rhs_) 
+{ return ¡s:relclsname¡(lhs_) /= rhs_; }
+
+inline
+¡s:relclsname¡ const operator/(
+	¡s:relclsname¡::scalar_type lhs_,
+	¡s:relclsname¡       const& rhs_)
+{ return ¡s:relclsname¡(rhs_) /= lhs_; }
+
