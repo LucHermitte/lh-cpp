@@ -2,7 +2,7 @@
 " $Id$
 " File:		autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
+"		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.1.0
 " Created:	07th Oct 2006
 " Last Update:	$Date$ (13th Feb 2008)
@@ -39,10 +39,25 @@
 let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
-" Functions {{{1
+" ## Functions {{{1
+" # Debug {{{2
+function! lh#cpp#GotoFunctionImpl#verbose(level)
+  let s:verbose = a:level
+endfunction
 
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
+function! lh#cpp#GotoFunctionImpl#debug(expr)
+  return eval(a:expr)
+endfunction
+
+" # Public {{{2
 "------------------------------------------------------------------------
-" Function: lh#cpp#GotoFunctionImpl#MoveImpl() "{{{2
+" Function: lh#cpp#GotoFunctionImpl#MoveImpl() "{{{3
 " The default values for 'HowToShowVirtual', 'HowToShowStatic' and
 " 'HowToShowDefaultParams' come from cpp_options.vim ; they can be overridden
 " momentarily.
@@ -57,7 +72,7 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl()
 endfunction
 
 "------------------------------------------------------------------------
-" Function: lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource "{{{2
+" Function: lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource "{{{3
 " The default values for 'HowToShowVirtual', 'HowToShowStatic' and
 " 'HowToShowDefaultParams' come from cpp_options.vim ; they can be overridden
 " momentarily.
@@ -67,18 +82,18 @@ endfunction
 " 	      'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
 let s:option_value = '\%(on\|off\|\d\+\)$'
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
-  " 0- Check options {{{3
-  let s:ShowVirtual		= lh#option#Get('cpp_ShowVirtual',       1)
-  let s:ShowStatic		= lh#option#Get('cpp_ShowStatic',        1)
-  let s:ShowExplicit		= lh#option#Get('cpp_ShowExplicit',      1)
-  let s:ShowDefaultParams	= lh#option#Get('cpp_ShowDefaultParams', 1)
+  " 0- Check options {{{4
+  let s:ShowVirtual		= lh#option#get('cpp_ShowVirtual',       1)
+  let s:ShowStatic		= lh#option#get('cpp_ShowStatic',        1)
+  let s:ShowExplicit		= lh#option#get('cpp_ShowExplicit',      1)
+  let s:ShowDefaultParams	= lh#option#get('cpp_ShowDefaultParams', 1)
   if 0 != a:0
     let i = 0
     while i < a:0
       let i = i + 1
       let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '') 
-      if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{4
-	call lh#common#ErrorMsg(
+      if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
+	call lh#common#error_msg(
 	      \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Unknown parameter : <'.varname.'>')
 	return
       endif " }}}4
@@ -86,7 +101,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
       if     val == 'on'  | let val = 1
       elseif val == 'off' | let val = 0
       elseif val !~ '\d\+'
-	call lh#common#ErrorMsg(
+	call lh#common#error_msg(
 	      \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Invalid value for parameter : <'.varname.'>')
 	return
       endif
@@ -96,80 +111,100 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
     endwhile
   endif
 
-  " 1- Retrieve the context {{{3
+  " 1- Retrieve the context {{{4
   " 1.1- Get the class name,if any -- thanks to cpp_FindContextClass.vim
   let className = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
   " 1.2- Get the whole prototype of the function (even if on several lines)
   let proto = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 1)
   if "" == proto
-    call lh#common#ErrorMsg('cpp#GotoFunctionImpl.vim: We are not uppon the declaration of a function prototype!')
+    call lh#common#error_msg('cpp#GotoFunctionImpl.vim: We are not uppon the declaration of a function prototype!')
     return
   endif
 
-  " 2- Build the result strings {{{3
+  " 2- Build the result strings {{{4
   let impl2search = s:BuildRegexFromImpl(proto,className)
   if impl2search.ispure
-    call lh#common#ErrorMsg("cpp#GotoFunctionImpl.vim:\n\n".
+    call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
 	  \ "Pure virtual functions don't have an implementation!")
     return
   endif
   let impl        = s:BuildFunctionSignature4impl(proto,className)
 
-  " 3- Add the string into the implementation file {{{3
-  " neutralize mu-template {{{4
-  if exists('g:mu_template') && 
-	\ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
-    " NB: g:mt_jump_to_first_markers is true by default
-    let mt_jump = 1
-    let g:mt_jump_to_first_markers = 0
-  endif " }}}4
-  let split_opt = ''
-  let use_alternate = 1
-  if exists(':AS') " from a.vim
-    if !s:IsThereAMatchingSourceFile(expand('%:p'))
-      " let split_opt = 'cpp'
-      " let use_alternate = 1
-      let split_opt = NewAlternateFilename(expand('%:p'))
-      let split_opt = lh#path#ToRelative(split_opt)
-      let use_alternate = 0
-    endif
-  else
-    let split_opt = fnamemodify(expand('%'), ':r') . '.cpp'
-    let use_alternate = 0
-  endif
-  call s:DoSplit(' '.split_opt, use_alternate)
+  " 3- Add the string into the implementation file {{{4
+  call lh#cpp#GotoFunctionImpl#open_cpp_file()
   " Search or insert the C++ implementation
   if !s:Search4Impl('^'.(impl2search.regex).'\_s*{', className)
     " Todo: Support looking into other files like the .inl file
 
     " Insert the C++ code at the end of the file
-    let p = s:SearchLineToAddImpl()
-    if -1 != p
-      call s:InsertCodeAtLine(impl, p)
-      let s:FunctionImpl = impl
-    else
-      " Otherwise, we use a method somehow like the one used by Robert:
-      " We store the text to insert in a specific variable and wait for manual
-      " insertion of the text.
-      let s:FunctionImpl = impl
-      call lh#common#WarningMsg(":GOTOIMPL cannot determine where the function definition should be inserted."
-	    \ ."\nUse :PASTEIMPL to paste the code prepared."
-	    \ ."\nSee ftplugin/cpp/cpp_options.vim to tune the placement heuristic")
-    endif
+    call lh#cpp#GotoFunctionImpl#insert_impl(impl)
   endif
 
   " call confirm(impl, '&ok', 1)
-  " restore mu-template " {{{4
-  if exists('mt_jump')
-    let g:mt_jump_to_first_markers = mt_jump
-    unlet mt_jump
-  endif " }}} 4
   " }}}3
 endfunction 
 " }}}2
 
 "------------------------------------------------------------------------
-" Function: s:BuildRegexFromImpl(impl,className) {{{2
+" Function: lh#cpp#GotoFunctionImpl#insert_impl(impl) {{{3
+function! lh#cpp#GotoFunctionImpl#insert_impl(impl)
+  let p = s:SearchLineToAddImpl()
+  if -1 != p
+    call s:InsertCodeAtLine(a:impl, p)
+    let s:FunctionImpl = a:impl
+  else
+    " Otherwise, we use a method somehow like the one used by Robert:
+    " We store the text to insert in a specific variable and wait for manual
+    " insertion of the text.
+    let s:FunctionImpl = a:impl
+    call lh#common#warning_msg(":GOTOIMPL cannot determine where the function definition should be inserted."
+	  \ ."\nUse :PASTEIMPL to paste the code prepared."
+	  \ ."\nSee ftplugin/cpp/cpp_options.vim to tune the placement heuristic")
+  endif
+endfunction
+" }}}2
+
+"------------------------------------------------------------------------
+" Function: lh#cpp#GotoFunctionImpl#open_cpp_file() {{{3
+function! lh#cpp#GotoFunctionImpl#open_cpp_file()
+  if expand('%:e') =~? 'cpp\|c\|C\|cxx'
+    " already within the .cpp file
+    return 
+  endif
+  try 
+    " neutralize mu-template jump to marker feature {{{5
+    if exists('g:mu_template') && 
+	  \ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
+      " NB: g:mt_jump_to_first_markers is true by default
+      let mt_jump = 1
+      let g:mt_jump_to_first_markers = 0
+    endif " }}}4
+    let split_opt = ''
+    let use_alternate = 1
+    if exists(':AS') " from a.vim
+      if !s:IsThereAMatchingSourceFile(expand('%:p'))
+	" let split_opt = 'cpp'
+	" let use_alternate = 1
+	let split_opt = NewAlternateFilename(expand('%:p'))
+	let split_opt = lh#path#to_relative(split_opt)
+	let use_alternate = 0
+      endif
+    else
+      let split_opt = fnamemodify(expand('%'), ':r') . '.cpp'
+      let use_alternate = 0
+    endif
+    call s:DoSplit(' '.split_opt, use_alternate)
+  finally
+    " restore mu-template " {{{5
+    if exists('mt_jump')
+      let g:mt_jump_to_first_markers = mt_jump
+    endif " }}} 4
+  endtry
+endfunction
+" }}}2
+
+"------------------------------------------------------------------------
+" Function: s:BuildRegexFromImpl(impl,className) {{{3
 " Build the regex that will be used to search the signature in the
 " implementations file
 function! s:BuildRegexFromImpl(impl,className)
@@ -180,32 +215,32 @@ function! s:BuildRegexFromImpl(impl,className)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: s:Search4Impl(re_impl, scope):bool {{{2
+" Function: s:Search4Impl(re_impl, scope):bool {{{3
 function! s:Search4Impl(re_impl, scope)
-  " 0- Pretransformations {{{3
+  " 0- Pretransformations {{{4
   let required_ns = matchstr(a:scope, '^.*\ze#::#')
-  " 1- Memorize position {{{3
+  " 1- Memorize position {{{4
   let l0 = line('.')
-  " 2- Loop until the implementation is found, {{{3
+  " 2- Loop until the implementation is found, {{{4
   "    *and* the scope (namespaces) matches
   normal! gg
   " let l = 1
   while 1 " l > 0
-    " a- search for an acceptable implementation {{{4
+    " a- search for an acceptable implementation {{{5
     "    Note: re_impl looks like :
     "    'type \(\(ns1::\)\=ns2::\)\=cl1::cl2::function(...)'
     let l = search(a:re_impl, 'W')
     if l <= 0 | break | endif
 
-    " b- Get the current namespace at the found line {{{4
+    " b- Get the current namespace at the found line {{{5
     let current_ns = lh#cpp#AnalysisLib_Class#CurrentScope(l, 'namespace')
 
-    " c- Build the function name that must be found on the current line {{{4
+    " c- Build the function name that must be found on the current line {{{5
     "    The function aname also contain the scope
     " let req_proto  = matchstr(required_ns, current_ns.
 	  " \ (current_ns == '') ? '.*$' : '::\zs.*$')
 
-    " d- Retrieve the actual function name (+ relative scope) {{{4
+    " d- Retrieve the actual function name (+ relative scope) {{{5
     let z=@"
     let fe=&foldenable
     set nofoldenable
@@ -220,7 +255,7 @@ function! s:Search4Impl(re_impl, scope)
     let @" = z
     " Todo: purge comments within current_proto
 
-    " e- Check if really found {{{4
+    " e- Check if really found {{{5
     " if match(required_ns, '^'.current_ns) == 0 
 	  " \ && (req_proto == current_proto)
     let current = current_ns . ((current_ns != "") ? '::' : '' ).current_proto
@@ -240,29 +275,29 @@ function! s:Search4Impl(re_impl, scope)
     " }}}4
   endwhile
 
-  " 2.b- Not found {{{3
+  " 2.b- Not found {{{4
   exe l0
   return 0
   " }}}3
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: s:BuildFunctionSignature4impl " {{{2
+" Function: s:BuildFunctionSignature4impl " {{{3
 let s:k_operators = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\)'
 function! s:BuildFunctionSignature4impl(proto,className)
-  " 1.a- XXX if you want virtual commented in the implementation: {{{3
+  " 1.a- XXX if you want virtual commented in the implementation: {{{4
   let impl = substitute(a:proto, '\(\<virtual\>\)\(\s*\)', 
 	\ (1 == s:ShowVirtual ? '/*\1*/\2' : ''), '')
 
-  " 1.b- XXX if you want static commented in the implementation: {{{3
+  " 1.b- XXX if you want static commented in the implementation: {{{4
   let impl = substitute(impl, '\(\<static\>\)\(\s*\)', 
 	\ (1 == s:ShowStatic ? '/*\1*/\2' : ''), '')
 
-  " 1.b- XXX if you want explicit commented in the implementation: {{{3
+  " 1.b- XXX if you want explicit commented in the implementation: {{{4
   let impl = substitute(impl, '\(\<explicit\>\)\(\s*\)', 
 	\ (1 == s:ShowExplicit ? '/*\1*/\2' : ''), '')
 
-  " 2- Handle default params, if any. {{{3
+  " 2- Handle default params, if any. {{{4
   "    0 -> ""              : ignored
   "    1 -> "/* = value */" : commented
   "    2 -> "/*=value*/"    : commented, spaces trimmed
@@ -291,49 +326,49 @@ function! s:BuildFunctionSignature4impl(proto,className)
 	\ . matchstr(impl, '\zs).\{-}$')
   " echo "impl=".impl
 
-  " 3- Add '::' to the class name (if any).{{{3
+  " 3- Add '::' to the class name (if any).{{{4
   let className = a:className . (""!=a:className ? '::' : '')
   " if "" != className | let className = className . '::' | endif
   let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(', 
 	\ className.'\0', '')
     " echo "impl=".impl
 
-  " 4- Remove last part{{{3
+  " 4- Remove last part{{{4
   let impl = substitute(impl, '\s*;\s*$', "\n{\n}", '')
-  " 5- Return{{{3
+  " 5- Return{{{4
   return impl
   "}}}3
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: s:SearchLineToAddImpl() {{{2
+" Function: s:SearchLineToAddImpl() {{{3
 
 function! s:SearchLineToAddImpl()
-  let cpp_FunctionPosition = lh#option#Get('cpp_FunctionPosition', 'g', 0)
-  let cpp_FunctionPosArg   = lh#option#Get('cpp_FunctionPosArg',   'g', 0)
-  if     cpp_FunctionPosition == 0 " {{{3
+  let cpp_FunctionPosition = lh#option#get('cpp_FunctionPosition', 'g', 0)
+  let cpp_FunctionPosArg   = lh#option#get('cpp_FunctionPosArg',   'g', 0)
+  if     cpp_FunctionPosition == 0 " {{{4
     return line('$') + cpp_FunctionPosArg
-  elseif cpp_FunctionPosition == 1 " {{{3
+  elseif cpp_FunctionPosition == 1 " {{{4
     if !exists('g:cpp_FunctionPosArg') 
-      call lh#common#ErrorMsg('cpp#GotoFunctionImpl.vim: The search pattern '.
+      call lh#common#error_msg('cpp#GotoFunctionImpl.vim: The search pattern '.
 	    \'<g:cpp_FunctionPosArg> is not defined')
       return -1
     endif
     let s=search(g:cpp_FunctionPosArg)
     if 0 == s
-      call lh#common#ErrorMsg("cpp#GotoFunctionImpl.vim: Can't find the pattern\n".
+      call lh#common#error_msg("cpp#GotoFunctionImpl.vim: Can't find the pattern\n".
 	    \'   <g:cpp_FunctionPosArg>: '.g:cpp_FunctionPosArg)
       return -1
     else
       return s
     endif
-  elseif cpp_FunctionPosition == 2 " {{{3
+  elseif cpp_FunctionPosition == 2 " {{{4
     if     !exists('g:cpp_FunctionPosArg') 
-      call lh#common#ErrorMsg('cpp#GotoFunctionImpl.vim: No positionning '.
+      call lh#common#error_msg('cpp#GotoFunctionImpl.vim: No positionning '.
 	    \ 'function defined thanks to <g:cpp_FunctionPosArg>')
       return -1
     elseif !exists('*'.g:cpp_FunctionPosArg) 
-      call lh#common#ErrorMsg('cpp#GotoFunctionImpl.vim: The function '.
+      call lh#common#error_msg('cpp#GotoFunctionImpl.vim: The function '.
 	    \ '<g:cpp_FunctionPosArg> is not defined')
       return -1
     endif
@@ -344,7 +379,7 @@ function! s:SearchLineToAddImpl()
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: s:InsertCodeAtLine([code [,line]]) {{{2
+" Function: s:InsertCodeAtLine([code [,line]]) {{{3
 function! s:InsertCodeAtLine(...)
   if     a:0 >= 2 | let p = a:2+1     | let impl = a:1
   elseif a:0 >= 1 | let p = line('.') | let impl = a:1
@@ -361,7 +396,7 @@ function! s:InsertCodeAtLine(...)
       " call confirm('trim: '.n0, '&OK', 1)
       let impl = substitute(impl, '\(\s\)'.n0.'\%(::\|#::#\)', '\1', 'g')
     else
-      call lh#common#ErrorMsg( 'cpp#GotoFunctionImpl.vim: Namespaces mismatch!!!'.
+      call lh#common#error_msg( 'cpp#GotoFunctionImpl.vim: Namespaces mismatch!!!'.
 	    \ "\n\nCan't insert <".
 	    \ matchstr(impl0, '\%(::\|#::#\|\<\I\i*\>\)*\ze\_s*(').
 	    \ '> within the namespace <'.ns.'>')
@@ -411,7 +446,7 @@ function! NewAlternateFilename(file)
     let sFiles = EnumerateFilesByExtensionInPath(baseName, extension, g:alternateSearchPath, currentPath)
     let lFiles = split(sFiles, ',')
     " call filter(lFiles, 'v:val != a:file')
-    let result = lh#path#SelectOne(lFiles, "What should be the name of the new file?")
+    let result = lh#path#select_one(lFiles, "What should be the name of the new file?")
   finally
     " restore
     if exists('l:save_extensions_h')
@@ -423,7 +458,7 @@ function! NewAlternateFilename(file)
   return result
 endfunction
 
-" Function: s:IsThereAMatchingSourceFile(file) {{{2
+" Function: s:IsThereAMatchingSourceFile(file) {{{3
 " Check if the file already exists and can be found into the list of
 " directories from g:alternateSearchPath.
 " This function is a partial workaround for a bug in a.vim:  ":AS cpp" does not
@@ -452,8 +487,8 @@ function! s:IsThereAMatchingSourceFile(file)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Split Options: {{{2
-" Function: s:SplitOption() {{{3
+" Split Options: {{{3
+" Function: s:SplitOption() {{{4
 " @return the type of split desired: "n)o split", "v)ertical" (default one) or
 "         "h)orizontal"/
 function! s:SplitOption()
@@ -467,7 +502,7 @@ function! s:SplitOption()
   return 'v'
 endfunction
 
-" Internal constants {{{3
+" Internal constants {{{4
 " s:split_{a.vim or vim built-in commands}_{split n/h/v} = command to execute
 " --a.vim
 let s:split_a_n = 'A'
@@ -481,7 +516,7 @@ let s:split_n_n = 'e'
 let s:split_n_h = 'sp'
 let s:split_n_v = 'vsp'
 
-" Function: s:DoSplit(arg) {{{3
+" Function: s:DoSplit(arg) {{{4
 function! s:DoSplit(arg, use_alternate)
   let a = (a:use_alternate ? 'a' : 'n')
   exe 'silent '.s:split_{a}_{s:SplitOption()}.' '.a:arg
