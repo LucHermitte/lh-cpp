@@ -3,7 +3,7 @@
 " File:		syntax/c-assign-in-condition.vim                         {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.0.0
+" Version:	1.1.0
 " Created:	08th Oct 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------

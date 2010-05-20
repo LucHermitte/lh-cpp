@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		ftplugin.vim                                           {{{1
+" File:		autoload/lh/cpp/ftplugin.vim                             {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	11th Sep 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -19,7 +19,24 @@
 let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
+" ## Functions {{{1
+" # Debug {{{2
+function! lh#cpp#ftplugin#verbose(level)
+  let s:verbose = a:level
+endfunction
 
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
+function! lh#cpp#ftplugin#debug(expr)
+  return eval(a:expr)
+endfunction
+
+"------------------------------------------------------------------------
+" # Public {{{2
 function! lh#cpp#ftplugin#OptionalClass(...)
   if a:0 != 0
     if     type(a:1) == type("") && strlen(a:1)>0

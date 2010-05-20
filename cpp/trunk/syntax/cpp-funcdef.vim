@@ -5,7 +5,7 @@
 " 		<URL:http://vim.wikia.com/wiki/Highlighting_of_method_names_in_the_definition>
 " Maintainer:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.0.0
+" Version:	1.1.0
 " Created:	23rd Jul 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------

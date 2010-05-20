@@ -1,9 +1,9 @@
 " ========================================================================
 " $Id$
-" File:		c_set.vim
+" File:		ftplugin/c/c_set.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Last Update:	$Date$
 "
 " Purpose:	ftplugin for C (-like) programming

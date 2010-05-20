@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		c_UnmatchedFunctions.vim                                           {{{1
+" File:		ftplugin/c/c_UnmatchedFunctions.vim                       {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	«version»
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	14th Feb 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------

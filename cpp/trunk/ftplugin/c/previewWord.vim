@@ -1,11 +1,11 @@
 "=============================================================================
 " $Id$
-" File:		previewWord.vim
+" File:		ftplugin/c/previewWord.vim
 " Author: 	Georgi Slavchev <EMAIL:goyko@gbg.bg>
 " 		From <URL:http://vim.sf.net>
 " 		Adapted by Luc Hermitte <EMAIL:hermitte at free.fr>
-" 		<URL:http://hermitte.free.fr/vim>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	?
 " Last Update:	$Date$ (21st jul 2002)
 "------------------------------------------------------------------------

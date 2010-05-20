@@ -2,8 +2,8 @@
 " $Id$
 " File:		ftplugin/c/c_brackets.vim                                {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+"               <URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	26th May 2004
 " Last Update:	$Date$
 "------------------------------------------------------------------------

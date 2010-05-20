@@ -74,3 +74,20 @@ Toto& Toto::operator=(Toto const& rhs)
 	
     }«»
 }
+
+
+/*===========================================================================*/
+/*===========================[ :Constructor test ]===========================*/
+/*===========================================================================*/
+class Titi
+{
+public:
+private:
+    int              m_int;
+    std::string      m_str;
+    Ptr*             m_ptr;
+    Ref&             m_ref;
+    Tab[N]           m_tab;
+    std::vector<int> m_vector;
+};
+

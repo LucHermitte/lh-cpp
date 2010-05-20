@@ -1,8 +1,8 @@
 "=============================================================================
 " $Id$
-" File:		autoload/lh/cpp/AnalysisLib_Function.vim                                           {{{1
+" File:		autoload/lh/cpp/AnalysisLib_Function.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.1.0
 " Created:	05th Oct 2006
 " Last Update:	$Date$ (13th Feb 2008)
@@ -55,9 +55,25 @@
 let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
-" Functions {{{1
+" ## Functions {{{1
+" # Debug {{{2
+function! lh#cpp#AnalysisLib_Function#verbose(level)
+  let s:verbose = a:level
+endfunction
+
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
+function! lh#cpp#AnalysisLib_Function#debug(expr)
+  return eval(a:expr)
+endfunction
+
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#GetFunctionPrototype " {{{2
+" # Public {{{2
+" Function: lh#cpp#AnalysisLib_Function#GetFunctionPrototype " {{{3
 " Todo: 
 " * Retrieve the type even when it is not on the same line as the function
 "   identifier.
@@ -102,7 +118,7 @@ endfunction
 " }}}2
 
 "------------------------------------------------------------------------
-" Function: s:SplitTypeParam(typed_param) {{{2
+" Function: s:SplitTypeParam(typed_param) {{{3
 " @return 4-uple -> [parameter-type, parameter-name, default-value, new-line-before]
 " todo: support pointers to functions and arrays
 " todo: 'int', 'unsigned int', 'char const*'
@@ -123,7 +139,7 @@ function! s:SplitTypeParam(typed_param)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype) {{{2
+" Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype) {{{3
 " todo: beware of exception specifications
 " todo: check about of functions types ; to be done with templates... ?
 " todo: Arrays of pointers	 : "T (*p)[n]"
@@ -162,7 +178,7 @@ function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
 endfunction
 " }}}2
 
-" Function: lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) {{{2
+" Function: lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) {{{3
 " @return: {qualifier, return-type, function-name, parameters, throw-spec, const}
 " @todo support friends.
 " @todo support function types
@@ -254,7 +270,7 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2) {{{2
+" Function: lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2) {{{3
 " @param[in] sig1 Signature 1 (GetListOfParams() format)
 " @param[in] sig2 Signature 2 (GetListOfParams() format)
 " @return whether the two signatures are similar (parameters names, default
@@ -270,7 +286,7 @@ function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{2
+" Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
 function! s:ParamToString(param)
   " 0:Type + 1:param name
   let p = a:param[0] . ' ' .a:param[1]
@@ -290,7 +306,7 @@ function! lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{2
+" Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
 " function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
   " return a:def.name == a:decl[0].name 
 	" \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl[0].parameters) 
@@ -301,7 +317,7 @@ function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#LoadTags(id) {{{2
+" Function: lh#cpp#AnalysisLib_Function#LoadTags(id) {{{3
 function! s:ConvertTag(t)
   let fn_data = {
 	\ 'name'          : a:t.name,
@@ -340,7 +356,7 @@ function! lh#cpp#AnalysisLib_Function#LoadTags(id)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#SearchUnmatched(fn) {{{2
+" Function: lh#cpp#AnalysisLib_Function#SearchUnmatched(fn) {{{3
 function! s:SearchUnmatched(functions)
   let unmatched_decl = []
   let unmatched_def = deepcopy(a:functions.definitions)
@@ -371,7 +387,7 @@ function! lh#cpp#AnalysisLib_Function#SearchUnmatched(what)
 endfunction
 
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#SearchAllDeclarations(fn) {{{2
+" Function: lh#cpp#AnalysisLib_Function#SearchAllDeclarations(fn) {{{3
 " inline member function are seen as "p" (instead of "f") by ctags, hence this
 " function
 function! lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
@@ -393,7 +409,7 @@ endfunction
 "------------------------------------------------------------------------
 " }}}2
 "------------------------------------------------------------------------
-" Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className) {{{2
+" Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className) {{{3
 " todo:
 " - ignore default arguments
 " - template types like std::auto_ptr<foo::bar>
@@ -465,7 +481,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   return res
 endfunction
 
-" Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{2
+" Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{3
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className)
   " trim spaces {{{3
   let impl2search = substitute(a:signature, "\\(\\s\\|\n\\)\\+", ' ', 'g')

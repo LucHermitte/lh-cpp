@@ -3,7 +3,7 @@
 " File:		syntax/cpp-badcatch.vim                                    {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.0.0
+" Version:	1.1.0
 " Created:	29th Jun 2006
 " Last Update:	$Date$
 "------------------------------------------------------------------------

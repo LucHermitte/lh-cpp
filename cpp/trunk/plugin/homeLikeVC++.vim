@@ -1,10 +1,11 @@
 "=============================================================================
-" File:		homeLikeVC++.vim
+" $Id$
+" File:		plugin/homeLikeVC++.vim
 " Author:	Luc Hermitte <EMAIL:hermitte at free.fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.0.0
+" Version:	1.1.0
 " Created:	23rd mar 2002
-" Last Update:	06th Jun 2008
+" Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	Makes <Home> behaves like it does with Ms-VC++. 
 " -> Hitting <Home> once moves the cursor to the first non blank character of

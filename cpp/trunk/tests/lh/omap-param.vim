@@ -1,10 +1,10 @@
 " ======================================================================
 " $Id$
-" File:		omap-param
+" File:		tests/lh/omap-param.vim
 " Maintainer:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Last Update:	$Date$
-" Version:	0.6.0
+" Version:	1.1.0
 "
 "
 " Author: Luc Hermitte
