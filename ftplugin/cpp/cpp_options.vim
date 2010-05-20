@@ -1,10 +1,10 @@
 " ========================================================================
 " $Id$
-" File:		cpp_InsertAccessors.vim                               {{{1
+" File:		ftplugin/cpp/cpp_InsertAccessors.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Last Change:	$Date$ (28th July 2003)
-" Version:	1.0.0
+" Version:	1.1.0
 "
 "------------------------------------------------------------------------
 " Description:	
@@ -44,6 +44,8 @@ let g:getPrefix  = 'get_'
 let g:refPrefix  = 'ref_'
 let g:dataPrefix = 'm_'
 let g:dataSuffix = ''
+let g:paramPrefix = ''
+let g:paramSuffix = ''
 
 """ Very Short Style:
 ""let g:setPrefix  = ''
@@ -51,6 +53,8 @@ let g:dataSuffix = ''
 ""let g:refPrefix  = ''
 ""let g:dataPrefix = ''
 ""let g:dataSuffix = '_'
+""let g:paramPrefix = ''
+""let g:paramSuffix = ''
 "
 """ Herb Sutter's Style:
 ""let g:setPrefix  = 'Set'
@@ -58,6 +62,8 @@ let g:dataSuffix = ''
 ""let g:refPrefix  = 'Get'
 ""let g:dataPrefix = ''
 ""let g:dataSuffix = '_'
+""let g:paramPrefix = ''
+""let g:paramSuffix = ''
 " }}}
 " ====================================================================
 " Preference regarding where accessors' definitions occur {{{
