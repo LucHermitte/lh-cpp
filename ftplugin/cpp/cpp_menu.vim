@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		cpp_menu.vim                                           {{{1
+" File:		ftplugin/cpp/cpp_menu.vim                                 {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	14th Oct 2006
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -44,8 +44,8 @@ let g:loaded_cpp_menu = 1
 " Avoid global reinclusion }}}1
 "------------------------------------------------------------------------
 " Menu      {{{1
-let s:menu_prio = lh#option#Get('cpp_menu_priority', '50', 'g')
-let s:menu_name = lh#option#Get('cpp_menu_name',     '&C++', 'g')
+let s:menu_prio = lh#option#get('cpp_menu_priority', '50', 'g')
+let s:menu_name = lh#option#get('cpp_menu_name',     '&C++', 'g')
 
 " 80 wizards
 " 90 options
