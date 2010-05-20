@@ -1,9 +1,9 @@
 " ========================================================================
 " $Id$
-" File:		cpp_FindContextClass.vim                              {{{1
+" File:		ftplugin/cpp/cpp_FindContextClass.vim                 {{{1
 " Author:	Luc Hermitte <MAIL:hermitte at free.fr>
-" 		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Last Update:	$Date$ (16th May 2006)
 "------------------------------------------------------------------------
 " Description:	

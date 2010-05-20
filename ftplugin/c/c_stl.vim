@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		c_stl.vim
+" File:		ftplugin/c/c_stl.vim
 " Author:	Luc Hermitte <EMAIL:hermitte at free.fr>
-"		<URL:http://hermitte.free.fr/vim>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	24th oct 2002
 " Last Update:	$Date$
 "------------------------------------------------------------------------

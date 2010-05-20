@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		cpp_Inspect.vim                                           {{{1
+" File:		ftplugin/cpp/cpp_Inspect.vim                             {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	11th Sep 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 "=============================================================================
 " $Id$
-" File:		omap-param.vim                                           {{{1
+" File:		plugin/omap-param.vim                                     {{{1
 " Maintainer:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
 " Other Contributors:	A.Politz
-" Version:	1.0.0
+" Version:	1.1.0
 " Created:	03rd Sep 2007
 " Last Update:	$Date$ (05th Sep 2007)
 "------------------------------------------------------------------------

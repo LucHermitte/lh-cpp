@@ -3,7 +3,7 @@
 " File:		syntax/cpp.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.0.0
+" Version:	1.1.0
 " Last Update:	$Date$
 "
 " Purpose:	C++ syntax enhancements
