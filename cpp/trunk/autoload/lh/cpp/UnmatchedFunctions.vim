@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		Functions.vim                                           {{{1
+" File:		autoload/lh/cpp/UnmatchedFunctions.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	«version»
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	14th Feb 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -23,7 +23,23 @@ command! -nargs=1 FEcho :echo s:<args>
 let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
+" ## Functions {{{1
+" # Debug {{{2
+function! lh#cpp#UnmatchedFunctions#verbose(level)
+  let s:verbose = a:level
+endfunction
 
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
+function! lh#cpp#UnmatchedFunctions#debug(expr)
+  return eval(a:expr)
+endfunction
+
+" ## Menu {{{1
 " ==========================[ Menu ]====================================
 function! s:AddToMenu(lines, fns, kind)
   for fn in a:fns
@@ -93,7 +109,7 @@ function! lh#cpp#UnmatchedFunctions#select(results)
     throw "Functions-Matcher: We are not supposed to select several functions"
   endif
   let selection = a:results.selection[0]
-  if selection == 0 | call lh#buffer#dialog#Quit() | return | endif
+  if selection == 0 | call lh#buffer#dialog#quit() | return | endif
   " let unmatched = b:dialog.unmatched
   " let cmd = b:cmd
 
@@ -103,7 +119,7 @@ function! lh#cpp#UnmatchedFunctions#select(results)
   if exists('s:quit') | :quit | endif
   " 
   let selected_unmatched = a:results.dialog.unmatched[selection-1]
-  call lh#buffer#Find(selected_unmatched.filename)
+  call lh#buffer#find(selected_unmatched.filename)
   normal! gg
   try
     " todo: save history and @/
