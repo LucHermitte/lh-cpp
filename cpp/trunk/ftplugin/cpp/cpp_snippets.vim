@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		cpp_snippets.vim                                           {{{1
+" File:		ftplugin/cpp/cpp_snippets.vim                            {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	15th Apr 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -22,7 +22,7 @@
 
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
-if (exists("b:loaded_ftplug_cpp_snippets") && !exists('g:force_reload_ftplug_cpp_snippets')) || lh#option#Get("lh_cpp_snippets", 1, "g") == 0
+if (exists("b:loaded_ftplug_cpp_snippets") && !exists('g:force_reload_ftplug_cpp_snippets')) || lh#option#get("lh_cpp_snippets", 1, "g") == 0
   finish
 endif
 let s:cpo_save=&cpo
@@ -149,13 +149,15 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 " /**       inserts /** <cursor>
 "                    */
 " but only outside the scope of C++ comments and strings
-  inoremap <buffer> /**  <c-r>=Def_MapC('/**',
-	\ '/**\<cr\>\<BS\>/\<up\>\<end\> ',
-	\ '/**\<cr\>\<BS\>/!mark!\<up\>\<end\> ')<cr>
+  " inoremap <buffer> /**  <c-r>=Def_MapC('/**',
+	" \ '/**\<cr\>\<BS\>/\<up\>\<end\> ',
+	" \ '/**\<cr\>\<BS\>/!mark!\<up\>\<end\> ')<cr>
+  inoreab <buffer> /** <c-r>=Def_AbbrC('/**', '/**!cursorhere!\n/!mark!')<cr>
 " /*<space> inserts /** <cursor>*/
-  inoremap <buffer> /!  <c-r>=Def_MapC('/* ',
-	\ '/** */\<left\>\<left\>',
-	\ '/** */!mark!\<esc\>F*i')<cr>
+  " inoremap <buffer> /*!  <c-r>=Def_MapC('/* ',
+	" \ '/** */\<left\>\<left\>',
+	" \ '/** */!mark!\<esc\>F*i')<cr>
+  inoreab <buffer> /*! <c-r>=Def_AbbrC('/*!', '/**!cursorhere!*/!mark!')<cr>
 
 "--- Std oriented stuff-------------------------------------------{{{4
 " In std::foreach and std::find algorithms, ..., expand 'algo(container§)'
