@@ -1,10 +1,10 @@
 " ========================================================================
 " $Id$
-" File:		cpp_InsertAccessors.vim                               {{{1
+" File:		ftplugin/cpp/cpp_InsertAccessors.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " Last Change:	$Date$ (28th July 2003)
-" Version:	1.0.0
+" Version:	1.1.0
 "
 "------------------------------------------------------------------------
 " Description:	
@@ -83,44 +83,6 @@ endif
 " Insertion of accessors {{{
 "
   ""so <sfile>:p:h/cpp_FindContextClass.vim
-
-" Function:	s:ExtractPattern(str, pat) : str	{{{
-" Note:		Internal, used by IsBaseType
-function! s:ExtractPattern(expr, pattern)
-  return substitute(a:expr, '^\s*\('. a:pattern .'\)\s*', '', 'g')
-endfunction
-" }}}
-" Function:	s:IsBaseType(typeName) : bool	{{{
-" Note:		Do not test for aberrations like long float
-function! s:IsBaseType(type, pointerAsWell)
-  let sign  = '\(unsigned\)\|\(signed\)'
-  let size  = '\(short\)\|\(long\)\|'
-  let types = '\(void\)\|\(char\)\|\(int\)\|\(float\)\|\(double\)'
-
-  let expr = s:ExtractPattern( a:type, sign )
-  let expr = s:ExtractPattern( expr,   size )
-  let expr = s:ExtractPattern( expr,   types )
-  if a:pointerAsWell==1
-    if match( substitute(expr,'\s*','','g'), '\(\*\|&\)\+$' ) != -1
-      return 1
-    endif 
-  endif
-  " return strlen(expr) == 0
-  return expr == ''
-endfunction
-" }}}
-" Function:	s:ConstCorrectType(type) : string	{{{
-" Purpose:	Returns the correct expression of the type regarding the
-" 		const-correctness issue ; cf Herb Sutter's
-" 		_Exceptional_C++_ - Item 43.
-function! s:ConstCorrectType(type)
-  if s:IsBaseType(a:type,1) == 1
-    return a:type
-  else
-    return 'const ' . a:type . '&'
-  endif
-endfunction
-" }}}
 
 function! s:InsertComment(text) "{{{
   if "" != a:text
@@ -267,7 +229,7 @@ function! Cpp_AddAttribute()
   endif
   " }}}
 
-  let ccType      = s:ConstCorrectType(type)
+  let ccType      = lh#cpp#types#ConstCorrectType(type)
   " Insert the get accessor {{{
   let proxyType   = 0
   let choice = confirm('Do you want a get accessor ?', "&Yes\n&No\n&Proxy", 1) 
