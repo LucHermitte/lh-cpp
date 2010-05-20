@@ -1,6 +1,6 @@
 " ========================================================================
 " $Id$
-" File:		cpp_GotoFunctionImpl.vim                              {{{1
+" File:		ftplugin/cpp/cpp_GotoFunctionImpl.vim                 {{{1
 " Authors:	{{{2
 " 		From an original mapping by Leif Wickland (VIM-TIP#335)
 " 		See: http://vim.sourceforge.net/tip_view.php?tip_id=335 
@@ -8,10 +8,10 @@
 " 		<Feral at FireTop.Com> 
 " 		Rewritten by Luc Hermitte <hermitte at free.fr>, but features
 " 		and fixes still mainly coming from Robert's ideas.
-" 		<URL:http://hermitte.free.fr/vim/>
+" 		<URL:http://code.google.com/p/lh-vim/>
 " }}}2
 " Last Change:	$Date$ (05th May 2006)
-" Version:	1.0.0
+" Version:	1.1.0
 "------------------------------------------------------------------------
 " Description:	
 " 	Defines mappings and commands to jumps to the implementation of a
@@ -273,10 +273,10 @@ let g:loaded_cpp_GotoFunctionImpl = 1
 "------------------------------------------------------------------------
 " VIM Includes {{{2
 if   
-      \    !lh#common#CheckDeps('*Cpp_CurrentScope', 
+      \    !lh#common#check_deps('*Cpp_CurrentScope', 
       \			'cpp_FindContextClass.vim', 'ftplugin/cpp/',
       \                 'cpp_GotoFunctionImpl')
-      \ || !lh#common#CheckDeps(':CheckOptions',
+      \ || !lh#common#check_deps(':CheckOptions',
       \			'cpp_options-commands.vim', 'ftplugin/cpp/',
       \                 'cpp_GotoFunctionImpl')
   let &cpo=s:cpo_save
@@ -285,8 +285,8 @@ endif
 "------------------------------------------------------------------------
 " Menus {{{2
 "
-let s:menu_prio = lh#option#Get('cpp_menu_priority', '50', 'g')
-let s:menu_name = lh#option#Get('cpp_menu_name',     '&C++', 'g')
+let s:menu_prio = lh#option#get('cpp_menu_priority', '50', 'g')
+let s:menu_name = lh#option#get('cpp_menu_name',     '&C++', 'g')
 
 
 let s:FunctionPositionMenu = {
@@ -299,7 +299,7 @@ let s:FunctionPositionMenu = {
       \     "name": s:menu_name.'.&Options.&New-function-position'}
       \}
 
-call lh#menu#DefToggleItem(s:FunctionPositionMenu)
+call lh#menu#def_toggle_item(s:FunctionPositionMenu)
 "------------------------------------------------------------------------
 " }}}2
 "------------------------------------------------------------------------

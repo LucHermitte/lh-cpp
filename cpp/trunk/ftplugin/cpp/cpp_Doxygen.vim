@@ -1,9 +1,9 @@
 "=============================================================================
 " $Id$
-" File:		cpp_Doxygen.vim                                           {{{1
+" File:		ftplugin/cpp/cpp_Doxygen.vim                              {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.1
+"		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Created:	22nd Nov 2005
 " Last Update:	$Date$ (08th Feb 2008)
 "------------------------------------------------------------------------
@@ -72,11 +72,11 @@ let s:loaded_cpp_Doxygen_vim = 1
 " require Cpp_GetListOfParams and Cpp_GetFunctionPrototype
 
 function! s:CommentLeadingChar()
-  return lh#option#Get('CppDox_CommentLeadingChar', '*', 'bg')
+  return lh#option#get('CppDox_CommentLeadingChar', '*', 'bg')
 endfunction
 
 function! s:TagLeadingChar()
-  return lh#option#Get('CppDox_TagLeadingChar', '@', 'bg')
+  return lh#option#get('CppDox_TagLeadingChar', '@', 'bg')
   " alternative: \
 endfunction
 
@@ -99,13 +99,13 @@ function! CppDox_snippet(tagname, commentLeadingChar)
 endfunction
 
 " Function: CppDox_author()                           {{{2
-let s:author_tag = lh#option#Get('CppDox_author_tag', 'author', 'g')
+let s:author_tag = lh#option#get('CppDox_author_tag', 'author', 'g')
 
 function! CppDox_author()
-  let s:author_tag = lh#option#Get('CppDox_author_tag', 'author', 'g')
+  let s:author_tag = lh#option#get('CppDox_author_tag', 'author', 'g')
   let tag         = s:TagLeadingChar() . s:author_tag . ' '
 
-  let author = lh#option#Get('CppDox_author', '', 'bg')
+  let author = lh#option#get('CppDox_author', '', 'bg')
   if author =~ '^g:.*'
     if exists(author) 
       return tag . {author}
@@ -134,6 +134,19 @@ function! s:ParameterDirection(type)
   endif
 endfunction
 
+" Function: CppDox_set_brief_snippet(type)           {{{2
+function! CppDox_set_brief_snippet()
+  let brief = lh#option#get('CppDox_brief', 'short', 'bg')
+  if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
+    let g:CppDox_brief_snippet = s:Tag('brief ').Marker_Txt('brief').'.'
+  elseif brief =~? '^no$\|^n\%[ever]$\|0'
+    let g:CppDox_brief_snippet = Marker_Txt('brief').'.'
+  elseif brief =~? '^s\%[hort]$'
+    let g:CppDox_brief_snippet = Marker_Txt('autobrief').'.'
+  else " maybe
+    let g:CppDox_brief_snippet = Marker_Txt(s:Tag('brief ')).'.'
+  endif
+endfunction
 " Function: s:Doxygenize()                            {{{2
 function! s:Doxygenize()
   " Obtain informations from the function at the current cursor position.
@@ -156,7 +169,7 @@ function! s:Doxygenize()
   endfor
 
   " Ingroup
-  let ingroup = lh#option#Get('CppDox_ingroup', 0, 'bg')
+  let ingroup = lh#option#get('CppDox_ingroup', 0, 'bg')
   if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let g:CppDox_ingroup_snippet = s:Tag('ingroup ').Marker_Txt('group')
   elseif ingroup =~? '^no$\|^n\%[ever]$\|0'
@@ -166,16 +179,7 @@ function! s:Doxygenize()
   endif
 
   " Brief
-  let brief = lh#option#Get('CppDox_brief', 'short', 'bg')
-  if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
-    let g:CppDox_brief_snippet = s:Tag('brief ').Marker_Txt('brief').'.'
-  elseif brief =~? '^no$\|^n\%[ever]$\|0'
-    let g:CppDox_brief_snippet = Marker_Txt('brief').'.'
-  elseif brief =~? '^s\%[hort]$'
-    let g:CppDox_brief_snippet = Marker_Txt('autobrief').'.'
-  else " maybe
-    let g:CppDox_brief_snippet = Marker_Txt(s:Tag('brief ')).'.'
-  endif
+  call CppDox_set_brief_snippet()
 
   if ret =~ 'void\|^$'
     let g:CppDox_return_snippet = ''
