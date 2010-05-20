@@ -1,9 +1,9 @@
 " ========================================================================
 " $Id$
-" File:		AnalysisLib_Class.vim                                 {{{1
+" File:		autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
 " Author:	Luc Hermitte <MAIL:hermitte at free.fr>
-" 		<URL:http://hermitte.free.fr/vim/>
-" Version:	1.0.0
+" 		<URL:http://code.google.com/p/lh-vim/>
+" Version:	1.1.0
 " Last Update:	$Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
 " Description:	
@@ -110,6 +110,20 @@ if exists('g:force_load_cpp_FindContextClass')
   command! -nargs=1 CppCACEcho :echo s:<arg>
 endi
 
+function! lh#cpp#AnalysisLib_Class#verbose(level)
+  let s:verbose = a:level
+endfunction
+
+function! s:Verbose(expr)
+  if exists('s:verbose') && s:verbose
+    echomsg a:expr
+  endif
+endfunction
+
+function! lh#cpp#AnalysisLib_Class#debug(expr)
+  return eval(a:expr)
+endfunction
+
 
 " ==========================================================================
 " Search for current and most nested namespace/class <internal> {{{
@@ -174,7 +188,7 @@ endfunction
 function! s:SearchClassOrNamespaceDefinition(class_or_ns)
   let pos = 1
   let scope = ''
-  let defines = lh#option#Get('cpp_defines_to_ignore', '')
+  let defines = lh#option#get('cpp_defines_to_ignore', '')
   while pos > 0
     let pos = s:CurrentScope(1, a:class_or_ns)
     if pos > 0
@@ -354,7 +368,7 @@ endfunction
 " (at least, we must see: C1 < V, and C3 < C2 < V)
 " }}}
 " ==========================================================================
-" Search for the child classes {{{
+" Search for the child classes {{{1
 " a:namespace_where_to_search is a hack because listing all element to extract
 " classes is very slow!
 " lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search [, recheck_namespace])
@@ -372,7 +386,35 @@ function! lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_se
   return children
 endfunction
 
-" }}}
+" }}}1
+" ==========================================================================
+" Fetch Attributes {{{1
+function! lh#cpp#AnalysisLib_Class#attributes(id)
+  let tags = taglist(a:id)
+  let class_tags = filter(copy(tags), 'v:val.kind=~"[sc]" && v:val.name=="'.a:id.'"')
+  " overwrite tagnames
+  for class in class_tags
+    let class.name = lh#tags#tag_name(class)
+  endfor
+  let class_tags = lh#list#unique_sort2(class_tags)
+  " echo join(class_tags, "\n")
+  let nb_matches=len(class_tags)
+  let struct_class_filter = [0]
+  for class in class_tags
+    if class.kind == 's'
+      call add(struct_class_filter, '(has_key(v:val,"struct") && v:val.struct=="'.class.name.'")')
+    elseif class.kind == 'c'
+      call add(struct_class_filter, '(has_key(v:val,"class") && v:val.class=="'.class.name.'")')
+    endif
+  endfor
+
+  let members = filter(copy(tags), 'v:val.kind=="m"')
+  let class_filter = join(struct_class_filter, '||')
+  call s:Verbose ("filter=". class_filter)
+  let members = filter(members, class_filter)
+  return members
+endfunction
+" }}}1
 " ==========================================================================
 let &cpo = s:cpo_save
 " ========================================================================
