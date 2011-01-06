@@ -64,6 +64,9 @@ iab  <buffer> #e    <C-R>=MapNoContext("#e ",'\<esc\>0i#endif')<CR>
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
 vmap <buffer> <localleader><k0> <localleader>0
 nmap <buffer> <localleader><k0> <localleader>0
+:Brackets #if\ 0 #else\ \n#endif -insert=0 -nl -trigger=<localleader>1
+vmap <buffer> <localleader><k1> <localleader>1
+nmap <buffer> <localleader><k1> <localleader>1
 
 " ------------------------------------------------------------------------
 " Control statements {{{3
@@ -101,8 +104,8 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
       nmap <buffer> <LocalLeader>elif V<LocalLeader>elif
 
 "--else  insert else clause of if statement      {{{5
-  Inoreabbr <buffer> <silent> else <C-R>=Def_AbbrC('else ',
-	\ '\<c-f\>else {\n!cursorhere!\n}!mark!')<cr><c-f>
+  Inoreabbr <buffer> <silent> else <C-R>=InsertIfNotBefore('else ',
+	\ '\<c-f\>else {\n!cursorhere!\n}!mark!', 'if')<cr><c-f>
 "--,else  insert else clause of if statement
   vnoremap <buffer> <silent> <localleader>else
 	\ <c-\><c-n>@=Surround('else {', '}',
@@ -235,7 +238,7 @@ endif
 "------------------------------------------------------------------------
 " Functions {{{2
 
-" exported function !
+" Def_MapC(key, expr1, expr2) {{{3
 function! Def_MapC(key,expr1,expr2)
   if exists('b:usemarks') && b:usemarks
     return "\<c-r>=MapNoContext2('".a:key."',BuildMapSeq('".a:expr2."'))\<cr>"
@@ -246,6 +249,7 @@ function! Def_MapC(key,expr1,expr2)
   endif
 endfunction
 
+" Def_AbbrC(key,expr) {{{3
 function! Def_AbbrC(key,expr)
   " Special handling of preprocessor context
   if getline('.') =~ '^\s*#'
@@ -265,12 +269,14 @@ function! Def_AbbrC(key,expr)
   return InsertSeq(a:key, rhs)
 endfunction
 
+" Goto_ReturnSemiColon() {{{3
 function! Goto_ReturnSemiColon()
   let p = getpos('.')
   let r = search('return.*;', 'e')
   if r == 0 | call setpos('.', p) | endif
 endfunction
 
+" InsertReturn() {{{3
 function! InsertReturn()
   let c = col('.') - 1
   let l = getline('.')
@@ -291,6 +297,7 @@ function! InsertReturn()
   endif
 endfunction
 
+" InsertReturn0() {{{3
 function! InsertReturn0()
   let c = col('.') - 1
   let l = getline('.')
@@ -311,6 +318,7 @@ function! InsertReturn0()
   endif
 endfunction
 
+" InsertIfNotAfter(key, what, pattern) {{{3
 function! InsertIfNotAfter(key, what, pattern)
   let c = col('.') - 1
   let l = getline('.')
@@ -322,6 +330,19 @@ function! InsertIfNotAfter(key, what, pattern)
   endif
 endfunction
 
+" InsertIfNotBefore(key, what, pattern) {{{3
+function! InsertIfNotBefore(key, what, pattern)
+  let c = col('.') - 1
+  let l = getline('.')
+  let l = strpart(l, c)
+  if l =~ '^\s*'.a:pattern
+    return a:key
+  else 
+    return Def_AbbrC(a:key, a:what)
+  endif
+endfunction
+
+" C_SelectExpr4Surrounding() {{{3
 " todo: fin a better name for the function
 function! C_SelectExpr4Surrounding()
   " Go to the first non blank character of the line
