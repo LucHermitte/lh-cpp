@@ -119,17 +119,17 @@ endfunction
 
 function! s:Cpp_bigLine(title) " {{{3
   silent put = s:EqLine
-  let pos = (79-strlen(a:title)-4)/2
+  let pos = (79-lh#encoding#strlen(a:title)-4)/2
   silent put = substitute(s:EqLine, 
-	\ '\(.\{'.pos.'}\).\{'.(strlen(a:title)+4).'}\(.*\)$', 
+	\ '\(.\{'.pos.'}\).\{'.(lh#encoding#strlen(a:title)+4).'}\(.*\)$', 
 	\ '\1[ '.a:title.' ]\2', '')
   silent put = s:EqLine
 endfunction
 
 function! s:Cpp_littleLine(title) " {{{3
-  let pos = (79-strlen(a:title)-4)/2
+  let pos = (79-lh#encoding#strlen(a:title)-4)/2
   silent put = substitute(s:MnLine, 
-	\ '\(.\{'.pos.'}\).\{'.(strlen(a:title)+4).'}\(.*\)$', 
+	\ '\(.\{'.pos.'}\).\{'.(lh#encoding#strlen(a:title)+4).'}\(.*\)$', 
 	\ '\1[ '.a:title.' ]\2', '')
 endfunction
 
