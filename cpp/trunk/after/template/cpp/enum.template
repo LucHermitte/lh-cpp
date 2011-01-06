@@ -1,0 +1,30 @@
+VimL:" $Id$
+VimL:" Enum definition Template, Luc Hermitte
+VimL: let s:value_start = '¡'
+VimL:" hint: struct Enum { enum type { ... } };
+VimL: let s:value_end   = '¡'
+VimL: let s:reindent = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt(expand('%:t:r')))
+struct ¡s:enum_name¡ {
+    enum type { <+values+>, MAX__ };
+    static type next(type e_) {
+        assert(e_ < MAX__);
+        return type(e_+1);
+    }
+    static char const* to_string(type e_);
+    static type to_enum(std::string const& s_);
+};
+
+inline
+¡s:enum_name¡::type& operator++(¡s:enum_name¡::type& e_) {
+    return e_ = ¡s:enum_name¡::next(e_);
+}
+
+inline
+¡s:enum_name¡::type operator++(¡s:enum_name¡::type&e_, int) {
+    const ¡s:enum_name¡::type tmp = e_;
+    e_ = ¡s:enum_name¡::next(e_);
+    return tmp;
+}

@@ -1,0 +1,13 @@
+VimL:" $Id$
+VimL:"{try{...}catch(){...}} Template-File, Luc Hermitte
+VimL:" hint: try { ... } catch(...) { ... }
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1 
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+try ¡C_nl_before_curlyB()¡{
+    <+code+>
+}¡C_nl_before_curlyB()¡catch¡C_nl_before_bracket()¡(<+std::exception const& e+>)¡C_nl_before_curlyB()¡{
+    <+catch-code+>
+}<++>

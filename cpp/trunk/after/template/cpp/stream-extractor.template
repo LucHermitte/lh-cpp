@@ -1,5 +1,6 @@
 VimL:" $Id$
 VimL:" C++ stream-extractor (operator>>) Template, Luc Hermitte, 04th Jun 2004
+VimL:" hint: ostream& operator>>(ostream &, class-type)
 VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:direction   = 'i'

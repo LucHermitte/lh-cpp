@@ -1,0 +1,11 @@
+VimL:" $Id$
+VimL:"{std::ostringstream oss; oss << } Template-File, Luc Hermitte
+VimL:" hint: std::ostringstream oss; oss << ...
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1 
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+std::ostringstream oss;
+oss << <++>;
+<++>
