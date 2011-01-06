@@ -79,63 +79,19 @@ endfunction
 "   identifier.
 " * Retrieve the const modifier even when it is not on the same line as the
 "   ')'.
-function! s:GetFunctionPrototype(lineNo, onlyDeclaration)
-  let endPattern = a:onlyDeclaration ? ';' : '[;{]'
-  exe a:lineNo
-  " 0- Goto end of current line of prototype (stop at the first found)
-  normal! 0
-  call search( ')\|\n')
-  " 1- Goto start of current prototype
-  " let pos = searchpair('\<\i\+\>\%(\n\|\s\)*(', '', ')\%(\n\|[^;]\)*;.*$\ze', 'bW')
-  " let pos = searchpair('\<\i\+\>\%(\n\|\s\)*(', '', ')', 'bW')
-  let pos = searchpair('\<\i\+\>\_s*(', '', ')\_[^{};]*'.endPattern, 'bW')
-  let l0 = line('.')
-  " 2- Goto the "end" of the current prototype
-  " let pos = searchpair('\<\i\+\>\%(\n\|\s\)*(', '', ')', 'W')
-  " let pos = searchpair('\<\i\+\>\%(\n\|\s\)*(', '', ')\%(\n\|[^;]\)*;\zs','W')
-  let pos = searchpair('\<\i\+\>\_s*(', '', ')\_[^{};]*'.endPattern.'\zs', 'W')
-  let l1 = line('.')
-  " Abort if nothing found
-  if ((0==pos) || (l0>a:lineNo)) | return '' | endif
-  " 3- Build the prototype string
-  let proto = getline(l0)
-  while l0 < l1
-    let l0 = l0 + 1
-    " Add the line, and trim any comments ending the line
-    let proto = proto . "\n" .
-	  \ substitute(getline(l0), '\s*//.*$\|\s*/\*.\{-}\*/\s*$', '', 'g')
-	  " \ substitute(getline(l0), '//.*$', '', 'g')
-	  " \ substitute(getline(l0), '//.*$\|/\*.\{-}\*/', '', 'g')
-  endwhile
-  " 4- and return it.
-  exe a:lineNo
-  return proto
-endfunction
-
 function! lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, onlyDeclaration)
-  return s:GetFunctionPrototype(a:lineno, a:onlyDeclaration)
+  " deprecated
+  return lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
 endfunction
 " }}}2
 
 "------------------------------------------------------------------------
 " Function: s:SplitTypeParam(typed_param) {{{3
 " @return 4-uple -> [parameter-type, parameter-name, default-value, new-line-before]
-" todo: support pointers to functions and arrays
-" todo: 'int', 'unsigned int', 'char const*'
+" @under deprecation...
 function! s:SplitTypeParam(typed_param)
-  " Strip spaces
-  let typed_param = substitute(a:typed_param, '\_s\+', ' ', 'g')
-  " Extract default value
-  let default = matchstr(typed_param, '^.\{-}\s*=\s*\zs.*\ze$')
-  let typed_param = substitute(typed_param, '\s*=\s*'.escape(default,'\*'), '', '')
-  " Type
-  let t = matchstr(typed_param, '^\s*\zs.*\%(\ze\s\+\|[&*]\ze\s*\)\S\+')
-  " Parameter
-  let p = matchstr(typed_param, '^.*\%(\s\|[&*]\)\s*\zs\S\+')
-  " New line before the parameter
-  let nl = match(a:typed_param, "^\\s*[\n\r]") >= 0
-  " Result
-  return [t, p, default, nl]
+  let pa = lh#dev#option#call('function#_analyse_parameter', &ft, a:typed_param)
+  return [pa.type, pa.name, pa.default, pa.nl]
 endfunction
 " }}}2
 "------------------------------------------------------------------------
@@ -148,32 +104,10 @@ function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
   let prototype  = a:prototype
   let prototype  = substitute(prototype, '//.\{-}\n', '', 'g')
   let prototype  = substitute(prototype, '/\*\_.\{-}\*/', '', 'g')
-  let parameters = matchstr  (prototype, '(\zs.*\ze)')
 
   " 2- convert the string into a list, the separation being done on commas
-  let params = split(parameters, '\s*,\s*')
+  let res_params = lh#dev#option#call('function#_signature_to_parameters', &ft, prototype)
 
-  " 3- merge the template parameters.
-  let res_params = []
-  let idx = 0
-  let to_append = ''
-  while idx < len(params) " for each element in the first list
-    " string to append to the result list
-    let to_append = to_append . (strlen(to_append)?',':'') . params[idx]
-    " Reduce templates and function types ; take care of the recursive grammar
-    let tpl = substitute(to_append, '[^<>()]\+', '', 'g')
-    while strlen(tpl)
-      let tpl2 = substitute(tpl, '<>\|()', '', 'g')
-      if tpl == tpl2 | break | endif
-      let tpl = tpl2
-    endwhile
-    if !strlen(tpl) " a complete parameter has been read
-      " => append it to the result list 
-      let res_params += [ s:SplitTypeParam(to_append) ]
-      let to_append = ''
-    endif
-    let idx = idx + 1 " next
-  endwhile
   return res_params
 endfunction
 " }}}2
@@ -276,9 +210,9 @@ endfunction
 " @return whether the two signatures are similar (parameters names, default
 " parameters and other comment are ignored)
 function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2)
-  if len(a:sig1) != len(a:sig2) | return 0 | endif
+  if lh#encoding#len(a:sig1) != lh#encoding#len(a:sig2) | return 0 | endif
   let i = 0
-  while i != len(a:sig1)
+  while i != lh#encoding#len(a:sig1)
     if a:sig1[i][0] != a:sig2[i][0] | return 0 | endif
     let i += 1
   endwhile

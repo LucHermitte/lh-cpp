@@ -47,7 +47,7 @@ endfunction
 " Function: s:Attributes(classname) {{{3
 function! s:Attributes(classname)
   " fetch the attributes
-  let attributes = lh#cpp#AnalysisLib_Class#attributes(a:classname)
+  let attributes = lh#dev#class#attributes(a:classname)
   " The attributes need to be sorted by their order of definition in the class
   " definition
 
@@ -123,7 +123,7 @@ function! s:AddToMenu(lines, attrs)
     " for attr in overloads
     for attr in a:attrs
       " this damned ctags does not store the type of the attribute ...
-      let length = strlen(attr.fullsignature)
+      let length = lh#encoding#strlen(attr.fullsignature)
       if length > max_length | let max_length = length | endif
       call add(attrs, attr)
     endfor
@@ -132,7 +132,7 @@ function! s:AddToMenu(lines, attrs)
   " 2- Build the result
   for attr in attrs
     let line = s:Access(attr).' '.attr.fullsignature 
-	  \ . repeat(' ', max_length-strlen(attr.fullsignature))
+	  \ . repeat(' ', max_length-lh#encoding#strlen(attr.fullsignature))
     call add(a:lines, line)
   endfor
 endfunction
@@ -229,7 +229,7 @@ function! lh#cpp#constructors#select(results)
 
   " 0- prepare the init-ctr signature
   let len = eval(lh#list#accumulate(sig_params, 'strlen', 'join(v:1_,  "+")'))
-   \ + strlen(a:results.dialog.classname) + 2*len(sig_params) 
+   \ + lh#encoding#strlen(a:results.dialog.classname) + 2*len(sig_params) 
    \ + 3 " ();
   if len > &tw-&sw
     let sig = [a:results.dialog.classname . '(' ]
