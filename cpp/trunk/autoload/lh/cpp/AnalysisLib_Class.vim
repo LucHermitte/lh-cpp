@@ -30,6 +30,8 @@
 " Dependencies:	VIM 7.0+
 
 " History:	{{{2
+" 	31st May 2010
+" 	(*) many generic functions move to lh#dev#class#
 " 	23rd Apr 2008
 " 	(*) #Ancestors() return the list of base classes (topologicaly sorted)
 " 	13th Feb 2008
@@ -292,80 +294,21 @@ endfunction
 " @todo follow typedefs
 
 function! lh#cpp#AnalysisLib_Class#GetClassTag(id)
-  let tags = taglist(a:id)
-  " In C++, a struct is a class, but with different default access rights
-  let class_tags = filter(copy(tags), 'v:val.kind=~"[sc]"')
-  return class_tags
+  call lh#common#error_msg("lh#cpp#AnalysisLib_Class#GetClassTag is deprecated, use lh#dev#class#get_class_tag() instead")
+  return lh#dev#option#call('class#get_class_tag', &ft, a:id)
 endfunction
 
-" Return the information already known, or do fetch it in CTags base
-function! s:DoFetchClasses(id, instance)
-  if has_key(a:instance, a:id)
-    return a:instance[a:id]
-  else
-    let classes = lh#cpp#AnalysisLib_Class#GetClassTag('^'.a:id.'$')
-    let a:instance[a:id] = classes
-    return classes
-  endif
-endfunction
 
 function! lh#cpp#AnalysisLib_Class#FetchDirectParents(id)
-  let parents = []
-  if !exists('s:instance')
-    let s:instance = {}
-  endif
-  " 1- Fetch the tags associated to classes names a:id
-  let classes = s:DoFetchClasses(a:id, s:instance)
-  " select the classes that inherit from another ... in order to found their parents
-  call filter(classes, 'has_key(v:val, "inherits")')
-  " 2- Select the best match for the a:id class
-  if len(classes) > 1
-    echomsg "Warning lh#cpp#AnalysisLib_Class#FetchDirectParents: has detected several classes named `".a:id."'"
-  endif
-  for class in classes
-    " 3- Look at its parents
-    let sParents = class.inherits
-    " echomsg "[".a:id.']'.class.name . " inherits " . sParents
-    let lParents = split(sParents, ',')
-    " 4- Keep the best candidates as parents
-    " todo: select the class that better matches the current context (imported
-    " namespaces, and current namespace)
-    "    -> omni#cpp#namespaces#GetContexts()
-    "    How can we obtain the exact parent names without fetching them ahead ?
-    "    Or may be we need to fetch (and cache them ahead)... <-------- GO for this one!
-    "
-    " 4.a- open a scratch buffer, goto class definition, check its context
-    " 4.b- compare each parent with the context
-    " 4.c- save the exact good parents
-    call extend(parents, lParents)
-  endfor
-  return parents
+  call lh#common#error_msg("lh#cpp#AnalysisLib_Class#FetchDirectParents is deprecated, use lh#dev#class#fetch_direct_parents() instead")
+  return lh#dev#option#call('class#fetch_direct_parents', &ft, a:id)
 endfunction
 
 function! lh#cpp#AnalysisLib_Class#Ancestors(id)
-  try
-    let s:instance = {}
-    let parents = lh#graph#tsort#depth(function('lh#cpp#AnalysisLib_Class#FetchDirectParents'), [a:id])
-    " and then remove the first node: a:id
-    call remove(parents, 0)
-    " echomsg string(parents)
-    return parents
-  catch /Tsort.*/
-    let cycle = matchstr(v:exception, '.*: \zs.*')
-    throw "Cycle in ".a:id." inheritance tree detected: ".cycle
-  finally
-    unlet s:instance
-  endtry
+  call lh#common#error_msg("lh#cpp#AnalysisLib_Class#Ancestors is deprecated, use lh#dev#class#ancestors() instead")
+  return lh#dev#option#call('class#ancestors', &ft, a:id)
 endfunction
 
-" With:
-"   struct V {};
-"   struct C1 : virtual V {};
-"   struct C2 : virtual V {};
-"   struct C3 : C2{};
-"   struct D : C1, C3 {};
-" ":Parent D" must return: [C1, C3, C2, V] 
-" (at least, we must see: C1 < V, and C3 < C2 < V)
 " }}}
 " ==========================================================================
 " Search for the child classes {{{1
@@ -373,46 +316,16 @@ endfunction
 " classes is very slow!
 " lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search [, recheck_namespace])
 function! lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search, ...)
-  let children = []
-  if !exists('s:instance') || (a:0 > 0 && a:1)
-    let s:instance = {}
-  endif
-  " 1- Fetch the tags associated to classes names a:id
-  let classes = s:DoFetchClasses(a:namespace_where_to_search.'::.*', s:instance)
-  " select the classes that inherit from another ... in order to found their parents
-  call filter(classes, 'has_key(v:val, "inherits") && v:val.inherits=~'.string(a:id))
-  " 2- Select the best match for the a:id class
-  let children = lh#list#Transform(classes, [], 'v:val.name')
-  return children
+  call lh#common#error_msg("lh#cpp#AnalysisLib_Class#FetchDirectChildren is deprecated, use lh#dev#class#fetch_direct_children() instead")
+  return lh#dev#option#call('class#fetch_direct_children', &ft, a:id)
 endfunction
 
 " }}}1
 " ==========================================================================
 " Fetch Attributes {{{1
 function! lh#cpp#AnalysisLib_Class#attributes(id)
-  let tags = taglist(a:id)
-  let class_tags = filter(copy(tags), 'v:val.kind=~"[sc]" && v:val.name=="'.a:id.'"')
-  " overwrite tagnames
-  for class in class_tags
-    let class.name = lh#tags#tag_name(class)
-  endfor
-  let class_tags = lh#list#unique_sort2(class_tags)
-  " echo join(class_tags, "\n")
-  let nb_matches=len(class_tags)
-  let struct_class_filter = [0]
-  for class in class_tags
-    if class.kind == 's'
-      call add(struct_class_filter, '(has_key(v:val,"struct") && v:val.struct=="'.class.name.'")')
-    elseif class.kind == 'c'
-      call add(struct_class_filter, '(has_key(v:val,"class") && v:val.class=="'.class.name.'")')
-    endif
-  endfor
-
-  let members = filter(copy(tags), 'v:val.kind=="m"')
-  let class_filter = join(struct_class_filter, '||')
-  call s:Verbose ("filter=". class_filter)
-  let members = filter(members, class_filter)
-  return members
+  call lh#common#error_msg("lh#cpp#AnalysisLib_Class#attributes is deprecated, use lh#dev#class#attributes() instead")
+  return lh#dev#option#call('class#attributes', &ft, a:id)
 endfunction
 " }}}1
 " ==========================================================================
