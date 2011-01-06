@@ -33,7 +33,7 @@ set cpo&vim
 " Local commands {{{2
 
 command! -b -nargs=? Ancestors 
-      \ echo lh#cpp#AnalysisLib_Class#Ancestors(lh#cpp#ftplugin#OptionalClass(<q-args>))
+      \ echo lh#dev#option#call('class#ancestors', &ft, lh#cpp#ftplugin#OptionalClass(<q-args>))
 command! -b -nargs=+ -bang Children  call s:Children("<bang>", <f-args>)
 
 "=============================================================================
@@ -56,7 +56,9 @@ let g:loaded_ftplug_cpp_Inspect = 100
 function! s:Children(bang, namespace, ...)
   let reset_namespace_cache = a:bang == "!"
   let classname = lh#cpp#ftplugin#OptionalClass(a:000)
-  let children = lh#cpp#AnalysisLib_Class#FetchDirectChildren(classname, a:namespace, reset_namespace_cache)
+  let children = lh#dev#option#call('class#fetch_direct_children', &ft,
+	\ classname, a:namespace, reset_namespace_cache)
+  " lh#cpp#AnalysisLib_Class#FetchDirectChildren(classname, a:namespace, reset_namespace_cache)
   echo children
 endfunction
 
