@@ -60,7 +60,9 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- namespace ---------------------------------------------------{{{4
 "--,ns insert "namespace" statement
   Inoreabbr <buffer> namespace <C-R>=InsertIfNotAfter('namespace ',
-	\ '\<c-f\>namespace !cursorhere! {!mark!\n}!mark!', 'using')<cr>
+	\ '\<c-f\>namespace <+namespace+> {<++>\n} // namespace <+namespace+>', 'using')<cr>
+  " Inoreabbr <buffer> namespace <C-R>=InsertIfNotAfter('namespace ',
+	" \ '\<c-f\>namespace !cursorhere! {!mark!\n}!mark!', 'using')<cr>
   vnoremap <buffer> <silent> <LocalLeader>ns 
 	\ <c-\><c-n>@=Surround('namespace !cursorhere! {', '!mark!\n}!mark!', 
 	\ 1, 1, '', 1, 'namespace ')<cr>
