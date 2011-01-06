@@ -312,12 +312,12 @@ function! s:BuildFunctionSignature4impl(proto,className)
 
   let params = lh#cpp#AnalysisLib_Function#GetListOfParams(impl)
   let implParams = []
-  for [ type, var, default, nl ] in params
-    let param = (nl ? "\n" : '')
-	  \ . type . ' ' . var 
-	  \ . substitute(default, '\(.\+\)', pattern, '')
+  for param in params
+    let sParam = ((param.nl) ? "\n" : '')
+	  \ . (param.type) . ' ' . (param.name) 
+	  \ . substitute((param.default), '\(.\+\)', pattern, '')
     " echo "param=".param
-    call add(implParams, param)
+    call add(implParams, sParam)
   endfor
   let implParamsStr = join(implParams, ', ')
   " @todo: exceptions specifications
