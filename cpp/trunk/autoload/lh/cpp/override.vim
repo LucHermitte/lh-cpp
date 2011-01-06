@@ -179,7 +179,7 @@ function! s:AddToMenu(lines, fns)
     for fn in a:fns
       let signature = lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
       let fn['fullsignature' ] = signature
-      let length = strlen(signature)
+      let length = lh#encoding#strlen(signature)
       if length > max_length | let max_length = length | endif
       call add(fns, fn)
     endfor
@@ -188,7 +188,7 @@ function! s:AddToMenu(lines, fns)
   " 2- Build the result
   for fn in fns
     let line = s:Overriden(fn).s:Access(fn).' '.fn.fullsignature 
-	  \ . repeat(' ', max_length-strlen(fn.fullsignature))
+	  \ . repeat(' ', max_length-lh#encoding#strlen(fn.fullsignature))
 	  \ . ' ' . string(fn.contexts)
     call add(a:lines, line)
   endfor
