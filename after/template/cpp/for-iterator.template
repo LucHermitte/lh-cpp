@@ -1,12 +1,13 @@
 VimL:" $Id$
 VimL:" C++ for-loop on iterators Template, Luc Hermitte
+VimL:" hint: for (T::iterator b=c.begin(), e=c.end(); b!=e; ++b) { ... }
 VimL: let s:value_start  = '¡'
 VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL:"
-VimL: let s:cont  = INPUT('Contrainer name: ')
+VimL: let s:cont  = INPUT('Container name: ')
 VimL: let s:begin = INPUT('Iterator variable: ', 'b')
 VimL: let s:end   = INPUT('Iterator end variable: ', 'e')
 VimL:"

@@ -1,0 +1,14 @@
+VimL:" $Id$
+VimL:" For loop over Enum definition Template, Luc Hermitte
+VimL:" hint: for (Enum::type e=Enum::type(); e!=Enum::MAX__; ++e) { ... }
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = '¡'
+VimL: let s:reindent = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt('EnumType'))
+VimL: let s:index = inputdialog('Name of the for index ?', Marker_Txt('e'))
+VimL: " todo: automagically detect the type of the real enum, and the MAX__ value
+for (¡s:enum_name¡::type ¡s:index¡ = ¡s:enum_name¡::type() ; ¡s:index¡ != ¡s:enum_name¡::MAX__ ; ++¡s:index¡ ) {
+   <++>
+}<++>

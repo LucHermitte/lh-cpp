@@ -2,6 +2,7 @@ VimL:" $Id$
 VimL:" C++ Singleton-Class Template, Luc Hermitte
 VimL:" «Meyers singleton», cf. More Effective C++ Item 26
 VimL:" For a more precise definition, cf. A. Alexandrescu's Modern C++ Design
+VimL:" hint: singleton class Wizard
 VimL: let s:value_start  = '¡'
 VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1

@@ -1,0 +1,9 @@
+VimL:" $Id$
+VimL:"{throw default exceptions for project} Template-File, Luc Hermitte
+VimL:" hint: throw std::runtime_error
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1 
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+throw std::runtime_error("<++>");<++>

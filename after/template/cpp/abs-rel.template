@@ -1,6 +1,7 @@
 VimL:" $Id$
 VimL:" Absolute and relative Classes Template, Luc Hermitte
 VimL:" Used to define Date and Duration, Point and Distance, ... 
+VimL:" hint: Absolute/Relative classes (e.g. point/distance, date/duration, ...)
 VimL: let s:value_start = '¡'
 VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
