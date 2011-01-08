@@ -6,11 +6,12 @@ VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:clsname = inputdialog("class name ?")
+VimL: let s:clsname = inputdialog("class name ?", Marker_Txt(expand('%:t:r')))
+VimL: call CppDox_set_brief_snippet()
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
 /**
- * @brief <+brief+>
+ * ¡g:CppDox_brief_snippet¡
  *
  * <+doc+>
  *
