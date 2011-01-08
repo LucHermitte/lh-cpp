@@ -41,7 +41,7 @@ endif
 let s:cpo_save=&cpo
 set cpo&vim
 if exists('b:loaded_ftplug_switch_enum')
-       \ && !exists('g:force_reload_switch_enum')
+       \ && !exists('g:force_reload_c_switch_enum')
   let &cpo=s:cpo_save
   finish
 endif
@@ -50,13 +50,13 @@ let b:loaded_ftplug_switch_enum = 1
 " }}}1
 "------------------------------------------------------------------------
 " Commands and mappings {{{1
-inoremap <buffer> <silent> <c-x>se <c-r>=<sid>SwitchEnum()<cr>
+inoremap <buffer> <silent> <c-x>se <c-\><c-n>:call <sid>SwitchEnum()<cr>
  
 " Commands and mappings }}}1
 "=============================================================================
 " Avoid global reinclusion {{{1
 if exists("g:loaded_switch_enum") 
-      \ && !exists('g:force_reload_switch_enum')
+      \ && !exists('g:force_reload_c_switch_enum')
   let &cpo=s:cpo_save
   finish 
 endif
@@ -67,6 +67,22 @@ let g:loaded_switch_enum = 1
 
 function! s:SwitchEnum()
   let enum_name = GetCurrentKeyword()
+  let def = lh#cpp#enum#get_definition(enum_name)
+  if !empty(def)
+    normal! diw
+    call MuTemplate('c/switch', def)
+    " todo: delete enum_name if MuTemplate() expands
+  endif
+  return
+
+"======================================================================
+"OLD CODE
+"======================================================================
+  " Two possibilities:
+  " a- enum_name is an anumerated variable
+  " b- enum_name is already a type
+  " => check it with ctags
+
   split  " search in another window
   let found = searchdecl(enum_name, 1)
   echomsg "`".enum_name."' found=".(found==0?'yes':'no')
@@ -74,6 +90,7 @@ function! s:SwitchEnum()
     quit " close the search window
     throw "C_SwitchEnum: Cannot find declaration of `".enum_name."'"
   endif
+
 
   let s:skip_comments = 'synIDattr(synID(line("."), col("."), 0), "name") =~?'
 	\ . '"string\\|comment\\|doxygen"'
