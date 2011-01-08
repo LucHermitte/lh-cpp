@@ -164,14 +164,14 @@ function! CppDox_ClassWizard(clsname)
 
   elseif semantics == 2 " stack-based semantics, non-copyable
     let g:CppDox_isVirtualDest = ''
-    let g:CppDox_inherits = ': public boost::non_copyable'
+    let g:CppDox_inherits = ': public boost::noncopyable'
     let g:CppDox_semantics =
 	  \ " * <li> Stack-based semantics\n"
 	  \." * <li> Non-copyable"
 
   elseif semantics == 3 " entity semantics, non-copyable
     let g:CppDox_isVirtualDest = 'virtual '
-    let g:CppDox_inherits = 'public boost::non_copyable'.
+    let g:CppDox_inherits = ': public boost::noncopyable'.
 	  \ Marker_Txt(', other ancestors')
     let g:CppDox_semantics =
 	  \ " * <li> Entity semantics (=> reference semantics)\n"
@@ -233,7 +233,7 @@ function! CppDox_SingletonWizard(clsname)
   elseif type == 2 " explicit ctr, MT-safe
     let g:CppDox_constructors       = a:clsname."(".Marker_Txt("Parameters").");" 
     let g:CppDox_isVirtualDest      = ""
-    let g:CppDox_inherits           = ": private boost::non_copyable"
+    let g:CppDox_inherits           = ": private boost::noncopyable"
     let g:CppDox_private_members    = 
           \ "static ".a:clsname." *ms_instance;\n"
           \.g:CppDox_private_members
