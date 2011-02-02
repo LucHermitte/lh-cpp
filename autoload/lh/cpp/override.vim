@@ -45,7 +45,7 @@ function! s:OverrideableFunctions(classname)
   let result = {}
   " todo: do not sort ancestors (find the inheritance (tree) order) because
   " some virtual functions are not marked virtual in childs
-  let ancestors = lh#cpp#AnalysisLib_Class#Ancestors(a:classname)
+  let ancestors = lh#dev#class#ancestors(a:classname)
   " Build the list of inherited overrideable functions
   for base in ancestors
     " - "::" because "inherits:" does not resolves the contextual namespaces
@@ -70,9 +70,11 @@ function! s:OverrideableFunctions(classname)
 	  if lh#cpp#AnalysisLib_Function#IsSame(overload, fn2)
 	    " an override
 	    call add(overload.contexts, context)
+            " echomsg "SAME: " . string(overload). " -- " . string(fn2)
 	  else
 	    " new overload
 	    call add(result[name], fn2)
+            " echomsg "DIFF: " . string(overload). " -- " . string(fn2)
 	  endif
 	endfor
       endif
@@ -81,7 +83,9 @@ function! s:OverrideableFunctions(classname)
   endfor
 
   " And now Identify which functions are already overridden
-  let class_pattern = ((a:classname =~ '::') ? '^' : '::') . a:classname . '\>'
+  " ::classname\> is no good with tagslist ...
+  " let class_pattern = ((a:classname =~ '::') ? '^' : '::') . a:classname . '\>'
+  let class_pattern = '\<' . a:classname . '\>'
   let functions = lh#cpp#AnalysisLib_Function#LoadTags(class_pattern)
   let declarations = lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
   " don't restrict to virtual as sometimes it is implicit
@@ -94,6 +98,9 @@ function! s:OverrideableFunctions(classname)
 	if lh#cpp#AnalysisLib_Function#IsSame(overload, fn)
 	  " an override
 	  let overload.overriden = 1
+          echomsg "SAME: " . string(overload). " -- " . string(fn)
+        else
+          echomsg "DIFF: " . string(overload). " -- " . string(fn)
 	endif
       endfor
     endif
@@ -116,13 +123,15 @@ function! s:OverrideFunction(function_tag)
     let signature = a:function_tag.fullsignature
     let g:signature = signature
     let regex_signature = lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature, '').regex
-    let regex_signature = regex_signature . '\s*;' 
+    " todo: support embedded comment within the optional "= 0" part
+    let regex_signature .= '\s*\(=\s*0\s*\)\=;' 
     let lineno = search(regex_signature)
     if lineno <= 0
       throw "Override: cannot find ".signature." declaration in ".filename
     endif
     " c- extract all the relevant text (beware of =0)
     let code = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, 1)
+    let code = substitute(code, '\s*=\s*0\s*;$', '', '')
   finally
     " quit the split-opened window
     :q
@@ -135,6 +144,7 @@ function! s:OverrideFunction(function_tag)
     call add(lines, '')
     return lines
 endfunction
+
 " # Main {{{2
 function! lh#cpp#override#Main()
   " 1- Obtain current class name
