@@ -210,10 +210,10 @@ endfunction
 " @return whether the two signatures are similar (parameters names, default
 " parameters and other comment are ignored)
 function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2)
-  if lh#encoding#len(a:sig1) != lh#encoding#len(a:sig2) | return 0 | endif
+  if len(a:sig1) != len(a:sig2) | return 0 | endif
   let i = 0
-  while i != lh#encoding#len(a:sig1)
-    if a:sig1[i][0] != a:sig2[i][0] | return 0 | endif
+  while i != len(a:sig1)
+    if a:sig1[i] != a:sig2[i] | return 0 | endif
     let i += 1
   endwhile
   return 1
@@ -223,7 +223,7 @@ endfunction
 " Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
 function! s:ParamToString(param)
   " 0:Type + 1:param name
-  let p = a:param[0] . ' ' .a:param[1]
+  let p = (a:param.type) . ' ' .(a:param.name)
   return p
 endfunction
 
@@ -246,8 +246,12 @@ endfunction
 	" \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl[0].parameters) 
 " endfunction
 function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
-  return a:def.name == a:decl.name 
+  let res = a:def.name == a:decl.name 
 	\ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl.parameters) 
+  " if a:def.name == a:decl.name 
+    " echomsg res ."[".(a:def.name)."] <- " . string(a:def.parameters) . ' <--> ' . string(a:decl.parameters)
+  " endif
+  return res
 endfunction
 " }}}2
 "------------------------------------------------------------------------
