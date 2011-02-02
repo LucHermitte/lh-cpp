@@ -12,11 +12,19 @@ VimL: let s:relclsname = inputdialog('Name of the "relative" class ?')
 VimL: let s:sharedclsname = inputdialog('Name of the "shared" class ? (empty=none)', s:absclsname . "Impl_")
 VimL: let s:issharingimpl = ! empty(s:sharedclsname)
 VimL: let s:defaultisenough = CONFIRM( "Are the implicitly generated default constructor, copy-constructor, destructor, and assignement operatror enough?", "&Yes\n&No", 1) == 1
+VimL: let s:istemplate = CONFIRM("Are the classes template ?", "&Yes\n&No", 2) == 1
+VimL: let s:tmpl_type = Marker_Txt("T")
+VimL: let s:tmpl_decl = IF(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl_type."> ", "")
+VimL: let s:tmpl = IF(s:istemplate, "<".s:tmpl_type.">", "")
+VimL: let s:tmpl2_type = Marker_Txt("U")
+VimL: let s:tmpl2_decl = IF(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl2_type.">\n", "")
+VimL: let s:tmpl2 = IF(s:istemplate, "<".s:tmpl2_type.">", "")
+VimL: let s:typename = IF(s:istemplate, "typename ", "")
+VimL:"
 VimL:"
 VimL: call CppDox_set_brief_snippet()
-VimL:"
-class ¡s:absclsname¡;
-class ¡s:relclsname¡;
+¡s:tmpl_decl¡class ¡s:absclsname¡;
+¡s:tmpl_decl¡class ¡s:relclsname¡;
 VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | endif
 /**
  * ¡g:CppDox_brief_snippet¡
@@ -33,25 +41,36 @@ VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | e
  * @version ¡'$'¡revision$
  * ¡CppDox_author()¡
  */
-class ¡s:absclsname.IF(s:issharingimpl, ' : DETAILS::' . s:sharedclsname, '')¡
+VimL: let s:super = "DETAILS::".s:sharedclsname.s:tmpl
+VimL: let s:inh = IF(s:issharingimpl, "\n: ".s:super."(".Marker_Txt("params").")", "\n".Marker_Txt(" "))
+¡s:tmpl_decl¡class ¡s:absclsname.IF(s:issharingimpl, " : ".s:super, "")¡
 {
 public:
+    friend class ¡s:relclsname¡¡s:tmpl¡;
+    typedef ¡IF(s:issharingimpl, s:typename.s:super."::scalar_type", "<+scalar_type+>")¡ scalar_type;
+
     /**@name Construction/destruction
      */
     //@{
     /** Initialisation constructor.
      */
-    ¡s:absclsname¡(<+parameters+>);
+    ¡s:absclsname¡(<+parameters+>)¡IF(s:istemplate, s:inh."{<++>}", ";")¡
     ¡lh#cpp#abs_rel#canonicalortodoxform(s:absclsname, ! s:defaultisenough)¡
     //@}
 
     /**@name Operators
      */
     //@{
-    ¡s:absclsname¡ & operator+=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { add(rhs_); return *this; }', ';')¡
-    ¡s:absclsname¡ & operator-=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { dec(rhs_); return *this; }', ';')¡
+    ¡s:absclsname¡ & operator+=(¡s:relclsname.s:tmpl¡ const& rhs_)¡IF(s:issharingimpl, " { this->add(rhs_); return *this; }", IF(s:istemplate, "<++>", ";"))¡
+    ¡s:absclsname¡ & operator-=(¡s:relclsname.s:tmpl¡ const& rhs_)¡IF(s:issharingimpl, " { this->dec(rhs_); return *this; }", IF(s:istemplate, "<++>", ";"))¡
 
-    friend bool operator==(¡s:absclsname¡ const& rhs_, ¡s:absclsname¡ const& lhs_)¡IF(s:issharingimpl, "\n".'{ return isEqual(rhs_, lhs_); }', ';')¡
+    static ¡s:super¡ const diff(¡s:absclsname¡ const& lhs_, ¡s:absclsname¡ const& rhs_)
+    {
+	¡s:super¡ tmp(lhs_);
+	tmp.dec(rhs_);
+	return tmp;
+    }
+    friend bool operator==(¡s:absclsname¡ const& rhs_, ¡s:absclsname¡ const& lhs_)¡IF(s:issharingimpl, "\n{ return ".s:absclsname."::isEqual(rhs_, lhs_); }", ';')¡
     //@}
 };
 
@@ -70,91 +89,103 @@ public:
  * @version ¡'$'¡revision$
  * ¡CppDox_author()¡
  */
-class ¡s:relclsname.IF(s:issharingimpl, ' : DETAILS::' . s:sharedclsname, '')¡
+¡s:tmpl_decl¡class ¡s:relclsname.IF(s:issharingimpl, " : ".s:super, "")¡
 {
 public:
+    friend class ¡s:absclsname¡¡s:tmpl¡;
+    typedef ¡IF(s:issharingimpl, s:typename.s:super."::scalar_type", "<+scalar_type+>")¡ scalar_type;
 
     /**@name Construction/destruction
      */
     //@{
     /** Initialisation constructor.
      */
-    ¡s:relclsname¡(<+parameters+>);
+    ¡s:relclsname¡(<+parameters+>)¡IF(s:istemplate, s:inh."{<++>}", ";")¡
     ¡lh#cpp#abs_rel#canonicalortodoxform(s:relclsname, ! s:defaultisenough)¡
     //@}
 
     /**@name Operators
      */
     //@{
-    typedef ¡IF(s:issharingimpl, s:sharedclsname.'::scalar_type', '<+scalar_type+>')¡ scalar_type;
-    ¡s:relclsname¡ & operator+=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { add(rhs_); return *this; }', ';')¡
-    ¡s:relclsname¡ & operator-=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, ' { dec(rhs_); return *this; }', ';')¡
-    ¡s:relclsname¡ & operator*=(scalar_type coeff_)¡IF(s:issharingimpl, '{ mult(coeff_); return *this; }', ';')¡
-    ¡s:relclsname¡ & operator/=(scalar_type coeff_)¡IF(s:issharingimpl, '{ div(coeff_); return *this; }', ';')¡
+    ¡s:relclsname¡ & operator+=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, " { this->add(rhs_); return *this; }", ";")¡
+    ¡s:relclsname¡ & operator-=(¡s:relclsname¡ const& rhs_)¡IF(s:issharingimpl, " { this->dec(rhs_); return *this; }", ";")¡
+    ¡s:relclsname¡ & operator*=(scalar_type coeff_)¡IF(s:issharingimpl, "{ this->mult(coeff_); return *this; }", ";")¡
+    ¡s:relclsname¡ & operator/=(scalar_type coeff_)¡IF(s:issharingimpl, "{ this->div(coeff_); return *this; }", ";")¡
 
-    friend bool operator==(¡s:relclsname¡ const& rhs_, ¡s:relclsname¡ const& lhs_)¡IF(s:issharingimpl, "\n".'{ return isEqual(rhs_, lhs_); }', ';')¡
+    friend bool operator==(¡s:relclsname¡ const& rhs_, ¡s:relclsname¡ const& lhs_)¡IF(s:issharingimpl, "\n{ return ".s:relclsname."::isEqual(rhs_, lhs_); }", ";")¡
+
+    ¡s:tmpl2_decl¡friend ¡s:relclsname.s:tmpl2¡ const operator-(¡s:absclsname.s:tmpl2¡ const& lhs_, ¡s:absclsname.s:tmpl2¡ const& rhs_);
     //@}
+
+    protected:
+    explicit Dist(¡s:super¡ const& rhs_) : ¡s:super¡(rhs_) {}
 };
 
-inline
-¡s:absclsname¡ const operator+(
-	¡s:absclsname¡ const& lhs_,
-	¡s:relclsname¡ const& rhs_) 
-{ return ¡s:absclsname¡(lhs_) += rhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator-(
+	¡s:absclsname.s:tmpl¡ const& lhs_,
+	¡s:absclsname.s:tmpl¡ const& rhs_)
+{ return ¡s:relclsname.s:tmpl¡(¡s:absclsname.s:tmpl¡::diff(lhs_, rhs_)); }
 
-inline
-¡s:absclsname¡ const operator+(
-	¡s:relclsname¡ const& lhs_,
-	¡s:absclsname¡ const& rhs_)
-{ return ¡s:absclsname¡(rhs_) += lhs_; }
+¡s:tmpl_decl¡inline
+¡s:absclsname.s:tmpl¡ const operator+(
+	¡s:absclsname.s:tmpl¡ const& lhs_,
+	¡s:relclsname.s:tmpl¡ const& rhs_) 
+{ return ¡s:absclsname.s:tmpl¡(lhs_) += rhs_; }
 
-inline
-¡s:absclsname¡ const operator-(
-	¡s:absclsname¡ const& lhs_,
-	¡s:relclsname¡ const& rhs_)
-{ return ¡s:absclsname¡(lhs_) -= rhs_; }
+¡s:tmpl_decl¡inline
+¡s:absclsname.s:tmpl¡ const operator+(
+	¡s:relclsname.s:tmpl¡ const& lhs_,
+	¡s:absclsname.s:tmpl¡ const& rhs_)
+{ return ¡s:absclsname.s:tmpl¡(rhs_) += lhs_; }
+
+¡s:tmpl_decl¡inline
+¡s:absclsname.s:tmpl¡ const operator-(
+	¡s:absclsname.s:tmpl¡ const& lhs_,
+	¡s:relclsname.s:tmpl¡ const& rhs_)
+{ return ¡s:absclsname.s:tmpl¡(lhs_) -= rhs_; }
 
 #if 0
 // Makes no sense
-inline
-¡s:absclsname¡ const operator-(
-	¡s:relclsname¡ const& lhs_,
-	¡s:absclsname¡ const& rhs_);
+¡s:tmpl_decl¡inline
+¡s:absclsname.s:tmpl¡ const operator-(
+	¡s:relclsname.s:tmpl¡ const& lhs_,
+	¡s:absclsname.s:tmpl¡ const& rhs_);
 #endif
 
-inline
-¡s:relclsname¡ const operator+(
-	¡s:relclsname¡ const& lhs_,
-	¡s:relclsname¡ const& rhs_) 
-{ return ¡s:relclsname¡(lhs_) += rhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator+(
+	¡s:relclsname.s:tmpl¡ const& lhs_,
+	¡s:relclsname.s:tmpl¡ const& rhs_) 
+{ return ¡s:relclsname.s:tmpl¡(lhs_) += rhs_; }
 
-inline
-¡s:relclsname¡ const operator-(
-	¡s:relclsname¡ const& lhs_,
-	¡s:relclsname¡ const& rhs_)
-{ return ¡s:relclsname¡(lhs_) -= rhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator-(
+	¡s:relclsname.s:tmpl¡ const& lhs_,
+	¡s:relclsname.s:tmpl¡ const& rhs_)
+{ return ¡s:relclsname.s:tmpl¡(lhs_) -= rhs_; }
 
-inline
-¡s:relclsname¡ const operator*(
-	¡s:relclsname¡       const& lhs_,
-	¡s:relclsname¡::scalar_type rhs_) 
-{ return ¡s:relclsname¡(lhs_) *= rhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator*(
+	¡s:relclsname.s:tmpl¡       const& lhs_,
+	¡s:typename.s:relclsname.s:tmpl¡::scalar_type rhs_) 
+{ return ¡s:relclsname.s:tmpl¡(lhs_) *= rhs_; }
 
-inline
-¡s:relclsname¡ const operator*(
-	¡s:relclsname¡::scalar_type lhs_,
-	¡s:relclsname¡       const& rhs_)
-{ return ¡s:relclsname¡(rhs_) *= lhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator*(
+	¡s:typename.s:relclsname.s:tmpl¡::scalar_type lhs_,
+	¡s:relclsname.s:tmpl¡       const& rhs_)
+{ return ¡s:relclsname.s:tmpl¡(rhs_) *= lhs_; }
 
-inline
-¡s:relclsname¡ const operator/(
-	¡s:relclsname¡       const& lhs_,
-	¡s:relclsname¡::scalar_type rhs_) 
-{ return ¡s:relclsname¡(lhs_) /= rhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator/(
+	¡s:relclsname.s:tmpl¡       const& lhs_,
+	¡s:typename.s:relclsname.s:tmpl¡::scalar_type rhs_) 
+{ return ¡s:relclsname.s:tmpl¡(lhs_) /= rhs_; }
 
-inline
-¡s:relclsname¡ const operator/(
-	¡s:relclsname¡::scalar_type lhs_,
-	¡s:relclsname¡       const& rhs_)
-{ return ¡s:relclsname¡(rhs_) /= lhs_; }
+¡s:tmpl_decl¡inline
+¡s:relclsname.s:tmpl¡ const operator/(
+	¡s:typename.s:relclsname.s:tmpl¡::scalar_type lhs_,
+	¡s:relclsname.s:tmpl¡       const& rhs_)
+{ return ¡s:relclsname.s:tmpl¡(rhs_) /= lhs_; }
 

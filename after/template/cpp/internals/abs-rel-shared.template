@@ -9,33 +9,35 @@ VimL: let s:marker_close = '+>'
 VimL:"
 namespace DETAILS
 {
-    class ¡s:sharedclsname¡
+    ¡s:tmpl_decl¡class ¡s:sharedclsname¡
     {
     public:
-	typedef <+scalar_type+> scalar_type;
-	friend class ¡s:absclsname¡;
-	friend class ¡s:relclsname¡;
+	typedef ¡IF(s:istemplate, s:tmpl_type, "<+scalar_type+>")¡ scalar_type;
+	friend class ¡s:absclsname.s:tmpl¡;
+	friend class ¡s:relclsname.s:tmpl¡;
     protected:
 	/**@name Construction/destruction
 	 */
 	//@{
 	/** Initialisation constructor.
 	 */
-	¡s:sharedclsname¡(<+parameters+>);
-	¡IF(s:issharingimpl, '~'.s:sharedclsname.'();', '')¡
+	¡s:sharedclsname¡(<+parameters+>)¡IF(s:istemplate,"\n<+: +>{<++>}", ";")¡
+	/** Protected destructor.
+	 */
+	~¡s:sharedclsname¡();
 	¡lh#cpp#abs_rel#canonicalortodoxform(s:absclsname, ! s:defaultisenough)¡
 	//@}
 
 	/**@name Operations
 	 */
 	//@{
-	void add(¡s:sharedclsname¡ const& rhs_);
-	void dec(¡s:sharedclsname¡ const& rhs_);
-	void mult(scalar_type coeff_);
-	void div(scalar_type coeff_);
+	void add(¡s:sharedclsname¡ const& rhs_)¡IF(s:istemplate,"\n{<++>}", ";")¡
+	void dec(¡s:sharedclsname¡ const& rhs_)¡IF(s:istemplate,"\n{<++>}", ";")¡
+	void mult(scalar_type coeff_)¡IF(s:istemplate,"\n{<++>}", ";")¡
+	void div(scalar_type coeff_)¡IF(s:istemplate,"\n{<++>}", ";")¡
 	static bool isEqual(
 		¡s:sharedclsname¡ const& rhs_,
-		¡s:sharedclsname¡ const& lhs_);
+		¡s:sharedclsname¡ const& lhs_)¡IF(s:istemplate,"\n{<++>}", ";")¡
 	//@}
     private:
 	<+representation+>;
