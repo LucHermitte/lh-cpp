@@ -107,7 +107,7 @@ let s:namespace_open  = '\_s*'
 let s:namespace_close = '}'
 " }}}1
 " ==========================================================================
-" Debug oriented command
+" Debug oriented command {{{1
 if exists('g:force_load_cpp_FindContextClass')
   command! -nargs=1 CppCACEcho :echo s:<arg>
 endi
@@ -126,7 +126,7 @@ function! lh#cpp#AnalysisLib_Class#debug(expr)
   return eval(a:expr)
 endfunction
 
-
+" }}}1
 " ==========================================================================
 " Search for current and most nested namespace/class <internal> {{{
 
