@@ -40,7 +40,11 @@ endfunction
 "------------------------------------------------------------------------
 function! lh#cpp#abs_rel#canonicalortodoxform(clsname, required)
   if !a:required | return "" | endif
-  let text = Marker_Txt("sorry not implemented yet>") . ";\n"
+  let text = "/** Protected Copy constructor.\n*/\n"
+  let text .= a:clsname."(".a:clsname." const& rhs_);\n"
+  let text .= "/** Protected Assignment operator.\n*/\n"
+  let text .= a:clsname." & operator=(".a:clsname." const& rhs_);"
+  " let text = Marker_Txt("sorry not implemented yet>") . ";\n"
   return text
 endfunction
 "------------------------------------------------------------------------

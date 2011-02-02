@@ -40,8 +40,8 @@ function! lh#cpp#brackets#lt()
       return '<!cursorhere!>!mark!'
       " NB: InsertSeq with "\<left>" as parameter won't work in utf-8 => Prefer
       " "h" when motion is needed.
-      " return '<>' . "!mark!\<esc>".strlen(Marker_Txt())."hi"
-      " return '<>' . "!mark!\<esc>".strlen(Marker_Txt())."\<left>i"
+      " return '<>' . "!mark!\<esc>".lh#encoding#strlen(Marker_Txt())."hi"
+      " return '<>' . "!mark!\<esc>".lh#encoding#strlen(Marker_Txt())."\<left>i"
     else
       " return '<>' . "\<Left>"
       return '<!cursorhere!>'
