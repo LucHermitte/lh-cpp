@@ -1,0 +1,22 @@
+VimL:" $Id$
+VimL:" traits-class File Template, Luc Hermitte, 20th Jan 2011
+VimL:" hint: traits-class
+VimL: let s:value_start = '¡'
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+/** <+name+> traits class.
+ */
+template <typename <+T+>> struct <+name+>_traits
+{
+    <++>
+};
+
+/** <+name+> traits class specialization for \c <+spe+>.
+ */
+VimL: " todo: auto deduce the overridable traits
+template <> struct <+name+>_traits<<+spe+>>
+{
+    <++>
+};
