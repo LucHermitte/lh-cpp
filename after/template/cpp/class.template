@@ -15,7 +15,7 @@ VimL:"
  *
  * <+doc+>
  *
- * <+@invariants+>
+ * <+@invariant+>
  *
  * <p><b>Semantics</b><br>
  ¡g:CppDox_semantics¡
