@@ -160,22 +160,22 @@ function! CppDox_ClassWizard(clsname)
 	  \ s:AssignmentOperator(a:clsname)
     let g:CppDox_inherits  = ''
     let g:CppDox_semantics =
-	  \ " * <li> Full value semantics (stack-based, copyable".Marker_Txt(", comparable").")\n"
+	  \ " * -  Full value semantics (stack-based, copyable".Marker_Txt(", comparable").")\n"
 
   elseif semantics == 2 " stack-based semantics, non-copyable
     let g:CppDox_isVirtualDest = ''
     let g:CppDox_inherits = ': public boost::noncopyable'
     let g:CppDox_semantics =
-	  \ " * <li> Stack-based semantics\n"
-	  \." * <li> Non-copyable"
+	  \ " * -  Stack-based semantics\n"
+	  \." * -  Non-copyable"
 
   elseif semantics == 3 " entity semantics, non-copyable
     let g:CppDox_isVirtualDest = 'virtual '
     let g:CppDox_inherits = ': public boost::noncopyable'.
 	  \ Marker_Txt(', other ancestors')
     let g:CppDox_semantics =
-	  \ " * <li> Entity semantics (=> reference semantics)\n"
-	  \." * <li> Non-copyable"
+	  \ " * -  Entity semantics (=> reference semantics)\n"
+	  \." * -  Non-copyable"
 
   elseif semantics == 4 " entity semantics, clonable
     let g:CppDox_isVirtualDest = 'virtual '
@@ -185,8 +185,8 @@ function! CppDox_ClassWizard(clsname)
     let g:CppDox_forbidden_members = 
 	  \ s:AssignmentOperator(a:clsname, "Disabled")
     let g:CppDox_semantics =
-	  \ " * <li> Entity semantics (=> reference semantics)\n"
-	  \." * <li> Clonable"
+	  \ " * -  Entity semantics (=> reference semantics)\n"
+	  \." * -  Clonable"
   endif
 
 endfunction
@@ -221,9 +221,9 @@ function! CppDox_SingletonWizard(clsname)
     let g:CppDox_isVirtualDest      = ""
     let g:CppDox_inherits           = ": private boost::noncopyable"
     let g:CppDox_semantics          =
-          \ " * <li> Implicitly initialized with a default constructor\n"
-	  \." * <li> MT-Safe\n"
-	  \." * <li> Non-copyable"
+          \ " * -  Implicitly initialized with a default constructor\n"
+	  \." * -  MT-Safe\n"
+	  \." * -  Non-copyable"
     let g:CppDox_instance           = "public:\n"
 	  \."static ".a:clsname." & instance() {\n"
 	  \."    static ".a:clsname." theInstance;\n"
@@ -238,9 +238,9 @@ function! CppDox_SingletonWizard(clsname)
           \ "static ".a:clsname." *ms_instance;\n"
           \.g:CppDox_private_members
     let g:CppDox_semantics          =
-	  \ " * <li> Explicitly initialized\n"
-	  \." * <li> MT-Safe\n"
-	  \." * <li> Non-copyable"
+	  \ " * -  Explicitly initialized\n"
+	  \." * -  MT-Safe\n"
+	  \." * -  Non-copyable"
     let g:CppDox_instance           = "public:\n"
           \."/** Singleton accessor.\n"
 	  \." * @pre ms_instance != 0\n"
