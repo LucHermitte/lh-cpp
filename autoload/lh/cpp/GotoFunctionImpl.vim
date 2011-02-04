@@ -27,6 +27,8 @@
 "	    cannot be found.
 "	v1.1.0
 "	(*) two functions moved to autoload/lh/cpp/AnalysisLib_Function
+"	v1.1.1
+"	(*) Support jump to existing destructor
 " TODO:		«missing features»
 " 	(*) add knowledge about C99/C++0x new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -250,7 +252,7 @@ function! s:Search4Impl(re_impl, scope)
     endif
     silent exe 'normal! v'.mv.'y'
     let &foldenable=fe
-    let current_proto = matchstr(@", '\%(::\|\<\I\i*\>\)\+\ze($')
+    let current_proto = matchstr(@", '\%(::\|\<\I\i*\>\|\~\)\+\ze($')
     let proto0= @"
     let @" = z
     " Todo: purge comments within current_proto
@@ -263,12 +265,12 @@ function! s:Search4Impl(re_impl, scope)
       let required_ns = required_ns . '::' 
     endif
     " call confirm('required_ns='.required_ns.
-	  " \ "\ncurrent_proto=".current_proto.
-	  " \ "\ncurrent_ns=".current_ns.
-	  " \ "\n".l."=".getline('.').
-	  " \ "\n\nreq_proto=".req_proto.
-	  " \ "\n\nmv=".mv."\nproto0=".proto0."\ncurrent=".current,
-	  " \ '&ok', 1)
+          " \ "\ncurrent_proto=".current_proto.
+          " \ "\ncurrent_ns=".current_ns.
+          " \ "\n".l."=".getline('.').
+          " \ "\n\nmv=".mv."\nproto0=".proto0."\ncurrent=".current,
+          " \ '&ok', 1)
+          " \ "\n\nreq_proto=".req_proto.
     if match(current,'^'.required_ns) == 0 
       return l 
     endif
