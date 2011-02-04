@@ -3,7 +3,7 @@
 " File:		ftplugin/cpp/cpp_Doxygen.vim                              {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	1.1.«1»
 " Created:	22nd Nov 2005
 " Last Update:	$Date$ (08th Feb 2008)
 "------------------------------------------------------------------------
@@ -162,8 +162,8 @@ function! s:Doxygenize()
   for param in params
     let sValue =
 	  \  s:Tag("param")
-	  \ . s:ParameterDirection(param[0])
-	  \ . ' ' . param[1]
+	  \ . s:ParameterDirection(param.type)
+	  \ . ' ' . param.name
 	  \ . '  ' . Marker_Txt('explanations') 
     call add (g:CppDox_Params_snippet, sValue)
   endfor
