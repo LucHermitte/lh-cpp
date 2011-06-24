@@ -35,17 +35,30 @@ let b:loaded_ftplug_previewWord = 1
 
 "------------------------------------------------------------------------
 " Mappings {{{
-inoremap <buffer> <c-space> <C-o>:call <sid>PreviewWord()<CR>
-nnoremap <buffer> <c-space> :call <sid>PreviewWord()<CR>
-nnoremap <buffer> <c-F10> :call <sid>ClosePreviewWindow()<CR>
-inoremap <buffer> <c-F10> <c-o>:call <sid>ClosePreviewWindow()<CR>
+inoremap <buffer> <Plug>PreviewWord <C-o>:call <sid>PreviewWord()<CR>
+if !hasmapto('<Plug>PreviewWord', 'i')
+  imap <unique> <c-space> <Plug>PreviewWord
+endif
+nnoremap <buffer> <Plug>PreviewWord :call <sid>PreviewWord()<CR>
+if !hasmapto('<Plug>PreviewWord', 'n')
+  nmap <unique> <c-space> <Plug>PreviewWord
+endif
+
+inoremap <buffer> <Plug>ClosePreviewWindow <C-o>:call <sid>ClosePreviewWindow()<CR>
+if !hasmapto('<Plug>ClosePreviewWindow', 'i')
+  imap <unique> <c-F10> <Plug>ClosePreviewWindow
+endif
+nnoremap <buffer> <Plug>ClosePreviewWindow :call <sid>ClosePreviewWindow()<CR>
+if !hasmapto('<Plug>ClosePreviewWindow', 'n')
+  nmap <unique> <c-F10> <Plug>ClosePreviewWindow
+endif
 
 " I've (LH) desactivated the '(' key because I use a bracketing system.
 " inoremap <buffer> <c-space> <C-R>=<sid>PreviewFunctionSignature()<CR> 
 " }}}
  
 " g:preview_if_hold {{{
-if !exists('g:preview_if_hold') | let g:preview_if_hold = 0 | endif
+LetIfUndef g:preview_if_hold 0 
 if !exists('*Trigger_Function')
   runtime plugin/Triggers.vim
 endif
