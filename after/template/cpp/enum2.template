@@ -1,0 +1,47 @@
+VimL:" $Id$
+VimL:" safe-Enum definition Template, Luc Hermitte
+VimL: let s:value_start = '¡'
+VimL:" hint: struct Enum { enum type { ... } ; private: type m_value; };
+VimL: let s:value_end   = '¡'
+VimL: let s:reindent = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt(expand('%:t:r')))
+struct ¡s:enum_name¡ {
+    enum type { <+values+>, MAX__ };
+    static type next(type e_) {
+        assert(e_ < MAX__);
+        return type(e_+1);
+    }
+    static ¡s:enum_name¡ to_enum(std::string const& s_);
+    static char const* to_string(type e_);
+    char const* to_string() const { return to_string(m_value); }
+
+    explicit ¡s:enum_name¡(uint8_t value_ = MAX__)
+        : m_value(value_) {
+            assert(m_value < MAX__);
+        }
+    ¡s:enum_name¡& operator=(¡s:enum_name¡::type value_) {
+        assert(m_value < MAX__);
+        m_value = value_;
+        return *this;
+    }
+    uint8_t to_int() const { return m_value; }
+    friend bool operator==(type lhs_, ¡s:enum_name¡ rhs_) { return lhs_==rhs_.m_value; }
+    friend bool operator==(¡s:enum_name¡ lhs_, type rhs_) { return lhs_.m_value==rhs_; }
+    friend bool operator!=(¡s:enum_name¡ lhs_, ¡s:enum_name¡ rhs_) { return lhs_.m_value!=rhs_.m_value; }
+private:
+    type m_value;
+};
+
+inline
+¡s:enum_name¡::type& operator++(¡s:enum_name¡::type& e_) {
+    return e_ = ¡s:enum_name¡::next(e_);
+}
+
+inline
+¡s:enum_name¡::type operator++(¡s:enum_name¡::type&e_, int) {
+    const ¡s:enum_name¡::type tmp = e_;
+    e_ = ¡s:enum_name¡::next(e_);
+    return tmp;
+}
