@@ -49,7 +49,7 @@ cnoreab          firend friend
 inoreab <buffer> firend friend
 
 inoremap <buffer> <m-s> std::
-inoremap <buffer> <m-b> boost::
+inoremap <buffer> <expr> <m-b> (getline('.')=~'#\s*include') ? 'boost/' : 'boost::'
 " We don't want ô (\hat o) to be expanded in comments)
 inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\<cr\>')<cr>
 
