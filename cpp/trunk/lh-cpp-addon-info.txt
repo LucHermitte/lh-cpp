@@ -3,12 +3,12 @@
   "version" : "dev",
   "author" : "Luc Hermitte <http://code.google.com/p/lh-vim/wiki/contact>",
   "maintainer" : "Luc Hermitte <http://code.google.com/p/lh-vim/wiki/contact>",
-  "repository" : {"type": "svn", "url": "http://code.google.com/p/lh-vim/source/browse/#svn/tags/trunk"},
+  "repository" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/cpp/trunk"},
   "dependencies" : {
-      "lh-vim-lib" : {"type" : "svn", "url" : "http://code.google.com/p/lh-vim/source/browse/#svn/vim-lib/trunk"},
-      "lh-brackets" : {"type": "svn", "url": "http://code.google.com/p/lh-vim/source/browse/#svn/map-tools/trunk"},
-      "mu-template" : {"type": "svn", "url": "http://code.google.com/p/lh-vim/source/browse/#svn/mu-template/trunk"},
-      "lh-dev" : {"type": "svn", "url": "http://code.google.com/p/lh-vim/source/browse/#svn/dev/trunk"}
+      "lh-vim-lib" : {"type" : "svn", "url" : "http://lh-vim.googlecode.com/svn/vim-lib/trunk"},
+      "lh-brackets" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/map-tools/trunk"},
+      "mu-template" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/mu-template/trunk"},
+      "lh-dev" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/dev/trunk"}
   },
   "description" : "C&C++ ftplugins suite",
   "homepage" : "http://code.google.com/p/lh-vim/wiki/lhCpp"
