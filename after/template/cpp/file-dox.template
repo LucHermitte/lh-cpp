@@ -7,7 +7,7 @@ VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL:"
-/**@ingroup g<+Projet+>
+/**@ingroup g¡lh#option#get('dox_group', '<+Projet+>')¡
  * @file    ¡expand('%:t')¡
  * ¡CppDox_author()¡
  * @version ¡'$'¡Revision$
