@@ -16,4 +16,6 @@ for (<+container-type+>::<+const_+>iterator ¡s:begin¡ = ¡s:cont¡.begin(), ¡
     ; ¡s:begin¡ != ¡s:end¡
     ; ++¡s:begin¡
     )
-{<+code+>}<++>
+{
+¡s:Surround(1, '<++>')¡
+}<++>
