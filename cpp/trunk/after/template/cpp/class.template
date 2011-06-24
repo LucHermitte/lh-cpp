@@ -10,7 +10,7 @@ VimL: let s:clsname = inputdialog("class name ?", Marker_Txt(expand('%:t:r')))
 VimL: call CppDox_set_brief_snippet()
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
-/**
+/**@ingroup g¡lh#option#get('dox_group', '<+Group+>')¡
  * ¡g:CppDox_brief_snippet¡
  *
  * <+doc+>

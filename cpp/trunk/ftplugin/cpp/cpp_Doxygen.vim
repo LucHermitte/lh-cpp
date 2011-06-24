@@ -3,7 +3,7 @@
 " File:		ftplugin/cpp/cpp_Doxygen.vim                              {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.«1»
+" Version:	1.1.«2»
 " Created:	22nd Nov 2005
 " Last Update:	$Date$ (08th Feb 2008)
 "------------------------------------------------------------------------
@@ -71,17 +71,8 @@ let s:loaded_cpp_Doxygen_vim = 1
 
 " require Cpp_GetListOfParams and Cpp_GetFunctionPrototype
 
-function! s:CommentLeadingChar()
-  return lh#option#get('CppDox_CommentLeadingChar', '*', 'bg')
-endfunction
-
-function! s:TagLeadingChar()
-  return lh#option#get('CppDox_TagLeadingChar', '@', 'bg')
-  " alternative: \
-endfunction
-
-function! s:Tag(tag)
-  return s:TagLeadingChar().a:tag
+function! lh#cpp#dox#tag(tag)
+  return lh#cpp#dox#tag_leading_char().a:tag
 endfunction
 
 function! CppDox_snippet(tagname, commentLeadingChar)
@@ -103,7 +94,7 @@ let s:author_tag = lh#option#get('CppDox_author_tag', 'author', 'g')
 
 function! CppDox_author()
   let s:author_tag = lh#option#get('CppDox_author_tag', 'author', 'g')
-  let tag         = s:TagLeadingChar() . s:author_tag . ' '
+  let tag         = lh#cpp#dox#tag_leading_char() . s:author_tag . ' '
 
   let author = lh#option#get('CppDox_author', '', 'bg')
   if author =~ '^g:.*'
@@ -138,13 +129,13 @@ endfunction
 function! CppDox_set_brief_snippet()
   let brief = lh#option#get('CppDox_brief', 'short', 'bg')
   if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
-    let g:CppDox_brief_snippet = s:Tag('brief ').Marker_Txt('brief').'.'
+    let g:CppDox_brief_snippet = lh#cpp#dox#tag('brief ').Marker_Txt('brief').'.'
   elseif brief =~? '^no$\|^n\%[ever]$\|0'
     let g:CppDox_brief_snippet = Marker_Txt('brief').'.'
   elseif brief =~? '^s\%[hort]$'
     let g:CppDox_brief_snippet = Marker_Txt('autobrief').'.'
   else " maybe
-    let g:CppDox_brief_snippet = Marker_Txt(s:Tag('brief ')).'.'
+    let g:CppDox_brief_snippet = Marker_Txt(lh#cpp#dox#tag('brief ')).'.'
   endif
 endfunction
 " Function: s:Doxygenize()                            {{{2
@@ -161,21 +152,21 @@ function! s:Doxygenize()
   let g:CppDox_Params_snippet = []
   for param in params
     let sValue =
-	  \  s:Tag("param")
+	  \  lh#cpp#dox#tag("param")
 	  \ . s:ParameterDirection(param.type)
 	  \ . ' ' . param.name
-	  \ . '  ' . Marker_Txt('explanations') 
+	  \ . '  ' . Marker_Txt((param.name).'-explanations') 
     call add (g:CppDox_Params_snippet, sValue)
   endfor
 
   " Ingroup
   let ingroup = lh#option#get('CppDox_ingroup', 0, 'bg')
   if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
-    let g:CppDox_ingroup_snippet = s:Tag('ingroup ').Marker_Txt('group')
+    let g:CppDox_ingroup_snippet = lh#cpp#dox#tag('ingroup ').Marker_Txt('group')
   elseif ingroup =~? '^no$\|^n\%[ever]$\|0'
     let g:CppDox_ingroup_snippet = ''
   else " maybe
-    let g:CppDox_ingroup_snippet = Marker_Txt(s:Tag('ingroup '))
+    let g:CppDox_ingroup_snippet = Marker_Txt(lh#cpp#dox#tag('ingroup '))
   endif
 
   " Brief
@@ -184,7 +175,7 @@ function! s:Doxygenize()
   if ret =~ 'void\|^$'
     let g:CppDox_return_snippet = ''
   else
-    let g:CppDox_return_snippet	  = s:Tag('return ').Marker_Txt(ret) 
+    let g:CppDox_return_snippet	  = lh#cpp#dox#tag('return ').Marker_Txt(ret) 
   endif
 
   " todo
@@ -192,14 +183,14 @@ function! s:Doxygenize()
   " list => n x @throw list
   " non-existant => markerthrow
   if !has_key(info, 'throw') || len(info.throw) == 0 
-    let g:CppDox_exceptions_snippet = Marker_Txt(s:Tag('throw '))
+    let g:CppDox_exceptions_snippet = Marker_Txt(lh#cpp#dox#tag('throw '))
   else
     let throws = info.throw
     let empty_marker = Marker_Txt('')
     if len(throws) == 1 && strlen(throws[0]) == 0 
-      let g:CppDox_exceptions_snippet = s:Tag('throw ').'None'.empty_marker
+      let g:CppDox_exceptions_snippet = lh#cpp#dox#tag('throw ').'None'.empty_marker
     else
-      call map(throws, '"'.s:Tag('throw ').'".v:val. empty_marker')
+      call map(throws, '"'.lh#cpp#dox#tag('throw ').'".v:val. empty_marker')
       let g:CppDox_exceptions_snippet = throws
     endif
   endif
