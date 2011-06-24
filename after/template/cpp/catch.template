@@ -7,5 +7,5 @@ VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 catch¡C_nl_before_bracket()¡(<+...+>)¡C_nl_before_curlyB()¡{
-    <+catch-code+>
+    ¡s:Surround(1, '<+catch-code+>')¡
 }<++>

@@ -10,5 +10,5 @@ VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt('Enum
 VimL: let s:index = inputdialog('Name of the for index ?', Marker_Txt('e'))
 VimL: " todo: automagically detect the type of the real enum, and the MAX__ value
 for (¡s:enum_name¡::type ¡s:index¡ = ¡s:enum_name¡::type() ; ¡s:index¡ != ¡s:enum_name¡::MAX__ ; ++¡s:index¡ ) {
-   <++>
+    ¡s:Surround(1, '<++>')¡
 }<++>
