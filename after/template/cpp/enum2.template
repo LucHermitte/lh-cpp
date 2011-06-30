@@ -18,7 +18,7 @@ struct ¡s:enum_name¡ {
     char const* to_string() const { return to_string(m_value); }
 
     explicit ¡s:enum_name¡(uint8_t value_ = MAX__)
-        : m_value(value_) {
+        : m_value(type(value_)) {
             assert(m_value < MAX__);
         }
     ¡s:enum_name¡& operator=(¡s:enum_name¡::type value_) {

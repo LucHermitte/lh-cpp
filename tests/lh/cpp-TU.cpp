@@ -1,6 +1,15 @@
 // nnoremap µ :echo lh#cpp#AnalysisLib_Function#AnalysePrototype(lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0))<cr>
 // nnoremap £ :echo lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0)<cr>
 
+
+// test refactorinng
+void f(int z) {
+    int i = 42 + z;
+    printf("ttoto %d\n", i);
+    int j = i / 2 ;
+}
+
+
 void f(int)
 {
     printf(toto);
@@ -33,6 +42,8 @@ class Toto
     void foo(toto t=42, titi r, tutu z=f()) throw(foo, bar);
     void foo(toto t=42, std::string const& s, char * p, int[] i, titi r, tutu z=f()) const throw(foo, bar);
     int foo(toto t=42, std::string const&, char * p, int[] i, std::vector<short>, titi r, tutu z=f()) const throw(foo, bar);
+
+    int bar(/*c1*/T/*c2*/ v/*c3*/); // c-eol
 };
 
 namespace NS1 { namespace NS2 {

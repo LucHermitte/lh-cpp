@@ -18,6 +18,7 @@ plugin/a-old.vim
 after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
 after/template/cpp/internals/stream-signature.template
+after/template/cpp/b-e.template
 after/template/cpp/bool-operator.template
 after/template/cpp/class.template
 after/template/cpp/singleton.template

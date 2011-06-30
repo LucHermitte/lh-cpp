@@ -47,6 +47,7 @@ Iabbr <buffer> tpl template <
 inoreab <buffer> vir virtual
 cnoreab          firend friend
 inoreab <buffer> firend friend
+inoreab <buffer> delate delta
 
 inoremap <buffer> <m-s> std::
 inoremap <buffer> <expr> <m-b> (getline('.')=~'#\s*include') ? 'boost/' : 'boost::'

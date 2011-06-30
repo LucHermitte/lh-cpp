@@ -1,0 +1,8 @@
+VimL:" $Id$
+VimL:" b-e File Template, Luc Hermitte, 30th Jun 2011
+VimL:" hint: <+c+>.begin(), <+c+>.end()
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:c = empty(s:Args()) ? Marker_Txt('c') : (s:Args()[0])
+<+s:c+>.begin(), <+s:c+>.end()<++>
+VimL: unlet s:c
