@@ -9,7 +9,7 @@ Audience      : Any C&C++ developers,
 		features that require a little understanding of C++
 		constructs (like function signatures, etc)
 Requirements  : Vim 7, lh-vim-lib (2.2.0), map-tools (1.0.0),
-		searchInRuntime, mu-template v2.0.3, lh-tags
+		searchInRuntime, mu-template v2.4.0, lh-tags
 		alternate (a version is shipped with lh-cpp)
 Required by   : No other script as far as I know
 Author        : Luc Hermitte
