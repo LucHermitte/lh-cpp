@@ -3,7 +3,7 @@
 " File:		plugin/homeLikeVC++.vim
 " Author:	Luc Hermitte <EMAIL:hermitte at free.fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	2.0.1
 " Created:	23rd mar 2002
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -49,24 +49,23 @@
 "  v1.0:   initial version
 "  v1.1:   VISUAL-mode mapping added.
 "  v2.0.0: <end> is supported as well
-" 
-" TODO:		any missing features ?
+"  v2.0.1: silent mappings
 "=============================================================================
 "
 " Avoid reinclusion
 if exists("g:loaded_homeLikeVC") && !exists('g:force_reload_homelikeVC')
   finish 
 endif
-let g:loaded_homeLikeVC = '2.0.0'
+let g:loaded_homeLikeVC = '2.0.1'
 
 "------------------------------------------------------------------------
-inoremap <Home> <c-o>@=<SID>HomeLikeVCpp()<cr>
-nnoremap <Home> @=<SID>HomeLikeVCpp()<cr>
-vnoremap <Home> @=<SID>HomeLikeVCpp()<cr>
+inoremap <silent> <Home> <c-o>@=<SID>HomeLikeVCpp()<cr>
+nnoremap <silent> <Home> @=<SID>HomeLikeVCpp()<cr>
+vnoremap <silent> <Home> @=<SID>HomeLikeVCpp()<cr>
 
-inoremap <End> <c-\><c-n>@=<SID>EndLikeVCpp()<cr>a
-nnoremap <End> @=<SID>EndLikeVCpp()<cr>
-vnoremap <End> @=<SID>EndLikeVCpp()<cr>
+inoremap <silent> <End> <c-\><c-n>@=<SID>EndLikeVCpp()<cr>a
+nnoremap <silent> <End> @=<SID>EndLikeVCpp()<cr>
+vnoremap <silent> <End> @=<SID>EndLikeVCpp()<cr>
 
 function! s:HomeLikeVCpp()
   let ll = strpart(getline('.'), -1, col('.'))
@@ -82,11 +81,11 @@ function! s:EndLikeVCpp()
 
   if getline('.') =~ '^\s*$'
     if col('.') + (mode()!='v') == col('$') | return 'g_'
-    else                        | return '$'
+    else                                    | return '$'
     endif
   else
     if ll >= 0 | return '$'
-    else                        | return 'g_'
+    else       | return 'g_'
     endif
   endif
 endfunction

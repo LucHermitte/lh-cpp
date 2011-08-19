@@ -68,9 +68,12 @@ endfunction
 " Purpose:	Returns the correct expression of the type regarding the
 " 		const-correctness issue ; cf Herb Sutter's
 " 		_Exceptional_C++_ - Item 43.
+" Option:       (b|g):{cpp_}place_const_after_type : boolean, default: true
 function! lh#cpp#types#ConstCorrectType(type)
   if lh#cpp#types#IsBaseType(a:type,1) == 1
     return a:type
+  elseif lh#dev#option#get('place_const_after_type', 'cpp', 1)
+    return a:type . ' const&'
   else
     return 'const ' . a:type . '&'
   endif

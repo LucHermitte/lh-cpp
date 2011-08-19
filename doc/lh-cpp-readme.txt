@@ -1,9 +1,8 @@
 *lh-cpp-readme.txt*     C & C++ ftplugins short presentation
                         For Vim version 6.x.    Last change: 02nd May 2005
 
-
-                               By Luc Hermitte
-                               <hermitte {at} free {dot} fr>
+                        By Luc Hermitte
+                        <hermitte {at} free {dot} fr>
 
 
 ------------------------------------------------------------------------------
@@ -234,21 +233,15 @@ Features~
         :REACHINLINE {name} ;RI         Reaches the place where inlines are
                                         defined
     Options:
-        *g:setPrefix* *g:getPrefix* *g:refPrefix* accessors names
-        *g:dataPrefix* *g:dataSuffix* member variables names
-        *g:accessorCap* decides the capitalization ...
-            ... of the first letter of the attribute within accessor-names
-            -1  -> always lowercase ; Foo => get_foo(), foo => get_foo()
-            [0] -> no change        ; Foo => get_Foo(), foo => get_foo()
-             1  -> always uppercase ; Foo => get_Foo(), foo => get_Foo()
+        See |lhdev-naming| options.
 
-        *g:accessor_comment_get* *g:accessor_comment_proxy_get*
-        *g:accessor_comment_set* *g:accessor_comment_proxy_set*
-        *g:accessor_comment_ref* *g:accessor_comment_proxy_ref*
+        *(b|g):{ft_}accessor_comment_get* *(b|g):{ft_}accessor_comment_proxy_get*
+        *(b|g):{ft_}accessor_comment_set* *(b|g):{ft_}accessor_comment_proxy_set*
+        *(b|g):{ft_}accessor_comment_ref* *(b|g):{ft_}accessor_comment_proxy_ref*
             => strings to customize the comments
             "%a" will be substituted by the name of the attribute.
 
-        *g:implPlace* where accessor-definitions occur 
+        *(b|g):{ft_}implPlace* where accessor-definitions occur 
             0 -> Near the prototype/definition (Java's way)
             1 -> Within the inline section of the header/inline/current file
             2 -> Within the implementation file (.cpp)
