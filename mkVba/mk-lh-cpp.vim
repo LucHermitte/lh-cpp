@@ -15,12 +15,16 @@ finish
 after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 plugin/a-old.vim
+after/template/cpp/internals/function-comment.template
 after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
 after/template/cpp/internals/stream-signature.template
+after/template/cpp/assignment-operator.template
 after/template/cpp/b-e.template
 after/template/cpp/bool-operator.template
 after/template/cpp/class.template
+after/template/cpp/copy-and-swap.template
+after/template/cpp/copy-constructor.template
 after/template/cpp/singleton.template
 after/template/cpp/stream-extractor.template
 after/template/cpp/stream-inserter.template
