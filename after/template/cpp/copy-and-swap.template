@@ -1,0 +1,33 @@
+VimL:" $Id$
+VimL:" copy-and-swap File Template, Luc Hermitte, 21st Aug 2011
+VimL:" hint: assign op + swap
+VimL: " todo: recognize C++11 in order to add the proper nothrow specification
+VimL: " todo: use doxygen auto-brief setting
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: " in case the class name is already known, no need to extract it
+VimL: let s:clsname = empty(s:Args()) ? Cpp_CurrentScope(line("."), "class") : (s:Args()[0])
+VimL:"
+VimL:"
+VimL: let s:rhs = lh#dev#naming#param("rhs")
+VimL: let s:fn_comments = { }
+VimL: let s:fn_comments.brief = "Assignment operator"
+VimL: let s:fn_comments.text  = []
+VimL: let s:fn_comments.note  = [] " => empty line
+VimL: let s:fn_comments.note += ["based on copy-and-swap idiom, with copy-elision exploited"]
+VimL: let s:fn_comments.note += ["exception-safe"]
+VimL: let s:fn_comments.param = [s:rhs . " data to copy"]
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
+<+s:clsname+>& operator=(<+s:clsname+> <+s:rhs+>)
+{
+    this->swap(<+s:rhs+>);
+    return *this;
+}
+
+VimL: let s:fn_comments = { }
+VimL: let s:fn_comments.brief = "Swap operation"
+VimL: let s:fn_comments.throw = ["None"]
+VimL: let s:fn_comments.param = [s:rhs . " data with which content is swapped"]
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
+void swap(<+s:clsname+> & <+lh#dev#naming#param("other")+>);

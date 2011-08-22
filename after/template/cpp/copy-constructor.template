@@ -1,0 +1,11 @@
+VimL:" $Id$
+VimL:" copy-constructor File Template, Luc Hermitte, 21st Aug 2011
+VimL:" hint: T(T const&);
+VimL: let s:marker_open  = "<+"
+VimL: let s:marker_close = "+>"
+VimL: let s:reindent     = 1
+VimL: " in case the class name is already known, no need to extract it
+VimL: let s:clsname = empty(s:Args()) ? Cpp_CurrentScope(line("."), "class") : (s:Args()[0])
+/** <+lh#cpp#dox#brief('')+>Copy constructor.
+ */
+<+s:clsname+>(<+s:clsname+> const& <+lh#dev#naming#param("rhs")+>);
