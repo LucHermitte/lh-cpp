@@ -1,0 +1,16 @@
+VimL:" $Id$
+VimL:" assignment-operator File Template, Luc Hermitte, 21st Aug 2011
+VimL:" hint: T& operator=(T const&);
+VimL: let s:marker_open  = "<+"
+VimL: let s:marker_close = "+>"
+VimL: let s:reindent     = 1
+VimL: " in case the class name is already known, no need to extract it
+VimL: let s:clsname = empty(s:Args()) ? Cpp_CurrentScope(line("."), "class") : (s:Args()[0])
+VimL: let s:use_copyandswap = len(s:Args())>=2 ? (s:Args()[0]) : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
+MuT: if 1 == s:use_copyandswap
+VimL: call s:Include("copy-and-swap","cpp", s:clsname)
+MuT: else 
+/** <+lh#cpp#dox#brief('')+>Assignment operator.
+ */
+<+s:clsname+>& operator=(<+s:clsname+> const& <+lh#dev#naming#param("rhs")+>);
+MuT: endif

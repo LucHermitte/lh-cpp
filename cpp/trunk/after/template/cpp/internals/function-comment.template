@@ -1,0 +1,26 @@
+VimL:" $Id$
+VimL:" function-comment File Template, Luc Hermitte, 22nd Aug 2011
+VimL:" template to generate function comments, default format=doxygen
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:fn_comments=s:Args()[0]
+VimL: function! s:_ExpandListTag(tagname, data)
+VimL:   if !has_key(a:data, a:tagname) | return "" | endif
+VimL:   let res = []
+VimL:   for e in a:data[a:tagname]
+VimL:       let res += [lh#cpp#dox#comment_leading_char()." " . lh#cpp#dox#tag(a:tagname) . ' ' . e]
+VimL:   endfor
+VimL:   return join(res, "\n")
+VimL: endfunction
+/** <+lh#cpp#dox#brief(s:fn_comments.brief)+>.
+<+s:_ExpandListTag('param', s:fn_comments)+>
+<+s:_ExpandListTag('return', s:fn_comments)+>
+<+s:_ExpandListTag('throw', s:fn_comments)+>
+<+s:_ExpandListTag('invariant', s:fn_comments)+>
+<+s:_ExpandListTag('pre', s:fn_comments)+>
+<+s:_ExpandListTag('post', s:fn_comments)+>
+MuT: if has_key(s:fn_comments, 'text')
+<+lh#cpp#dox#comment_leading_char()+> <+join(s:fn_comments.text, "\n".lh#cpp#dox#comment_leading_char()." ")+>
+MuT: endif
+<+s:_ExpandListTag('note', s:fn_comments)+>
+ */
