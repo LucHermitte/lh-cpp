@@ -68,6 +68,20 @@ function! lh#cpp#dox#tag(tag)
   return lh#cpp#dox#tag_leading_char().a:tag
 endfunction
 
+" Function: lh#cpp#dox#brief([text]) {{{3
+function! lh#cpp#dox#brief(...)
+  let text = a:0==0 ? Marker_Txt('brief').'.' : a:1
+  let brief = lh#option#get('CppDox_brief', 'short', 'bg')
+  if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
+    let res =  lh#cpp#dox#tag('brief ').text
+  elseif brief =~? '^no$\|^n\%[ever]$\|0\|^s\%[hort]$'
+    let res =  text
+  else " maybe
+    let res =  Marker_Txt(lh#cpp#dox#tag('brief ')).text
+  endif
+  return res
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
