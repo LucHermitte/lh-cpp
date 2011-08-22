@@ -127,16 +127,7 @@ endfunction
 
 " Function: CppDox_set_brief_snippet(type)           {{{2
 function! CppDox_set_brief_snippet()
-  let brief = lh#option#get('CppDox_brief', 'short', 'bg')
-  if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
-    let g:CppDox_brief_snippet = lh#cpp#dox#tag('brief ').Marker_Txt('brief').'.'
-  elseif brief =~? '^no$\|^n\%[ever]$\|0'
-    let g:CppDox_brief_snippet = Marker_Txt('brief').'.'
-  elseif brief =~? '^s\%[hort]$'
-    let g:CppDox_brief_snippet = Marker_Txt('autobrief').'.'
-  else " maybe
-    let g:CppDox_brief_snippet = Marker_Txt(lh#cpp#dox#tag('brief ')).'.'
-  endif
+  let g:CppDox_brief_snippet = lh#cpp#dox#brief('')
 endfunction
 " Function: s:Doxygenize()                            {{{2
 function! s:Doxygenize()

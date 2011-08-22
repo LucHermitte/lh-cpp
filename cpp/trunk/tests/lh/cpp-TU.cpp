@@ -48,6 +48,9 @@ class Toto
 
 namespace NS1 { namespace NS2 {
     int foo; // -> echo lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
+    class Bar {
+        
+    };
 } }
 
 void NS1::NS2::foo(toto t=42, int, std::string const& s, char * p, int[] i, titi r, tutu z=f()) const throw(foo, bar);
@@ -101,4 +104,5 @@ private:
     Tab[N]           m_tab;
     std::vector<int> m_vector;
 };
+
 

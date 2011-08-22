@@ -41,6 +41,7 @@
 "=============================================================================
 
 if 0
+  finish
   call Un(Null,fun2(fun3(a,b,g(NULL))),t, titi, r  , zzz
   call Un(Null,fun2(fun3(a,b,g(NULL))),t, titi,   , zzz)
 endif
