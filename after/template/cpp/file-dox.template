@@ -9,7 +9,7 @@ VimL: let s:marker_close = '+>'
 VimL:"
 /**@ingroup g¡lh#option#get('dox_group', '<+Projet+>')¡
  * @file    ¡expand('%:t')¡
- * ¡CppDox_author()¡
+ * <+lh#dox#author()+>
  * @version ¡'$'¡Revision$
  * @since   Version ¡lh#option#get('ProjectVersion', '<+1.0+>')¡
  * ¡'$'¡Id$

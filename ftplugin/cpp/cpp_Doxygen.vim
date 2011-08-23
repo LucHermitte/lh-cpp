@@ -20,11 +20,11 @@
 "
 "
 " Options:
-" 	- [bg]:CppDox_CommentLeadingChar
-" 	- [bg]:CppDox_TagLeadingChar
-" 	- g:CppDox_author_tag
-" 	- [bg]:CppDox_ingroup
-" 	- [bg]:CppDox_brief
+" 	- [bg]:[&ft_]dox_CommentLeadingChar
+" 	- [bg]:[&ft_]dox_TagLeadingChar
+" 	- [bg]:[&ft_]dox_author_tag
+" 	- [bg]:[&ft_]dox_ingroup
+" 	- [bg]:[&ft_]dox_brief
 " 
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
@@ -71,10 +71,6 @@ let s:loaded_cpp_Doxygen_vim = 1
 
 " require Cpp_GetListOfParams and Cpp_GetFunctionPrototype
 
-function! lh#cpp#dox#tag(tag)
-  return lh#cpp#dox#tag_leading_char().a:tag
-endfunction
-
 function! CppDox_snippet(tagname, commentLeadingChar)
   let varType = type(g:CppDox_{a:tagname}_snippet)
   if varType == type([]) " List
@@ -89,46 +85,19 @@ function! CppDox_snippet(tagname, commentLeadingChar)
   return sValue
 endfunction
 
-" Function: CppDox_author()                           {{{2
-let s:author_tag = lh#option#get('CppDox_author_tag', 'author', 'g')
-
-function! CppDox_author()
-  let s:author_tag = lh#option#get('CppDox_author_tag', 'author', 'g')
-  let tag         = lh#cpp#dox#tag_leading_char() . s:author_tag . ' '
-
-  let author = lh#option#get('CppDox_author', '', 'bg')
-  if author =~ '^g:.*'
-    if exists(author) 
-      return tag . {author}
-      " return tag . {author} . Marker_Txt('')
-    else
-      return tag . Marker_Txt('author-name')
-    endif
-  elseif strlen(author) == 0
-    return tag . Marker_Txt('author-name')
-  else
-    return tag . author
-    " return tag . author . Marker_Txt('')
-  endif
-endfunction
-
 " Function: s:ParameterDirection(type)               {{{2
 function! s:ParameterDirection(type)
   " todo: enhance the heuristics.
   " Support for boost smart pointers, custom types, ...
-  if     a:type =~ '\%(\<const\>\s*[&*]\=\|const_\%(reference\|iterator\)\)\s*$'
+  if     a:type =~ '\%(\<const\>\s*[&*]\=\|const_\%(reference\|iterator\)\|&&\|\%(unique\|auto\)_ptr\)\s*$'
     return '[in]'
-  elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\)\s*$'
+  elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\|_ptr\)\s*$'
     return '[' . Marker_Txt('in,') . 'out]'
   else
     return Marker_Txt('[in]')
   endif
 endfunction
 
-" Function: CppDox_set_brief_snippet(type)           {{{2
-function! CppDox_set_brief_snippet()
-  let g:CppDox_brief_snippet = lh#cpp#dox#brief('')
-endfunction
 " Function: s:Doxygenize()                            {{{2
 function! s:Doxygenize()
   " Obtain informations from the function at the current cursor position.
@@ -143,7 +112,7 @@ function! s:Doxygenize()
   let g:CppDox_Params_snippet = []
   for param in params
     let sValue =
-	  \  lh#cpp#dox#tag("param")
+	  \  lh#dox#tag("param")
 	  \ . s:ParameterDirection(param.type)
 	  \ . ' ' . param.name
 	  \ . '  ' . Marker_Txt((param.name).'-explanations') 
@@ -151,22 +120,15 @@ function! s:Doxygenize()
   endfor
 
   " Ingroup
-  let ingroup = lh#option#get('CppDox_ingroup', 0, 'bg')
-  if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
-    let g:CppDox_ingroup_snippet = lh#cpp#dox#tag('ingroup ').Marker_Txt('group')
-  elseif ingroup =~? '^no$\|^n\%[ever]$\|0'
-    let g:CppDox_ingroup_snippet = ''
-  else " maybe
-    let g:CppDox_ingroup_snippet = Marker_Txt(lh#cpp#dox#tag('ingroup '))
-  endif
+  let g:CppDox_ingroup_snippet = lh#dox#ingroup()
 
   " Brief
-  call CppDox_set_brief_snippet()
+  let g:CppDox_brief_snippet = lh#dox#brief('')
 
   if ret =~ 'void\|^$'
     let g:CppDox_return_snippet = ''
   else
-    let g:CppDox_return_snippet	  = lh#cpp#dox#tag('return ').Marker_Txt(ret) 
+    let g:CppDox_return_snippet	  = lh#dox#tag('return ').Marker_Txt(ret) 
   endif
 
   " todo
@@ -174,14 +136,14 @@ function! s:Doxygenize()
   " list => n x @throw list
   " non-existant => markerthrow
   if !has_key(info, 'throw') || len(info.throw) == 0 
-    let g:CppDox_exceptions_snippet = Marker_Txt(lh#cpp#dox#tag('throw '))
+    let g:CppDox_exceptions_snippet = Marker_Txt(lh#dox#tag('throw '))
   else
     let throws = info.throw
     let empty_marker = Marker_Txt('')
     if len(throws) == 1 && strlen(throws[0]) == 0 
-      let g:CppDox_exceptions_snippet = lh#cpp#dox#tag('throw ').'None'.empty_marker
+      let g:CppDox_exceptions_snippet = lh#dox#tag('throw ').'None'.empty_marker
     else
-      call map(throws, '"'.lh#cpp#dox#tag('throw ').'".v:val. empty_marker')
+      call map(throws, '"'.lh#dox#tag('throw ').'".v:val. empty_marker')
       let g:CppDox_exceptions_snippet = throws
     endif
   endif
