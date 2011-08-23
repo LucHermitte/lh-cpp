@@ -39,7 +39,7 @@ VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | e
  * <+ <li> sem+>
  *
  * @version ¡'$'¡revision$
- * ¡CppDox_author()¡
+ * <+lh#dox#author()+>
  */
 VimL: let s:super = "DETAILS::".s:sharedclsname.s:tmpl
 VimL: let s:inh = IF(s:issharingimpl, "\n: ".s:super."(".Marker_Txt("params").")", "\n".Marker_Txt(" "))
@@ -87,7 +87,7 @@ public:
  * <+ <li> sem+>
  *
  * @version ¡'$'¡revision$
- * ¡CppDox_author()¡
+ * <+lh#dox#author()+>
  */
 ¡s:tmpl_decl¡class ¡s:relclsname.IF(s:issharingimpl, " : ".s:super, "")¡
 {

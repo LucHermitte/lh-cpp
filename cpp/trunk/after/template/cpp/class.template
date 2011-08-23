@@ -10,7 +10,7 @@ VimL: let s:clsname = inputdialog("class name ?", Marker_Txt(expand('%:t:r')))
 VimL: call CppDox_set_brief_snippet()
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
-/**<+lh#cpp#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
+/**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
  * <+g:CppDox_brief_snippet+>
  *
  * <+doc+>
@@ -21,26 +21,26 @@ VimL:"
  <+g:CppDox_semantics+>
  * <+ <li> sem+>
  *
- * <+lh#cpp#dox#tag('version')+> ¡'$'¡revision$
- * <+CppDox_author()+>
+ * <+lh#dox#tag('version')+> ¡'$'¡revision$
+ * <+lh#dox#author()+>>
  */
 class ¡s:clsname¡
 ¡g:CppDox_inherits¡
 {
 public:
-    /**<+lh#cpp#dox#tag('name')+> Construction/destruction
+    /**<+lh#dox#tag('name')+> Construction/destruction
      */
-    //<+lh#cpp#dox#tag('{')+>
+    //<+lh#dox#tag('{')+>
     ¡g:CppDox_constructors¡
 
     /**
      * ¡g:CppDox_isVirtualDest¡ Destructor.
      *
      ¡IF(strlen(g:CppDox_isVirtualDest), '', '* @warning this class is not meant to be publicly inherited')¡
-     * <+lh#cpp#dox#tag('throw')+> Nothing
+     * <+lh#dox#tag('throw')+> Nothing
      */
     ¡g:CppDox_isVirtualDest¡ ~¡s:clsname¡() ;
-    //<+lh#cpp#dox#tag('}')+>
+    //<+lh#dox#tag('}')+>
 
     <+Other public functions+>;
 
