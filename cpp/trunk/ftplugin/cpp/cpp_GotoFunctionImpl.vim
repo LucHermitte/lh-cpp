@@ -271,18 +271,6 @@ if exists("g:loaded_cpp_GotoFunctionImpl")
 endif
 let g:loaded_cpp_GotoFunctionImpl = 1
 "------------------------------------------------------------------------
-" VIM Includes {{{2
-if   
-      \    !lh#common#check_deps('*Cpp_CurrentScope', 
-      \			'cpp_FindContextClass.vim', 'ftplugin/cpp/',
-      \                 'cpp_GotoFunctionImpl')
-      \ || !lh#common#check_deps(':CheckOptions',
-      \			'cpp_options-commands.vim', 'ftplugin/cpp/',
-      \                 'cpp_GotoFunctionImpl')
-  let &cpo=s:cpo_save
-  finish
-endif
-"------------------------------------------------------------------------
 " Menus {{{2
 "
 let s:menu_prio = lh#option#get('cpp_menu_priority', '50', 'g')

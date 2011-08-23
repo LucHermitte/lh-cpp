@@ -44,7 +44,7 @@
 " 	autoload/lh/cpp/AnalysisLib_Class.vim
 "
 " 	16th May 2006
-" 	(*) Bug fix: "using namespace" was misdirecting Cpp_CurrentScope(), and
+" 	(*) Bug fix: "using namespace" was misdirecting lh#cpp#AnalysisLib_Class#CurrentScope(), and
 " 	    :GOTOIMPL as a consequence.
 " 	29th Apr 2005
 " 	(*) Not misdriven anymore by:
@@ -63,7 +63,7 @@
 " 	    "typedef struct foo{...} *PFoo,Foo;"
 " 	(*) An inversion problem, with nested classes, fixed.
 " 	(*) Cpp_SearchClassDefinition becomes obsolete. Instead, use
-" 	    Cpp_CurrentScope(lineNo, scope_type) to search for a 
+" 	    lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type) to search for a 
 " 	    namespace::class scope.
 " 	11th oct 2002
 " 	(*) Cpp_SearchClassDefinition supports: 
@@ -239,7 +239,7 @@ function! lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type)
   elseif a:scope_type =~ 'class\|namespace'
     let scope = s:SearchClassOrNamespaceDefinition(a:scope_type)
   else
-    echoerr 'cpp_FindContextClass.vim::Cpp_CurrentScope(): the only ' . 
+    echoerr 'lh#cpp#AnalysisLib_Class#CurrentScope(): the only ' . 
 	  \ 'scope-types accepted are {class}, {namespace} and {any}!'
     return ''
   endif

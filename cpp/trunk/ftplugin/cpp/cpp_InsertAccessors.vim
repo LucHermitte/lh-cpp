@@ -216,7 +216,7 @@ function! Cpp_AddAttribute()
   " TODO: Place the cursor where accessors must be defined
   let l_line = line('.')
   let c_col  = col('.')
-  let className = Cpp_CurrentScope(l_line, 'any')
+  let className = lh#cpp#AnalysisLib_Class#CurrentScope(l_line, 'any')
 
   " const correct type
   let ccType      = lh#cpp#types#ConstCorrectType(type)
