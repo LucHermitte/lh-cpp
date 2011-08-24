@@ -219,7 +219,7 @@ function! Cpp_AddAttribute()
   let className = lh#cpp#AnalysisLib_Class#CurrentScope(l_line, 'any')
 
   " const correct type
-  let ccType      = lh#cpp#types#ConstCorrectType(type)
+  let ccType      = lh#dev#cpp#types#ConstCorrectType(type)
 
   " Insert the get accessor {{{
   let proxyType   = 0
