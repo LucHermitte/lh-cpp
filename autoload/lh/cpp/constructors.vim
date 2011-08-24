@@ -218,7 +218,7 @@ function! lh#cpp#constructors#select(results)
     let attrb_name = matchstr(one_selected_attr.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
     let param_name = lh#cpp#style#attribute2parameter_name(attrb_name)
 
-    call add(sig_params, lh#cpp#types#ConstCorrectType(attrb_type).param_name)
+    call add(sig_params, lh#dev#cpp#types#ConstCorrectType(attrb_type).param_name)
 
     call add(init_list, attrb_name.'('.param_name.')')
     " echomsg string(selected_virt)
