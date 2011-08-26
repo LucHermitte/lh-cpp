@@ -3,7 +3,7 @@
 " File:		autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	1.1.1
 " Created:	07th Oct 2006
 " Last Update:	$Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
@@ -30,6 +30,7 @@
 "	v1.1.1
 "	(*) Support jump to existing destructor
 "	(*) Support jump to constructor with a initialization-list
+"	(*) Support "using namespace"
 " TODO:		«missing features»
 " 	(*) add knowledge about C99/C++0x new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -237,6 +238,8 @@ function! s:Search4Impl(re_impl, scope)
 
     " b- Get the current namespace at the found line {{{5
     let current_ns = lh#cpp#AnalysisLib_Class#CurrentScope(l, 'namespace')
+    let imported_ns = lh#cpp#AnalysisLib_Class#used_namespaces(l)
+    let ns_list = imported_ns + [current_ns]
 
     " c- Build the function name that must be found on the current line {{{5
     "    The function aname also contain the scope
@@ -259,22 +262,24 @@ function! s:Search4Impl(re_impl, scope)
     " Todo: purge comments within current_proto
 
     " e- Check if really found {{{5
-    " if match(required_ns, '^'.current_ns) == 0 
-	  " \ && (req_proto == current_proto)
-    let current = current_ns . ((current_ns != "") ? '::' : '' ).current_proto
-    if ("" != required_ns) && (required_ns !~ '.*::$')
-      let required_ns = required_ns . '::' 
-    endif
-    " call confirm('required_ns='.required_ns.
-          " \ "\ncurrent_proto=".current_proto.
-          " \ "\ncurrent_ns=".current_ns.
-          " \ "\n".l."=".getline('.').
-          " \ "\n\nmv=".mv."\nproto0=".proto0."\ncurrent=".current,
-          " \ '&ok', 1)
-          " \ "\n\nreq_proto=".req_proto.
-    if match(current,'^'.required_ns) == 0 
-      return l 
-    endif
+    for ns in ns_list
+      " if match(required_ns, '^'.ns) == 0 
+      " \ && (req_proto == current_proto)
+      let current = ns . ((ns != "") ? '::' : '' ).current_proto
+      if ("" != required_ns) && (required_ns !~ '.*::$')
+        let required_ns = required_ns . '::' 
+      endif
+      " call confirm('required_ns='.required_ns.
+      " \ "\ncurrent_proto=".current_proto.
+      " \ "\ncurrent_ns=".ns.
+      " \ "\n".l."=".getline('.').
+      " \ "\n\nmv=".mv."\nproto0=".proto0."\ncurrent=".current,
+      " \ '&ok', 1)
+      " \ "\n\nreq_proto=".req_proto.
+      if match(current,'^'.required_ns) == 0 
+        return l 
+      endif
+    endfor
     " }}}4
   endwhile
 

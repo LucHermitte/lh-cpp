@@ -3,7 +3,7 @@
 " File:		autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
 " Author:	Luc Hermitte <MAIL:hermitte at free.fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	1.1.1
 " Last Update:	$Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
 " Description:	
@@ -30,6 +30,8 @@
 " Dependencies:	VIM 7.0+
 
 " History:	{{{2
+" 	26th Aug 2011
+" 	(*) list of imported namespaces lh#cpp#AnalysisLib_Class#used_namespaces
 " 	31st May 2010
 " 	(*) many generic functions move to lh#dev#class#
 " 	23rd Apr 2008
@@ -321,6 +323,21 @@ function! lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_se
 endfunction
 
 " }}}1
+" ==========================================================================
+" List of imported namespaces {{{1
+" Function: lh#cpp#AnalysisLib_Class#used_namespace([up_to]) {{{3
+" @return list of imported namespaces
+" @todo take the "namespace xx {" scop into account
+function! lh#cpp#AnalysisLib_Class#used_namespaces(...)
+  let up_to_line = (a:0>0) ? (a:1) : line('$')
+  let imported_ns = map( 
+        \filter(
+        \    getline(1,up_to_line), 
+        \    'v:val =~ "^\\s*using\\s\\+namespace"'),
+        \ 'matchstr(v:val, "^\\s*using\\s\\+namespace\\s\\+\\zs.\\{-}\\ze\\s*;")'
+        \ )
+  return imported_ns
+endfunction
 " ==========================================================================
 " Fetch Attributes {{{1
 function! lh#cpp#AnalysisLib_Class#attributes(id)
