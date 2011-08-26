@@ -29,6 +29,7 @@
 "	(*) two functions moved to autoload/lh/cpp/AnalysisLib_Function
 "	v1.1.1
 "	(*) Support jump to existing destructor
+"	(*) Support jump to constructor with a initialization-list
 " TODO:		«missing features»
 " 	(*) add knowledge about C99/C++0x new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -130,12 +131,12 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
 	  \ "Pure virtual functions don't have an implementation!")
     return
   endif
-  let impl        = s:BuildFunctionSignature4impl(proto,className)
 
   " 3- Add the string into the implementation file {{{4
   call lh#cpp#GotoFunctionImpl#open_cpp_file()
   " Search or insert the C++ implementation
-  if !s:Search4Impl('^'.(impl2search.regex).'\_s*{', className)
+  if !s:Search4Impl('^'.(impl2search.regex).'\_s*[{:]', className)
+    let impl        = s:BuildFunctionSignature4impl(proto,className)
     " Todo: Support looking into other files like the .inl file
 
     " Insert the C++ code at the end of the file
