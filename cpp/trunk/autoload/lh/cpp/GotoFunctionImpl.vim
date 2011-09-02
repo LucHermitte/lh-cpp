@@ -84,6 +84,7 @@ endfunction
 " 	      'ShowStaticon', '..off', '..0' or '..1'
 " 	      'ShowExplicitcon', '..off', '..0' or '..1'
 " 	      'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
+" TODO: add C++11 override et final
 let s:option_value = '\%(on\|off\|\d\+\)$'
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   " 0- Check options {{{4
@@ -194,6 +195,7 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file()
 	let use_alternate = 0
       endif
     else
+      " TODO: use lh#option#get for {ft}_extension
       let split_opt = fnamemodify(expand('%'), ':r') . '.cpp'
       let use_alternate = 0
     endif
