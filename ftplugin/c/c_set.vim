@@ -61,6 +61,7 @@ if filereadable(s:dictionary)
   let &dictionary=s:dictionary
   setlocal complete+=k
 endif
+setlocal complete-=i
 " }}}
 " ------------------------------------------------------------------------
 " File loading {{{
