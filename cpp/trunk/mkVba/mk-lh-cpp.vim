@@ -53,6 +53,7 @@ ftplugin/c/flistmaps.vim
 ftplugin/c/LoadHeaderFile.vim
 ftplugin/c/previewWord.vim
 ftplugin/c/word.list
+ftplugin/c/c_complete_include.vim
 ftplugin/c/c_mu-template_api.vim
 ftplugin/cpp/changelog
 ftplugin/cpp/cpp_BuildTemplates.vim
