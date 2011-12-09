@@ -57,7 +57,7 @@ function! lh#cpp#enum#analyse_token(name, ...)
   " 1.1- ask clang, if available
   " 1.2- ask ctags, if available
   " todo? filter on the exact name as well ?
-  let defs = taglist(a:name)
+  let defs = taglist('.*\<'.a:name.'\>.*')
   if !empty(defs)
     let t_enums = lh#list#copy_if(defs, [], 'v:1_.kind == "g"')
     let t_vars  = lh#list#copy_if(defs, [], 'v:1_.kind =~ "[lvx]"')
