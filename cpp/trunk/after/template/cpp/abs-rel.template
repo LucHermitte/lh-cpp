@@ -22,7 +22,6 @@ VimL: let s:tmpl2 = IF(s:istemplate, "<".s:tmpl2_type.">", "")
 VimL: let s:typename = IF(s:istemplate, "typename ", "")
 VimL:"
 VimL:"
-VimL: call CppDox_set_brief_snippet()
 ¡s:tmpl_decl¡class ¡s:absclsname¡;
 ¡s:tmpl_decl¡class ¡s:relclsname¡;
 VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | endif
