@@ -6,11 +6,11 @@ VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:clsname = inputdialog("class name ?", Marker_Txt(expand('%:t:r')))
+VimL: let s:clsname = INPUT("class name ?", Marker_Txt(expand('%:t:r')))
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
 /**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
- * <+g:CppDox_brief_snippet+>
+ * <+lh#dox#brief()+>
  *
  * <+doc+>
  *
