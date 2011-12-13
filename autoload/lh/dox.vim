@@ -70,7 +70,7 @@ endfunction
 
 " Function: lh#dox#brief([text]) {{{3
 function! lh#dox#brief(...)
-  let text = a:0==0 ? Marker_Txt('brief').'.' : a:1
+  let text = a:0==0 ? Marker_Txt('brief explanation').'.' : a:1
   let brief = lh#dev#option#get('dox_brief', &ft, 'short', 'bg')
   if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let res =  lh#dox#tag('brief ').text
