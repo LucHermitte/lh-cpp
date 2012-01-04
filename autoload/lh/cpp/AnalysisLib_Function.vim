@@ -3,7 +3,7 @@
 " File:		autoload/lh/cpp/AnalysisLib_Function.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	1.1.1
 " Created:	05th Oct 2006
 " Last Update:	$Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
@@ -41,6 +41,9 @@
 " 	Drop it into: {rtp}/autoload
 " 	Requirements: Vim7
 " History:	
+"	v1.1.1
+"	(*) lh#cpp#AnalysisLib_Function#GetListOfParams() is not messed up by
+"	throw-spec ; TODO support new C++11 noexcept spec
 "	v1.0.1:
 "	(*) Remembers the parameter is on a new line
 "	v1.0.0: First version
@@ -101,11 +104,13 @@ endfunction
 " todo: Arrays of pointers	 : "T (*p)[n]"
 function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
   " 1- Strip comments and parenthesis
-  let prototype  = a:prototype
-  let prototype  = substitute(prototype, '//.\{-}\n', '', 'g')
-  let prototype  = substitute(prototype, '/\*\_.\{-}\*/', '', 'g')
+  let prototype = a:prototype
+  let prototype = substitute(prototype, '//.\{-}\n', '', 'g')
+  let prototype = substitute(prototype, '/\*\_.\{-}\*/', '', 'g')
+  " 2- Strip throw spec
+  let prototype = substitute(prototype, ')\zs\_s*throw(.*', '', '')
 
-  " 2- convert the string into a list, the separation being done on commas
+  " 3- convert the string into a list, the separation being done on commas
   let res_params = lh#dev#option#call('function#_signature_to_parameters', &ft, prototype)
 
   return res_params
