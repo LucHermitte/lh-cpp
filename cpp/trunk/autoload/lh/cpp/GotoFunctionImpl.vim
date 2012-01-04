@@ -31,10 +31,14 @@
 "	(*) Support jump to existing destructor
 "	(*) Support jump to constructor with a initialization-list
 "	(*) Support "using namespace"
-" TODO:		«missing features»
+"	(*) Don't expect the searched regex to start the line (as the return
+"	    type may need to be fully-qualified is the function definition)
+" TODO:
 " 	(*) add knowledge about C99/C++0x new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
 " 	    line as the function signature.
+" 	(*) Check how to convert the return type to its fully-qualified name if
+" 	    required in the function definition.
 " }}}1
 "=============================================================================
 
@@ -137,7 +141,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   " 3- Add the string into the implementation file {{{4
   call lh#cpp#GotoFunctionImpl#open_cpp_file()
   " Search or insert the C++ implementation
-  if !s:Search4Impl('^'.(impl2search.regex).'\_s*[{:]', className)
+  if !s:Search4Impl((impl2search.regex).'\_s*[{:]', className)
     let impl        = s:BuildFunctionSignature4impl(proto,className)
     " Todo: Support looking into other files like the .inl file
 
@@ -295,17 +299,28 @@ endfunction
 " Function: s:BuildFunctionSignature4impl " {{{3
 let s:k_operators = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\)'
 function! s:BuildFunctionSignature4impl(proto,className)
+  let proto = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:proto)
+  let g:implproto = proto
+
+  let re_qualifiers = []
   " 1.a- XXX if you want virtual commented in the implementation: {{{4
-  let impl = substitute(a:proto, '\(\<virtual\>\)\(\s*\)', 
-	\ (1 == s:ShowVirtual ? '/*\1*/\2' : ''), '')
+  if s:ShowVirtual
+    let re_qualifiers += ['\<virtual\>']
+  endif
 
   " 1.b- XXX if you want static commented in the implementation: {{{4
-  let impl = substitute(impl, '\(\<static\>\)\(\s*\)', 
-	\ (1 == s:ShowStatic ? '/*\1*/\2' : ''), '')
+  if s:ShowStatic
+    let re_qualifiers += ['\<static\>']
+  endif
 
   " 1.b- XXX if you want explicit commented in the implementation: {{{4
-  let impl = substitute(impl, '\(\<explicit\>\)\(\s*\)', 
-	\ (1 == s:ShowExplicit ? '/*\1*/\2' : ''), '')
+  if s:ShowExplicit
+    let re_qualifiers += ['\<explicit\>']
+  endif
+  let comments = matchstr(proto.qualifier, join(re_qualifiers, '\|'))
+  if !empty(comments)
+    let comments = '/*'.comments.'*/ ' 
+  endif
 
   " 2- Handle default params, if any. {{{4
   "    0 -> ""              : ignored
@@ -320,9 +335,8 @@ function! s:BuildFunctionSignature4impl(proto,className)
   endif
   "
 
-  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(impl)
   let implParams = []
-  for param in params
+  for param in proto.parameters
     let sParam = ((param.nl) ? "\n" : '')
 	  \ . (param.type) . ' ' . (param.name) 
 	  \ . substitute((param.default), '\(.\+\)', pattern, '')
@@ -331,22 +345,22 @@ function! s:BuildFunctionSignature4impl(proto,className)
   endfor
   let implParamsStr = join(implParams, ', ')
   " @todo: exceptions specifications
-  let impl = matchstr(impl, '.\{-}(\ze')
-	\ . implParamsStr
-	\ . matchstr(impl, '\zs).\{-}$')
-  " echo "impl=".impl
 
   " 3- Add '::' to the class name (if any).{{{4
   let className = a:className . (""!=a:className ? '::' : '')
-  " if "" != className | let className = className . '::' | endif
-  let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(', 
-	\ className.'\0', '')
-    " echo "impl=".impl
+  " let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(', 
+        " \ className.'\0', '')
 
-  " 4- Remove last part{{{4
-  let impl = substitute(impl, '\s*;\s*$', "\n{\n}", '')
   " 5- Return{{{4
-  return impl
+  let res = comments
+        \ . (proto.return) . ' '
+        \ . className
+        \ . join(proto.name, '::')
+        \ . '('.implParamsStr . ')'
+        \ . (proto.const ? ' const' : '')
+        \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
+        \ . "\n{\n}"
+  return res
   "}}}3
 endfunction
 " }}}2
