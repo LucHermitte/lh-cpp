@@ -5,7 +5,7 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.1.1
 " Created:	07th Oct 2006
-" Last Update:	$Date$ (13th Feb 2008)
+" Last Update:	$Date$ (04th Jan 2012)
 "------------------------------------------------------------------------
 " Description:	
 " 	Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -34,11 +34,11 @@
 "	(*) Don't expect the searched regex to start the line (as the return
 "	    type may need to be fully-qualified is the function definition)
 " TODO:
-" 	(*) add knowledge about C99/C++0x new numeric types
+" 	(*) add knowledge about C99/C++11 new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
 " 	    line as the function signature.
-" 	(*) Check how to convert the return type to its fully-qualified name if
-" 	    required in the function definition.
+" 	(*) Check how to convert the return, and the parameters, types to their
+" 	    fully-qualified names if required in the function definition.
 " }}}1
 "=============================================================================
 
@@ -337,6 +337,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
 
   let implParams = []
   for param in proto.parameters
+    " TODO: param type may need to be fully-qualified
     let sParam = ((param.nl) ? "\n" : '')
 	  \ . (param.type) . ' ' . (param.name) 
 	  \ . substitute((param.default), '\(.\+\)', pattern, '')

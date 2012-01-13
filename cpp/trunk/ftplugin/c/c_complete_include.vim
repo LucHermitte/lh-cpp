@@ -22,7 +22,7 @@
 " }}}1
 "=============================================================================
 
-let s:k_version = 1
+let s:k_version = 2
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_c_complete_include")
@@ -41,6 +41,11 @@ set cpo&vim
 inoremap <Plug>CompleteIncludes <c-r>=<sid>Complete()<cr>
 if !hasmapto('<Plug>CompleteIncludes', 'i')
   imap <unique> <c-x>i <Plug>CompleteIncludes
+endif
+
+nnoremap <Plug>OpenIncludes :call <sid>Open()<cr>
+if !hasmapto('<Plug>OpenIncludes', 'n')
+  nmap <unique> <c-x>i <Plug>OpenIncludes
 endif
 
 "=============================================================================
@@ -70,6 +75,19 @@ function! s:Complete()
   let files = map(files, 'lh#path#strip_start(v:val, paths)')
   call complete(col('.')-len(prev), files)
   return ''
+endfunction
+
+" Function: s:Open() {{{3
+" built on top of SearchInRuntime
+function! s:Open()
+  try
+    let path = &path
+    let paths = lh#dev#option#get("includes", &ft, &path)
+    exe 'set path+='.join(paths, ',')
+    exe "normal \<c-w>f"
+  finally
+    let &path = path
+  endtry
 endfunction
 
 " Functions }}}2
