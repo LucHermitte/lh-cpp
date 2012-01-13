@@ -5,7 +5,7 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.1.1
 " Created:	05th Oct 2006
-" Last Update:	$Date$ (13th Feb 2008)
+" Last Update:	$Date$ (04th Jan 2012)
 "------------------------------------------------------------------------
 " Description:	
 " 	This plugin defines VimL functions specialized in the analysis of C++
@@ -49,7 +49,9 @@
 "	v1.0.0: First version
 "		Code extracted from cpp_GotoFunctionImpl
 " TODO:		
-" 	Support template, function types, friends
+" 	(*) Support template, function types, friends
+" 	(*) add knowledge about C++11 new qualifiers & co (=delete,
+" 	noexcept, override, etc)
 " }}}1
 "=============================================================================
 
