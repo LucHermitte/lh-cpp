@@ -13,11 +13,18 @@ Requirements  : Vim 7, lh-vim-lib (2.2.0), map-tools (1.0.0),
 		alternate (a version is shipped with lh-cpp)
 Required by   : No other script as far as I know
 Author        : Luc Hermitte
-License       : GPL2
+License       : - plugin&templates -> GPL2
+                - code generated from the following wizards: class, singleton,
+                  enum (1&2, switch, for), abs-rel -> Boost Software Licence
+                - all other generated code from snippets (for control
+                  statements, proto -> definition, accessors, ...)
+                  -> public domain/licence exception
 More Help At  : http://code.google.com/p/lh-vim/wiki/lhCpp
 Vim script#336: http://www.vim.org/scripts/script.php?script_id=336
 Repository    :
 	svn checkout http://lh-vim.googlecode.com/svn/cpp/trunk lh-cpp
+VAM           :
+	http://code.google.com/p/lh-vim/source/browse/map-tools/trunk/lh-cpp-info.txt
 
 See also      : lh-refactor, lh-dev, local_vimrc, BuildToolsWrapper
 		Project, EnhancedCommentify
