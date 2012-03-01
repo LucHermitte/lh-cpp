@@ -113,5 +113,3 @@ syntax/cpp-cxxtest.vim
 syntax/cpp-funcdef.vim
 syntax/cpp-throw-spec.vim
 syntax/cpp.vim
-tests/lh-cpp-TU.cpp
-tests/omap-param.vim
