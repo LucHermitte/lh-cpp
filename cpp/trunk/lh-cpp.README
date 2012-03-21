@@ -1,5 +1,5 @@
 			  --------------------
-			     lh-cpp v1.1.0
+			     lh-cpp v2.0.0
 			  --------------------
 
 lh-cpp is a suite of C&C++ ftplugins for Vim users.
@@ -8,17 +8,19 @@ Audience      : Any C&C++ developers,
 		and C++-ftplugins writers that desire to define complex
 		features that require a little understanding of C++
 		constructs (like function signatures, etc)
-Requirements  : Vim 7, lh-vim-lib (2.2.0), map-tools (1.0.0),
-		searchInRuntime, mu-template v2.4.0, lh-tags
+Requirements  : Vim 7, lh-vim-lib (3.0.0), map-tools (2.0.0),
+		searchInRuntime, mu-template v3.0.0, lh-tags
 		alternate (a version is shipped with lh-cpp)
 Required by   : No other script as far as I know
 Author        : Luc Hermitte
-License       : - plugin&templates -> GPL2
+License       : GPLv3 with exceptions
+                http://code.google.com/p/lh-vim/wiki/License
+                - plugin&templates -> GPLv3
                 - code generated from the following wizards: class, singleton,
                   enum (1&2, switch, for), abs-rel -> Boost Software Licence
                 - all other generated code from snippets (for control
                   statements, proto -> definition, accessors, ...)
-                  -> public domain/licence exception
+                  -> licence exception
 More Help At  : http://code.google.com/p/lh-vim/wiki/lhCpp
 Vim script#336: http://www.vim.org/scripts/script.php?script_id=336
 Repository    :
