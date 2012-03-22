@@ -30,7 +30,7 @@ if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_sni
 endif
 let s:cpo_save=&cpo
 set cpo&vim
-let b:loaded_ftplug_c_snippets = 100
+let b:loaded_ftplug_c_snippets = 200
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -60,7 +60,7 @@ iab  <buffer> #n    <C-R>=MapNoContext("#n ",'\<esc\>0i#include')<CR>
 iab  <buffer> #i    <C-R>=MapNoContext('#i ','\<esc\>0i#ifdef')<CR>
 iab  <buffer> #e    <C-R>=MapNoContext("#e ",'\<esc\>0i#endif')<CR>
 
-"-- sourrounds with "#if 0 ... endif"
+"-- surrounds with "#if 0 ... endif"
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
 vmap <buffer> <localleader><k0> <localleader>0
 nmap <buffer> <localleader><k0> <localleader>0

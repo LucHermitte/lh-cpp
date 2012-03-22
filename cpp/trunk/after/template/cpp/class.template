@@ -6,46 +6,57 @@ VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:clsname = INPUT("class name ?", Marker_Txt(expand('%:t:r')))
+VimL: let s:clsname = empty(s:Args()) ? INPUT("class name ?", Marker_Txt(expand('%:t:r'))) : (s:Args()[0])
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
+VimL: call s:Include("section-sep", "c", s:clsname." class")
 /**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
  * <+lh#dox#brief()+>
  *
  * <+doc+>
  *
- * <+@invariant+>
+ * <+lh#dox#tag("invariant")+>
  *
  * <p><b>Semantics</b><br>
  <+g:CppDox_semantics+>
  * <+ <li> sem+>
  *
- * <+lh#dox#tag('version')+> ¡'$'¡revision$
+ * <+lh#dox#tag('version')+> <+'$'+>revision$
  * <+lh#dox#author()+>>
  */
-class ¡s:clsname¡
+class <+s:clsname+>
 ¡g:CppDox_inherits¡
 {
 public:
     /**<+lh#dox#tag('name')+> Construction/destruction
      */
     //<+lh#dox#tag('{')+>
-    ¡g:CppDox_constructors¡
+    /** Default constructor.
+      <+s:lead+><+Marker_Txt(lh#dox#tag('throw '))+>
+      */
+    <+s:clsname+>();
+
+VimL: " not documented, this is :DOX's job
+    <+s:clsname+>(<+define the params, and document me w/ :DOX+>);
+
+VimL: " todo: support using default implementations
+VimL: if g:CppDox_do_copy | call s:Include("copy-constructor", "cpp", s:clsname) | endif
+¡IF(g:CppDox_do_copy, "\n", '')¡
+VimL: if g:CppDox_do_copy | call s:Include("copy-and-swap", "cpp", s:clsname) | endif
 
     /**
-     * ¡g:CppDox_isVirtualDest¡ Destructor.
+     * <+g:CppDox_isVirtualDest+> Destructor.
      *
      ¡IF(strlen(g:CppDox_isVirtualDest), '', '* @warning this class is not meant to be publicly inherited')¡
      * <+lh#dox#tag('throw')+> Nothing
      */
-    ¡g:CppDox_isVirtualDest¡ ~¡s:clsname¡() ;
+    <+g:CppDox_isVirtualDest+> ~<+s:clsname+>() ;
     //<+lh#dox#tag('}')+>
 
     <+Other public functions+>;
 
     ¡IF(strlen(g:CppDox_protected_members), "protected:\n", '')¡
     ¡g:CppDox_protected_members¡
-
 private:
     ¡g:CppDox_forbidden_members¡
 

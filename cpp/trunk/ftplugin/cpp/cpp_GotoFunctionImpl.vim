@@ -232,6 +232,7 @@ command! -buffer -nargs=0 MOVETOIMPL call lh#cpp#GotoFunctionImpl#MoveImpl()
 nnoremap <buffer> <Plug>GotoImpl	:GOTOIMPL<SPACE>
 nnoremap <buffer> <Plug>PasteImpl	:PASTEIMPL<CR>
 nnoremap <buffer> <Plug>MoveToImpl	:MOVETOIMPL<CR>
+
 if !hasmapto('<Plug>GotoImpl', 'n')
   nmap <buffer> ;GI <Plug>GotoImpl
   " <LeftMouse> is used to position the cursor first

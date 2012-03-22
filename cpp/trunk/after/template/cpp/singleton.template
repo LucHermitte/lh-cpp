@@ -8,46 +8,44 @@ VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:clsname = inputdialog("singleton name ?")
+VimL: let s:clsname = empty(s:Args()) ? INPUT("singleton name ?", Marker_Txt(expand('%:t:r'))) : (s:Args()[0])
 VimL: call CppDox_SingletonWizard(s:clsname)
 VimL:"
-/*===========================================================================*/
-/*===============================[ Class ¡s:clsname¡ ]==============================*/
-/*===========================================================================*/
-/**@ingroup g¡lh#option#get('dox_group', '<+Group+>')¡
- * ¡g:CppDox_brief_snippet¡
+VimL: call s:Include("section-sep", "c", s:clsname." singleton")
+/**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
+ * <+lh#dox#brief()+>
  *
  * <+doc+>
  *
- * <+@invariants+>
+ * <+lh#dox#tag("invariant")+>
  *
  * <p><b>Semantics</b><br>
- ¡g:CppDox_semantics¡
+ <+g:CppDox_semantics+>
  * <+ <li> sem+>
  *
- * @version ¡'$'¡revision$
+ * <+lh#dox#tag('version')+> <+'$'+>revision$
  * <+lh#dox#author()+>
  */
-class ¡s:clsname¡
+class <+s:clsname+>
 ¡g:CppDox_inherits¡
 {
-    /** @name Singleton related functions */
-    //@{ 
+    /** <+lh#dox#tag('name')+> Singleton related functions */
+    //<+lh#dox#tag('{')+>
 private:
-    /** Constructor */
-    ¡g:CppDox_constructors¡
-    /** Destructor */
-    ¡g:CppDox_isVirtualDest¡ ~¡s:clsname¡() ;
+    /** Constructor. */
+    <+g:CppDox_constructors+>
+    /** Destructor. */
+    ~<+s:clsname+>() ;
 
-    ¡g:CppDox_instance¡
-    //@}
+    <+g:CppDox_instance+>
+    //<+lh#dox#tag('}')+>
 
 
-    /** @name Public functions */
-    //@{
+    /** <+lh#dox#tag('name')+> Public functions */
+    //<+lh#dox#tag('{')+>
 public:
     <+Public functions+>;
-    //@}
+    //<+lh#dox#tag('}')+>
 
 private:
     ¡g:CppDox_forbidden_members¡

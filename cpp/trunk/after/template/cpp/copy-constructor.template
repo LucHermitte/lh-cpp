@@ -6,6 +6,10 @@ VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
 VimL: " in case the class name is already known, no need to extract it
 VimL: let s:clsname = empty(s:Args()) ? lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class") : (s:Args()[0])
+VimL: let s:lead = lh#dox#comment_leading_char().' '
+VimL: let s:param = lh#dev#naming#param("rhs")
 /** <+lh#dox#brief('')+>Copy constructor.
+ <+s:lead+><+lh#dox#tag('param[in]')+> <+s:param+> source data to be copied.
+ <+s:lead+><+Marker_Txt(lh#dox#tag('throw '))+>
  */
-<+s:clsname+>(<+s:clsname+> const& <+lh#dev#naming#param("rhs")+>);
+<+s:clsname+>(<+s:clsname+> const& <+s:param+>);

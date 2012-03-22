@@ -27,7 +27,7 @@ Features~
 |C++_jump_implementation|       Jumping to functions-implementation
 |C++_function_doxygenation|     Doxygenize a function prototype
 |C++_templates|                 Skeletons, snippets, and wizards provided
-|C++_Overide|                   Function overiding helper
+|C++_Overide|                   Function overriding helper
 |C++_unmatched_functions|       Search for declared ad undefined functions (or
                               the other way around)
 |C++_options|                   Options for different features (i.e. ftplugins)
@@ -56,7 +56,7 @@ Features~
         'showmode'      is unset.
         'dictionary'    is completed with ``{rtp}/ftplugin/c/word.list''.
         'complete'      is completed with ``k'', and looses ``i'' (to prevent
-                        unterminable header-file parsing)
+                        interminable header-file parsing)
         'localleader'   is set to ``,'', unless it is already defined.
         'suffixesadd'   is completed with ``.h'' and ``.c''.
 
@@ -402,6 +402,94 @@ Options:
         manually the default function-implementation thanks to |:PASTEIMPL|.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                            *C++_templates*
+C++ skeletons and wizards~
+
+lh-cpp provides several template-files expanded thanks to |mu-template|.
+
+                                                    *C++_template_new*
+New C/C++ file~
+When a new C or C++ (non-existing) file is opened, |mu-template| provides a
+default skeleton. 
+
+... new header file~
+A header-file will have a header (where one's can put copyright information,
+RCS tags, etc.), anti-reinclusion guards. Some parts of what is generated can
+be globally overridden, or overridden only for project specific needs ; see
+|MuT-paths-override|. 
+The variation points are:
+- the template-file {rtp}/template/c/internals/c-file-header.template
+  where file header is specified ;
+- the template-file {rtp}/template/c/internals/c-header-guard.template
+  where the computation of the header guard name, *s:guard* , is done ;
+- |b:sources_root| that can be used to specify the project root directory --
+  this information is used by the default header-guard name policy. 
+
+... new implementation file~
+An implementation-file will have a header, and if a header-file (and even an
+inline (.inl) file) file with the "same" name is found, it will be included.
+The variation points are:
+- the template-file {rtp}/template/c/internals/c-file-header.template
+  where file header is specified ;
+- the template-file {rtp}/template/c/section-sep.template that is used to
+  specify the format of section header ;
+- |(bg):cpp_included_paths|, |List| that is used to search for the related
+  header-file to include.
+
+
+                                                    *C++_template_class*
+New C++ class~
+This skeleton-file acts as a wizard.
+It first asks the user the name of the new C++ class if it hasn't specified
+(by default it's the name of the current file).  Then it asks what semantics
+the class shall have:
+- value-semantics (stack-based, copyable, assignable, and may be comparable) ;
+- Stack-based semantics, but non copyable ;
+- Entity semantics, and non copyable ;
+- Entity semantics, but clonable.
+
+See the following articles if you want some more C++ insights on the
+implications of the question: 
+- <http://akrzemi1.wordpress.com/2012/02/03/value-semantics/>
+- [French]
+  <http://cpp.developpez.com/faq/cpp/?page=classes#CLASS_forme_canonique>
+
+Accordingly to user's choice, default functions for the class will be
+generated, or inhibited.
+
+If you'd rather have more control over what is done, use instead the templates
+|C++_template_copy-and-swap|, |C++_template_copy-constructor|,
+|C++_template_assignment_operator|.
+
+To-do: |C++_template_destructor| that detects visibility to add <+virtual+> or
+nothing.
+To-do: support C++11 copy inhibition syntax
+To-do: support C++11 move-construction and move-assignement.
+To-do: doxygen headers shall not be hardcoded in the template-file the way
+they are
+
+The variation points are:
+- |(bg):[{ft}_]dox_CommentLeadingChar|, |(bg):[{ft}_]dox_TagLeadingChar|,
+  |(bg):[{ft}_]dox_brief|, |(bg):[{ft}_]dox_ingroup|,
+  |(bg):[{ft}_]dox_author_tag|, |(bg):[{ft}_]dox_author|, 
+- |(bg):dox_group|
+  NB: As I've reached the conclusion that everything shall be sorted into
+  doxygen groups, I force the presence of this doxygen tag.
+- CppDox_ClassWizard()
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                            *C++_doxygen-options*
+C++ options for doxygen~
+
+*(bg):[{ft}_]dox_CommentLeadingChar* Character used at ???; default: "*"
+*(bg):[{ft}_]dox_TagLeadingChar*     Character used to introduce tags: "!"/"[@]"
+*(bg):[{ft}_]dox_brief*              Shall we have a @brief tag?  -> yes/no/[short]
+*(bg):[{ft}_]dox_ingroup*            Shall we have a @ingroup tag?  -> yes/[no]
+*(bg):dox_group*                     Name of the doxygen group.
+*(bg):[{ft}_]dox_author_tag*         Name of the tag to use: ["author"]/"authors"
+*(bg):[{ft}_]dox_author*             Name(s) of the author(s).
+ 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                             *C++_options*
 C++ options~
 lh-cpp supports many options directly, or indirectly (through |mu-template|
@@ -430,7 +518,7 @@ Most of lh-cpp options are expected to begin with "cpp_". As a consequence,
 they won't actually clash with equivalent settings from other filetypes.
 
 Other plugins I'm maintaining (see |lh-refactor| for instance) support
-multi-filetype options, which support default values that can be overidden for
+multi-filetype options, which support default values that can be overridden for
 specific filetypes (by appending "{ft}_" to the name of the options when
 setting them), or specific projects. See |lhdev-filetype| for the actual
 naming policy.
@@ -448,7 +536,7 @@ Default options for a specific filetype shall be defined as |buffer-variable|s
 (/vim local |options|) in a |ftplugin| placed in $HOME/.vim/ftplugin/cpp/ (or
 /c/) (or the windows equivalent location, see 'runtimepath').
 
-Project specific settings shall overide the previous default settings in
+Project specific settings shall override the previous default settings in
 |local_vimrc|s.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -494,7 +582,7 @@ Notes:
                                                         *lh-cpp-first-steps*
 First steps with lh-cpp-ftplugins~
 
-The first steps with these ftplugins can be quite desorienting.
+The first steps with these ftplugins can be quite disorienting.
 I expect you did read the |lh-cpp-features| section before trying to write your
 first C or C++ files with the new ftplugins activated.
 
@@ -523,11 +611,11 @@ If you don't like this feature ~
     skeleton with: >
     :MuTemplate c                    " for the C skeleton
     :MuTemplate cpp                  " for the C++ skeleton
-    :MuTemplate cpp/class            " for a heavilly documented classes
+    :MuTemplate cpp/class            " for a heavily documented classes
     :MuTemplate cpp/singleton        " for Scott Meyers' singleton model.
     :MuTemplate cpp/stream-extractor " for op<< (beta, smart & slow)
     :MuTemplate cpp/stream-inserter  " for op>> (beta, smart & slow)
-    :MuTemplate cpp/my-cpp           " for a specfic C++ skeleton
+    :MuTemplate cpp/my-cpp           " for a specific C++ skeleton
 (*) you don't want C++ skeleton (only) be inserted automatically, 
     [ie: you are OK for HTML and other skeletons] :
     Then rename the file {rtp}/after/template/template.cpp
