@@ -99,7 +99,7 @@ endfunction
 " Function: lh#dox#author() {{{3
 function! lh#dox#author()
   let author_tag = lh#dev#option#get('dox_author_tag', &ft, 'author', 'g')
-  let tag        = lh#dox#tag_leading_char() . author_tag . ' '
+  let tag        = lh#dox#tag(author_tag) .  ' '
 
   let author = lh#dev#option#get('dox_author', &ft, '', 'bg')
   if author =~ '^g:.*'

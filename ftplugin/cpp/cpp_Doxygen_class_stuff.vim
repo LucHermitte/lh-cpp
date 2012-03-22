@@ -60,26 +60,32 @@ let g:loaded_cpp_Doxygen_class_stuff = 1
 " Functions                                                {{{1
 
 " Internal functions                             {{{2
+
+" Function: s:Lead()                                       {{{3
+function! s:Lead()
+  return ' '.lh#dox#comment_leading_char().' '
+endfunction
+
 "
 " Function: s:CopyConstructor   ({clsname} [, {text} ])    {{{3 
 " @param[in] {clsname}	Is the name of the englobbing class
 " @param[in] {text}	@brief text in case the copy-ctr is not public
 function! s:CopyConstructor(clsname, ...)
+  let lead = s:Lead()
   let type = (a:0 == 0)
 	\ ? ''
 	\ : (a:1.' ')
   let text = "/**\n"
-	\ . " * ".type."Copy Constructor.\n"
-	\ . " *\n"
+	\ . lead.type."Copy Constructor.\n"
+	\ . " ".lh#dox#comment_leading_char()."\n"
   if a:0 == 0
     let text = text
-	  \ . " * @param[in] rhs_ source data to be copied.\n"
-	  \ . " * @return \\\\c this\n"
-	  \ . " * ".Marker_Txt('@throw ')."\n"
+	  \ . lead.lh#dox#tag("param[in]")." rhs_ source data to be copied.\n"
+	  \ . lead.Marker_Txt(lh#dox#tag('throw '))."\n"
   else
     let text = text
-	  \ . ' * The semantics of \\c '.a:clsname." requires for\n"
-	  \ . " * the copy constructor to not be publicly accessible.\n"
+	  \ . lead.'The semantics of \c '.a:clsname." requires for\n"
+	  \ . lead."the copy constructor to not be publicly accessible.\n"
   endif
   let text = text
 	\ . " */"
@@ -94,21 +100,22 @@ endfunction
 " @param[in] {clsname}	Is the name of the englobbing class
 " @param[in] {text}	@brief text in case the copy-ctr is not public
 function! s:AssignmentOperator(clsname, ...)
+  let lead = s:Lead()
   let type = (a:0 == 0)
 	\ ? ''
 	\ : (a:1.' ')
   let text = "/**\n"
-	\ . " * ".type."Assignment Operator.\n"
+	\ . lead.type."Assignment Operator.\n"
 	\ . " *\n"
   if a:0 == 0
     let text = text
-	  \ . " * @param[in] rhs_ source data to be copied.\n"
-	  \ . " * @return \\\\c this\n"
-	  \ . " * ".Marker_Txt('@throw ')."\n"
+	  \ . lead.lh#dox#tag("param[in]")." rhs_ source data to be copied.\n"
+	  \ . lead.lh#dox#tag("return")." \\c this\n"
+	  \ . lead.Marker_Txt(lh#dox#tag('throw '))."\n"
   else
     let text = text
-	  \ . ' * The semantics of \\c '.a:clsname." requires for\n"
-	  \ . " * the assignment operator to not be defined.\n"
+	  \ . lead.'The semantics of \c '.a:clsname." requires for\n"
+	  \ . lead."the assignment operator to not be defined.\n"
   endif
   let text = text
 	\ . " */"
@@ -124,6 +131,7 @@ endfunction
 " Function s:CppDox_ClassWizard({clsname}) {{{3
 " @param[in] {clsname}	Name of the class for which charateristics are asked.
 function! CppDox_ClassWizard(clsname)
+  let lead = s:Lead()
   " todo: present the list of classes we can inherit
   " Then, for each class, we select the type of inheritance:
   " - is-a => default non copyable/clonable
@@ -144,7 +152,8 @@ function! CppDox_ClassWizard(clsname)
 
 
   let g:CppDox_constructors      = a:clsname.'();' 
-  let g:CppDox_isVirtualDest 	 = ''
+  let g:CppDox_do_copy           = 0
+  let g:CppDox_isVirtualDest     = ''
   let g:CppDox_inherits      	 = ''
   let g:CppDox_protected_members = ''
   let g:CppDox_forbidden_members = ''
@@ -154,39 +163,41 @@ function! CppDox_ClassWizard(clsname)
     " => inherits from nothing 
     "    todo: idiom envelop/letter
     let g:CppDox_isVirtualDest = ''
+    let g:CppDox_do_copy = 1
     let g:CppDox_constructors = g:CppDox_constructors . "\n" .
 	  \ s:CopyConstructor(a:clsname)
     let g:CppDox_constructors = g:CppDox_constructors . "\n" .
 	  \ s:AssignmentOperator(a:clsname)
     let g:CppDox_inherits  = ''
     let g:CppDox_semantics =
-	  \ " * -  Full value semantics (stack-based, copyable".Marker_Txt(", comparable").")\n"
+	  \ lead."-  Full value semantics (stack-based, copyable".Marker_Txt(", comparable").")\n"
 
   elseif semantics == 2 " stack-based semantics, non-copyable
     let g:CppDox_isVirtualDest = ''
     let g:CppDox_inherits = ': public boost::noncopyable'
     let g:CppDox_semantics =
-	  \ " * -  Stack-based semantics\n"
-	  \." * -  Non-copyable"
+	  \ lead."-  Stack-based semantics\n"
+	  \.lead."-  Non-copyable"
 
   elseif semantics == 3 " entity semantics, non-copyable
     let g:CppDox_isVirtualDest = 'virtual '
     let g:CppDox_inherits = ': public boost::noncopyable'.
 	  \ Marker_Txt(', other ancestors')
     let g:CppDox_semantics =
-	  \ " * -  Entity semantics (=> reference semantics)\n"
-	  \." * -  Non-copyable"
+	  \ lead."-  Entity semantics (=> reference semantics)\n"
+	  \.lead."-  Non-copyable"
 
   elseif semantics == 4 " entity semantics, clonable
     let g:CppDox_isVirtualDest = 'virtual '
     let g:CppDox_inherits = ': <ancestors+>'
     let g:CppDox_protected_members = 
 	  \ s:CopyConstructor(a:clsname, "Access limited")
+          \."\n"
     let g:CppDox_forbidden_members = 
 	  \ s:AssignmentOperator(a:clsname, "Disabled")
     let g:CppDox_semantics =
-	  \ " * -  Entity semantics (=> reference semantics)\n"
-	  \." * -  Clonable"
+	  \ lead."-  Entity semantics (=> reference semantics)\n"
+	  \.lead."-  Clonable"
   endif
 
 endfunction
@@ -194,6 +205,7 @@ endfunction
 " Function s:CppDox_SingletonWizard({clsname}) {{{3
 " @param[in] {clsname}	Name of the class for which charateristics are asked.
 function! CppDox_SingletonWizard(clsname)
+  let lead = s:Lead()
   " todo: 
   " - CRTP approach
   "
@@ -201,7 +213,7 @@ function! CppDox_SingletonWizard(clsname)
 
   let type = confirm("Of what type of singleton ".a:clsname." should be?",
 	\ "&Meyers' (local-static, MT-safe, default ctr)\n"
-	\."&Explicit Initialisation (MT-safe)\n",
+	\."&Explicit Initialisation (MT-safe)",
 	\ 2)
   if type == 0 " default choice => non copyable 
     let type = 2
@@ -209,7 +221,6 @@ function! CppDox_SingletonWizard(clsname)
 
 
   let g:CppDox_constructors       = a:clsname.'();' 
-  let g:CppDox_isVirtualDest      = ''
   let g:CppDox_inherits           = ''
   let g:CppDox_semantics          = ''
   let g:CppDox_instance           = ''
@@ -218,12 +229,11 @@ function! CppDox_SingletonWizard(clsname)
   let g:CppDox_stuff_for_cpp_file = ''
 
   if     type == 1 " Scott Meyers'
-    let g:CppDox_isVirtualDest      = ""
     let g:CppDox_inherits           = ": private boost::noncopyable"
     let g:CppDox_semantics          =
-          \ " * -  Implicitly initialized with a default constructor\n"
-	  \." * -  MT-Safe\n"
-	  \." * -  Non-copyable"
+          \ lead."-  Implicitly initialized with a default constructor\n"
+	  \.lead."-  MT-Safe\n"
+	  \.lead."-  Non-copyable"
     let g:CppDox_instance           = "public:\n"
 	  \."static ".a:clsname." & instance() {\n"
 	  \."    static ".a:clsname." theInstance;\n"
@@ -232,19 +242,18 @@ function! CppDox_SingletonWizard(clsname)
 
   elseif type == 2 " explicit ctr, MT-safe
     let g:CppDox_constructors       = a:clsname."(".Marker_Txt("Parameters").");" 
-    let g:CppDox_isVirtualDest      = ""
     let g:CppDox_inherits           = ": private boost::noncopyable"
     let g:CppDox_private_members    = 
           \ "static ".a:clsname." *ms_instance;\n"
           \.g:CppDox_private_members
     let g:CppDox_semantics          =
-	  \ " * -  Explicitly initialized\n"
-	  \." * -  MT-Safe\n"
-	  \." * -  Non-copyable"
+	  \ lead."-  Explicitly initialized\n"
+	  \.lead."-  MT-Safe\n"
+	  \.lead."-  Non-copyable"
     let g:CppDox_instance           = "public:\n"
           \."/** Singleton accessor.\n"
-	  \." * @pre ms_instance != 0\n"
-	  \." * @throw None\n"
+	  \.lead.lh#dox#tag("pre")." ms_instance != 0\n"
+	  \.lead.lh#dox#tag("throw")." None\n"
 	  \." */\n"
 	  \."static ".a:clsname." & instance() {\n"
 	  \."    assert(ms_instance && \"Singleton not initialized.\");\n"
@@ -252,11 +261,11 @@ function! CppDox_SingletonWizard(clsname)
 	  \."}\n"
 	  \."\n"
 	  \."/** Singleton Construction.\n"
-	  \." * This function is expected to be call from the main thread,"
-          \." * before any other thread is created.\n"
-	  \." * @pre ms_instance == 0\n"
-	  \." * @post ms_instance != 0\n"
-	  \." * @throw ".Marker_Txt("std::exception")."\n"
+	  \.lead."This function is expected to be call from the main thread,"
+          \.lead."before any other thread is created.\n"
+	  \.lead.lh#dox#tag("pre")." ms_instance == 0\n"
+	  \.lead.lh#dox#tag("post")." ms_instance != 0\n"
+	  \.lead.lh#dox#tag("throw")." ".Marker_Txt("std::exception")."\n"
 	  \." */\n"
 	  \."static void create(".Marker_Txt("Parameters").") {\n"
 	  \."    assert(!ms_instance && \"Singleton already initialized.\");\n"
@@ -264,9 +273,9 @@ function! CppDox_SingletonWizard(clsname)
 	  \."}\n"
 	  \."\n"
 	  \."/** Singleton Destruction.\n"
-	  \." * @pre ms_instance != 0\n"
-	  \." * @post ms_instance == 0\n"
-	  \." * @throw None\n"
+	  \.lead.lh#dox#tag("pre")." ms_instance != 0\n"
+	  \.lead.lh#dox#tag("post")." ms_instance == 0\n"
+	  \.lead.lh#dox#tag("throw")." None\n"
 	  \." */\n"
 	  \."static void release() {\n"
 	  \."    assert(ms_instance && \"Singleton not initialized.\");\n"
