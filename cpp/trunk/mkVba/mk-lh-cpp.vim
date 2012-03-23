@@ -3,11 +3,11 @@
 " File:		mkVba/mk-lh-cpp.vim
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	2.0.0b1
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '1.1.0'
+let s:version = '2.0.0b1'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -31,6 +31,7 @@ after/template/cpp/catch.template
 after/template/cpp/class.template
 after/template/cpp/copy-and-swap.template
 after/template/cpp/copy-constructor.template
+after/template/cpp/destructor.template
 after/template/cpp/doxygen-function.template
 after/template/cpp/enum.template
 after/template/cpp/enum2.template
@@ -40,6 +41,7 @@ after/template/cpp/for-iterator.template
 after/template/cpp/fori.template
 after/template/cpp/group-dox.template
 after/template/cpp/internals/abs-rel-shared.template
+after/template/cpp/internals/formatted-comment.template
 after/template/cpp/internals/function-comment.template
 after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
