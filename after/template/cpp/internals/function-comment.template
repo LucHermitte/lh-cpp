@@ -1,26 +1,62 @@
 VimL:" $Id$
 VimL:" function-comment File Template, Luc Hermitte, 22nd Aug 2011
 VimL:" template to generate function comments, default format=doxygen
-VimL: let s:marker_open  = '<+'
-VimL: let s:marker_close = '+>'
 VimL: let s:fn_comments=s:Args()[0]
-VimL: function! s:_ExpandListTag(tagname, data)
-VimL:   if !has_key(a:data, a:tagname) | return "" | endif
-VimL:   let res = []
-VimL:   for e in a:data[a:tagname]
-VimL:       let res += [lh#dox#comment_leading_char()." " . lh#dox#tag(a:tagname) . ' ' . e]
-VimL:   endfor
-VimL:   return join(res, "\n")
+VimL: "
+VimL: function! s:_AddItemToDoc(tagname, data)
+VimL:   let text = empty(a:data) ? "\n" : a:data 
+VimL:   if empty(a:tagname)
+VimL:      return [{"text": text}]
+VimL:   else
+VimL:      return [{"tag":(a:tagname), "text": text}]
+VimL:   endif
 VimL: endfunction
-/** <+lh#dox#brief(s:fn_comments.brief)+>.
-<+s:_ExpandListTag('param', s:fn_comments)+>
-<+s:_ExpandListTag('return', s:fn_comments)+>
-<+s:_ExpandListTag('throw', s:fn_comments)+>
-<+s:_ExpandListTag('invariant', s:fn_comments)+>
-<+s:_ExpandListTag('pre', s:fn_comments)+>
-<+s:_ExpandListTag('post', s:fn_comments)+>
-MuT: if has_key(s:fn_comments, 'text')
-<+lh#dox#comment_leading_char()+> <+join(s:fn_comments.text, "\n".lh#dox#comment_leading_char()." ")+>
+VimL: "
+VimL: function! s:_AddToDoc(tagname, data)
+VimL:   if !has_key(a:data, a:tagname) | return [] | endif
+VimL:   let res = []
+VimL:   if type(a:data[a:tagname]) == type([])
+VimL:     for e in a:data[a:tagname]
+VimL:       let e2 = {(a:tagname): e}
+VimL:       let res += s:_AddToDoc(a:tagname, e2)
+VimL:     endfor
+VimL:   elseif type(a:data[a:tagname]) == type({})
+VimL:     " special case to handle things like "optional"
+VimL:     let data = copy(a:data[a:tagname])
+VimL:     let data.tag = a:tagname
+VimL:     let res += [data]
+VimL:   else
+VimL:     let res += s:_AddItemToDoc(a:tagname, a:data[a:tagname])
+VimL:   endif
+VimL:   return res
+VimL: endfunction
+VimL: "
+VimL: function! s:_GenerateDoc(data)
+VimL:   " echomsg "\n-->".string(a:data)
+VimL:   " tags ordered => determine the order in which they are displayed
+VimL:   let pre_tags_default = [ "ingroup", "brief", "param", "return", "throw", "invariant", "pre", "post"]
+VimL:   let post_tags_default = ["note", "warning"]
+VimL:   let doc = []
+VimL:   let tags = lh#dev#option#get("pre_desc_ordered_tags", &ft, pre_tags_default)
+VimL:   for tag in tags
+VimL:     let doc +=  s:_AddToDoc(tag, a:data) 
+VimL:   endfor
+VimL:   if has_key(s:fn_comments, "text")
+VimL:     if empty(s:fn_comments.text)
+VimL:       let doc += s:_AddItemToDoc("", "")
+VimL:     else
+VimL:       for t in s:fn_comments.text
+VimL:         let doc += s:_AddItemToDoc("", t)
+VimL:       endfor
+VimL:     endif
+VimL:   endif
+VimL:   let tags = lh#dev#option#get("post_desc_ordered_tags", &ft, post_tags_default)
+VimL:   for tag in tags
+VimL:     let doc +=  s:_AddToDoc(tag, a:data) 
+VimL:   endfor
+VimL:   " and finally, generate!
+VimL:   call s:Include("formatted-comment", "cpp/internals", doc)
+VimL: endfunction
+MuT: if lh#dev#option#get("template_expand_doc", &ft, 1)
+VimL: call s:_GenerateDoc(s:fn_comments)
 MuT: endif
-<+s:_ExpandListTag('note', s:fn_comments)+>
- */

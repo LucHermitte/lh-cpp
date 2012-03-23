@@ -1,4 +1,4 @@
-*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0)
+*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b1)
                         For Vim version 7.x.    Last change: 20th Mar 2012
 
                         By Luc Hermitte
@@ -465,8 +465,6 @@ To-do: |C++_template_destructor| that detects visibility to add <+virtual+> or
 nothing.
 To-do: support C++11 copy inhibition syntax
 To-do: support C++11 move-construction and move-assignement.
-To-do: doxygen headers shall not be hardcoded in the template-file the way
-they are
 
 The variation points are:
 - |(bg):[{ft}_]dox_CommentLeadingChar|, |(bg):[{ft}_]dox_TagLeadingChar|,
@@ -476,6 +474,17 @@ The variation points are:
   NB: As I've reached the conclusion that everything shall be sorted into
   doxygen groups, I force the presence of this doxygen tag.
 - CppDox_ClassWizard()
+- the template-file {rtp}/template/cpp/internals/function-comment.template
+  that is used to order the documentation tags associated to generated
+  functions. This template file introduced its own variation points:
+  - *(bg):[{ft_}]pre_desc_ordered_tags* 
+    default= ["ingroup", "brief", "param", "return", "throw", "invariant", "pre", "post"]
+  - *(bg):[{ft_}]post_desc_ordered_tags*
+    default= ["note", "warning"]
+  - |(bg):[{ft_}]template_expand_doc|
+  - the template-file {rtp}/template/cpp/internals/formatted-comment.template
+    that is used to convert the final list of documentation tag into the
+    embedded comments. The default format used is Doxygen format.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                             *C++_doxygen-options*
@@ -488,6 +497,13 @@ C++ options for doxygen~
 *(bg):dox_group*                     Name of the doxygen group.
 *(bg):[{ft}_]dox_author_tag*         Name of the tag to use: ["author"]/"authors"
 *(bg):[{ft}_]dox_author*             Name(s) of the author(s).
+
+*(bg):[{ft_}]template_expand_doc* is a boolean option (default: 1) 
+    Tells whether embedded documentation (as comments) shall be generated when
+    template-files are expanded.
+    Used by: 
+    - the template-file {rtp}/template/cpp/internals/function-comment.template
+    - the template-file {rtp}/template/cpp/internals/formatted-comment.template
  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                             *C++_options*

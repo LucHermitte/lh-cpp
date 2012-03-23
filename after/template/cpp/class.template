@@ -10,20 +10,21 @@ VimL: let s:clsname = empty(s:Args()) ? INPUT("class name ?", Marker_Txt(expand(
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
 VimL: call s:Include("section-sep", "c", s:clsname." class")
-/**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
- * <+lh#dox#brief()+>
- *
- * <+doc+>
- *
- * <+lh#dox#tag("invariant")+>
- *
- * <p><b>Semantics</b><br>
- <+g:CppDox_semantics+>
- * <+ <li> sem+>
- *
- * <+lh#dox#tag('version')+> <+'$'+>revision$
- * <+lh#dox#author()+>>
- */
+VimL: silent! unlet s:doc
+VimL: let s:doc = []
+VimL: let s:doc += [{ "tag": "ingroup", "text": "g".lh#option#get('dox_group', Marker_Txt('Group')) }]
+VimL: let s:doc += [{ "tag": "brief" }]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "text": "<+doc+>" }]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "tag": "invariant"}]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "tag": "semantics"}]
+VimL: let s:doc += [{ "text": g:CppDox_semantics}]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "tag": "version", "text": "$"."revision$"}]
+VimL: let s:doc += [{ "tag": "author"}]
+VimL: call s:Include("formatted-comment", "cpp/internals", s:doc)
 class <+s:clsname+>
 ¡g:CppDox_inherits¡
 {
@@ -31,26 +32,24 @@ public:
     /**<+lh#dox#tag('name')+> Construction/destruction
      */
     //<+lh#dox#tag('{')+>
-    /** Default constructor.
-      <+s:lead+><+Marker_Txt(lh#dox#tag('throw '))+>
-      */
+VimL: let s:fn_comments = { }
+VimL: let s:fn_comments.brief = "Default constructor."
+VimL: let s:fn_comments.throw = {"optional": 1}
+VimL: " let s:fn_comments.text  = []
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
     <+s:clsname+>();
 
 VimL: " not documented, this is :DOX's job
     <+s:clsname+>(<+define the params, and document me w/ :DOX+>);
 
 VimL: " todo: support using default implementations
-VimL: if g:CppDox_do_copy | call s:Include("copy-constructor", "cpp", s:clsname) | endif
-¡IF(g:CppDox_do_copy, "\n", '')¡
-VimL: if g:CppDox_do_copy | call s:Include("copy-and-swap", "cpp", s:clsname) | endif
+MuT: if g:CppDox_do_copy 
+VimL:     call s:Include("copy-constructor", "cpp", s:clsname)
+VimL:     call s:Inject([""])
+VimL:     call s:Include("copy-and-swap", "cpp", s:clsname)
 
-    /**
-     * <+g:CppDox_isVirtualDest+> Destructor.
-     *
-     ¡IF(strlen(g:CppDox_isVirtualDest), '', '* @warning this class is not meant to be publicly inherited')¡
-     * <+lh#dox#tag('throw')+> Nothing
-     */
-    <+g:CppDox_isVirtualDest+> ~<+s:clsname+>() ;
+MuT: endif
+VimL: call s:Include("destructor", "cpp",{"name":(s:clsname), "virtual": (g:CppDox_isVirtualDest) })
     //<+lh#dox#tag('}')+>
 
     <+Other public functions+>;

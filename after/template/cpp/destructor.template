@@ -1,0 +1,21 @@
+VimL:" $Id$
+VimL:" destructor File Template, Luc Hermitte, 23rd Mar 2012
+VimL:" hint: ~T();
+VimL: let s:marker_open  = "<+"
+VimL: let s:marker_close = "+>"
+VimL: let s:reindent     = 1
+VimL: " in case the class name is already known, no need to extract it
+MuT:  if empty(s:Args())
+VimL:   let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
+VimL:   let s:virtual = Marker_Txt("virtual ")
+MuT:  else
+VimL:   let s:clsname = s:Args()[0].name
+VimL:   let s:virtual = s:Args()[0].virtual
+MuT:  endif
+VimL: let s:fn_comments = { }
+VimL: let s:fn_comments.brief = s:virtual."Destructor." 
+VimL: if empty(s:virtual) | let s:fn_comments.warning = ["this class is not meant to be publicly inherited"] | endif
+VimL: let s:fn_comments.throw = "Nothing"
+VimL: " let s:fn_comments.text  = []
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
+<+s:virtual+>~<+s:clsname+>() ;

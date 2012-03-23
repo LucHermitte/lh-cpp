@@ -2,7 +2,6 @@ VimL:" $Id$
 VimL:" copy-and-swap File Template, Luc Hermitte, 21st Aug 2011
 VimL:" hint: assign op + swap
 VimL: " todo: recognize C++11 in order to add the proper nothrow specification
-VimL: " todo: use doxygen auto-brief setting
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
@@ -17,7 +16,7 @@ VimL: let s:fn_comments.text  = []
 VimL: let s:fn_comments.note  = [] " => empty line
 VimL: let s:fn_comments.note += ["based on copy-and-swap idiom, with copy-elision exploited"]
 VimL: let s:fn_comments.note += ["exception-safe"]
-VimL: let s:fn_comments.param = [s:rhs . " data to copy"]
+VimL: let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "source data to be copied." } ]
 VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
 <+s:clsname+>& operator=(<+s:clsname+> <+s:rhs+>)
 {

@@ -1,0 +1,43 @@
+VimL:" $Id$
+VimL:" C++ formatted-comment template-routine, Luc Hermitte, 23rd Mar 2012
+VimL:" Meant to be used as a function whose parameter is a list of things to print.
+VimL:" Default output format=doxygen; override this template for  other formats.
+VimL:" hint: /** stuff from the list... =/
+VimL: let s:reindent     = 1
+VimL: function! s:_LoopOverDoxItems(doc)
+VimL:    " echomsg "-->".string(a:doc)
+VimL:    let lead = lh#dox#comment_leading_char(). " "
+VimL:    let lines = []
+VimL:    for item in a:doc
+VimL:        let text = has_key(item, "text")?(item.text):""
+VimL:        if has_key(item,"tag")
+VimL:           " try to use the lh#dox#{tag}() function if it exists
+VimL:           if (item.tag) == "param"
+VimL:               let line = lh#dox#{item.tag}(item)
+VimL:           elseif exists("*lh#dox#".(item.tag)) 
+VimL:               let line = lh#dox#{item.tag}(text)
+VimL:           else
+VimL:               let line = lh#dox#tag(item.tag) . " " . text
+VimL:           endif
+VimL:        else
+VimL:            let line = text
+VimL:        endif
+VimL:        " optional entries are completly surrounded by a placeholder
+VimL:        if has_key(item,"optional") && item.optional
+VimL:            let line = Marker_Txt(line)
+VimL:        endif
+VimL:        " special case: @ingroup is put on the /** line
+VimL:        if has_key(item,"tag") && item.tag == "ingroup"
+VimL:            let s:content.lines[s:content.crt-1] .= line
+VimL:        elseif (line!~'^\s*$') " empty lines produce nothing
+VimL:            " Use "\n" as {text} to force an empty line
+VimL:            let lines += [line=="\n" ? lead : lead.line] 
+VimL:        endif
+VimL:    endfor
+VimL:    call s:Inject(lines)
+VimL: endfunction
+MuT: if lh#dev#option#get("template_expand_doc", &ft, 1)
+/**
+VimL: call s:_LoopOverDoxItems(empty(s:Args()) ? [] : s:Args()[0])
+ */
+MuT: endif

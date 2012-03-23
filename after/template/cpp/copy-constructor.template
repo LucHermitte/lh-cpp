@@ -8,8 +8,10 @@ VimL: " in case the class name is already known, no need to extract it
 VimL: let s:clsname = empty(s:Args()) ? lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class") : (s:Args()[0])
 VimL: let s:lead = lh#dox#comment_leading_char().' '
 VimL: let s:param = lh#dev#naming#param("rhs")
-/** <+lh#dox#brief('')+>Copy constructor.
- <+s:lead+><+lh#dox#tag('param[in]')+> <+s:param+> source data to be copied.
- <+s:lead+><+Marker_Txt(lh#dox#tag('throw '))+>
- */
+VimL: let s:fn_comments = { }
+VimL: let s:fn_comments.brief = "Copy constructor."
+VimL: let s:fn_comments.throw = {"optional": 1}
+VimL: " let s:fn_comments.text  = []
+VimL: let s:fn_comments.param = [{"dir": "in", "name": (s:param), "text": "source data to be copied." } ]
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
 <+s:clsname+>(<+s:clsname+> const& <+s:param+>);
