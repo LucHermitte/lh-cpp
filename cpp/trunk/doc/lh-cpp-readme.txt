@@ -433,6 +433,9 @@ The variation points are:
   where file header is specified ;
 - the template-file {rtp}/template/c/section-sep.template that is used to
   specify the format of section header ;
+- the template-file {rtp}/template/c/internals/c-header-content.template
+  that is meant to be overridden if some default content is always expected
+  like a C++ namespace.
 - |(bg):cpp_included_paths|, |List| that is used to search for the related
   header-file to include.
 
