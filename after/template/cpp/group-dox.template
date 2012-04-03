@@ -5,5 +5,7 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
 /**<+lh#dox#tag("name ")+><+group-name+> */
-//@{<++>
+VimL: let s:text = s:Surround(1, "<++>")
+VimL: let s:text = s:text != "<++>" ? ("\n".s:text) : Marker_Txt()
+//@{<+s:text+>
 //@}<++>
