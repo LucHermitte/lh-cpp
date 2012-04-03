@@ -3,7 +3,7 @@
 " File:		autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.1
+" Version:	2.0.0
 " Created:	07th Oct 2006
 " Last Update:	$Date$ (04th Jan 2012)
 "------------------------------------------------------------------------
@@ -33,6 +33,11 @@
 "	(*) Support "using namespace"
 "	(*) Don't expect the searched regex to start the line (as the return
 "	    type may need to be fully-qualified is the function definition)
+"	v2.0.0
+"	(*) GPLv3 with exception
+"	(*) parameter for the new implementation file extention
+"	(*) reuse a know buffer if it already exists -- i.e.: not limited to
+"	    readable files
 " TODO:
 " 	(*) add knowledge about C99/C++11 new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -192,15 +197,14 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file()
     let use_alternate = 1
     if exists(':AS') " from a.vim
       if !s:IsThereAMatchingSourceFile(expand('%:p'))
-	" let split_opt = 'cpp'
-	" let use_alternate = 1
 	let split_opt = NewAlternateFilename(expand('%:p'))
 	let split_opt = lh#path#to_relative(split_opt)
 	let use_alternate = 0
       endif
     else
-      " TODO: use lh#option#get for {ft}_extension
-      let split_opt = fnamemodify(expand('%'), ':r') . '.cpp'
+      let root_name = fnamemodify(expand('%'), ':r')
+      let best_ext = s:BestExtensionFor(root_name)
+      let split_opt = root_name . '.' . best_ext
       let use_alternate = 0
     endif
     call s:DoSplit(' '.split_opt, use_alternate)
@@ -212,6 +216,16 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file()
   endtry
 endfunction
 " }}}2
+
+"------------------------------------------------------------------------
+" Function: s:BestExtensionFor(root_name) {{{3
+function! s:BestExtensionFor(root_name)
+  let Best_ext = lh#dev#option#get('ext_4_impl_file', &ft, 'cpp')
+  let best_ext = type(Best_ext) == type(function('has'))
+        \ ?  Best_ext(a:root_name)
+        \ : Best_ext
+  return best_ext
+endfunction
 
 "------------------------------------------------------------------------
 " Function: s:BuildRegexFromImpl(impl,className) {{{3
@@ -467,7 +481,7 @@ function! NewAlternateFilename(file)
     if exists('g:alternateExtensions_'.extension)
       let l:save_extensions_h = g:alternateExtensions_{extension}
     endif
-    let g:alternateExtensions_{extension} = 'cpp'
+    let g:alternateExtensions_{extension} = s:BestExtensionFor(baseName)
     let sFiles = EnumerateFilesByExtensionInPath(baseName, extension, g:alternateSearchPath, currentPath)
     let lFiles = split(sFiles, ',')
     " call filter(lFiles, 'v:val != a:file')
@@ -506,7 +520,7 @@ function! s:IsThereAMatchingSourceFile(file)
   let allfiles = allfiles1 . (comma ? ',' : '') . allfiles2
 
   let l_allfiles = split(allfiles, ',')
-  let l_matches  = filter(l_allfiles, 'filereadable(v:val)')
+  let l_matches  = filter(l_allfiles, 'filereadable(v:val) || bufexists(v:val)')
   let matches    = join(l_matches, ',')
   return strlen(matches) > 0
 endfunction
