@@ -1,13 +1,9 @@
 VimL:" $Id$
 VimL:" Doxygen local group File-Template, Luc Hermitte, 26th Jan 2011
 VimL:" hint: Doxygen local group 
-VimL: let s:value_start = '¡'
-VimL: let s:value_start = '¡'
-VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
-/**@name <+group-name+> */
-//@{
-<++>
-//@}
+/**<+lh#dox#tag("name ")+><+group-name+> */
+//@{<++>
+//@}<++>
