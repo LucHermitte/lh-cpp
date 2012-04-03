@@ -51,7 +51,7 @@ endfunction
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
 
-" # doxygen comment generation
+" # doxygen comment generation {{{2
 " Function: lh#dox#comment_leading_char() {{{3
 function! lh#dox#comment_leading_char()
   return lh#dev#option#get('dox_CommentLeadingChar', &ft, '*', 'bg')
@@ -76,7 +76,7 @@ endfunction
 
 " Function: lh#dox#ingroup([text]) {{{3
 function! lh#dox#ingroup(...)
-  let text = a:0==0 && !empty(a:1) ? Marker_Txt('group') : a:1
+  let text = a:0==0 || empty(a:1) ? Marker_Txt('group') : a:1
   let ingroup = lh#dev#option#get('dox_ingroup', &ft, 0, 'bg')
   if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let res =  lh#dox#tag('ingroup ').text
