@@ -4,7 +4,7 @@
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Last Change:	$Date$ (28th July 2003)
-" Version:	1.1.0
+" Version:	2.0.0
 "
 "------------------------------------------------------------------------
 " Description:	
@@ -13,6 +13,8 @@
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
 " 	Override these definitions in each C|C++ project.
+" TODO: move these definitions to autoload/lh/cpp/option.vim as the approach
+" used in this file is now deprecated
 " }}}1
 " ==========================================================================
 if !exists("g:do_load_cpp_options") | finish | endif
@@ -177,17 +179,6 @@ endfunction
 function! Cpp_FileExtension4Implementation()
   return '.cpp'
 endfunction
-" }}}
-" ====================================================================
-" Preferences regarding how control statements are expanded {{{
-" Possible values: 0 (default)/1
-" Applies to: if (){}, else{}, for (;;){}, while(){}, switch, catch, ...
-
-" Write each '(' on a new line; -> if \n() ... {}
-" let g:c_nl_before_bracket = 1
-"
-" Write each '{' on a new line; -> if ...() \n {}
-let g:c_nl_before_curlyB  = 1
 " }}}
 " ====================================================================
 " vim600: set fdm=marker:
