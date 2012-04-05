@@ -257,11 +257,11 @@ function! Def_AbbrC(key,expr)
   endif
   " Default behaviour
   let rhs = a:expr
-  if exists('g:c_nl_before_bracket') && g:c_nl_before_bracket
+  if lh#cpp#option#nl_before_bracket()
     " let rhs = substitute(rhs, '\(BuildMapSeq\)\@<!(', '\\<cr\\>\0', 'g')
     let rhs = substitute(rhs, '\s*(', '\\n(', 'g')
   endif
-  if exists('g:c_nl_before_curlyB') && g:c_nl_before_curlyB
+  if lh#cpp#option#nl_before_curlyB()
     " let rhs = substitute(rhs, '{', '\\<cr\\>\0', 'g')
     let rhs = substitute(rhs, '\s*{', '\\n{', 'g')
     let rhs = substitute(rhs, '}\s*', '}\\n', 'g')

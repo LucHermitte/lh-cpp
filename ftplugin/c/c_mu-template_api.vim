@@ -3,7 +3,7 @@
 " File:		ftplugin/c/c_mu-template_api.vim                          {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	2.0.0
 " Created:	14th Apr 2006
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -18,6 +18,7 @@
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
 " Dependancies:	mu-template (=> lh-map-tools, searchInRuntime)
+" TODO: move to an autoload plugin
 " }}}1
 "=============================================================================
 
@@ -37,11 +38,11 @@ set cpo&vim
 " note: The space is needed after the "\n" to avoid mu-template from joining
 " the two next lines.
 function! C_nl_before_bracket()
-  return exists('g:c_nl_before_bracket') && g:c_nl_before_bracket ? "\n " : " "
+  return lh#cpp#option#nl_before_bracket() ? "\n " : " "
 endfunction
 
 function! C_nl_before_curlyB()
-  return exists('g:c_nl_before_curlyB') && g:c_nl_before_curlyB ? "\n " : " "
+  return lh#cpp#option#nl_before_curlyB() ? "\n " : " "
 endfunction
 
 " Functions }}}1

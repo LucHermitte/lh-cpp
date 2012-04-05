@@ -4,7 +4,7 @@
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Last Change:	$Date$ (28th July 2003)
-" Version:	1.2.0
+" Version:	2.0.0
 "
 "------------------------------------------------------------------------
 " Description:	
@@ -91,8 +91,7 @@ function! s:WriteAccessor(returnType, signature, instruction, comment)
     let lines = []
     let lines += [a:comment]
     if '' != a:instruction
-      let curly = (exists('g:c_nl_before_curlyB') && g:c_nl_before_curlyB)
-            \ ? "" : "\<tab>{"
+      let curly = lh#cpp#option#nl_before_curlyB() ? "" : "\<tab>{"
       if a:returnType =~ "^inline"
         let lines += ['inline']
         let lines += [ substitute(a:returnType,"inline.",'','')

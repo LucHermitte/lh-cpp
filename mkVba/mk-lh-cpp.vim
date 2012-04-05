@@ -65,6 +65,7 @@ autoload/lh/cpp/brackets.vim
 autoload/lh/cpp/constructors.vim
 autoload/lh/cpp/enum.vim
 autoload/lh/cpp/ftplugin.vim
+autoload/lh/cpp/option.vim
 autoload/lh/cpp/override.vim
 autoload/lh/cpp/style.vim
 autoload/lh/dox.vim
