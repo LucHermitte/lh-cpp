@@ -27,9 +27,11 @@ Features~
 |C++_jump_implementation|       Jumping to functions-implementation
 |C++_function_doxygenation|     Doxygenize a function prototype
 |C++_templates|                 Skeletons, snippets, and wizards provided
-|C++_Overide|                   Function overriding helper
+|C++_Override|                  Function overriding helper
 |C++_unmatched_functions|       Search for declared ad undefined functions (or
                               the other way around)
+|C++_inspection|                Inspection of various properties (children,
+                              ancestors, ...)
 |C++_options|                   Options for different features (i.e. ftplugins)
 
 |mu-template.txt|               Gergely Kontra's mu-template
@@ -508,6 +510,26 @@ C++ options for doxygen~
     - the template-file {rtp}/template/cpp/internals/function-comment.template
     - the template-file {rtp}/template/cpp/internals/formatted-comment.template
  
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                          *C++_Override*
+                                                          *:Override*  
+Function overridding helper~
+>
+    :Override
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                *C++_unmatched_functions*
+                                                *:CppDisplayUnmatchedFunctions*
+Search for declared ad undefined functions (or the other way around)~
+>
+    :CppDisplayUnmatchedFunctions
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                        *C++_inspection*
+Inspection of various properties~
+*:Ancestor* [classname]
+*:Children* [!] [namespace] [classname]
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                             *C++_options*
 C++ options~

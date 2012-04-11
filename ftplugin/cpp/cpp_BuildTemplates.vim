@@ -3,7 +3,9 @@
 " File:		ftplugin/cpp/cpp_BuildTemplates.vim                   {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Last Update:	$Date$ (28th Jul 2003)
 "------------------------------------------------------------------------
 " Description:	«description»
@@ -11,9 +13,9 @@
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
 " Dependencies:	a.vim (Alternate files)
-" 		VIM >= 6.00 only
 " TODO:	
 " * Correct the ftplugin to be VIM 6 fully compliant
+" * Delete what's redundant with µTemplate's templates
 " }}}1
 " ========================================================================
 
@@ -111,7 +113,7 @@ let s:MnLine= '/*---------------------------------------------------------------
   inoremap /*1 0<c-d>/*<esc>75a=<esc>a*/
 function! s:Cpp_group(name) " {{{3
   " TODO: use indent()
-  silent put = '    /**@name ' .a:name 
+  silent put = '    /**'. lh#dox#tag('name') 
   silent put = '     */'
   silent put = '    //@{'
   silent put = '    //@}'

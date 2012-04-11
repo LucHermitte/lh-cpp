@@ -3,7 +3,9 @@
 " File:		ftplugin/c/c_brackets.vim                                {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "               <URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	26th May 2004
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -22,6 +24,8 @@
 " 	Requires Vim7+, lh-map-tools, and {rtp}/autoload/lh/cpp/brackets.vim
 "
 " History:	
+"	v2.0.0  11th Apr 2012
+"	        License GPLv3 w/ extension
 "	v1.0.0	19th Mar 2008
 "		Exploit the new kernel from map-tools v1.0.0 
 "	v0.5    26th Sep 2007

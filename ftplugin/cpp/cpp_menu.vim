@@ -3,17 +3,14 @@
 " File:		ftplugin/cpp/cpp_menu.vim                                 {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	14th Oct 2006
 " Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	
 " 	Various C++ menu definitions
-" 
-"------------------------------------------------------------------------
-" Installation:	«install details»
-" History:	«history»
-" TODO:		«missing features»
 " }}}1
 "=============================================================================
 
@@ -84,9 +81,12 @@ exe 'amenu <silent> '.s:menu_prio.'.100.50.20 '.
       \ escape(s:menu_name.'.&Help.&Wizards.&Goto Implementation', '\ ').
       \ ' :help C++_jump_implementation<cr>'
 exe 'amenu <silent> '.s:menu_prio.'.100.50.30 '.
-      \ escape(s:menu_name.'.&Help.&Wizards.&Doxygen function', '\ ').
-      \ ' :help C++_dox_function<cr>'
+      \ escape(s:menu_name.'.&Help.&Wizards.&Override function', '\ ').
+      \ ' :help C++_Override<cr>'
 exe 'amenu <silent> '.s:menu_prio.'.100.50.40 '.
+      \ escape(s:menu_name.'.&Help.&Wizards.&Doxygen function', '\ ').
+      \ ' :help C++_function_doxygenation<cr>'
+exe 'amenu <silent> '.s:menu_prio.'.100.50.50 '.
       \ escape(s:menu_name.'.&Help.&Wizards.&C++ Templates', '\ ').
       \ ' :help C++_templates<cr>'
 " -> class
@@ -94,9 +94,12 @@ exe 'amenu <silent> '.s:menu_prio.'.100.50.40 '.
 exe 'amenu <silent> '.s:menu_prio.'.100.50.100 '.
       \ escape(s:menu_name.'.&Help.&Wizards.-100-', '\ '). ' <Nop>'
 exe 'amenu <silent> '.s:menu_prio.'.100.50.100 '.
-      \ escape(s:menu_name.'.&Help.&Wizards.&Templates', '\ ').
+      \ escape(s:menu_name.'.&Help.&Wizards.µ &Template', '\ ').
       \ ' :help mu-template<cr>'
 
+exe 'amenu <silent> '.s:menu_prio.'.100.80 '.
+      \ escape(s:menu_name.'.&Help.See &Unmatched functions', '\ ').
+      \ ' :help C++_unmatched_functions<cr>'
 exe 'amenu <silent> '.s:menu_prio.'.100.90 '.
       \ escape(s:menu_name.'.&Help.-90-', '\ '). ' <Nop>'
 exe 'amenu <silent> '.s:menu_prio.'.100.90 '.

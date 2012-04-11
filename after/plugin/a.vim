@@ -18,10 +18,11 @@
 " 24th Jan 2008: Non official patches by Luc Hermitte
 " 21st Apr 2010: Other non official patches by Luc Hermitte
 "                -> introduces dependendy to autoplugin/lh/path.vim
+" 02nd Apr 2012: dynamic options through lh-dev
 
 " Do not load a.vim if is has already been loaded.
 if &cp || (exists("loaded_alternateFile")
-      \ && !exists('g:force_load_alternateFile'))
+      \ && !exists('g:force_reload_a'))
     finish
 endif
 if (v:progname == "ex")
@@ -40,8 +41,24 @@ let alternateExtensionsDict = {}
 
 
 " This variable will be increased when an extension with greater number of dots
-" is added by the AddAlternateExtensionMapping call.
+" is added by the SetAlternateExtensionMapping call.
 let s:maxDotsInExtension = 1
+
+" Function : SetAlternateExtensionMapping (PRIVATE)
+" Purpose  : simple helper function to set the default alternate extension
+"            mappings.
+" Args     : extension -- the extension to map
+"            alternates -- comma separated list of alternates extensions
+" Returns  : nothing
+" Author   : Michael Sharpe <feline@irendi.com>
+function! <SID>SetAlternateExtensionMapping(extension, alternates)
+   let g:alternateExtensionsDict[a:extension] = a:alternates
+   let dotsNumber = strlen(substitute(a:extension, "[^.]", "", "g"))
+   if s:maxDotsInExtension < dotsNumber
+     let s:maxDotsInExtension = dotsNumber
+   endif
+endfunction
+
 
 " Function : AddAlternateExtensionMapping (PRIVATE)
 " Purpose  : simple helper function to add the default alternate extension
@@ -49,24 +66,19 @@ let s:maxDotsInExtension = 1
 " Args     : extension -- the extension to map
 "            alternates -- comma separated list of alternates extensions
 " Returns  : nothing
-" Author   : Michael Sharpe <feline@irendi.com>
-function! <SID>AddAlternateExtensionMapping(extension, alternates)
-   " This code does not actually work for variables like foo{'a.b.c.d.e'}
-   "let varName = "g:alternateExtensions_" . a:extension
-   "if (!exists(varName))
-   "   let g:alternateExtensions_{a:extension} = a:alternates
-   "endif
-
-   " This code handles extensions which contains a dot. exists() fails with
-   " such names.
-   "let v:errmsg = ""
-   " FIXME this line causes ex to return 1 instead of 0 for some reason??
-   "silent! echo g:alternateExtensions_{a:extension}
-   "if (v:errmsg != "")
-      "let g:alternateExtensions_{a:extension} = a:alternates
-   "endif
-
-   let g:alternateExtensionsDict[a:extension] = a:alternates
+" Author   : Luc Hermitte <hermite {at} free {dot} fr>
+function! AddAlternateExtensionMapping(extension, alternates)
+   if !has_key(g:alternateExtensionsDict, a:extension)
+      return s:SetAlternateExtensionMapping(a:extension, a:alternates)
+   endif
+   let new_alternates = split(a:alternates, ',')
+   let know_alternates = split(g:alternateExtensionsDict[a:extension], ',')
+   for a in new_alternates
+      if match(know_alternates, a) == -1
+         let know_alternates += [a]
+      endif
+   endfor
+   let g:alternateExtensionsDict[a:extension] = join(know_alternates, ',')
    let dotsNumber = strlen(substitute(a:extension, "[^.]", "", "g"))
    if s:maxDotsInExtension < dotsNumber
      let s:maxDotsInExtension = dotsNumber
@@ -76,44 +88,48 @@ endfunction
 
 " Add all the default extensions
 " Mappings for C and C++
-call <SID>AddAlternateExtensionMapping('h',"c,cpp,cxx,cc,CC")
-call <SID>AddAlternateExtensionMapping('H',"C,CPP,CXX,CC")
-call <SID>AddAlternateExtensionMapping('hpp',"cpp")
-call <SID>AddAlternateExtensionMapping('HPP',"CPP,C")
-call <SID>AddAlternateExtensionMapping('c',"h")
-call <SID>AddAlternateExtensionMapping('C',"H")
-call <SID>AddAlternateExtensionMapping('cpp',"h,hpp")
-call <SID>AddAlternateExtensionMapping('CPP',"H,HPP")
-call <SID>AddAlternateExtensionMapping('cc',"h")
-call <SID>AddAlternateExtensionMapping('CC',"H,h")
-call <SID>AddAlternateExtensionMapping('cxx',"h")
-call <SID>AddAlternateExtensionMapping('CXX',"H")
+call <SID>SetAlternateExtensionMapping('h',"c,cpp,cxx,cc,CC")
+call <SID>SetAlternateExtensionMapping('H',"C,CPP,CXX,CC")
+call <SID>SetAlternateExtensionMapping('hpp',"cpp,c")
+call <SID>SetAlternateExtensionMapping('HPP',"CPP,C")
+call <SID>SetAlternateExtensionMapping('c',"h")
+call <SID>SetAlternateExtensionMapping('C',"H")
+call <SID>SetAlternateExtensionMapping('cpp',"h,hpp")
+call <SID>SetAlternateExtensionMapping('CPP',"H,HPP")
+call <SID>SetAlternateExtensionMapping('cc',"h")
+call <SID>SetAlternateExtensionMapping('CC',"H,h")
+call <SID>SetAlternateExtensionMapping('cxx',"h")
+call <SID>SetAlternateExtensionMapping('CXX',"H")
 " Mappings for PSL7
-call <SID>AddAlternateExtensionMapping('psl',"ph")
-call <SID>AddAlternateExtensionMapping('ph',"psl")
+call <SID>SetAlternateExtensionMapping('psl',"ph")
+call <SID>SetAlternateExtensionMapping('ph',"psl")
 " Mappings for ADA
-call <SID>AddAlternateExtensionMapping('adb',"ads")
-call <SID>AddAlternateExtensionMapping('ads',"adb")
+call <SID>SetAlternateExtensionMapping('adb',"ads")
+call <SID>SetAlternateExtensionMapping('ads',"adb")
 " Mappings for lex and yacc files
-call <SID>AddAlternateExtensionMapping('l',"y,yacc,ypp")
-call <SID>AddAlternateExtensionMapping('lex',"yacc,y,ypp")
-call <SID>AddAlternateExtensionMapping('lpp',"ypp,y,yacc")
-call <SID>AddAlternateExtensionMapping('y',"l,lex,lpp")
-call <SID>AddAlternateExtensionMapping('yacc',"lex,l,lpp")
-call <SID>AddAlternateExtensionMapping('ypp',"lpp,l,lex")
+call <SID>SetAlternateExtensionMapping('l',"y,yacc,ypp")
+call <SID>SetAlternateExtensionMapping('lex',"yacc,y,ypp")
+call <SID>SetAlternateExtensionMapping('lpp',"ypp,y,yacc")
+call <SID>SetAlternateExtensionMapping('y',"l,lex,lpp")
+call <SID>SetAlternateExtensionMapping('yacc',"lex,l,lpp")
+call <SID>SetAlternateExtensionMapping('ypp',"lpp,l,lex")
 " Mappings for OCaml
-call <SID>AddAlternateExtensionMapping('ml',"mli")
-call <SID>AddAlternateExtensionMapping('mli',"ml")
+call <SID>SetAlternateExtensionMapping('ml',"mli")
+call <SID>SetAlternateExtensionMapping('mli',"ml")
 " ASP stuff
-call <SID>AddAlternateExtensionMapping('aspx.cs', 'aspx')
-call <SID>AddAlternateExtensionMapping('aspx.vb', 'aspx')
-call <SID>AddAlternateExtensionMapping('aspx', 'aspx.cs,aspx.vb')
+call <SID>SetAlternateExtensionMapping('aspx.cs', 'aspx')
+call <SID>SetAlternateExtensionMapping('aspx.vb', 'aspx')
+call <SID>SetAlternateExtensionMapping('aspx', 'aspx.cs,aspx.vb')
 
 " Setup default search path, unless the user has specified
 " a path in their [._]vimrc. 
+let s:alternateSearchPath_default = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc'
 if (!exists('g:alternateSearchPath'))
-  let g:alternateSearchPath = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc'
+  let g:alternateSearchPath = s:alternateSearchPath_default
 endif
+function! s:alternateSearchPath()
+  return lh#dev#option#get('alternateSearchPath', &ft, s:alternateSearchPath_default)
+endfunction
 
 " If this variable is true then a.vim will not alternate to a file/buffer which
 " does not exist. E.g while editing a.c and the :A will not swtich to a.h
@@ -153,7 +169,7 @@ function! <SID>GetNthItemFromList(list, n)
    while (i != a:n)
       let itemStart = itemEnd + 1
       let itemEnd = match(a:list, ",", itemStart)
-      let i = i + 1
+      let i += 1
       if (itemEnd == -1)
          if (i == a:n)
             let itemEnd = strlen(a:list)
@@ -259,7 +275,7 @@ function! <SID>FindFileInSearchPath(fileName, pathList, relPathBase)
          else
             break
          endif
-         let m = m + 1
+         let m += 1
       endwhile
    endif
    return filepath
@@ -285,21 +301,21 @@ function! <SID>FindFileInSearchPathEx(fileName, pathList, relPathBase, count)
          if (pathSpec != "")
             let path = <SID>ExpandAlternatePath(pathSpec, a:relPathBase)
             if (spath != "")
-               let spath = spath . ','
+               let spath .= ','
             endif
-            let spath = spath . path
+            let spath .= path
          else
             break
          endif
-         let m = m + 1
+         let m += 1
       endwhile
    endif
 
    if (&path != "")
       if (spath != "")
-         let spath = spath . ','
+         let spath .= ','
       endif
-      let spath = spath . &path
+      let spath .= &path
    endif
 
    let filepath = findfile(a:fileName, spath, a:count)
@@ -340,12 +356,12 @@ function! EnumerateFilesByExtension(path, baseName, extension)
             if (enumeration == "")
                let enumeration = newFilename
             else
-               let enumeration = enumeration . "," . newFilename
+               let enumeration .= "," . newFilename
             endif
          else
             let done = 1
          endif
-         let n = n + 1
+         let n += 1
       endwhile
    endif
    return enumeration
@@ -377,13 +393,13 @@ function! EnumerateFilesByExtensionInPath(baseName, extension, pathList, relPath
 	      if (enumeration == "")
 		let enumeration = pe
 	      else
-		let enumeration = enumeration . "," . pe
+		let enumeration .= "," . pe
 	      endif
 	    endif
          else
             break
          endif
-         let m = m + 1
+         let m += 1
       endwhile
    endif
    return enumeration
@@ -417,7 +433,7 @@ function! DetermineExtension(path)
   let mods = ":t"
   let i = 0
   while i <= s:maxDotsInExtension
-    let mods = mods . ":e"
+    let mods .= ":e"
     let extension = fnamemodify(a:path, mods)
     if (has_key(g:alternateExtensionsDict, extension))
        return extension
@@ -427,7 +443,7 @@ function! DetermineExtension(path)
     if (v:errmsg == "")
       return extension
     endif
-    let i = i + 1
+    let i += 1
   endwhile
   return ""
 endfunction
@@ -463,7 +479,7 @@ function! AlternateFile(splitWindow, ...)
      let allfiles = ""
      if (extension != "")
         let allfiles1 = EnumerateFilesByExtension(currentPath, baseName, extension)
-        let allfiles2 = EnumerateFilesByExtensionInPath(baseName, extension, g:alternateSearchPath, currentPath)
+        let allfiles2 = EnumerateFilesByExtensionInPath(baseName, extension, s:alternateSearchPath(), currentPath)
 
 "Decho "allfiles1=".allfiles1
 "Decho "allfiles2=".allfiles2
@@ -493,7 +509,7 @@ function! AlternateFile(splitWindow, ...)
               let bestScore = score
               let bestFile = onefile
            endif
-           let n = n + 1
+           let n += 1
            let onefile = <SID>GetNthItemFromList(allfiles, n)
         endwhile
 
@@ -519,7 +535,7 @@ function! AlternateOpenFileUnderCursor(splitWindow,...)
    let currentPath = expand("%:p:h")
    let openCount = 1
 
-   let fileName = <SID>FindFileInSearchPathEx(cursorFile, g:alternateSearchPath, currentPath, openCount)
+   let fileName = <SID>FindFileInSearchPathEx(cursorFile, s:alternateSearchPath(), currentPath, openCount)
    if (fileName != "")
       call <SID>FindOrCreateBuffer(fileName, a:splitWindow, 1)
       let b:openCount = openCount
@@ -554,14 +570,14 @@ function! AlternateOpenNextFile(bang)
    endif
 
    if (cursorFile != ""  && currentPath != ""  && openCount != 0)
-      let fileName = <SID>FindFileInSearchPathEx(cursorFile, g:alternateSearchPath, currentPath, openCount)
+      let fileName = <SID>FindFileInSearchPathEx(cursorFile, s:alternateSearchPath(), currentPath, openCount)
       if (fileName != "")
          call <SID>FindOrCreateBuffer(fileName, "n".a:bang, 0)
          let b:openCount = openCount
          let b:cursorFile = cursorFile
          let b:currentPath = currentPath
       else 
-         let fileName = <SID>FindFileInSearchPathEx(cursorFile, g:alternateSearchPath, currentPath, 1)
+         let fileName = <SID>FindFileInSearchPathEx(cursorFile, s:alternateSearchPath(), currentPath, 1)
          if (fileName != "")
             call <SID>FindOrCreateBuffer(fileName, "n".a:bang, 0)
             let b:openCount = 1
@@ -590,7 +606,7 @@ nmap <Leader>ihn :IHN<CR>
 "   let n = 1
 "   let oneFile = <SID>GetNthItemFromList(a:theList, n)
 "   while (oneFile != "")
-"      let n = n + 1
+"      let n += 1
 "      let oneFile = <SID>GetNthItemFromList(a:theList, n)
 "   endwhile
 "endfunction
@@ -607,13 +623,13 @@ function! NextAlternate(bang)
       let n = 1
       let onefile = <SID>GetNthItemFromList(b:AlternateAllFiles, n)
       while (onefile != "" && !<SID>EqualFilePaths(fnamemodify(onefile,":p"), fnamemodify(currentFile,":p")))
-         let n = n + 1
+         let n += 1
          let onefile = <SID>GetNthItemFromList(b:AlternateAllFiles, n)
       endwhile
 
       if (onefile != "")
          let stop = n
-         let n = n + 1
+         let n += 1
          let foundAlternate = 0
          let nextAlternate = ""
          while (n != stop)
@@ -622,7 +638,7 @@ function! NextAlternate(bang)
                let n = 1
                continue
             endif
-            let n = n + 1
+            let n += 1
             if (<SID>EqualFilePaths(fnamemodify(nextAlternate, ":p"), fnamemodify(currentFile, ":p")))
                 continue
             endif
@@ -674,7 +690,7 @@ function! <SID>BufferOrFileExists(fileName)
        let result = 2
        break
      endif
-     let i = i + 1
+     let i += 1
    endwhile
 
    if (!result) 
@@ -730,7 +746,7 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
          let bufNr = i
          break
        endif
-       let i = i + 1
+       let i += 1
      endwhile
 
      if (bufNr == -1)
@@ -796,7 +812,7 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
               let tabNr = i + 1
               break
            endif
-           let idx = idx + 1
+           let idx += 1
         endwhile
         if (tabNr != -1)
            break
@@ -871,3 +887,5 @@ function! A_debug(func, ...)
   let res = call(Fn, a:000)
   return res
 endfunction
+
+" vim:sw=3:

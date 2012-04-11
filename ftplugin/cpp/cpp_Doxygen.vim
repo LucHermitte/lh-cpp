@@ -152,7 +152,7 @@ function! s:Doxygenize()
   " goto begining of the function
   :put!=''
   " Load the template
-  :MuTemplate cpp/doxygen-function
+  :MuTemplate dox/function
 
   " release parameters of the template-file
   unlet g:CppDox_Params_snippet
