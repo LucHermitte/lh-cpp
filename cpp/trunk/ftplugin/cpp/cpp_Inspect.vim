@@ -3,7 +3,9 @@
 " File:		ftplugin/cpp/cpp_Inspect.vim                             {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	11th Sep 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -11,15 +13,10 @@
 " 	C++ ftplugin that provides command to inpect various information:
 " 	- ancestor of a class
 " 	- children of a class
-" 
-"------------------------------------------------------------------------
-" Installation:	«install details»
-" History:	«history»
-" TODO:		«missing features»
 " }}}1
 "=============================================================================
 
-let s:k_version = 111
+let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_cpp_Inspect") && !exists('g:force_reload_ftplug_cpp_Inspect'))

@@ -8,7 +8,7 @@ Audience      : Any C&C++ developers,
 		and C++-ftplugins writers that desire to define complex
 		features that require a little understanding of C++
 		constructs (like function signatures, etc)
-Requirements  : Vim 7, lh-vim-lib (3.0.0), map-tools (2.0.0),
+Requirements  : Vim 7, lh-vim-lib (3.1.0), map-tools (2.0.0),
 		searchInRuntime, mu-template v3.0.0, lh-tags
 		alternate (a version is shipped with lh-cpp)
 Required by   : No other script as far as I know
