@@ -30,7 +30,7 @@ class <+s:clsname+>
 ¡g:CppDox_inherits¡
 {
     /** <+lh#dox#tag('name')+> Singleton related functions */
-    //<+lh#dox#tag('{')+>
+    //@{
 private:
     /** Constructor. */
     <+g:CppDox_constructors+>
@@ -38,14 +38,14 @@ private:
     ~<+s:clsname+>() ;
 
     <+g:CppDox_instance+>
-    //<+lh#dox#tag('}')+>
+    //@}
 
 
     /** <+lh#dox#tag('name')+> Public functions */
-    //<+lh#dox#tag('{')+>
+    //@{
 public:
     <+Public functions+>;
-    //<+lh#dox#tag('}')+>
+    //@}
 
 private:
     ¡g:CppDox_forbidden_members¡
