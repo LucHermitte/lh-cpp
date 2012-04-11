@@ -1,0 +1,8 @@
+VimL:" $Id$
+VimL:" doxygen <+html+> snippets, Luc Hermitte, 11th Apr 2012
+VimL:" hint: <html-tag>|</html-tag>
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:text = s:Surround(1, Marker_Txt())
+VimL: let s:tag = s:Surround(2, Marker_Txt("html"))
+<<+s:tag+>><+s:text+></<+s:tag+>>
