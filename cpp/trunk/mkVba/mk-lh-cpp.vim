@@ -24,7 +24,6 @@ after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 after/template/cpp/abs-rel.template
 after/template/cpp/assignment-operator.template
-after/template/cpp/author-doxygen.template
 after/template/cpp/b-e.template
 after/template/cpp/bool-operator.template
 after/template/cpp/catch.template
@@ -32,14 +31,11 @@ after/template/cpp/class.template
 after/template/cpp/copy-and-swap.template
 after/template/cpp/copy-constructor.template
 after/template/cpp/destructor.template
-after/template/cpp/doxygen-function.template
 after/template/cpp/enum.template
 after/template/cpp/enum2.template
-after/template/cpp/file-dox.template
 after/template/cpp/for-enum.template
 after/template/cpp/for-iterator.template
 after/template/cpp/fori.template
-after/template/cpp/group-dox.template
 after/template/cpp/internals/abs-rel-shared.template
 after/template/cpp/internals/formatted-comment.template
 after/template/cpp/internals/function-comment.template
@@ -56,6 +52,14 @@ after/template/cpp/throw.template
 after/template/cpp/traits.template
 after/template/cpp/try.template
 after/template/cpp/utf8.template
+after/template/dox/author.template
+after/template/dox/code.template
+after/template/dox/em.template
+after/template/dox/file.template
+after/template/dox/function.template
+after/template/dox/group.template
+after/template/dox/html.template
+after/template/dox/tt.template
 autoload/lh/cpp/AnalysisLib_Class.vim
 autoload/lh/cpp/AnalysisLib_Function.vim
 autoload/lh/cpp/GotoFunctionImpl.vim
