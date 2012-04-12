@@ -9,9 +9,11 @@
 " 		Rewritten by Luc Hermitte <hermitte at free.fr>, but features
 " 		and fixes still mainly coming from Robert's ideas.
 " 		<URL:http://code.google.com/p/lh-vim/>
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " }}}2
 " Last Change:	$Date$ (05th May 2006)
-" Version:	1.1.0
+" Version:	2.0.0
 "------------------------------------------------------------------------
 " Description:	
 " 	Defines mappings and commands to jumps to the implementation of a
@@ -38,6 +40,10 @@
 " 	code. If you find such a broken C++-rule, send me an email to see if I
 " 	can fix it.
 "
+"    [Luc: 12th Apr 2012] v2.0.0: {{{3
+"       (*) GPLv3 w/ extension
+"       (*) facultative option: extension of the file where to put the
+"           definition of the function.
 "    [Luc: 06th Oct 2006] v0.8.6: {{{3
 "    	(*) Code refactorized and moved to 
 " 		{rtp}/autoload/lh/cpp/CodeAnalysisLib.vim
@@ -203,7 +209,7 @@ if exists("b:loaded_ftplug_cpp_GotoFunctionImpl")
       \ && !exists('g:force_load_cpp_GotoFunctionImpl')
     finish 
 endif 
-let b:loaded_ftplug_cpp_GotoFunctionImpl = 1 
+let b:loaded_ftplug_cpp_GotoFunctionImpl = 200
 let s:cpo_save=&cpo
 set cpo&vim
 
@@ -215,6 +221,8 @@ set cpo&vim
 "  'ShowStaticon', '..off', '..0' or '..1'
 "  'ShowExplicitcon', '..off', '..0' or '..1'
 "  'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
+"  {extension} -> cpp,txx,cxx, etc when there can be a choice where to have the
+"  function definition
 
 command! -buffer -nargs=* GOTOIMPL call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(<f-args>)
 
@@ -225,7 +233,7 @@ command! -buffer -nargs=* GOTOIMPL call lh#cpp#GotoFunctionImpl#GrabFromHeaderPa
 command! -buffer -nargs=0 PASTEIMPL call lh#cpp#GotoFunctionImpl#InsertCodeAtLine()
 
 " Like GOTOIMPL, but instead move an inlined function to a separate .cpp file
-command! -buffer -nargs=0 MOVETOIMPL call lh#cpp#GotoFunctionImpl#MoveImpl()
+command! -buffer -nargs=* MOVETOIMPL call lh#cpp#GotoFunctionImpl#MoveImpl(<f-args>)
 
 " Mappings: {{{2
 " normal mode mapping ; still possible to set parameters
