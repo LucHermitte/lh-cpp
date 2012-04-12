@@ -94,7 +94,7 @@ exe 'amenu <silent> '.s:menu_prio.'.100.50.50 '.
 exe 'amenu <silent> '.s:menu_prio.'.100.50.100 '.
       \ escape(s:menu_name.'.&Help.&Wizards.-100-', '\ '). ' <Nop>'
 exe 'amenu <silent> '.s:menu_prio.'.100.50.100 '.
-      \ escape(s:menu_name.'.&Help.&Wizards.µ &Template', '\ ').
+      \ escape(s:menu_name.'.&Help.&Wizards.mu&Template', '\ ').
       \ ' :help mu-template<cr>'
 
 exe 'amenu <silent> '.s:menu_prio.'.100.80 '.
