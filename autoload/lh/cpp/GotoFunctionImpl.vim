@@ -3,6 +3,8 @@
 " File:		autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " Version:	2.0.0
 " Created:	07th Oct 2006
 " Last Update:	$Date$ (04th Jan 2012)
@@ -38,6 +40,8 @@
 "	(*) parameter for the new implementation file extention
 "	(*) reuse a know buffer if it already exists -- i.e.: not limited to
 "	    readable files
+"       (*) facultative option: extension of the file where to put the
+"           definition of the function.
 " TODO:
 " 	(*) add knowledge about C99/C++11 new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -72,13 +76,12 @@ endfunction
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#MoveImpl() "{{{3
 " The default values for 'HowToShowVirtual', 'HowToShowStatic' and
-" 'HowToShowDefaultParams' come from cpp_options.vim ; they can be overridden
-" momentarily.
+" 'HowToShowDefaultParams' can be overridden momentarily.
 " Parameters: None
-function! lh#cpp#GotoFunctionImpl#MoveImpl()
+function! lh#cpp#GotoFunctionImpl#MoveImpl(...)
   try
     let a_save = @a
-    :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL\<cr>va{\"ap=a{"
+    :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
   finally
     let @a = a_save
   endtry
@@ -87,41 +90,46 @@ endfunction
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource "{{{3
 " The default values for 'HowToShowVirtual', 'HowToShowStatic' and
-" 'HowToShowDefaultParams' come from cpp_options.vim ; they can be overridden
-" momentarily.
+" 'HowToShowDefaultParams' can be overridden momentarily.
 " Parameters: 'ShowVirtualon', 'ShowVirtualoff', 'ShowVirtual0', 'ShowVirtual1',
 " 	      'ShowStaticon', '..off', '..0' or '..1'
 " 	      'ShowExplicitcon', '..off', '..0' or '..1'
 " 	      'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
-" TODO: add C++11 override et final
+" TODO: add C++11 override and final
 let s:option_value = '\%(on\|off\|\d\+\)$'
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   " 0- Check options {{{4
-  let s:ShowVirtual		= lh#option#get('cpp_ShowVirtual',       1)
-  let s:ShowStatic		= lh#option#get('cpp_ShowStatic',        1)
-  let s:ShowExplicit		= lh#option#get('cpp_ShowExplicit',      1)
-  let s:ShowDefaultParams	= lh#option#get('cpp_ShowDefaultParams', 1)
+  let s:ShowVirtual		= lh#dev#option#get('ShowVirtual',       &ft, 1)
+  let s:ShowStatic		= lh#dev#option#get('ShowStatic',        &ft, 1)
+  let s:ShowExplicit		= lh#dev#option#get('ShowExplicit',      &ft, 1)
+  let s:ShowDefaultParams	= lh#dev#option#get('ShowDefaultParams', &ft, 1)
+  let expected_extension        = ''
   if 0 != a:0
     let i = 0
     while i < a:0
-      let i = i + 1
+      let i +=  1
       let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '') 
       if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
-	call lh#common#error_msg(
-	      \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Unknown parameter : <'.varname.'>')
-	return
-      endif " }}}4
-      let val = matchstr(a:{i}, s:option_value)
-      if     val == 'on'  | let val = 1
-      elseif val == 'off' | let val = 0
-      elseif val !~ '\d\+'
-	call lh#common#error_msg(
-	      \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Invalid value for parameter : <'.varname.'>')
-	return
+        if !empty(expected_extension)
+          call lh#common#error_msg(
+                \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: extension already set to <'.expected_extension.'>')
+          return
+        else
+          let expected_extension = a:{i}
+        endif
+      else " }}}4
+        let val = matchstr(a:{i}, s:option_value)
+        if     val == 'on'  | let val = 1
+        elseif val == 'off' | let val = 0
+        elseif val !~ '\d\+'
+          call lh#common#error_msg(
+                \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Invalid value for parameter : <'.varname.'>')
+          return
+        endif
+        " exe "let s:".varname."= val"
+        let s:{varname} = val
+        " call confirm(s:{varname}.'='.val, '&ok', 1)
       endif
-      " exe "let s:".varname."= val"
-      let s:{varname} = val
-      " call confirm(s:{varname}.'='.val, '&ok', 1)
     endwhile
   endif
 
@@ -144,7 +152,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   endif
 
   " 3- Add the string into the implementation file {{{4
-  call lh#cpp#GotoFunctionImpl#open_cpp_file()
+  call lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
   " Search or insert the C++ implementation
   if !s:Search4Impl((impl2search.regex).'\_s*[{:]', className)
     let impl        = s:BuildFunctionSignature4impl(proto,className)
@@ -179,8 +187,8 @@ endfunction
 " }}}2
 
 "------------------------------------------------------------------------
-" Function: lh#cpp#GotoFunctionImpl#open_cpp_file() {{{3
-function! lh#cpp#GotoFunctionImpl#open_cpp_file()
+" Function: lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) {{{3
+function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
   if expand('%:e') =~? 'cpp\|c\|C\|cxx'
     " already within the .cpp file
     return 
@@ -197,13 +205,13 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file()
     let use_alternate = 1
     if exists(':AS') " from a.vim
       if !s:IsThereAMatchingSourceFile(expand('%:p'))
-	let split_opt = NewAlternateFilename(expand('%:p'))
+	let split_opt = NewAlternateFilename(expand('%:p'), a:expected_extension)
 	let split_opt = lh#path#to_relative(split_opt)
 	let use_alternate = 0
       endif
     else
       let root_name = fnamemodify(expand('%'), ':r')
-      let best_ext = s:BestExtensionFor(root_name)
+      let best_ext = s:BestExtensionFor(root_name, a:expected_extension)
       let split_opt = root_name . '.' . best_ext
       let use_alternate = 0
     endif
@@ -219,7 +227,8 @@ endfunction
 
 "------------------------------------------------------------------------
 " Function: s:BestExtensionFor(root_name) {{{3
-function! s:BestExtensionFor(root_name)
+function! s:BestExtensionFor(root_name, expected_extension)
+  if !empty(a:expected_extension) | return a:expected_extension | endif
   let Best_ext = lh#dev#option#get('ext_4_impl_file', &ft, 'cpp')
   let best_ext = type(Best_ext) == type(function('has'))
         \ ?  Best_ext(a:root_name)
@@ -287,7 +296,7 @@ function! s:Search4Impl(re_impl, scope)
       " \ && (req_proto == current_proto)
       let current = ns . ((ns != "") ? '::' : '' ).current_proto
       if ("" != required_ns) && (required_ns !~ '.*::$')
-        let required_ns = required_ns . '::' 
+        let required_ns .=  '::' 
       endif
       " call confirm('required_ns='.required_ns.
       " \ "\ncurrent_proto=".current_proto.
@@ -383,8 +392,8 @@ endfunction
 " Function: s:SearchLineToAddImpl() {{{3
 
 function! s:SearchLineToAddImpl()
-  let cpp_FunctionPosition = lh#option#get('cpp_FunctionPosition', 'g', 0)
-  let cpp_FunctionPosArg   = lh#option#get('cpp_FunctionPosArg',   'g', 0)
+  let cpp_FunctionPosition = lh#dev#option#get('FunctionPosition', &ft, 'g', 0)
+  let cpp_FunctionPosArg   = lh#dev#option#get('FunctionPosArg',   &ft, 'g', 0)
   if     cpp_FunctionPosition == 0 " {{{4
     return line('$') + cpp_FunctionPosArg
   elseif cpp_FunctionPosition == 1 " {{{4
@@ -462,14 +471,14 @@ function! s:InsertCodeAtLine(...)
   " call append(p, impl)
   " Reindent the newly inserted lines
   let nl = strlen(substitute(impl, "[^\n]", '', 'g')) - 1 
-  let p = p + 1
+  let p +=  1
   silent exe p.','.(p+nl).'v/^$/normal! =='
   " Restore folding
   let &foldenable=folder
 endfunction
 " }}}2
 "------------------------------------------------------------------------
-function! NewAlternateFilename(file)
+function! NewAlternateFilename(file, expected_extension)
   " Assert(exists('g:alternateSearchPath') && strlen(g:alternateSearchPath)>0)
   "
   try
@@ -481,7 +490,7 @@ function! NewAlternateFilename(file)
     if exists('g:alternateExtensions_'.extension)
       let l:save_extensions_h = g:alternateExtensions_{extension}
     endif
-    let g:alternateExtensions_{extension} = s:BestExtensionFor(baseName)
+    let g:alternateExtensions_{extension} = s:BestExtensionFor(baseName, a:expected_extension)
     let sFiles = EnumerateFilesByExtensionInPath(baseName, extension, g:alternateSearchPath, currentPath)
     let lFiles = split(sFiles, ',')
     " call filter(lFiles, 'v:val != a:file')

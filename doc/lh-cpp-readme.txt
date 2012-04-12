@@ -360,24 +360,32 @@ Special features:
     * Check the history for other minor details.
 
 Options:
-    *g:cpp_ShowVirtual*             (0/[1])
+    *(bg):[{ft}_]ext_4_impl_file*             (text)
+        This option specifies the default file-extension of the file where the
+        function definition should go.
+        Can be overridden on the fly with: :GOTOIMPL {ext}
+    *(bg):[{ft}_]ShowVirtual*             (0/[1])
         When true, if the function is virtual, then the comment
         /*virtual*/ will be added at the beginning of the proposed
         implementation.
-    *g:cpp_ShowStatic*              (0/[1])
+        Can be overridden on the fly with: :GOTOIMPL ShowVirtual0/1
+    *(bg):[{ft}_]ShowStatic*              (0/[1])
         When true, if the function is static, then the comment /*static*/
         will be added at the beginning of the proposed implementation.
-    *g:cpp_ShowExplicit*            (0/[1])
+        Can be overridden on the fly with: :GOTOIMPL ShowStatic0/1
+    *(bg):[{ft}_]ShowExplicit*            (0/[1])
         When true, if the function is explicit then the comment /*explicit*/
         will be added at the beginning of the proposed implementation.
-    *g:cpp_ShowDefaultParams*       (0/[1]/2/3)
+        Can be overridden on the fly with: :GOTOIMPL ShowExplicit0/1
+    *(bg):[{ft}_]ShowDefaultParams*       (0/[1]/2/3)
         Determines if a comment will be added for every parameter having a
         default value -- according to the function-signature.
             0 -> No reminder
             1 -> /* = {theDefaultValue} */
             2 -> /*={theDefaultValue}*/
             3 -> /*{theDefaultValue}*/
-    *g:cpp_FunctionPosition* ([0]/1/2/3) & *g:cpp_FunctionPosArg* ([0])
+        Can be overridden on the fly with: :GOTOIMPL ShowDefaultParam0/1
+    *(g):[{ft}_]FunctionPosition* ([0]/1/2/3) & *(g):[{ft}_]FunctionPosArg* ([0])
         Determines where the default implementation, for a function not yet
         defined, should be placed. We are placed ...
             0 -> ... at |g:cpp_FunctionPosArg| lines from the end of the
