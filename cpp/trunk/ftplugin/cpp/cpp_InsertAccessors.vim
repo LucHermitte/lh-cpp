@@ -4,6 +4,8 @@
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Last Change:	$Date$ (28th July 2003)
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " Version:	2.0.0
 "
 "------------------------------------------------------------------------
@@ -33,7 +35,7 @@
 " }}}1
 " ==========================================================================
 
-let s:k_version = 120
+let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_cpp_InsertAccessors")

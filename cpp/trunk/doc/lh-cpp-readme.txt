@@ -1,5 +1,5 @@
 *lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b1)
-                        For Vim version 7.x.    Last change: 20th Mar 2012
+                        For Vim version 7.x.    Last change: 12th Apr 2012
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -33,6 +33,10 @@ Features~
 |C++_inspection|                Inspection of various properties (children,
                               ancestors, ...)
 |C++_options|                   Options for different features (i.e. ftplugins)
+ ...|C++_doxygen-options|       Options related to Doxygen.
+|lh-cpp_API|                    Functions available to write your own
+                              ftplugins and templates.
+ ...|lh#cpp#dox#|               Doxygen related functions
 
 |mu-template.txt|               Gergely Kontra's mu-template
 |previewWord.vim|               Georgi Slavchev's previewWord.vim
@@ -500,25 +504,6 @@ The variation points are:
     embedded comments. The default format used is Doxygen format.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-                                                            *C++_doxygen-options*
-C++ options for doxygen~
-
-*(bg):[{ft}_]dox_CommentLeadingChar* Character used at ???; default: "*"
-*(bg):[{ft}_]dox_TagLeadingChar*     Character used to introduce tags: "!"/"[@]"
-*(bg):[{ft}_]dox_brief*              Shall we have a @brief tag?  -> yes/no/[short]
-*(bg):[{ft}_]dox_ingroup*            Shall we have a @ingroup tag?  -> yes/[no]
-*(bg):dox_group*                     Name of the doxygen group.
-*(bg):[{ft}_]dox_author_tag*         Name of the tag to use: ["author"]/"authors"
-*(bg):[{ft}_]dox_author*             Name(s) of the author(s).
-
-*(bg):[{ft_}]template_expand_doc* is a boolean option (default: 1) 
-    Tells whether embedded documentation (as comments) shall be generated when
-    template-files are expanded.
-    Used by: 
-    - the template-file {rtp}/template/cpp/internals/function-comment.template
-    - the template-file {rtp}/template/cpp/internals/formatted-comment.template
- 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                           *C++_Override*
                                                           *:Override*  
 Function overridding helper~
@@ -588,6 +573,25 @@ Default options for a specific filetype shall be defined as |buffer-variable|s
 Project specific settings shall override the previous default settings in
 |local_vimrc|s.
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                            *C++_doxygen-options*
+C++ options for doxygen~
+
+*(bg):[{ft}_]dox_CommentLeadingChar* Character used at ???; default: "*"
+*(bg):[{ft}_]dox_TagLeadingChar*     Character used to introduce tags: "!"/"[@]"
+*(bg):[{ft}_]dox_brief*              Shall we have a @brief tag?  -> yes/no/[short]
+*(bg):[{ft}_]dox_ingroup*            Shall we have a @ingroup tag?  -> yes/[no]
+*(bg):dox_group*                     Name of the doxygen group.
+*(bg):[{ft}_]dox_author_tag*         Name of the tag to use: ["author"]/"authors"
+*(bg):[{ft}_]dox_author*             Name(s) of the author(s).
+
+*(bg):[{ft_}]template_expand_doc* is a boolean option (default: 1) 
+    Tells whether embedded documentation (as comments) shall be generated when
+    template-files are expanded.
+    Used by: 
+    - the template-file {rtp}/template/cpp/internals/function-comment.template
+    - the template-file {rtp}/template/cpp/internals/formatted-comment.template
+ 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 Michael Sharpe's a.vim~
 File: a.vim
@@ -719,6 +723,41 @@ this, add one of the following lines into your .vimrc: >
     filetype plugin on
     filetype plugin indent on " is fine as well
 Check |:filetype-plugin-on| for more info.
+
+
+------------------------------------------------------------------------------
+                                                        *lh-cpp_API*
+lh-cpp API~
+Here are the function made available to write your own ftplugins and
+template-files.
+
+                                                    *lh#cpp#dox#*
+
+Doxygen related functions~
+The following functions are parametrized, see |C++_doxygen-options|.
+
+- Purely stylistic options~
+ *lh#dox#comment_leading_char()*
+    @see |(bg):[{ft}_]dox_CommentLeadingChar|
+ *lh#dox#tag_leading_char()*
+    @see |(bg):[{ft}_]dox_TagLeadingChar|
+ *lh#dox#tag()*
+    @returns |lh#dox#tag_leading_char()| + parameter 
+
+- Semantics options, i.e. that return a tag and sometimes more~
+ *lh#dox#semantics()*
+    @returns "<p><b>Semantics</b><br>" 
+ *lh#dox#ingroup()*
+    @param name
+    @see |(bg):[{ft}_]dox_ingroup|
+ *lh#dox#brief()*
+ *lh#dox#param()*
+    @param p parameter description: text, or |Dictionary| {dir: in,out,inout; name}.
+    @return lh#dox#tag("param") + p
+ *lh#dox#author()*
+    @param names (optional)
+    @returns lh#dox#tag(|(bg):[{ft}_]dox_author_tag|) 
+             + names or |(bg):[{ft}_]dox_author| if no names specified
 
 
 ------------------------------------------------------------------------------
