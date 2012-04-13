@@ -3,7 +3,9 @@
 " File:		autoload/lh/cpp/brackets.vim                             {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "               <URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	17th Mar 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -18,6 +20,7 @@
 "
 " History:	
 " 	v1.0.0: First version
+"	v2.0.0: License GPLv3 w/ extension
 " TODO:	
 " }}}1
 "=============================================================================

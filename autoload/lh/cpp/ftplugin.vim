@@ -3,16 +3,16 @@
 " File:		autoload/lh/cpp/ftplugin.vim                             {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	11th Sep 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-" Description:	«description»
-" 
-"------------------------------------------------------------------------
-" Installation:	«install details»
-" History:	«history»
-" TODO:		«missing features»
+" Description:	
+"       Provides lh#cpp#ftplugin#OptionalClass(...) that can be used to write
+"       :commands in ftplugins that tries to deduce the name of the current
+"       class if none is provided.
 " }}}1
 "=============================================================================
 
