@@ -3,20 +3,15 @@
 " File:         autoload/lh/cpp/dox.vim                           {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	200
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:      22nd Feb 2011
 " Last Update:  $Date$
 "------------------------------------------------------------------------
 " Description:
-"       «description»
-" 
-"------------------------------------------------------------------------
-" Installation:
-"       Drop this file into {rtp}/autoload/lh/cpp
-"       Requires Vim7+
-"       «install details»
-" History:      «history»
-" TODO:         «missing features»
+"       Set of functions to generate Doxygen tags in respect of the current
+"       style.
 " }}}1
 "=============================================================================
 
