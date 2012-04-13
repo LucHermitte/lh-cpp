@@ -731,6 +731,7 @@ lh-cpp API~
 Here are the function made available to write your own ftplugins and
 template-files.
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                     *lh#cpp#dox#*
 
 Doxygen related functions~
@@ -751,6 +752,7 @@ The following functions are parametrized, see |C++_doxygen-options|.
     @param name
     @see |(bg):[{ft}_]dox_ingroup|
  *lh#dox#brief()*
+    @see |(bg):[{ft}_]dox_brief|
  *lh#dox#param()*
     @param p parameter description: text, or |Dictionary| {dir: in,out,inout; name}.
     @return lh#dox#tag("param") + p
@@ -759,6 +761,23 @@ The following functions are parametrized, see |C++_doxygen-options|.
     @returns lh#dox#tag(|(bg):[{ft}_]dox_author_tag|) 
              + names or |(bg):[{ft}_]dox_author| if no names specified
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                    *lh#cpp#ftplugin#*
+Convinience functions for ftplugin definitions only~
+ *lh#cpp#ftplugin#OptionalClass()*
+    Function that can be used to write |:command|s in |ftplugins| that tries
+    to deduce the name of the current C++ class if none is provided.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                    *lh#cpp#style*
+Functions dedicated to obtain information on the current style~
+ *lh#cpp#style#get()*
+    @param datakind
+    @param pos
+    @returns lh#option#get(datakind + pos, '')
+ *lh#cpp#style#attribute2parameter_name()*
+    @param attrb_name
+    Applies the chosen naming style for parameters to a attribute name.
 
 ------------------------------------------------------------------------------
                                                         *Files-from-lh-cpp*
