@@ -3,7 +3,9 @@
 " File:		autoload/lh/cpp/AnalysisLib_Function.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.1
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	05th Oct 2006
 " Last Update:	$Date$ (04th Jan 2012)
 "------------------------------------------------------------------------
@@ -41,6 +43,9 @@
 " 	Drop it into: {rtp}/autoload
 " 	Requirements: Vim7
 " History:	
+"	v2.0.0
+"	(*) GPLv3 w/ exception
+"	(*) AnalysePrototype() accepts spaces between functionname and (
 "	v1.1.1
 "	(*) lh#cpp#AnalysisLib_Function#GetListOfParams() is not messed up by
 "	throw-spec ; TODO support new C++11 noexcept spec
@@ -161,8 +166,10 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
   "   operators
   if iName == -1
     " if not an operator -> just a function
-    let iName = match   (prototype, s:re_qualified_name . '\ze(')
-    let sName = matchstr(prototype, s:re_qualified_name . '\ze(')
+    " "\s*(" -> parenthesis may be aligned and not sticking to the function
+    " name
+    let iName = match   (prototype, s:re_qualified_name . '\ze\s*(')
+    let sName = matchstr(prototype, s:re_qualified_name . '\ze\s*(')
   else
     " echo "operator"
     let sName = matchstr(prototype, s:re_qualified_oper)
