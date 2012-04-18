@@ -360,7 +360,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
 
   let implParams = []
   for param in proto.parameters
-    " TODO: param type may need to be fully-qualified
+    " TODO: param type may need to be fully-qualified, see 4.2
     let sParam = ((param.nl) ? "\n" : '')
 	  \ . (param.type) . ' ' . (param.name) 
 	  \ . substitute((param.default), '\(.\+\)', pattern, '')
@@ -373,11 +373,40 @@ function! s:BuildFunctionSignature4impl(proto,className)
   " 3- Add '::' to the class name (if any).{{{4
   let className = a:className . (""!=a:className ? '::' : '')
   " let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(', 
-        " \ className.'\0', '')
+  " \ className.'\0', '')
+
+  " 4- Add scope to other types {{{4
+  try
+    let ltags = lh#dev#start_tag_session()
+    " 4.1- ... return type
+    let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
+    let all_rets = lh#list#transform(all_ret_dicts, [], 'v:1_.class')
+    let all_rets = lh#list#unique_sort(all_rets)
+    if len(all_rets) > 1
+      let all_rets = ['::'] + all_rets
+      let choice = CONFIRM('Where does <'.(proto.return).'> comes from?',
+            \ join(all_rets, "\n"), 1)
+      if     choice == 0 | let scope = []
+      elseif choice == 1 | let scope = ['']
+      else               | let scope = [all_rets[choice-1]]
+      endif
+    elseif len(all_rets) == 1
+      let scope = all_rets
+    else
+      let scope = []
+    endif
+    let scope += [proto.return]
+    let return = join(scope, '::')
+    " 4.2- ... parameters types
+  finally
+    call lh#dev#end_tag_session()
+  endtry
 
   " 5- Return{{{4
+  " TODO: some styles like to put return types and function names on two
+  " different lines
   let res = comments
-        \ . (proto.return) . ' '
+        \ . return . ' '
         \ . className
         \ . join(proto.name, '::')
         \ . '('.implParamsStr . ')'
@@ -478,6 +507,7 @@ function! s:InsertCodeAtLine(...)
 endfunction
 " }}}2
 "------------------------------------------------------------------------
+" Function: NewAlternateFilename(file, expected_extension) {{{3
 function! NewAlternateFilename(file, expected_extension)
   " Assert(exists('g:alternateSearchPath') && strlen(g:alternateSearchPath)>0)
   "
