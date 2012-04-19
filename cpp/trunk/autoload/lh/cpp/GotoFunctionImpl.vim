@@ -81,9 +81,27 @@ endfunction
 function! lh#cpp#GotoFunctionImpl#MoveImpl(...)
   try
     let a_save = @a
-    :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
+    let s      = @/
+    " goto the end declaration of the function
+    normal! ^
+    if ! search('\%#.*\zs)') " goto end of func param; todo use pairs
+      echomsg "not on the last line of the function inline definition"
+    endif
+    " Find the start of the init-list ; won't work if there are comments there!
+    if search('\%#)\(\_s*const\|\_s*mutable\|\_s*noexcept\|\_s*throw\_s*(.*)\)*\_s*\zs:')
+      " this won't work with C++11 initialiser-lists extended to {}
+      exe "normal! \"ad/{\<cr>"
+    else
+      let @a = ''
+    endif
+    normal! "Ad%
+    ?)
+    :exe "normal! A;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
+    " was:
+    " :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
   finally
     let @a = a_save
+    let @/ = s
   endtry
 endfunction
 
