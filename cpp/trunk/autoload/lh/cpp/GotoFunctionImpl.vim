@@ -82,21 +82,30 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...)
   try
     let a_save = @a
     let s      = @/
-    " goto the end declaration of the function
-    normal! ^
-    if ! search('\%#.*\zs)') " goto end of func param; todo use pairs
-      echomsg "not on the last line of the function inline definition"
+
+    let [end_proto, proto] = lh#dev#c#function#get_prototype(line('.'), 0, 1)
+    if empty(proto)
+      throw "No prototype found under the cursor."
     endif
-    " Find the start of the init-list ; won't work if there are comments there!
-    if search('\%#)\(\_s*const\|\_s*mutable\|\_s*noexcept\|\_s*throw\_s*(.*)\)*\_s*\zs:')
+    " move to the start of the definition
+    call setpos('.', end_proto) " this puts us one char behind the definition start
+    normal! h
+    if proto[-1:] == ':'
+      " select everything till the open bracket.
       " this won't work with C++11 initialiser-lists extended to {}
       exe "normal! \"ad/{\<cr>"
     else
       let @a = ''
     endif
     normal! "Ad%
-    ?)
-    :exe "normal! A;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
+    " Add the ';' at the end what precedes, but not on a single line
+    call search('\S', 'b')
+    :exe "normal! A;\<esc>"
+    " Search the prototype (once again!), from a compatible position (on the
+    " closing bracket)
+    call search(')', 'b')
+    " For now, search the protype once again...
+    :exe "normal! :GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
     " was:
     " :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
   finally
@@ -214,18 +223,22 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
   try 
     " neutralize mu-template jump to marker feature {{{5
     if exists('g:mu_template') && 
-	  \ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
+          \ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
       " NB: g:mt_jump_to_first_markers is true by default
       let mt_jump = 1
       let g:mt_jump_to_first_markers = 0
     endif " }}}4
     let split_opt = ''
     let use_alternate = 1
-    if exists(':AS') " from a.vim
+    if !empty(a:expected_extension)
+      let split_opt = NewAlternateFilename(expand('%:p'), a:expected_extension)
+      let split_opt = lh#path#to_relative(split_opt)
+      let use_alternate = 0
+    elseif exists(':AS') " from a.vim
       if !s:IsThereAMatchingSourceFile(expand('%:p'))
-	let split_opt = NewAlternateFilename(expand('%:p'), a:expected_extension)
-	let split_opt = lh#path#to_relative(split_opt)
-	let use_alternate = 0
+        let split_opt = NewAlternateFilename(expand('%:p'), a:expected_extension)
+        let split_opt = lh#path#to_relative(split_opt)
+        let use_alternate = 0
       endif
     else
       let root_name = fnamemodify(expand('%'), ':r')
@@ -233,7 +246,7 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
       let split_opt = root_name . '.' . best_ext
       let use_alternate = 0
     endif
-    call s:DoSplit(' '.split_opt, use_alternate)
+    call s:DoSplit(split_opt, use_alternate)
   finally
     " restore mu-template " {{{5
     if exists('mt_jump')
@@ -614,8 +627,13 @@ let s:split_n_v = 'vsp'
 
 " Function: s:DoSplit(arg) {{{4
 function! s:DoSplit(arg, use_alternate)
-  let a = (a:use_alternate ? 'a' : 'n')
-  exe 'silent '.s:split_{a}_{s:SplitOption()}.' '.a:arg
+  if a:use_alternate
+    exe 'silent '.s:split_{'a'}_{s:SplitOption()}.' '.a:arg
+  else
+    call lh#buffer#jump(a:arg, s:split_{'n'}_{s:SplitOption()})
+  endif
+  " let a = (a:use_alternate ? 'a' : 'n')
+  " exe 'silent '.s:split_{a}_{s:SplitOption()}.' '.a:arg
 endfunction
 " }}}2
 
