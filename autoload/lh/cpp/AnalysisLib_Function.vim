@@ -93,7 +93,7 @@ function! lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, onlyDeclarati
   " deprecated
   return lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
 endfunction
-" }}}2
+" }}}3
 
 "------------------------------------------------------------------------
 " Function: s:SplitTypeParam(typed_param) {{{3
@@ -103,7 +103,7 @@ function! s:SplitTypeParam(typed_param)
   let pa = lh#dev#option#call('function#_analyse_parameter', &ft, a:typed_param)
   return [pa.type, pa.name, pa.default, pa.nl]
 endfunction
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype) {{{3
 " todo: beware of exception specifications
@@ -122,21 +122,21 @@ function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
 
   return res_params
 endfunction
-" }}}2
+" }}}3
 
 " Function: lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) {{{3
 " @return: {qualifier, return-type, function-name, parameters, throw-spec, const}
 " @todo support friends.
 " @todo support function types
 " @todo support templates
-" Constants {{{3
+" Constants {{{4
 let s:re_qualifiers      = '\<\%(static\|explicit\|virtual\)\>'
 
 let s:re_qualified_name1 = '\%(::\s*\)\=\<\I\i*\>'
 let s:re_qualified_name2 = '\s*::\s*\<\I\i*\>'
 let s:re_qualified_name  = s:re_qualified_name1.'\%('.s:re_qualified_name2.'\)*'
 
-let s:re_operators       = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\| \)'
+let s:re_operators       = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\|==\| \)'
 "   What looks like to a "space" operator is actually used in next regex to
 "   match convertion operators
 let s:re_qualified_oper  = '\%('.s:re_qualified_name . '\s*::\s*\)\=' . s:re_operators . '.\{-}\ze('
@@ -145,20 +145,20 @@ let s:re_const_member_fn = ')\s*\zs\<const\>'
 let s:re_throw_spec      = ')\s*\%(\<const\>\s\+\)\=\<throw\>(\(\zs.*\ze\))'
 let s:re_pure_virtual    = ')\s*=\s*0\s*[;{]'
 
-" Implementation {{{3
+" Implementation {{{4
 function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
-  " 0- strip comments                            {{{4
+  " 0- strip comments                            {{{5
   let prototype = substitute(a:prototype, "\\(\\s\\|\n\\)\\+", ' ', 'g')
   let prototype = substitute(prototype, '/\*.\{-}\*/\|//.*$', '', 'g')
 
   " let prototype = s:StripComments(a:prototype)
 
-  " 1- Qualifier (only one possible in C++)      {{{4
+  " 1- Qualifier (only one possible in C++)      {{{5
   "   -> virtual / explicit / static
   let qualifier = matchstr  (prototype, s:re_qualifiers)
   let prototype = substitute(prototype, '\s*'.qualifier.'\s*', '', '')
 
-  " 2- Function name                             {{{4
+  " 2- Function name                             {{{5
   "   Not supposed to have a scoped qualification
   "   Operators need a special care
   let iName = match(prototype, s:re_qualified_oper)
@@ -177,7 +177,7 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
   let sName = matchstr(sName, '^\s*\zs.\{-}\ze\s*$')
   let lName = split(sName, '::')
 
-  " 3- Return type                               {{{4
+  " 3- Return type                               {{{5
   let retType = strpart(prototype, 0, iName)
   let retType = matchstr(retType, '^\s*\zs.\{-}\ze\s*$')
   if retType =~ '\~$'  " destructor
@@ -187,23 +187,23 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
     let retType = ''
   endif
 
-  " 4- Parameters                                {{{4
+  " 4- Parameters                                {{{5
   let params = lh#cpp#AnalysisLib_Function#GetListOfParams(a:prototype)
 
-  " 5- Const member function ?                   {{{4
+  " 5- Const member function ?                   {{{5
   let isConst = match(prototype, s:re_const_member_fn) != -1
 
-  " 6- Throw specification                       {{{4
+  " 6- Throw specification                       {{{5
   let sThrowSpec = matchstr(prototype, s:re_throw_spec)
   let lThrowSpec = split(sThrowSpec, '\s*,\s*')
   if len(lThrowSpec) == 0 && match(prototype, s:re_throw_spec) > 0
     let lThrowSpec = [ '' ] 
   endif
 
-  " 7- Pure member function ?                    {{{4
+  " 7- Pure member function ?                    {{{5
   let isPure =  prototype =~ s:re_pure_virtual
 
-  " 8- Result                                    {{{4
+  " 8- Result                                    {{{5
   " let result = [ qualifier, retType, lName, params]
   let result = {
 	\ "qualifier" : qualifier, 
@@ -216,7 +216,7 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
 	\}
   return result
 endfunction
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2) {{{3
 " @param[in] sig1 Signature 1 (GetListOfParams() format)
@@ -232,7 +232,7 @@ function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2)
   endwhile
   return 1
 endfunction
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
 function! s:ParamToString(param)
@@ -252,7 +252,7 @@ function! lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
   endif
   return sig
 endfunction
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
 " function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
@@ -267,7 +267,7 @@ function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
   " endif
   return res
 endfunction
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#LoadTags(id) {{{3
 function! s:ConvertTag(t)
@@ -306,7 +306,7 @@ function! lh#cpp#AnalysisLib_Function#LoadTags(id)
   let result = { 'definitions':definitions, 'declarations':declarations }
   return result
 endfunction
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SearchUnmatched(fn) {{{3
 function! s:SearchUnmatched(functions)
@@ -359,7 +359,7 @@ function! lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
   return declarations
 endfunction
 "------------------------------------------------------------------------
-" }}}2
+" }}}3
 "------------------------------------------------------------------------
 " Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className) {{{3
 " todo:
@@ -385,13 +385,13 @@ endfunction
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className)
   let function_data = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:signature)
 
-  " Return type {{{3
+  " Return type {{{4
   let impl2search = ''
   if strlen(function_data.return) > 0
   let impl2search .= s:Type2Regex(function_data.return, '') . ' '
   endif
 
-  " Class::functionname {{{3
+  " Class::functionname {{{4
   let className = a:className . (""!=a:className ? '::' : '')
   if className =~ '#::#'
     let ns = matchstr(className, '^.*\ze#::#') . '::'
@@ -405,7 +405,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   let name = className . join(function_data.name, ' :: ')
   let impl2search .= escape(name, '~')
 
-  " Parameters {{{3
+  " Parameters {{{4
   let params = []
   for param in function_data.parameters
     call add(params, s:Type2Regex(param[0], param[1]))
@@ -415,7 +415,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   let impl2search .= function_data.const ? ' const' : ''
 
 
-  " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{3
+  " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{4
   let impl2search = substitute(impl2search, '\s\{2,}', ' ', 'g')
   let g:impl2search2 = impl2search
 
@@ -424,9 +424,9 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   " Note: \%(\) is like \(\) but the subexpressions are not counted.
   " Note: ' \zs' inserted at the start of the regex helps ignore any comments
   " before the signature of the function.
-  " Return the regex built {{{3
+  " Return the regex built {{{4
   "
-  " Check pure virtual functions: {{{3
+  " Check pure virtual functions: {{{4
   let isPure =  function_data.pure
 
   let res = {'regex':impl2search, 'ispure':isPure}
@@ -435,13 +435,13 @@ endfunction
 
 " Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{3
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className)
-  " trim spaces {{{3
+  " trim spaces {{{4
   let impl2search = substitute(a:signature, "\\(\\s\\|\n\\)\\+", ' ', 'g')
-  " trim comments {{{3
+  " trim comments {{{4
   let impl2search = substitute(impl2search, '/\*.\{-}\*/\|//.*$', '', 'g')
-  " destructor ? {{{3
+  " destructor ? {{{4
   let impl2search = substitute(impl2search, '\~', '\\\0', 'g')
-  " '[,' '],' pointers {{{3
+  " '[,' '],' pointers {{{4
     " let impl2search = substitute(impl2search, '\s*\([[\]*]\)\s*', ' \\\1 ', 'g')
     " Note: these characters will be backspaced into s:TrimParametersNames
   " echo impl2search
@@ -452,26 +452,26 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
     let func_n_params = strpart(impl2search, retTypePos)
     let retType = substitute(retType, '\s*\([[\]*]\)\s*', ' \\\1 ', 'g')
     let impl2search = retType . func_n_params
-  " operator* {{{3
+  " operator* {{{4
   let impl2search = substitute(impl2search, 'operator\s*\*', 'operator \\*', '')
-  "  <, >, =, (, ), ',' and references {{{3
+  "  <, >, =, (, ), ',' and references {{{4
   let impl2search = substitute(impl2search, '\s*\([<>=(),&]\)\s*', ' \1 ', 'g')
-  " Check pure virtual functions: {{{3
+  " Check pure virtual functions: {{{4
   let isPure =  impl2search =~ '=\s*0\s*;\s*$'
-  " Start and end {{{3
+  " Start and end {{{4
   let impl2search = substitute(impl2search, '^\s*\|\s*;\s*$', '', 'g')
-  " Default parameters -> comment => ignored along with spaces {{{3
+  " Default parameters -> comment => ignored along with spaces {{{4
   let impl2search = substitute(impl2search, '\%(\<operator\>\s*\)\@<!=[^,)]\+', '', 'g')
-  " virtual, static and explicit -> comment => ignored along with spaces {{{3
+  " virtual, static and explicit -> comment => ignored along with spaces {{{4
   let impl2search = substitute(impl2search, 
 	\ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
-  " Trim the variables names {{{3
+  " Trim the variables names {{{4
   " Todo: \(un\)signed \(short\|long\) \(int\|float\|double\)
   "       const, *
   "       First non spaced type + exceptions like: scope\s*::\s*type ,
   "       class<xxx,yyy> (scope or type)
   let impl2search = lh#cpp#AnalysisLib_Function#TrimParametersNames(impl2search)
-  " class name {{{3
+  " class name {{{4
   let className = a:className . (""!=a:className ? '::' : '')
   if className =~ '#::#'
     let ns = matchstr(className, '^.*\ze#::#') . '::'
@@ -491,7 +491,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   " echo impl2search
   let g:impl2search1 = impl2search
 
-  " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{3
+  " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{4
   " let impl2search = substitute(' \zs'.impl2search, ' ', 
   let impl2search = substitute(impl2search, ' ', 
 	\ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
@@ -516,9 +516,9 @@ let s:type_scope  = s:type_scope1.'\%('.s:type_scope2.'\)*'
 let s:re = '^\s*\%(\<const\>\s*\)\='.
       \ '\%(\%('.s:type_simple.'\|\s\+\)\+\|'.s:type_scope.'\)'.
       \ '\%(\<const\>\|\*\|&\|\s\+\)*'
-" }}}
+" }}}4
 function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str)
-  " Stuff Supported: {{{5
+  " Stuff Supported: {{{4
   " - Simple parameters		 : "T p"
   " - Arrays			 : "T p[][n]"
   " - Arrays of pointers	 : "T (*p)[n]"
