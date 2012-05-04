@@ -89,18 +89,22 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...)
     endif
     " move to the start of the definition
     call setpos('.', end_proto) " this puts us one char behind the definition start
-    normal! h
+    if lh#position#char_at_mark('.') !~ '[:{]'
+      normal! h
+    endif
     if proto[-1:] == ':'
       " select everything till the open bracket.
       " this won't work with C++11 initialiser-lists extended to {}
-      exe "normal! \"ad/{\<cr>"
+      silent exe "normal! \"ad/{\<cr>"
     else
       let @a = ''
     endif
-    normal! "Ad%
+    silent normal! "Ad%
+    " For some reason, the previous command insert a trailing newline
+    let @a = substitute(@a, '^\_s*', '', '')
     " Add the ';' at the end what precedes, but not on a single line
     call search('\S', 'b')
-    :exe "normal! A;\<esc>"
+    silent :exe "normal! A;\<esc>"
     " Search the prototype (once again!), from a compatible position (on the
     " closing bracket)
     call search(')', 'b')
@@ -125,40 +129,7 @@ endfunction
 " TODO: add C++11 override and final
 let s:option_value = '\%(on\|off\|\d\+\)$'
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
-  " 0- Check options {{{4
-  let s:ShowVirtual		= lh#dev#option#get('ShowVirtual',       &ft, 1)
-  let s:ShowStatic		= lh#dev#option#get('ShowStatic',        &ft, 1)
-  let s:ShowExplicit		= lh#dev#option#get('ShowExplicit',      &ft, 1)
-  let s:ShowDefaultParams	= lh#dev#option#get('ShowDefaultParams', &ft, 1)
-  let expected_extension        = ''
-  if 0 != a:0
-    let i = 0
-    while i < a:0
-      let i +=  1
-      let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '') 
-      if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
-        if !empty(expected_extension)
-          call lh#common#error_msg(
-                \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: extension already set to <'.expected_extension.'>')
-          return
-        else
-          let expected_extension = a:{i}
-        endif
-      else " }}}4
-        let val = matchstr(a:{i}, s:option_value)
-        if     val == 'on'  | let val = 1
-        elseif val == 'off' | let val = 0
-        elseif val !~ '\d\+'
-          call lh#common#error_msg(
-                \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Invalid value for parameter : <'.varname.'>')
-          return
-        endif
-        " exe "let s:".varname."= val"
-        let s:{varname} = val
-        " call confirm(s:{varname}.'='.val, '&ok', 1)
-      endif
-    endwhile
-  endif
+  let expected_extension = call('s:CheckOptions', a:000)
 
   " 1- Retrieve the context {{{4
   " 1.1- Get the class name,if any -- thanks to cpp_FindContextClass.vim
@@ -256,6 +227,45 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
 endfunction
 " }}}2
 
+" # Private {{{2
+
+function! s:CheckOptions(...)
+  " 0- Check options {{{4
+  let s:ShowVirtual		= lh#dev#option#get('ShowVirtual',       &ft, 1)
+  let s:ShowStatic		= lh#dev#option#get('ShowStatic',        &ft, 1)
+  let s:ShowExplicit		= lh#dev#option#get('ShowExplicit',      &ft, 1)
+  let s:ShowDefaultParams	= lh#dev#option#get('ShowDefaultParams', &ft, 1)
+  let expected_extension        = ''
+  if 0 != a:0
+    let i = 0
+    while i < a:0
+      let i +=  1
+      let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '') 
+      if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
+        if !empty(expected_extension)
+          call lh#common#error_msg(
+                \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: extension already set to <'.expected_extension.'>')
+          return
+        else
+          let expected_extension = a:{i}
+        endif
+      else " }}}4
+        let val = matchstr(a:{i}, s:option_value)
+        if     val == 'on'  | let val = 1
+        elseif val == 'off' | let val = 0
+        elseif val !~ '\d\+'
+          call lh#common#error_msg(
+                \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Invalid value for parameter : <'.varname.'>')
+          return
+        endif
+        " exe "let s:".varname."= val"
+        let s:{varname} = val
+        " call confirm(s:{varname}.'='.val, '&ok', 1)
+      endif
+    endwhile
+  endif
+  return expected_extension
+endfunction
 "------------------------------------------------------------------------
 " Function: s:BestExtensionFor(root_name) {{{3
 function! s:BestExtensionFor(root_name, expected_extension)
