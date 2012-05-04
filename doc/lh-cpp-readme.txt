@@ -779,6 +779,23 @@ Functions dedicated to obtain information on the current style~
     @param attrb_name
     Applies the chosen naming style for parameters to a attribute name.
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                            *lh#cpp#AnalysisLib_Function#*
+Functions dedicated to the analysis of C/C++ functions~
+
+*lh#cpp#AnalysisLib_Function#GetFunctionPrototype()*
+*lh#cpp#AnalysisLib_Function#GetListOfParams()*
+*lh#cpp#AnalysisLib_Function#AnalysePrototype()*
+*lh#cpp#AnalysisLib_Function#HaveSameSignature()*
+*lh#cpp#AnalysisLib_Function#BuildSignatureAsString()*
+*lh#cpp#AnalysisLib_Function#IsSame()*
+*lh#cpp#AnalysisLib_Function#LoadTags()*
+*lh#cpp#AnalysisLib_Function#SearchUnmatched()*
+*lh#cpp#AnalysisLib_Function#SearchAllDeclarations()*
+*lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2()*
+*lh#cpp#AnalysisLib_Function#SignatureToSearchRegex()*
+*lh#cpp#AnalysisLib_Function#TrimParametersNames()*
+
 ------------------------------------------------------------------------------
                                                         *Files-from-lh-cpp*
 Files~
