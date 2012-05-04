@@ -1,8 +1,6 @@
 VimL:" $Id$
 VimL:" bool-operator Template, Luc Hermitte
 VimL:" hint: safe bool operator
-VimL: let s:value_start  = '¡'
-VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
@@ -18,7 +16,7 @@ struct boolean{ int i;};
  * @see <em>Imperfect C++</em>, Matthew Wilson, Addisson-Welsey, �24.6
  * <+@since +>
  */
-operator int boolean ::* () const {
+operator int boolean ::* () const<+C_nl_before_curlyB()+>{
     return <+isValid()+> ? &boolean::i : 0;
 }
 
