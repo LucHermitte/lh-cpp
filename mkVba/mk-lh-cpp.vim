@@ -95,6 +95,7 @@ ftplugin/cpp/cpp_BuildTemplates.vim
 ftplugin/cpp/cpp_Constructor.vim
 ftplugin/cpp/cpp_Doxygen.vim
 ftplugin/cpp/cpp_Doxygen_class_stuff.vim
+ftplugin/cpp/cpp_AddInclude.vim
 ftplugin/cpp/cpp_FindContextClass.vim
 ftplugin/cpp/cpp_GotoFunctionImpl.vim
 ftplugin/cpp/cpp_InsertAccessors.vim
