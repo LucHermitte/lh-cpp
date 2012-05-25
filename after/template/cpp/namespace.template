@@ -11,7 +11,7 @@ VimL: let s:namespace = lh#option#get('cpp_namespace', Marker_Txt('ns'))
 VimL: let s:namespace = INPUT('Namespace name: ', s:namespace)
 VimL: let s:ns_close  = IF(strlen(s:namespace), s:namespace, 'Anonymous')
 VimL: let s:ns_open   = IF(!strlen(s:namespace), ' // Anonymous namespace', '')
-namespace ¡s:namespace¡ {¡s:ns_open¡
+namespace ¡s:namespace¡¡C_nl_before_curlyB()¡{¡s:ns_open¡
 ¡s:Surround(1, '<++>')¡
 } // ¡s:ns_close¡ namespace 
 <++>
