@@ -38,14 +38,14 @@ set cpo&vim
 "------------------------------------------------------------------------
 " Local mappings {{{2
 
-inoremap <Plug>CompleteIncludes <c-r>=<sid>Complete()<cr>
+inoremap <buffer> <Plug>CompleteIncludes <c-r>=<sid>Complete()<cr>
 if !hasmapto('<Plug>CompleteIncludes', 'i')
-  imap <unique> <c-x>i <Plug>CompleteIncludes
+  imap <buffer> <unique> <c-x>i <Plug>CompleteIncludes
 endif
 
-nnoremap <Plug>OpenIncludes :call <sid>Open()<cr>
+nnoremap <buffer> <Plug>OpenIncludes :call <sid>Open()<cr>
 if !hasmapto('<Plug>OpenIncludes', 'n')
-  nmap <unique> <c-x>i <Plug>OpenIncludes
+  nmap <buffer> <unique> <c-l>i <Plug>OpenIncludes
 endif
 
 "=============================================================================
