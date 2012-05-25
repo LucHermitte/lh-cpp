@@ -163,7 +163,6 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   " call confirm(impl, '&ok', 1)
   " }}}3
 endfunction 
-" }}}2
 
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#insert_impl(impl) {{{3
@@ -182,7 +181,6 @@ function! lh#cpp#GotoFunctionImpl#insert_impl(impl)
 	  \ ."\nSee ftplugin/cpp/cpp_options.vim to tune the placement heuristic")
   endif
 endfunction
-" }}}2
 
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) {{{3
@@ -225,7 +223,6 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
     endif " }}} 4
   endtry
 endfunction
-" }}}2
 
 " # Private {{{2
 
@@ -287,7 +284,6 @@ function! s:BuildRegexFromImpl(impl,className)
   return impl2search
   " }}}3
 endfunction
-" }}}2
 "------------------------------------------------------------------------
 " Function: s:Search4Impl(re_impl, scope):bool {{{3
 function! s:Search4Impl(re_impl, scope)
@@ -358,7 +354,6 @@ function! s:Search4Impl(re_impl, scope)
   return 0
   " }}}3
 endfunction
-" }}}2
 "------------------------------------------------------------------------
 " Function: s:BuildFunctionSignature4impl " {{{3
 let s:k_operators = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\)'
@@ -457,7 +452,6 @@ function! s:BuildFunctionSignature4impl(proto,className)
   return res
   "}}}3
 endfunction
-" }}}2
 "------------------------------------------------------------------------
 " Function: s:SearchLineToAddImpl() {{{3
 
@@ -495,7 +489,6 @@ function! s:SearchLineToAddImpl()
   elseif cpp_FunctionPosition == 3 | return -1
   endif
 endfunction
-" }}}2
 "------------------------------------------------------------------------
 " Function: s:InsertCodeAtLine([code [,line]]) {{{3
 function! s:InsertCodeAtLine(...)
@@ -546,7 +539,6 @@ function! s:InsertCodeAtLine(...)
   " Restore folding
   let &foldenable=folder
 endfunction
-" }}}2
 "------------------------------------------------------------------------
 " Function: NewAlternateFilename(file, expected_extension) {{{3
 function! NewAlternateFilename(file, expected_extension)
@@ -604,7 +596,6 @@ function! s:IsThereAMatchingSourceFile(file)
   let matches    = join(l_matches, ',')
   return strlen(matches) > 0
 endfunction
-" }}}2
 "------------------------------------------------------------------------
 " Split Options: {{{3
 " Function: s:SplitOption() {{{4
