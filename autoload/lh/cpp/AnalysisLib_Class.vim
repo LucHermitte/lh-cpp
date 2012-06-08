@@ -3,7 +3,9 @@
 " File:		autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
 " Author:	Luc Hermitte <MAIL:hermitte at free.fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.1
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Last Update:	$Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
 " Description:	
@@ -30,6 +32,8 @@
 " Dependencies:	VIM 7.0+
 
 " History:	{{{2
+"	31st May 2012
+"	(*) v2.0.0 , License GPLv3 w/ extension
 " 	26th Aug 2011
 " 	(*) list of imported namespaces lh#cpp#AnalysisLib_Class#used_namespaces
 " 	31st May 2010
