@@ -10,10 +10,11 @@ VimL: let s:use_copyandswap = len(s:Args())>=2 ? (s:Args()[0]) : CONFIRM("Use co
 MuT: if 1 == s:use_copyandswap
 VimL:   call s:Include("copy-and-swap","cpp", s:clsname)
 MuT: else 
+VimL:   let s:rhs = lh#dev#naming#param("rhs")
 VimL:   let s:fn_comments = { }
 VimL:   let s:fn_comments.brief = "Assignment operator"
 VimL:   let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "source data to be copied." } ]
 VimL:   let s:fn_comments.throw = {"optional": 1}
 VimL:   call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:clsname+>& operator=(<+s:clsname+> const& <+lh#dev#naming#param("rhs")+>);
+<+s:clsname+>& operator=(<+s:clsname+> const& <+s:rhs+>);
 MuT: endif
