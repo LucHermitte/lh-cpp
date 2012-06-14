@@ -73,13 +73,19 @@ endfunction
 function! s:InsertInclude()
   let id = eval(s:TagsSelectPolicy())
 
-  let info = taglist(id.'$')
+  try
+    let isk_save = &isk
+    set isk-=:
+    let info = taglist('.*\<'.id.'$')
+  finally
+    let &isk = isk_save
+  endtry
   if len(info) == 0
     call lh#common#error_msg("insert-include: no tags for `".id."'")
     return
   endif
   " Filter for function definitions and #defines, ...
-  let accepted_kinds = lh#dev#option#get('tag_kinds_for_inclusion', &ft, '[dfptc]')
+  let accepted_kinds = lh#dev#option#get('tag_kinds_for_inclusion', &ft, '[dfptcs]')
   call filter(info, "v:val.kind =~ ".string(accepted_kinds))
   " Filter for include files only
   let accepted_files = lh#dev#option#get('file_regex_for_inclusion', &ft, '\.h')
