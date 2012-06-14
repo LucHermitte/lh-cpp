@@ -188,7 +188,8 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
   endif
 
   " 4- Parameters                                {{{5
-  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(a:prototype)
+  let sParams = strpart(prototype, iName+len(sName))
+  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(sParams)
 
   " 5- Const member function ?                   {{{5
   let isConst = match(prototype, s:re_const_member_fn) != -1
