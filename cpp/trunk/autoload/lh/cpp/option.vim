@@ -63,6 +63,12 @@ endfunction
 function! lh#cpp#option#nl_before_curlyB()
   return lh#dev#option#get('nl_before_curlyB', &ft, 0)
 endfunction
+
+" Function: lh#cpp#option#multiple_namespace_on_same_line() {{{3
+" Write each "namespace Foo {" on a same line
+function! lh#cpp#option#multiple_namespaces_on_same_line()
+  return lh#dev#option#get('multiple_namespaces_on_same_line', &ft, 1)
+endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
