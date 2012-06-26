@@ -47,7 +47,7 @@ setlocal formatoptions=croql
 setlocal cindent
 setlocal cinoptions=g0,t0
 setlocal define=^\(#\s*define\|[a-z]*\s*const\s*[a-z]*\)
-setlocal comments=sr:/*,mb:*,exl:*/,://
+setlocal comments=sr:/*,mb:*,exl:*/,:///,://
 setlocal isk+=#		" so #if is considered as a keyword, etc
 setlocal isk-=-		" so ptr- (in ptr->member) is not
 setlocal suffixesadd+=.h,.c
