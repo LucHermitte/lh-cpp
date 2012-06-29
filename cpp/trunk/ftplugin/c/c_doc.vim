@@ -3,7 +3,7 @@
 " File:		ftplugin/c/c_doc.vim                                      {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" Version:	v2.0.0
 " Created:	22nd Jan 2004
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -11,11 +11,17 @@
 " 
 "------------------------------------------------------------------------
 " Installation:	«install details»
-" History:	«history»
-" TODO:		«missing features»
+" History:
+"	v2.0.0  GPLv3 w/ exception + deprecation
+" TODO:		
+" - config variables to tell where to search the documentation
+" - fix VAM dependencies if FixPathName is still used
 " }}}1
 "=============================================================================
 
+" This plugin is deprecated for now.
+" I'll have to clean it up, and permit to tune where to find the documentation
+finish
 
 "=============================================================================
 " Local stuff {{{1
