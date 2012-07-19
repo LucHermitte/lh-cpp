@@ -796,6 +796,19 @@ Functions dedicated to the analysis of C/C++ functions~
 *lh#cpp#AnalysisLib_Function#SignatureToSearchRegex()*
 *lh#cpp#AnalysisLib_Function#TrimParametersNames()*
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                            *lh#cpp#AnalysisLib_Class#*
+Functions dedicated to the analysis of C/C++ classes~
+*lh#cpp#AnalysisLib_Class#SearchClassDefinition()*
+*lh#cpp#AnalysisLib_Class#CurrentScope()*
+*lh#cpp#AnalysisLib_Class#BaseClasses0()*
+*lh#cpp#AnalysisLib_Class#GetClassTag()*
+*lh#cpp#AnalysisLib_Class#FetchDirectParents()*
+*lh#cpp#AnalysisLib_Class#Ancestors()*
+*lh#cpp#AnalysisLib_Class#FetchDirectChildren()*
+*lh#cpp#AnalysisLib_Class#used_namespaces()*
+*lh#cpp#AnalysisLib_Class#attributes()*
+
 ------------------------------------------------------------------------------
                                                         *Files-from-lh-cpp*
 Files~
