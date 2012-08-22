@@ -27,6 +27,12 @@ Features~
 |C++_jump_implementation|       Jumping to functions-implementation
 |C++_function_doxygenation|     Doxygenize a function prototype
 |C++_templates|                 Skeletons, snippets, and wizards provided
+  |C_snippet_realloc|
+  |C++_template_new|
+  |C++_template_class|
+  |C++_template_copy-constructor|
+  |C++_template_copy-and-swap|
+  |C++_template_destructor|
 |C++_Override|                  Function overriding helper
 |C++_unmatched_functions|       Search for declared ad undefined functions (or
                               the other way around)
@@ -502,6 +508,27 @@ The variation points are:
   - the template-file {rtp}/template/cpp/internals/formatted-comment.template
     that is used to convert the final list of documentation tag into the
     embedded comments. The default format used is Doxygen format.
+
+                                                    *C_snippet_realloc*
+Snippet for realloc()~
+realloc() is a tricky C function that most C developers mis-use. One shall
+never write: >
+    p = realloc(p, new_size);
+but instead: >
+    T* p_temp = realloc(p, new_size);
+    if (!p_temp) {
+        free(p) ;
+	+ other reset ;
+	+ error notification ;
+	return false;
+    }
+    p = p_temp;
+Hence this snippet aimed at simpliying our life.
+
+|lh-refactor| defines |:FixRealloc| that corrects the first snippet above by
+the second one. -- this command is likelly fall back in |lh-cpp| scope in
+future versions.
+
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                           *C++_Override*

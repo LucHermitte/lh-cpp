@@ -1,0 +1,26 @@
+VimL:" $Id$
+VimL:" realloc File Template, Luc Hermitte, 20th Aug 2012
+VimL:" hint: new_p = realloc(pn size); if (!new_p) {free(p); +reset all 
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: silent! unlet s:_args
+VimL: let s:_args = empty(s:Args()) ? {} : (s:Args()[0])
+VimL: if (! has_key(s:_args, "ptr"))     | let s:_args.ptr     = Marker_Txt("p")    | endif
+VimL: if (! has_key(s:_args, "lhs"))     | let s:_args.lhs     = "new_".s:_args.ptr | endif
+VimL: if (! has_key(s:_args, "type"))    | let s:_args.type    = Marker_Txt("T")    | endif
+VimL: if (! has_key(s:_args, "count"))   | let s:_args.count   = Marker_Txt("count")| endif
+VimL: if (! has_key(s:_args, "size"))    | let s:_args.size    = s:_args.count." * sizeof(".s:_args.type.")" | endif
+VimL: if (! has_key(s:_args, "realloc")) | let s:_args.realloc = "realloc"          | endif
+VimL: if (! has_key(s:_args, "free"))    | let s:_args.free    = "free"             | endif
+VimL: if (! has_key(s:_args, "macro"))   | let s:_args.macro   = ""                 | endif
+VimL: if (! has_key(s:_args, "false"))   | let s:_args.false   = "false"            | endif
+<+s:_args.type+> *<+s:_args.lhs+> = (<+s:_args.type+> *) <+s:_args.realloc+>(<+s:_args.ptr+>, <+s:_args.size+>);<+s:_args.macro+>
+if (! <+s:_args.lhs+>) {<+s:_args.macro+>
+	<+s:_args.free+>(<+s:_args.ptr+>);<+s:_args.macro+>
+	<+s:_args.ptr+> = NULL;<+s:_args.macro+>
+	<+s:_args.count+> = 0;<+s:_args.macro+>
+	<+error_message+>;<+s:_args.macro+>
+	return <+s:_args.false+>;<+s:_args.macro+>
+}<+s:_args.macro+>
+<+s:_args.ptr+> = <+s:_args.lhs+>;<+s:_args.macro+>
