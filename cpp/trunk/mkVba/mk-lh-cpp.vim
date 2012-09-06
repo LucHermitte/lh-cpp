@@ -53,6 +53,7 @@ after/template/cpp/throw.template
 after/template/cpp/traits.template
 after/template/cpp/try.template
 after/template/cpp/utf8.template
+after/template/cpp/while-getline.template
 after/template/dox/author.template
 after/template/dox/code.template
 after/template/dox/em.template

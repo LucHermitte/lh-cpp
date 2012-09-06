@@ -1,0 +1,11 @@
+VimL:" $Id$
+VimL:" while-getline File Template, Luc Hermitte, 06th Sep 2012
+VimL:" hint: while(std::getline(stream,line)) { action; }
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+while¡C_nl_before_bracket()¡(std::getline(<+stream+>, <+line+>))¡C_nl_before_curlyB()¡{
+    ¡s:Surround(1, '<+code+>')¡
+}<++>
