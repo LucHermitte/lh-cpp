@@ -1,0 +1,11 @@
+VimL:" $Id$
+VimL:"{for size_t i=0, N= ; i!=N...} Template-File, Luc Hermitte
+VimL:" hint: for (std::size_t i=0, N=...;i!=N;++i) { action }
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = '¡'
+VimL: let s:reindent     = 1 
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+for¡C_nl_before_bracket()¡(<+std::size_t+> <+i+>=0, <+N+>=<+MAX+>; <+i+>!=<+N+> ; ++<+i+>)¡C_nl_before_curlyB()¡{
+    ¡s:Surround(1, '<+code+>')¡
+}<++>

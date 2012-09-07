@@ -37,6 +37,7 @@ after/template/cpp/enum2.template
 after/template/cpp/for-enum.template
 after/template/cpp/for-iterator.template
 after/template/cpp/fori.template
+after/template/cpp/foriN.template
 after/template/cpp/internals/abs-rel-shared.template
 after/template/cpp/internals/formatted-comment.template
 after/template/cpp/internals/function-comment.template
