@@ -436,6 +436,8 @@ endfunction
 
 " Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{3
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className)
+  let g:signature = a:signature
+  let g:className = a:className
   " trim spaces {{{4
   let impl2search = substitute(a:signature, "\\(\\s\\|\n\\)\\+", ' ', 'g')
   " trim comments {{{4

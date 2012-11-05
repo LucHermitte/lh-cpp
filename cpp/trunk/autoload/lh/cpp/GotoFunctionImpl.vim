@@ -42,6 +42,7 @@
 "	    readable files
 "       (*) facultative option: extension of the file where to put the
 "           definition of the function.
+"       (*) Fix :GOTOIMPL to work even if &isk contains ":"
 " TODO:
 " 	(*) add knowledge about C99/C++11 new numeric types
 " 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -142,26 +143,32 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   endif
 
   " 2- Build the result strings {{{4
-  let impl2search = s:BuildRegexFromImpl(proto,className)
-  if impl2search.ispure
-    call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
-	  \ "Pure virtual functions don't have an implementation!")
-    return
-  endif
+  try
+    let isk_save = &isk
+    set isk-=: 
+    let impl2search = s:BuildRegexFromImpl(proto,className)
+    if impl2search.ispure
+      call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
+            \ "Pure virtual functions don't have an implementation!")
+      return
+    endif
 
-  " 3- Add the string into the implementation file {{{4
-  call lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
-  " Search or insert the C++ implementation
-  if !s:Search4Impl((impl2search.regex).'\_s*[{:]', className)
-    let impl        = s:BuildFunctionSignature4impl(proto,className)
-    " Todo: Support looking into other files like the .inl file
+    " 3- Add the string into the implementation file {{{4
+    call lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
+    " Search or insert the C++ implementation
+    if !s:Search4Impl((impl2search.regex).'\_s*[{:]', className)
+      let impl        = s:BuildFunctionSignature4impl(proto,className)
+      " Todo: Support looking into other files like the .inl file
 
-    " Insert the C++ code at the end of the file
-    call lh#cpp#GotoFunctionImpl#insert_impl(impl)
-  endif
+      " Insert the C++ code at the end of the file
+      call lh#cpp#GotoFunctionImpl#insert_impl(impl)
+    endif
+  finally
+    let &isk = isk_save
+  endtry
 
   " call confirm(impl, '&ok', 1)
-  " }}}3
+  " }}}4
 endfunction 
 
 "------------------------------------------------------------------------
@@ -282,7 +289,7 @@ function! s:BuildRegexFromImpl(impl,className)
   let impl2search=lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(a:impl,a:className)
   let g:impl2search2 = impl2search
   return impl2search
-  " }}}3
+  " }}}4
 endfunction
 "------------------------------------------------------------------------
 " Function: s:Search4Impl(re_impl, scope):bool {{{3
@@ -310,7 +317,7 @@ function! s:Search4Impl(re_impl, scope)
     " c- Build the function name that must be found on the current line {{{5
     "    The function aname also contain the scope
     " let req_proto  = matchstr(required_ns, current_ns.
-	  " \ (current_ns == '') ? '.*$' : '::\zs.*$')
+    " \ (current_ns == '') ? '.*$' : '::\zs.*$')
 
     " d- Retrieve the actual function name (+ relative scope) {{{5
     let z=@"
@@ -318,7 +325,7 @@ function! s:Search4Impl(re_impl, scope)
     set nofoldenable
     let mv = l."gg".virtcol('.').'|'
     if search('(', 'W') <= 0 
-	  " echoerr "Weird Error!!!" 
+      " echoerr "Weird Error!!!" 
     endif
     silent exe 'normal! v'.mv.'y'
     let &foldenable=fe
@@ -346,13 +353,13 @@ function! s:Search4Impl(re_impl, scope)
         return l 
       endif
     endfor
-    " }}}4
+    " }}}5
   endwhile
 
   " 2.b- Not found {{{4
   exe l0
   return 0
-  " }}}3
+  " }}}4
 endfunction
 "------------------------------------------------------------------------
 " Function: s:BuildFunctionSignature4impl " {{{3
@@ -450,7 +457,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
         \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
         \ . "\n{\n}"
   return res
-  "}}}3
+  "}}}4
 endfunction
 "------------------------------------------------------------------------
 " Function: s:SearchLineToAddImpl() {{{3
@@ -485,7 +492,7 @@ function! s:SearchLineToAddImpl()
       return -1
     endif
     exe "return ".g:cpp_FunctionPosArg."()"
-    " }}}3
+    " }}}4
   elseif cpp_FunctionPosition == 3 | return -1
   endif
 endfunction
