@@ -8,7 +8,7 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL:"
 VimL: let s:ns_join = lh#cpp#option#multiple_namespaces_on_same_line()
-VimL: let s:namespace = lh#option#get('cpp_namespace', Marker_Txt('ns'))
+VimL: let s:namespace = lh#option#get('cpp_project_namespace', Marker_Txt('ns'))
 VimL: let s:namespace = INPUT('Namespace name: ', s:namespace)
 VimL: let s:namespaces = split(s:namespace, "::")
 VimL: let s:ns_open = s:namespace =~ '^\s*$' ? ["namespace ".C_nl_before_curlyB()."{ // Anonymous namespace"] : map(copy(s:namespaces), '"namespace ".v:val.C_nl_before_curlyB()."{"')
