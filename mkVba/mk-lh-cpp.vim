@@ -84,6 +84,7 @@ ftplugin/c/LoadHeaderFile.vim
 ftplugin/c/c_UnmatchedFunctions.vim
 ftplugin/c/c_complete_include.vim
 ftplugin/c/c_doc.vim
+ftplugin/c/c_gcov.vim
 ftplugin/c/c_localleader.vim
 ftplugin/c/c_mu-template_api.vim
 ftplugin/c/c_navigate_functions.vim
