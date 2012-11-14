@@ -1,0 +1,9 @@
+VimL:" $Id$
+VimL:" erase-remove File Template, Luc Hermitte, 06th Nov 2012
+VimL:" hint: erase-remove idiom
+VimL: let s:reindent     = 1
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:container = empty(s:Args()) ? s:Surround(1, Marker_Txt('container')): (s:Args()[0])
+<+s:container+>.erase(std::remove<+_if+>(<+s:container+>.begin(), <+s:container+>.end(), <+what+>), <+s:container+>.end());
+VimL: unlet s:container
