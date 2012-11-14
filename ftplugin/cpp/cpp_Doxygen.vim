@@ -3,7 +3,7 @@
 " File:		ftplugin/cpp/cpp_Doxygen.vim                              {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	2.0.0
+" Version:	2.0.0b1
 " Created:	22nd Nov 2005
 " Last Update:	$Date$ (08th Feb 2008)
 "------------------------------------------------------------------------
@@ -88,12 +88,16 @@ endfunction
 " Function: s:ParameterDirection(type)               {{{2
 function! s:ParameterDirection(type)
   " todo: enhance the heuristics.
+  " First strip any namespace/scope stuff
+
   " Support for boost smart pointers, custom types, ...
   if     a:type =~ '\%(\<const\>\s*[&*]\=\|const_\%(reference\|iterator\)\|&&\|\%(unique\|auto\)_ptr\)\s*$'
         \ . '\|^\s*\(\<const\>\)'
     return '[in]'
   elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\|_ptr\)\s*$'
     return '[' . Marker_Txt('in,') . 'out]'
+  elseif lh#dev#cpp#types#IsBaseType(a:type, 0)
+    return '[in]'
   else
     return Marker_Txt('[in]')
   endif
