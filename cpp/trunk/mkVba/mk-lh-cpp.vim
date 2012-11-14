@@ -34,6 +34,7 @@ after/template/cpp/copy-constructor.template
 after/template/cpp/destructor.template
 after/template/cpp/enum.template
 after/template/cpp/enum2.template
+after/template/cpp/erase-remove.template
 after/template/cpp/for-enum.template
 after/template/cpp/for-iterator.template
 after/template/cpp/fori.template
