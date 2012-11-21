@@ -69,6 +69,25 @@ function! lh#dox#semantics(text)
   return '<p><b>Semantics</b><br>'
 endfunction
 
+" Function: lh#dox#throw([text]) {{{3
+function! lh#dox#throw(...)
+  let throw = lh#dev#option#get('dox_throw', &ft, 'throw ', 'bg')
+  let res = ''
+  if !empty(throw)
+    let res .= lh#dox#tag(throw)
+    if a:0==0 || empty(a:1) 
+      let res = Marker_Txt(res)
+    else
+      let res .= a:1
+    endif
+  else
+    if a:0!=0 && ! empty(a:1) 
+      let res .= lh#dox#tag('throw ') . a:1
+    endif
+  endif
+  return res
+endfunction
+
 " Function: lh#dox#ingroup([text]) {{{3
 function! lh#dox#ingroup(...)
   let text = a:0==0 || empty(a:1) ? Marker_Txt('group') : a:1

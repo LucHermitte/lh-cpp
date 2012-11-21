@@ -25,6 +25,7 @@
 " 	- [bg]:[&ft_]dox_author_tag
 " 	- [bg]:[&ft_]dox_ingroup
 " 	- [bg]:[&ft_]dox_brief
+" 	- [bg]:[&ft_]dox_throw
 " 
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
@@ -141,14 +142,14 @@ function! s:Doxygenize()
   " list => n x @throw list
   " non-existant => markerthrow
   if !has_key(info, 'throw') || len(info.throw) == 0 
-    let g:CppDox_exceptions_snippet = Marker_Txt(lh#dox#tag('throw '))
+    let g:CppDox_exceptions_snippet = lh#dox#throw()
   else
     let throws = info.throw
     let empty_marker = Marker_Txt('')
     if len(throws) == 1 && strlen(throws[0]) == 0 
-      let g:CppDox_exceptions_snippet = lh#dox#tag('throw ').'None'.empty_marker
+      let g:CppDox_exceptions_snippet = lh#dox#throw('None').empty_marker
     else
-      call map(throws, '"'.lh#dox#tag('throw ').'".v:val. empty_marker')
+      call map(throws, 'lh#dox#throw(v:val). empty_marker')
       let g:CppDox_exceptions_snippet = throws
     endif
   endif
