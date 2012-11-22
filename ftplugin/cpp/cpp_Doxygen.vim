@@ -114,15 +114,27 @@ function! s:Doxygenize()
 
   " Build data to insert
   "
-  " Parameters
+  " Parameters & preconditions
   let g:CppDox_Params_snippet = []
+  let g:CppDox_preconditions_snippet = []
   for param in params
+    " @param
     let sValue =
-	  \  lh#dox#tag("param")
-	  \ . s:ParameterDirection(param.type)
-	  \ . ' ' . param.name
-	  \ . '  ' . Marker_Txt((param.name).'-explanations') 
+          \  lh#dox#tag("param")
+          \ . s:ParameterDirection(param.type)
+          \ . ' ' . param.name
+          \ . '  ' . Marker_Txt((param.name).'-explanations') 
     call add (g:CppDox_Params_snippet, sValue)
+    " pointer ? -> default non null precondition
+    " todo: add an option if we don't want that by default (or even better, use
+    " clang to check whether an assert is being used for that purpose...)
+    if lh#dev#cpp#types#IsPointer(param.type)
+      let sValue =
+            \  lh#dox#tag("pre")
+            \ . ' <tt>'.(param.name).' != NULL</tt>'
+            \ . Marker_Txt() 
+      call add(g:CppDox_preconditions_snippet, sValue)
+    endif
   endfor
 
   " Ingroup
@@ -161,6 +173,7 @@ function! s:Doxygenize()
 
   " release parameters of the template-file
   unlet g:CppDox_Params_snippet
+  unlet g:CppDox_preconditions_snippet
   unlet g:CppDox_return_snippet
   unlet g:CppDox_exceptions_snippet
   unlet g:CppDox_ingroup_snippet

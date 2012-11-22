@@ -10,10 +10,10 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 /**¡CppDox_snippet('ingroup', '')¡
  ¡CppDox_snippet('brief', '* ')¡
+ * <+details+>
  ¡CppDox_snippet('Params', '* ')¡
  *
  ¡CppDox_snippet('return', '* ')¡
  ¡CppDox_snippet('exceptions', '* ')¡
- *
- * <+details+>
+ ¡CppDox_snippet('preconditions', '* ')¡
  */
