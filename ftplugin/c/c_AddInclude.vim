@@ -1,6 +1,6 @@
 "=============================================================================
 " $Id$
-" File:         ftplugin/cpp/cpp_AddInclude.vim                   {{{1
+" File:         ftplugin/c/c_AddInclude.vim                       {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
@@ -15,7 +15,7 @@
 " 
 "------------------------------------------------------------------------
 " Installation:
-"       Drop this file into {rtp}/ftplugin/cpp
+"       Drop this file into {rtp}/ftplugin/c
 "       Requires Vim7+, lh-dev
 " History:      
 "	v2.0.0  GPLv3 w/ exception
@@ -29,12 +29,12 @@
 let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
-if &cp || (exists("b:loaded_ftplug_cpp_AddInclude")
-      \ && (b:loaded_ftplug_cpp_AddInclude >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_cpp_AddInclude'))
+if &cp || (exists("b:loaded_ftplug_c_AddInclude")
+      \ && (b:loaded_ftplug_c_AddInclude >= s:k_version)
+      \ && !exists('g:force_reload_ftplug_c_AddInclude'))
   finish
 endif
-let b:loaded_ftplug_cpp_AddInclude = s:k_version
+let b:loaded_ftplug_c_AddInclude = s:k_version
 let s:cpo_save=&cpo
 set cpo&vim
 " Avoid local reinclusion }}}2
@@ -50,18 +50,18 @@ endif
 "=============================================================================
 " Global Definitions {{{1
 " Avoid global reinclusion {{{2
-if &cp || (exists("g:loaded_ftplug_cpp_AddInclude")
-      \ && (g:loaded_ftplug_cpp_AddInclude >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_cpp_AddInclude'))
+if &cp || (exists("g:loaded_ftplug_c_AddInclude")
+      \ && (g:loaded_ftplug_c_AddInclude >= s:k_version)
+      \ && !exists('g:force_reload_ftplug_c_AddInclude'))
   let &cpo=s:cpo_save
   finish
 endif
-let g:loaded_ftplug_cpp_AddInclude = s:k_version
+let g:loaded_ftplug_c_AddInclude = s:k_version
 " Avoid global reinclusion }}}2
 "------------------------------------------------------------------------
 " Functions {{{2
 " Note: most filetype-global functions are best placed into
-" autoload/«your-initials»/cpp/«cpp_AddInclude».vim
+" autoload/«your-initials»/c/«c_AddInclude».vim
 " Keep here only the functions are are required when the ftplugin is
 " loaded, like functions that help building a vim-menu for this
 " ftplugin.
@@ -114,7 +114,8 @@ function! s:InsertInclude()
     return
   endif
   mark '
-  let filename = keys(files)[0] " this is a the full filename
+  let filename = keys(files)[0] " this is the full filename
+  echo filename
   let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
   let filename = fnamemodify(filename, filename_simplify)
   let l = search('^#\s*include\s*["<]'.filename)
@@ -124,7 +125,11 @@ function! s:InsertInclude()
   else
     keepjumps normal! G
     call search('^#\s*include', 'b')
-    let line='#include "'.filename.'"'
+    if keys(files)[0] =~ '\<usr\>\|\<local\>'
+      let line='#include <'.filename.'>'
+    else
+      let line='#include "'.filename.'"'
+    endif
     put=line
   endif
   echo "Use CTRL-O to go back to previous cursor position" 
