@@ -97,7 +97,9 @@ if exists(':Brackets')
         \ lh#dev#option#get('semicolon_closes_bracket', &ft, 1)
     call lh#brackets#define_imap(';',
           \ [{'condition': 'getline(".")[col(".")-1:-1]=~"^\"\\=)\\+"',
-          \   'action': 's:JumpOverAllClose(")", ";")'}],
+          \   'action': 's:JumpOverAllClose(")", ";")'},
+          \  {'condition': 'getline(".")[col(".")-1:-1]=~"^;"',
+          \   'action': 's:JumpOverAllClose(";", "")'}],
           \1)
     call lh#brackets#enrich_imap('<bs>',
           \ { 'condition': 'getline(".")[:col(".")-2]=~".*)\\+;$"',

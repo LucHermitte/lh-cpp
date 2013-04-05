@@ -82,6 +82,7 @@ doc/lh-cpp-readme.txt
 fold/c-fold.vim
 fold/cpp-fold.vim
 ftplugin/c/LoadHeaderFile.vim
+ftplugin/c/c_AddInclude.vim
 ftplugin/c/c_UnmatchedFunctions.vim
 ftplugin/c/c_complete_include.vim
 ftplugin/c/c_doc.vim
@@ -100,7 +101,6 @@ ftplugin/cpp/cpp_BuildTemplates.vim
 ftplugin/cpp/cpp_Constructor.vim
 ftplugin/cpp/cpp_Doxygen.vim
 ftplugin/cpp/cpp_Doxygen_class_stuff.vim
-ftplugin/cpp/cpp_AddInclude.vim
 ftplugin/cpp/cpp_FindContextClass.vim
 ftplugin/cpp/cpp_GotoFunctionImpl.vim
 ftplugin/cpp/cpp_InsertAccessors.vim

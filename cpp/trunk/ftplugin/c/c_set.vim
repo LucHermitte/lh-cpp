@@ -52,7 +52,7 @@ setlocal isk+=#		" so #if is considered as a keyword, etc
 setlocal isk-=-		" so ptr- (in ptr->member) is not
 setlocal suffixesadd+=.h,.c
 
-setlocal ch=2
+setlocal cmdheight=3
 setlocal nosmd
 
 " Dictionary from Dr.-Ing. Fritz Mehner 
