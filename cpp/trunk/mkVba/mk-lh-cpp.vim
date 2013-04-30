@@ -3,6 +3,8 @@
 " File:		mkVba/mk-lh-cpp.vim
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " Version:	2.0.0b1
 " Created:	06th Nov 2007
 " Last Update:	$Date$
@@ -106,7 +108,7 @@ ftplugin/cpp/cpp_GotoFunctionImpl.vim
 ftplugin/cpp/cpp_InsertAccessors.vim
 ftplugin/cpp/cpp_Inspect.vim
 ftplugin/cpp/cpp_Override.vim
-ftplugin/cpp/cpp_menu.vim
+ftplugin/c/c_menu.vim
 ftplugin/cpp/cpp_options-commands.vim
 ftplugin/cpp/cpp_options.vim
 ftplugin/cpp/cpp_refactor.vim
