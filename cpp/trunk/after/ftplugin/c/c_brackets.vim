@@ -24,6 +24,10 @@
 " 	Requires Vim7+, lh-map-tools, and {rtp}/autoload/lh/cpp/brackets.vim
 "
 " History:	
+"	v2.0.1  14th Aug 2013
+"	        { now doesn't insert a new line anymore. but just "{}".
+"	        Hitting <cr> while the cursor in between "{}", will add an
+"	        extra line between the cursor and the closing bracket.
 "	v2.0.0  11th Apr 2012
 "	        License GPLv3 w/ extension
 "	v1.0.0	19th Mar 2008
@@ -48,7 +52,7 @@
 if exists('b:loaded_ftplug_c_brackets') && !exists('g:force_reload_ftplug_c_brackets')
   finish
 endif
-let s:k_version = 200
+let s:k_version = 201
 let b:loaded_ftplug_c_brackets = s:k_version
  
 let s:cpo_save=&cpo
@@ -69,10 +73,11 @@ if exists(':Brackets')
   let b:cb_jump_on_close = 1
   " Re-run brackets() in order to update the mappings regarding the different
   " options.
-  :Brackets { } -visual=0 -nl
-  :Brackets { } -visual=0 -trigger=#{ 
+  " :Brackets { } -visual=0 -nl
+  " :Brackets { } -visual=0 -trigger=#{ 
+  " :Brackets { } -visual=1 -insert=0
+  :Brackets { }
   :Brackets { } -visual=1 -insert=0 -nl -trigger=<localleader>{
-  :Brackets { } -visual=1 -insert=0
 
   :Brackets ( )
   :Brackets [ ] -visual=0
@@ -107,6 +112,12 @@ if exists(':Brackets')
           \ 1,
           \ '\<bs\>'
           \ )
+    call lh#brackets#enrich_imap('<cr>',
+          \ {'condition': 'getline(".")[col(".")-2:col(".")-1]=="{}"',
+          \   'action': 'Cpp_Add2NewLinesBetweenBrackets()'},
+          \ 1,
+          \ '\<cr\>'
+          \ )
   endif
 endif
 " }}}1
@@ -132,6 +143,10 @@ function! MoveSemicolBackToStringContext()
   let lend= len(end)
   let move = repeat("\<left>", lend)
   return "\<bs>".move.";"
+endfunction
+
+function! Cpp_Add2NewLinesBetweenBrackets()
+  return "\<cr>\<esc>O"
 endfunction
 
 "=============================================================================
