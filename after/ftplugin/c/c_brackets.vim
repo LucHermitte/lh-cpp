@@ -106,9 +106,11 @@ if exists(':Brackets')
           \  {'condition': 'getline(".")[col(".")-1:-1]=~"^;"',
           \   'action': 's:JumpOverAllClose(";", "")'}],
           \1)
-    call lh#brackets#enrich_imap('<bs>',
-          \ { 'condition': 'getline(".")[:col(".")-2]=~".*)\\+;$"',
+    call lh#brackets#define_imap('<bs>',
+          \ [{ 'condition': 'getline(".")[:col(".")-2]=~".*\"\\s*)\\+;$"',
           \   'action': 'MoveSemicolBackToStringContext()'},
+          \  { 'condition': 'MatchAnyBracketPair()',
+          \   'action': 'DeleteEmptyBracketPair()'}],
           \ 1,
           \ '\<bs\>'
           \ )
@@ -134,15 +136,27 @@ let g:loaded_ftplug_c_brackets = s:k_version
 "------------------------------------------------------------------------
 " Global functions {{{2
 " TODO: use <SNR> function
-function! MoveSemicolBackToStringContext()
+function! Cpp_MoveSemicolBackToStringContext()
   " It seem c-o leaves the insert mode for good. Thats odd.
   " BUG? -> return "\<bs>\<c-o>F\";"
   " Let's do n-<left> instead
   let l=getline('.')[:col(".")-3]
-  let end = matchstr(l, '")\+$')
-  let lend= len(end)
+  let end = matchstr(l, '"\s*)\+$')
+  let lend= lh#encoding#strlen(end)
   let move = repeat("\<left>", lend)
   return "\<bs>".move.";"
+endfunction
+
+function! Cpp_MatchAnyBracketPair()
+  return getline(".")[col(".")-2:]=~'^\(()\|{}\|\[]\|""\|''\)'
+endfunction
+
+function! Cpp_DeleteEmptyBracketPair()
+  let l=getline('.')[col("."):]
+  let m = matchstr(l, '^'.Marker_Txt('.\{-}'))
+  let lm = lh#encoding#strlen(m)
+
+  return "\<left>".repeat("\<del>", lm+2)
 endfunction
 
 function! Cpp_Add2NewLinesBetweenBrackets()
