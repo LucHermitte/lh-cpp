@@ -3,20 +3,20 @@
 " File:		ftplugin/cpp/cpp_snippets.vim                            {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	15th Apr 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	Snippets of C++ Control Statements
 " 
 "------------------------------------------------------------------------
-" Installation:	«install details»
-" History:	«history»
+" History:	
 " for changelog: 13th Dec 2005 -> little bug in vmaps for ,,sc ,,rc ,,dc ,,cc
 " for changelog: 15th Feb 2006 -> abbr for firend -> friend
 " for changelog: 10th Apr 2006 -> "typename" after commas as well
 " for changelog: 12th Jun 2006 -> <m-t> is not expanded in comments/string
-" TODO:		«missing features»
 " }}}1
 "=============================================================================
 
