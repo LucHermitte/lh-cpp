@@ -3,20 +3,18 @@
 " File:         autoload/lh/cpp/enum.vim                          {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      1.0.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:      06th Jan 2011
 " Last Update:  $Date$
 "------------------------------------------------------------------------
 " Description:
-"       «description»
+"       Support autoload-plugin for :SwitchEnum.
 " 
 "------------------------------------------------------------------------
-" Installation:
-"       Drop this file into {rtp}/autoload/lh/cpp
-"       Requires Vim7+
-"       «install details»
-" History:      «history»
-" TODO:         «missing features»
+" Requirements:
+"       Requires Vim7+, lh-dev, lh-vim-lib
 " }}}1
 "=============================================================================
 
@@ -25,7 +23,7 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 100
+let s:k_version = 200
 function! lh#cpp#enum#version()
   return s:k_version
 endfunction
@@ -51,6 +49,17 @@ endfunction
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
 
+" Function: lh#cpp#enum#expand_enum_to_switch() {{{3
+function! lh#cpp#enum#expand_enum_to_switch()
+  let enum_name = GetCurrentKeyword()
+  let def = lh#cpp#enum#get_definition(enum_name)
+  if !empty(def)
+    normal! diw
+    call MuTemplate('c/switch', def)
+    " todo: delete enum_name if MuTemplate() expands
+  endif
+endfunction
+
 " Function: lh#cpp#enum#analyse_token(name) {{{2
 function! lh#cpp#enum#analyse_token(name, ...)
   " 1- check whether its a variable or a type
@@ -62,6 +71,9 @@ function! lh#cpp#enum#analyse_token(name, ...)
     let t_enums = lh#list#copy_if(defs, [], 'v:1_.kind == "g"')
     let t_vars  = lh#list#copy_if(defs, [], 'v:1_.kind =~ "[lvx]"')
     " nominal case: one type
+    if len(t_enums) > 1
+      let t_enums = lh#dev#tags#keep_full_names(t_enums)
+    endif
     if len(t_enums) == 1 && empty(t_vars)
       let res = (a:0 > 0) ? (a:1) : {}
       let res['type'] = t_enums[0]
@@ -135,6 +147,7 @@ function! lh#cpp#enum#get_definition(name)
   " };
   if what.type.name =~ "::type$"
     " 1- ask ctags 
+    " TODO: check weither the else case is enough
     if has_key(what.type, 'struct')
       let super = what.type.struct
     elseif has_key(what.type, 'class')
@@ -144,10 +157,24 @@ function! lh#cpp#enum#get_definition(name)
     endif
     let enum_values = taglist(super)
     call filter(enum_values, 'v:val.kind=="e"')
-    let res = {'type': what.type.name, 'name': (a:name)}
-    let res['values'] =  lh#list#transform(enum_values, [], 'v:1_.name')
-    return res
+  else
+    " Other cases, with no guaranties
+    if has_key(what.type, 'struct')
+      let super = what.type.struct
+    elseif has_key(what.type, 'class')
+      let super = what.type.class
+    else
+      ... ?
+    endif
+    let enum_values = taglist(super)
+    let enum_name = matchstr(a:name, '.*::\zs.*')
+    call filter(enum_values, 'v:val.kind=="e" && v:val.enum=~ enum_name')
   endif
+
+  let res = {'type': what.type.name, 'name': (a:name)}
+  let res['values'] =  lh#list#transform(enum_values, [], 'v:1_.name')
+  return res
+
 endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
