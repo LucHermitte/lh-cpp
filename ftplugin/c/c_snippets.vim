@@ -3,19 +3,20 @@
 " File:		ftplugin/c/c_snippets.vim                               {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.0.0
 " Created:	14th Apr 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	Snippets of C Control Statements
 " 
 "------------------------------------------------------------------------
-" Installation:	«install details»
 " Dependancies:	lh-vim-lib
 " 		a.vim			-- alternate files
 " 		VIM >= 6.00 only
 "
-" History:	«history»
+" History:
 " 06th,26th Mar 2006: InsertReturn() for smart insertion of return.
 " for changelog: 27th Jun 2006 -> C_SelectExpr4Surrounding used in
 "                                 <leader><leader> mappings

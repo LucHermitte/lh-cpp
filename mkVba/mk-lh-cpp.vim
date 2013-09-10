@@ -9,7 +9,7 @@
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b1'
+let s:version = '2.0.0b2'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
