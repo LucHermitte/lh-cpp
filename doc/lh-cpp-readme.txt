@@ -1,5 +1,5 @@
-*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b1)
-                        For Vim version 7.x.    Last change: 12th Apr 2012
+*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b2)
+                        For Vim version 7.x.    Last change: 10th Sep 2013
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -21,6 +21,7 @@ Features~
 |C_settings|                    Various settings
 |brackets-for-C|                Bracketing system
 |C_control-statements|          Control statements for C editing (for, if, etc)
+  |C_switch_enum|                 Expands an enum into a switch statement
 |C_snippets|                    Other C snippets and shortcuts
 |C++_control-statements|        Control statements for C++ editing (try, ...)
 |C++_accessors|                 C++ accessors & some templates skeletons
@@ -183,6 +184,45 @@ NB: * |b:usemarks| is still taken into account.
     * The normal- and visual-modes mappings do not respect
       |g:c_nl_before_bracket| and |g:c_nl_before_curlyB|.
      
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+                                                    *C_switch_enum*
+                                                    *<Plug>SwitchEnum*
+Mapping: ~
+   *i_CTRL-X_se* expands the name of the enum (type, or variable) before the
+   cursor into a switch statement.
+
+   Given: >
+        enum E { NO, YES, MAX__ };
+        E var;
+
+        var<c-x>se
+<   will expand into: >
+        switch (var)
+        {
+            case YES: 
+                «YES-code»;
+                break;
+            case NO:
+                «NO-code»;
+                break;
+            default:
+                «default-code»;
+                break;
+        }
+
+Requirements:~
+This feature requires a ctags database where to fetch the enum definition.
+It also requires |lh-dev|, and |mu-template|.
+
+Known issues:~
+At this time, the plugin is not capable of respecting the declaration order of
+the enumerated values. The switch will iterate on the enumerated values
+following the lexical order.
+
+Options~
+The default mapping to |i_CTRL-X_se| can be overridden with for instance: >
+    imap <buffer> <silent> <leader>se <Plug>SwitchEnum
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
                                                     *C_snippets*
 Other snippets and shortcuts from c_snippets.vim~
