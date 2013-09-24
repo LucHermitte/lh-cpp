@@ -101,16 +101,16 @@ if exists(':Brackets')
   if exists('*lh#dev#option#get') || 
         \ lh#dev#option#get('semicolon_closes_bracket', &ft, 1)
     call lh#brackets#define_imap(';',
-          \ [{'condition': 'getline(".")[col(".")-1:-1]=~"^\"\\=)\\+"',
+          \ [{'condition': 'getline(".")[col(".")-1:-1]=~"^\"\\=\\(".Marker_Txt(".\\{-}")."\\)\\=)\\+"',
           \   'action': 's:JumpOverAllClose(")", ";")'},
           \  {'condition': 'getline(".")[col(".")-1:-1]=~"^;"',
           \   'action': 's:JumpOverAllClose(";", "")'}],
           \1)
     call lh#brackets#define_imap('<bs>',
           \ [{ 'condition': 'getline(".")[:col(".")-2]=~".*\"\\s*)\\+;$"',
-          \   'action': 'MoveSemicolBackToStringContext()'},
-          \  { 'condition': 'MatchAnyBracketPair()',
-          \   'action': 'DeleteEmptyBracketPair()'}],
+          \   'action': 'Cpp_MoveSemicolBackToStringContext()'},
+          \  { 'condition': 'Cpp_MatchAnyBracketPair()',
+          \   'action': 'Cpp_DeleteEmptyBracketPair()'}],
           \ 1,
           \ '\<bs\>'
           \ )
