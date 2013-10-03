@@ -1,0 +1,20 @@
+VimL:" $Id$
+VimL:" C++ binary operator snippet, Luc Hermitte, 30th Sep 2013
+VimL:" hint: operatorX(T lhs, T const& rhs) { return lhs X= rhs; }
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL:"
+VimL: let s:_op      = s:Param('operator', Marker_Txt('X'))
+VimL: let s:_clsname = s:Param('classname', Marker_Txt('ClassName'))
+MuT:  if empty(s:_clsname)
+VimL:    let s:_clsname = lh#cpp#AnalysisLib_Class#search_closest_class(line('.'))
+MuT:     if empty(s:_clsname)
+VimL:       let s:_clsname = Marker_Txt('X')
+MuT:     endif
+MuT:  endif
+VimL: let s:_lhs     = lh#dev#naming#param('lhs')
+VimL: let s:_rhs     = lh#dev#naming#param('rhs')
+VimL:"
+<+s:_clsname+> operator<+s:_op+>(<+s:_clsname+> <+s:_lhs+>, <+s:_clsname+> const& <+s:_rhs+>) 
+{ return <+s:_lhs+> <+s:_op+>= <+s:_rhs+>; }
