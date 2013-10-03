@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b1
+" Version:	2.0.0b3
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b2'
+let s:version = '2.0.0b3'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -49,6 +49,7 @@ after/template/cpp/internals/stream-implementation.template
 after/template/cpp/internals/stream-signature.template
 after/template/cpp/iss.template
 after/template/cpp/namespace.template
+after/template/cpp/operator-binary.template
 after/template/cpp/oss.template
 after/template/cpp/singleton.template
 after/template/cpp/stream-extractor.template
@@ -90,6 +91,7 @@ ftplugin/c/c_complete_include.vim
 ftplugin/c/c_doc.vim
 ftplugin/c/c_gcov.vim
 ftplugin/c/c_localleader.vim
+ftplugin/c/c_menu.vim
 ftplugin/c/c_mu-template_api.vim
 ftplugin/c/c_navigate_functions.vim
 ftplugin/c/c_set.vim
@@ -108,7 +110,6 @@ ftplugin/cpp/cpp_GotoFunctionImpl.vim
 ftplugin/cpp/cpp_InsertAccessors.vim
 ftplugin/cpp/cpp_Inspect.vim
 ftplugin/cpp/cpp_Override.vim
-ftplugin/c/c_menu.vim
 ftplugin/cpp/cpp_options-commands.vim
 ftplugin/cpp/cpp_options.vim
 ftplugin/cpp/cpp_refactor.vim
