@@ -1,5 +1,5 @@
-VimL:" $Id$
-VimL:" copy-constructor File Template, Luc Hermitte, 21st Aug 2011
+VimL:" $Id: default-constructor.template 529 2012-03-23 19:10:41Z luc.hermitte $
+VimL:" default-constructor File Template, Luc Hermitte, 21st Aug 2011
 VimL:" hint: T(T const&);
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
@@ -9,9 +9,8 @@ VimL: let s:clsname = empty(s:Args()) ? lh#cpp#AnalysisLib_Class#CurrentScope(li
 VimL: let s:lead = lh#dox#comment_leading_char().' '
 VimL: let s:param = lh#dev#naming#param("rhs")
 VimL: let s:fn_comments = { }
-VimL: let s:fn_comments.brief = "Copy constructor."
+VimL: let s:fn_comments.brief = "Default constructor."
 VimL: let s:fn_comments.throw = {"optional": 1}
 VimL: " let s:fn_comments.text  = []
-VimL: let s:fn_comments.param = [{"dir": "in", "name": (s:param), "text": "source data to be copied." } ]
 VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:clsname+>(<+s:clsname+> const& <+s:param+>);
+<+s:clsname+>();

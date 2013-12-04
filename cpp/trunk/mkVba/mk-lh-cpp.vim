@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b3
+" Version:	2.0.0b4
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b3'
+let s:version = '2.0.0b4'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -33,6 +33,7 @@ after/template/cpp/catch.template
 after/template/cpp/class.template
 after/template/cpp/copy-and-swap.template
 after/template/cpp/copy-constructor.template
+after/template/cpp/default-constructor.template
 after/template/cpp/destructor.template
 after/template/cpp/enum.template
 after/template/cpp/enum2.template

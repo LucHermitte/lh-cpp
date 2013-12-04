@@ -1,5 +1,5 @@
-*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b2)
-                        For Vim version 7.x.    Last change: 10th Sep 2013
+*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b4)
+                        For Vim version 7.x.    Last change: 04th Dec 2013
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -31,8 +31,10 @@ Features~
   |C_snippet_realloc|
   |C++_template_new|
   |C++_template_class|
+  |C++_template_default-constructor|
   |C++_template_copy-constructor|
   |C++_template_copy-and-swap|
+  |C++_template_assignment-operator|
   |C++_template_destructor|
 |C++_Override|                  Function overriding helper
 |C++_unmatched_functions|       Search for declared ad undefined functions (or
@@ -548,6 +550,28 @@ The variation points are:
   - the template-file {rtp}/template/cpp/internals/formatted-comment.template
     that is used to convert the final list of documentation tag into the
     embedded comments. The default format used is Doxygen format.
+
+                               *:Constructor*
+                               *:ConstructorInit*
+                               *:ConstructorDefault*  *C++_template_default-constructor*
+                               *:ConstructorCopy*     *C++_template_copy-constructor*
+                                                    *C++_template_copy-and-swap*
+                               *:AssignmentOperator*  *C++_template_assignment-operator*
+                                                    *C++_template_destructor*
+Snippets for constructors and related functions~
+Various |mu-template| snippets are provided to insert construction/destruction related functions.
+All detect the current class-name, they can receive some other parameters. (to
+be documented)
+They will apply naming conventions from |lh#dev#naming|
+See |C++_template_class| documentation for a more complete list of the
+parameters and other variation points involved in these snippets.
+
+They can also be run from |:Constructor| (or the other commands). In that
+case, a ctag database will be used to find which attributes the current class
+is made of in order to fill the implementation of the function as weel as we
+can.
+
+TODO: rely of libclang when ctags in not used
 
                                                     *C_snippet_realloc*
 Snippet for realloc()~
