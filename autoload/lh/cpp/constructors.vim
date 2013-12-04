@@ -5,7 +5,7 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
+" Version:	2.0.0b4
 " Created:	09th Feb 2009
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -18,11 +18,20 @@
 " 	v1.1.0: Creation
 "	v2.0.0  31st May 2012
 "	        License GPLv3 w/ extension
+"	v.2.0.0b4
+"	        New commands: :ConstructorCopy, :ConstructorDefault,
+"	        :ConstructorInit, :AssignmentOperator
+" Requirements:
+"       - mu-template 3.0.8
+"       - lh-dev
 " TODO:		
 " - select all attributes by default
 " - permit to change the order of the attributes in the constructor parameters
 "   list (with <c-up>, <c-down> for instance
 " - align parameters on multiple lines, and init-lists
+" - have init-constructors rely on a mu-template snippet
+" - rely of libclang (databases?)
+" - Extend to C++11 move constructors & co
 " }}}1
 "=============================================================================
 
@@ -81,7 +90,18 @@ function! s:Attributes(classname)
 endfunction
 
 " # Main {{{2
-function! lh#cpp#constructors#Main()
+function! lh#cpp#constructors#Main(...)
+  if a:0 == 0 || a:1 == 'init'
+    call lh#cpp#constructors#InitConstructor()
+  elseif a:1 =~ 'assign'
+    call lh#cpp#constructors#AssignmentOperator()
+  else
+    call lh#cpp#constructors#GenericConstructor(a:1)
+  endif
+endfunction
+
+" Function: lh#cpp#constructors#InitConstructor() {{{2
+function! lh#cpp#constructors#InitConstructor()
   " 1- Obtain current class name
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
@@ -97,6 +117,95 @@ function! lh#cpp#constructors#Main()
   " -> asynchrounous
 endfunction
 
+" Function: lh#cpp#constructors#AssignmentOperator() {{{2
+function! lh#cpp#constructors#AssignmentOperator()
+  " 1- Obtain current class name
+  let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
+  call s:Verbose ("classname=".classname)
+  " 2- Obtain attributes functions
+  let attributes = s:Attributes(classname)
+  if exists('g:decls') | unlet g:decls | endif
+  let g:decls = attributes
+  call s:Verbose ("attributes=".join(attributes,"\n"))
+
+  " 3- Insert the copy-constructor declaration
+  try 
+    let mt_jump = g:mt_jump_to_first_markers
+    let g:mt_jump_to_first_markers = 0
+    exe 'MuTemplate cpp/assignment-operator '.classname.' 0'
+  finally
+    let g:mt_jump_to_first_markers = mt_jump
+  endtry
+
+  " 4- Go-to its implementation and fill-it
+  " Last line inserted should be the constructor signature
+  " 4.1- goto impl, at the right place
+  GOTOIMPL
+  " 4.2- Prepare init-list code
+  let rhs = lh#dev#naming#param('rhs').'.'
+  let code_list=[]
+  for attribute in attributes
+    let attrb_name = matchstr(attribute.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
+    call add(code_list, attrb_name.' = '.rhs.attrb_name.';')
+  endfor
+
+  " 4.3- Insert the code
+  put!=code_list
+  " reindent
+  normal! =a{
+
+endfunction
+
+" Function: lh#cpp#constructors#GenericConstructor(kind) {{{2
+function! lh#cpp#constructors#GenericConstructor(kind)
+  " 1- Obtain current class name
+  let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
+  call s:Verbose ("classname=".classname)
+  " 2- Obtain attributes functions
+  let attributes = s:Attributes(classname)
+  if exists('g:decls') | unlet g:decls | endif
+  let g:decls = attributes
+  call s:Verbose ("attributes=".join(attributes,"\n"))
+
+  " 3- Insert the copy-constructor declaration
+  try 
+    let mt_jump = g:mt_jump_to_first_markers
+    let g:mt_jump_to_first_markers = 0
+    exe 'MuTemplate cpp/'.a:kind.'-constructor'
+  finally
+    let g:mt_jump_to_first_markers = mt_jump
+  endtry
+
+  " 4- Go-to its implementation and fill-it
+  " Last line inserted should be the constructor signature
+  " 4.1- goto impl, at the right place
+  GOTOIMPL
+  normal! %
+  " 4.2- Prepare init-list code
+  let rhs = lh#dev#naming#param('rhs').'.'
+  let init_list=[]
+  for attribute in attributes
+    let attrb_name = matchstr(attribute.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
+    if a:kind == 'copy'
+      call add(init_list, attrb_name.'('.rhs.attrb_name.')')
+    elseif a:kind == 'default'
+      call add(init_list, attrb_name.'()')
+    endif
+  endfor
+
+  " 4.3- Insert the init-list
+  let impl_lines=[]
+  call add(impl_lines, ': '.init_list[0])
+  call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
+  put!=impl_lines
+
+endfunction
+
+" # Internals {{{2
+" Function: lh#cpp#constructors#_complete(A,L,P) {{{3
+function! lh#cpp#constructors#_complete(A,L,P)
+  return ['init', 'copy', 'default', 'assign']
+endfunction
 " # GUI {{{2
 
 " ==========================[ Menu ]====================================
@@ -152,7 +261,7 @@ function! s:Display(className, declarations)
   let choices = s:BuildMenu(a:declarations)
   " return
   let b_id = lh#buffer#dialog#new(
-	\ 'C++Override('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
+	\ 'C++Constructor('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
 	\ 'Construct-Initializable fields for '.a:className,
 	\ 'bot below',
 	\ 1,
@@ -263,7 +372,7 @@ function! lh#cpp#constructors#select(results)
   call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
   call extend(impl_lines, [ '{', '}'])
   let impl = join(impl_lines, "\n")
-  call lh#cpp#GotoFunctionImpl#open_cpp_file()
+  call lh#cpp#GotoFunctionImpl#open_cpp_file('')
   call lh#cpp#GotoFunctionImpl#insert_impl(impl)
 endfunction
 

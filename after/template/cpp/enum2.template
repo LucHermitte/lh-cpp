@@ -7,41 +7,47 @@ VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt(expand('%:t:r')))
-struct ¡s:enum_name¡ {
+VimL: let s:lhs_    = lh#dev#naming#param("lhs")
+VimL: let s:rhs_    = lh#dev#naming#param("rhs")
+VimL: let s:value_  = lh#dev#naming#param("value")
+VimL: let s:e_      = lh#dev#naming#param("e")
+VimL: let s:m_value = lh#dev#naming#member("value")
+VimL: let s:tmp     = lh#dev#naming#local("tmp")
+struct <+s:enum_name+> {
     enum type { <+values+>, MAX__ };
-    static type next(type e_) {
-        assert(e_ < MAX__);
-        return type(e_+1);
-    }
-    static ¡s:enum_name¡ to_enum(std::string const& s_);
-    static char const* to_string(type e_);
-    char const* to_string() const { return to_string(m_value); }
+    static <+s:enum_name+> to_enum(std::string const& <+lh#dev#naming#param("s")+>);
+    static char const* to_string(type <+s:e_+>);
+    char const* to_string() const { return to_string(<+s:m_value+>); }
 
-    explicit ¡s:enum_name¡(uint8_t value_ = MAX__)
-        : m_value(type(value_)) {
-            assert(m_value < MAX__);
+    explicit <+s:enum_name+>(std::uint8_t <+s:value_+> = 0)
+        : <+s:m_value+>(type(<+s:value_+>)) {
+            assert(<+s:m_value+> < MAX__);
         }
-    ¡s:enum_name¡& operator=(¡s:enum_name¡::type value_) {
-        assert(m_value < MAX__);
-        m_value = value_;
+    <+s:enum_name+>(type <+s:value_+>)
+        : <+s:m_value+>(type(<+s:value_+>)) {
+            //assert(<+s:m_value+> < MAX__);
+        }
+    <+s:enum_name+>& operator=(<+s:enum_name+>::type <+s:value_+>) {
+        assert(<+s:m_value+> < MAX__);
+        <+s:m_value+> = <+s:value_+>;
         return *this;
     }
-    uint8_t to_int() const { return m_value; }
-    friend bool operator==(type lhs_, ¡s:enum_name¡ rhs_) { return lhs_==rhs_.m_value; }
-    friend bool operator==(¡s:enum_name¡ lhs_, type rhs_) { return lhs_.m_value==rhs_; }
-    friend bool operator!=(¡s:enum_name¡ lhs_, ¡s:enum_name¡ rhs_) { return lhs_.m_value!=rhs_.m_value; }
+    <+s:enum_name+>& operator++() {
+        assert(<+s:m_value+> < <+s:enum_name+>::type::MAX__);
+        <+s:m_value+> = <+s:enum_name+>::type(<+s:m_value+>+1);
+        return *this;
+    }
+    <+s:enum_name+> operator++(int) {
+        <+s:enum_name+> <+s:tmp+> = *this;
+        ++*this;
+        return <+s:tmp+>;
+    }
+    uint8_t to_int() const { return <+s:m_value+>; }
+    type to_internal() const { return <+s:m_value+>; }
+    static const <+s:enum_name+> max() { return <+s:enum_name+>(MAX__); }
+    friend bool operator==(type <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>==<+s:rhs_+>.<+s:m_value+>; }
+    friend bool operator==(<+s:enum_name+> <+s:lhs_+>, type <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+>==<+s:rhs_+>; }
+    friend bool operator!=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+>!=<+s:rhs_+>.<+s:m_value+>; }
 private:
-    type m_value;
+    type <+s:m_value+>;
 };
-
-inline
-¡s:enum_name¡::type& operator++(¡s:enum_name¡::type& e_) {
-    return e_ = ¡s:enum_name¡::next(e_);
-}
-
-inline
-¡s:enum_name¡::type operator++(¡s:enum_name¡::type&e_, int) {
-    const ¡s:enum_name¡::type tmp = e_;
-    e_ = ¡s:enum_name¡::next(e_);
-    return tmp;
-}
