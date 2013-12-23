@@ -1,9 +1,11 @@
 VimL:" $Id$
 VimL:"{throw default exceptions for project} Template-File, Luc Hermitte
-VimL:" hint: throw std::runtime_error
-VimL: let s:value_start  = '¡'
-VimL: let s:value_end    = '¡'
+VimL:" hint: throw std::runtime_error/@throw (depending on context)
 VimL: let s:reindent     = 1 
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
+MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
+@throw <+Exception+>
+MuT:  else
 throw std::runtime_error("<++>");<++>
+MuT:  endif

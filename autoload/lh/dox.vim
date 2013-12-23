@@ -96,8 +96,10 @@ function! lh#dox#ingroup(...)
     let res =  lh#dox#tag('ingroup ').text
   elseif ingroup =~? '^no$\|^n\%[ever]$\|0'
     let res =  ''
+  elseif type(ingroup) == type('')
+    let res = lh#dox#tag('ingroup ').ingroup
   else " maybe
-    let res =  Marker_Txt(lh#dox#tag('ingroup ').(a:0==0?'':a:1))
+    let res = lh#marker#txt(lh#dox#tag('ingroup ').(a:0==0?'':a:1))
   endif
   return res
 endfunction
