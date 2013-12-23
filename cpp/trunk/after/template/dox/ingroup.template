@@ -1,0 +1,11 @@
+VimL:" $Id$
+VimL:" dox/ingroup File Template, Luc Hermitte, 23rd Dec 2013
+VimL:" hint: /**@ingroup ... */
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL:"
+/**<+lh#dox#tag("ingroup")+> g¡lh#option#get('dox_group', '<+Projet+>')¡
+ */<++>
