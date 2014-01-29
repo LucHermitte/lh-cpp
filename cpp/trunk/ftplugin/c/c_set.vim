@@ -24,10 +24,10 @@
 " ========================================================================
 " Buffer local definitions {{{1
 " ========================================================================
-if exists("b:loaded_local_c_settings") && !exists('g:force_reload_c_ftp')
+if exists("b:loaded_c_set") && !exists('g:force_reload_c_set')
   finish 
 endif
-let b:loaded_local_c_settings = 1
+let b:loaded_c_set = 1
 let s:cpo_save = &cpo
 set cpo&vim
 
@@ -50,6 +50,9 @@ setlocal define=^\(#\s*define\|[a-z]*\s*const\s*[a-z]*\)
 setlocal comments=sr:/*,mb:*,exl:*/,:///,://
 setlocal isk+=#		" so #if is considered as a keyword, etc
 setlocal isk-=-		" so ptr- (in ptr->member) is not
+setlocal isk-=<
+setlocal isk-=>
+setlocal isk-=:
 setlocal suffixesadd+=.h,.c
 
 setlocal cmdheight=3
