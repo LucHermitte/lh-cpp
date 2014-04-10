@@ -5,7 +5,7 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0
+" Version:      2.0.1
 " Created:      22nd May 2012
 " Last Update:  $Date$
 "------------------------------------------------------------------------
@@ -26,7 +26,7 @@
 " }}}1
 "=============================================================================
 
-let s:k_version = 200
+let s:k_version = 201
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_c_AddInclude")
@@ -116,8 +116,14 @@ function! s:InsertInclude()
   mark '
   let filename = keys(files)[0] " this is the full filename
   echo filename
-  let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
-  let filename = fnamemodify(filename, filename_simplify)
+  if exists('b:sources_root') " from mu-template & lh-suite(s)
+    if filename[0] == '/' " absolute => try to remove b:sources_root
+      let [root, filename] = lh#path#strip_common(lh#path_to_dirname(b:sources_root), filename)
+    endif
+  else
+    let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
+    let filename = fnamemodify(filename, filename_simplify)
+  endif
   let l = search('^#\s*include\s*["<]'.filename)
   if l > 0
     call lh#common#warning_msg("insert-include: ".filename.", where `"
