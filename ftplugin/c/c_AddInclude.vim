@@ -115,10 +115,17 @@ function! s:InsertInclude()
   endif
   mark '
   let filename = keys(files)[0] " this is the full filename
-  echo filename
+  " echo filename
+  let includes = []
   if exists('b:sources_root') " from mu-template & lh-suite(s)
-    if filename[0] == '/' " absolute => try to remove b:sources_root
-      let [root, filename] = lh#path#strip_common(lh#path_to_dirname(b:sources_root), filename)
+    let includes += [lh#path#to_dirname(b:sources_root)]
+  endif
+  if exists('b:includes')
+    let includes += b:includes
+  endif
+  if !empty(includes)
+    if filename[0] == '/' " absolute => try to remove things from b:includes and/or b:sources_root
+      let filename = lh#path#strip_start(filename, includes)
     endif
   else
     let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
