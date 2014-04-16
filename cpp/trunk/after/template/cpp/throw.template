@@ -4,8 +4,10 @@ VimL:" hint: throw std::runtime_error/@throw (depending on context)
 VimL: let s:reindent     = 1 
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
+VimL: let s:_exception_type = lh#dev#option#get('exception_type', &ft, 'std::runtime_error')
+VimL: let s:_exception_args = lh#dev#option#get('exception_args', &ft, lh#marker#txt('text'))
 MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
-@throw <+Exception+>
+@throw <+s:_exception_type+><++>
 MuT:  else
-throw std::runtime_error("<++>");<++>
+throw <+s:_exception_type+>(<+s:_exception_args+>);<++>
 MuT:  endif
