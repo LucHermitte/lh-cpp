@@ -1,0 +1,61 @@
+VimL:" $Id$
+VimL:" enum2-impl File Template, Luc Hermitte, 23rd Apr 2014
+VimL:" hint: enum2 code that goes into .cpp files
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:enum_name   = empty(s:Args()) ?  lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))) : (s:Args()[0])
+VimL: let s:lhs_        = lh#dev#naming#param("lhs")
+VimL: let s:rhs_        = lh#dev#naming#param("rhs")
+VimL: let s:value_      = lh#dev#naming#param("value")
+VimL: let s:m_value     = lh#dev#naming#member("value")
+VimL: let s:tmp         = lh#dev#naming#local("tmp")
+VimL: let s:range       = lh#dev#naming#function("range")
+VimL: let s:RangeType   = lh#dev#naming#type("range")
+VimL: let s:to_string   = lh#dev#naming#function("to_string")
+VimL: let s:to_internal = lh#dev#naming#function("to_internal")
+VimL: let s:max         = lh#dev#naming#function("max")
+VimL: let s:type        = lh#dev#naming#type("type")
+VimL: let s:str_param   = lh#dev#naming#param("s")
+#include <algorithm>
+MuT:  if lh#dev#cpp#use_cpp11()
+#include <iterator>
+#include <type_traits>
+VimL:   let s:range_ns = 'std' 
+MuT:  else
+#include <boost/range/begin.hpp>
+#include <boost/range/end.hpp>
+#include <boost/static_assert.hpp>
+VimL:   let s:range_ns = 'boost' 
+MuT:  endif
+
+namespace  { // Anonymous namespace
+    typedef char const* const* strings_iterator;
+    static char const* const k_strings[] =
+    { <+values+> };
+} // Anonymous namespace //  namespaces
+
+
+<+s:enum_name+>::<+s:enum_name+>(std::string const& <+s:str_param+>)
+{
+    strings_iterator const <+s:enum_name+>_it = std::find(<+s:range_ns+>::begin(::k_strings),<+s:range_ns+>::end(::k_strings), <+s:str_param+>);
+    if (<+s:enum_name+>_it == <+s:range_ns+>::end(::k_strings)) {
+VimL: call s:Include('throw', 'cpp', '"Cannot decode '.s:enum_name.' name `"+'.s:str_param.'+"`"')
+    }
+    <+s:m_value+> = <+s:type+>(std::distance(<+s:range_ns+>::begin(::k_strings), <+s:enum_name+>_it));
+    assert(<+s:m_value+> < MAX__);
+}
+
+MuT:  if lh#dev#cpp#use_cpp11()
+#define array_size(array) std::extent<decltype(array)>::value
+MuT:  endif
+
+char const* <+s:enum_name+>::<+s:to_string+>() const
+{
+VimL: call s:Include('static_assert', 'cpp', {'condition': 'MAX__ == array_size(::k_strings)', 'message': '"Array size mismatches number of elements in enum"'})
+    assert(<+s:m_value+> != UNDEFINED__); // Yes, I know UNDEFINED__ > MAX__
+    assert(<+s:m_value+> < MAX__);
+    return k_strings[<+s:m_value+>];
+}
+

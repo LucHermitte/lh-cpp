@@ -1,13 +1,25 @@
 VimL:" $Id$
 VimL:"{throw default exceptions for project} Template-File, Luc Hermitte
 VimL:" hint: throw std::runtime_error/@throw (depending on context)
+VimL:"
+VimL:" This snippet supports options:
+VimL:" - b:exception_type in the form of a string
+VimL:" - b:exception_args in the form of lh#function:
+VimL:"   e.g.: let b:exception_args = 'v:1_.'.string(lh#marker#txt(', '.b:cpp_project_namespace.'::ExitCode::'))
+VimL:"   This functor takes a parameter that will get injected in place of v:1_
+VimL:"   e.g. VimL: call s:Include('throw', 'cpp', '"Cannot decode'.s:enum_name.'"')
+VimL:"
 VimL: let s:reindent     = 1 
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:_exception_type = lh#dev#option#get('exception_type', &ft, 'std::runtime_error')
-VimL: let s:_exception_args = lh#dev#option#get('exception_args', &ft, lh#marker#txt('text'))
+VimL: let s:_exception_txt  = empty(s:Args()) ? lh#marker#txt('text') : (s:Args()[0])
+VimL: let s:_exception_args = lh#function#bind(lh#dev#option#get('exception_args', &ft, 'v:1_'))
 MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
 @throw <+s:_exception_type+><++>
 MuT:  else
-throw <+s:_exception_type+>(<+s:_exception_args+>);<++>
+throw <+s:_exception_type+>(<+lh#function#execute(s:_exception_args, s:_exception_txt)+>);<++>
 MuT:  endif
+VimL: unlet s:_exception_type
+VimL: unlet s:_exception_txt
+VimL: unlet s:_exception_args
