@@ -6,35 +6,41 @@ VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt(expand('%:t:r')))
-VimL: let s:lhs_    = lh#dev#naming#param("lhs")
-VimL: let s:rhs_    = lh#dev#naming#param("rhs")
-VimL: let s:value_  = lh#dev#naming#param("value")
-VimL: let s:e_      = lh#dev#naming#param("e")
-VimL: let s:m_value = lh#dev#naming#member("value")
-VimL: let s:tmp     = lh#dev#naming#local("tmp")
+VimL: let s:enum_name   = empty(s:Args()) ? '' : (s:Args()[0])
+MuT:  if empty(s:enum_name)
+VimL:   let s:enum_name   = inputdialog('Name of the enum class ?', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
+MuT:  endif
+VimL: let s:lhs_        = lh#dev#naming#param("lhs")
+VimL: let s:rhs_        = lh#dev#naming#param("rhs")
+VimL: let s:value_      = lh#dev#naming#param("value")
+VimL: let s:m_value     = lh#dev#naming#member("value")
+VimL: let s:tmp         = lh#dev#naming#local("tmp")
+VimL: let s:range       = lh#dev#naming#function("range")
+VimL: let s:RangeType   = lh#dev#naming#type("range")
+VimL: let s:to_string   = lh#dev#naming#function("to_string")
+VimL: let s:to_internal = lh#dev#naming#function("to_internal")
+VimL: let s:max         = lh#dev#naming#function("max")
+VimL: let s:type        = lh#dev#naming#type("type")
 struct <+s:enum_name+> {
-    enum type { <+values+>, MAX__ };
-    static <+s:enum_name+> to_enum(std::string const& <+lh#dev#naming#param("s")+>);
-    static char const* to_string(type <+s:e_+>);
-    char const* to_string() const { return to_string(<+s:m_value+>); }
+    enum <+s:type+> { <+values+>, MAX__, UNDEFINED__, FIRST__=0 };
 
-    explicit <+s:enum_name+>(std::uint8_t <+s:value_+> = 0)
-        : <+s:m_value+>(type(<+s:value_+>)) {
+    explicit <+s:enum_name+>(std::uint8_t <+s:value_+>)
+        : <+s:m_value+>(<+s:type+>(<+s:value_+>))
+        {
+            if (<+s:value_+> >= MAX__) {
+VimL: call s:Include('throw', 'cpp', '"Invalid '.s:enum_name.' value"')
+            }
+        }
+    <+s:enum_name+>(<+s:type+> <+s:value_+>)
+        : <+s:m_value+>(<+s:type+>(<+s:value_+>)) {
             assert(<+s:m_value+> < MAX__);
         }
-    <+s:enum_name+>(type <+s:value_+>)
-        : <+s:m_value+>(type(<+s:value_+>)) {
-            //assert(<+s:m_value+> < MAX__);
-        }
-    <+s:enum_name+>& operator=(<+s:enum_name+>::type <+s:value_+>) {
-        assert(<+s:m_value+> < MAX__);
-        <+s:m_value+> = <+s:value_+>;
-        return *this;
-    }
+    <+s:enum_name+>()
+        : <+s:m_value+>(UNDEFINED__) {}
+    <+s:enum_name+>(std::string const& <+lh#dev#naming#param("s")+>);
     <+s:enum_name+>& operator++() {
-        assert(<+s:m_value+> < <+s:enum_name+>::type::MAX__);
-        <+s:m_value+> = <+s:enum_name+>::type(<+s:m_value+>+1);
+        assert(<+s:m_value+> < MAX__);
+        <+s:m_value+> = <+s:enum_name+>::<+s:type+>(<+s:m_value+>+1);
         return *this;
     }
     <+s:enum_name+> operator++(int) {
@@ -42,12 +48,37 @@ struct <+s:enum_name+> {
         ++*this;
         return <+s:tmp+>;
     }
-    uint8_t to_int() const { return <+s:m_value+>; }
-    type to_internal() const { return <+s:m_value+>; }
-    static const <+s:enum_name+> max() { return <+s:enum_name+>(MAX__); }
-    friend bool operator==(type <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>==<+s:rhs_+>.<+s:m_value+>; }
-    friend bool operator==(<+s:enum_name+> <+s:lhs_+>, type <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+>==<+s:rhs_+>; }
-    friend bool operator!=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+>!=<+s:rhs_+>.<+s:m_value+>; }
+
+    char const* <+s:to_string+>() const;
+    <+s:type+> <+s:to_internal+>() const { return <+s:m_value+>; }
+    friend bool operator<=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> <= <+s:rhs_+>.<+s:m_value+>; }
+    friend bool operator>=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> >= <+s:rhs_+>.<+s:m_value+>; }
+    friend bool operator< (<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> <  <+s:rhs_+>.<+s:m_value+>; }
+    friend bool operator> (<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> >  <+s:rhs_+>.<+s:m_value+>; }
+    friend bool operator==(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> == <+s:rhs_+>.<+s:m_value+>; }
+    friend bool operator!=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> != <+s:rhs_+>.<+s:m_value+>; }
+
+    static <+s:enum_name+> <+s:max+>  () { return MAX__; }
+    static <+s:enum_name+> begin() { return FIRST__; }
+    static <+s:enum_name+> end  () { return MAX__  ; }
+
+MuT:  if lh#dev#cpp#use_cpp11()
+          /** Helper class to provide for-range loops on <+s:enum_name+>.
+           * @see \c range()
+           */
+          struct <+s:RangeType+> {
+              static <+s:enum_name+> begin() { return FIRST__; }
+              static <+s:enum_name+> end  () { return MAX__  ; }
+          };
+          /** Helper function to provide for-range loops on \c <+s:enum_name+>.
+           * e.g.
+           * @code
+           * for (value : <+s:enum_name+>::<+s:range+>())
+           *    cout << value.to_internal() << " -> " << value.to_string();
+           * @endcode
+           */
+      static <+s:RangeType+> <+s:range+>() { return <+s:RangeType+>(); }
+MuT:  endif
 private:
-    type <+s:m_value+>;
+    <+s:type+> <+s:m_value+>;
 };
