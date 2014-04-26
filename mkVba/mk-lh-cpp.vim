@@ -26,6 +26,7 @@ after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 after/template/c/realloc.template
 after/template/cpp/abs-rel.template
+after/template/cpp/array_size.template
 after/template/cpp/assignment-operator.template
 after/template/cpp/b-e.template
 after/template/cpp/bool-operator.template
