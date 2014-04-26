@@ -47,9 +47,7 @@ VimL: call s:Include('throw', 'cpp', '"Cannot decode '.s:enum_name.' name `"+'.s
     assert(<+s:m_value+> < MAX__);
 }
 
-MuT:  if lh#dev#cpp#use_cpp11()
-#define array_size(array) std::extent<decltype(array)>::value
-MuT:  endif
+VimL: call s:Include('array_size', 'cpp')
 
 char const* <+s:enum_name+>::<+s:to_string+>() const
 {

@@ -1,0 +1,23 @@
+VimL:" $Id$
+VimL:" array_size definition File Template, Luc Hermitte, 25th Apr 2014
+VimL:" hint: std::extent<decltype(tab)>::value
+VimL: let s:value_start = 'Â¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+MuT:  if lh#dev#cpp#use_cpp11()
+#define array_size(tab) std::extent<decltype(tab)>::value
+MuT:  else
+// Parfois on a besoin d'une constante de compilation ;
+// dans ce cas la solution suivante est applicable :
+// Falk Tannhäuser, fclc++, 
+//   Message-ID: <3FCB378C.1A1C6066@crf.canon.fr>
+namespace  {
+    template <std::size_t N>
+        struct array { char value[N]; };
+
+    template<typename T, std::size_t N>
+    array<N> array_size_helper(T (&)[N]);
+} // namespace 
+#define array_size(array) (sizeof ::array_size_helper(array).value)
+MuT:  endif
