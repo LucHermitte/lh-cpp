@@ -10,4 +10,5 @@ MuT:  if lh#dev#cpp#use_cpp11()
 static_assert(<+s:_condition+>, <+s:_message+>);
 MuT:  else
 BOOST_STATIC_ASSERT(<+s:_condition+>);
+VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<boost/range/static_assert.hpp>"))
 MuT:  endif

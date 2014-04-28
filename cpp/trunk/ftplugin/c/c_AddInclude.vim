@@ -133,7 +133,7 @@ function! s:InsertInclude()
     let filename = fnamemodify(filename, filename_simplify)
   endif
   try
-    call AddInclude(filename, fullfilename=~ '\<usr\>\|\<local\>')
+    call lh#include#add(filename, fullfilename=~ '\<usr\>\|\<local\>')
   catch /^insert-include:.* is already included/
     call lh#common#warning_msg("insert-include: ".filename.", where `"
           \ .id."' is defined, is already included")
@@ -141,47 +141,6 @@ function! s:InsertInclude()
   echo "Use CTRL-O to go back to previous cursor position" 
 endfunction
 
-function! AddInclude(filename, useAngleBrackets, ...) abort
-  keepjumps normal! gg
-  let l = search('^#\s*include\s*["<]'.a:filename.'\>', 'c')
-  if l > 0
-    throw "insert-include: ".a:filename." is already included"
-  endif
-
-  let where = a:0 == 0 ? "last" : a:1
-  if where == "last"
-    keepjumps normal! G
-    if search('^#\s*include', 'b') == 0
-      " nothing found => like first
-      return AddInclude(a:filename, a:useAngleBrackets, 'first')
-    endif
-  elseif where == "first"
-    keepjumps normal! gg
-    if search('^#\s*include', 'c') == 0 " try after the first #include
-      " Search for the #ifndef/#define in case of include files
-      if search('^#ifndef \(\k\+\)\>.*\n#define \1\>') > 0
-        keepjumps normal! j " move down
-      else
-        " Search for after the file headers
-        let line = 1
-        while line <= line('$')
-          if !lh#syntax#is_a_comment_at(line, 1) && !lh#syntax#is_a_comment_at(line, len(getline(line))+1)
-            break
-          endif
-          let line += 1
-        endwhile
-        let line -= line != line('$')
-        call cursor(line, 0)
-      endif
-    endif
-  endif
-  if a:useAngleBrackets
-    let line='#include <'.a:filename.'>'
-  else
-    let line='#include "'.a:filename.'"'
-  endif
-  put=line
-endfunction
 " Functions }}}2
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save

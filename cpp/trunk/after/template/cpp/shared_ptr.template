@@ -1,0 +1,14 @@
+VimL:" $Id$
+VimL:" shared_ptr File Template, Luc Hermitte, 28th Apr 2014
+VimL:" hint: std/boost::shared_ptr<>
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+MuT:  if lh#dev#cpp#use_cpp11()
+VimL:    call s:AddPostExpandCallback('lh#cpp#include#add("<memory>")')
+std::shared_ptr<¡s:Surround(1, '<+type+>')¡> <++>
+MuT:  else
+VimL:    call s:AddPostExpandCallback('lh#cpp#include#add("<boost/shared_ptr.hpp>")')
+boost::shared_ptr<¡s:Surround(1, '<+type+>')¡> <++>
+MuT:  endif

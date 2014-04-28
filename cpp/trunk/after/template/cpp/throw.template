@@ -18,6 +18,9 @@ VimL: let s:_exception_args = lh#function#bind(lh#dev#option#get('exception_args
 MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
 @throw <+s:_exception_type+><++>
 MuT:  else
+MuT:    if s:_exception_type =~ 'std::.*'
+VimL:     call s:AddPostExpandCallback('lh#cpp#include#add("<stdexcept>")')
+MuT:    endif
 throw <+s:_exception_type+>(<+lh#function#execute(s:_exception_args, s:_exception_txt)+>);<++>
 MuT:  endif
 VimL: unlet s:_exception_type
