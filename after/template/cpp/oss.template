@@ -6,6 +6,7 @@ VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1 
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<sstream>")')
 std::ostringstream oss;
 oss << <++>;
 <++>

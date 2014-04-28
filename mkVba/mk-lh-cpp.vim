@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b4
+" Version:	2.0.0b6
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b5'
+let s:version = '2.0.0b6'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -22,6 +22,7 @@ finally
   let &rtp = save_rtp
 endtry
 finish
+
 after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 after/template/c/realloc.template
@@ -31,15 +32,19 @@ after/template/cpp/assignment-operator.template
 after/template/cpp/b-e.template
 after/template/cpp/bool-operator.template
 after/template/cpp/catch.template
+after/template/cpp/cerr.template
+after/template/cpp/cin.template
 after/template/cpp/class.template
 after/template/cpp/copy-and-swap.template
 after/template/cpp/copy-constructor.template
+after/template/cpp/cout.template
 after/template/cpp/default-constructor.template
 after/template/cpp/destructor.template
 after/template/cpp/enum.template
 after/template/cpp/enum2-impl.template
 after/template/cpp/enum2.template
 after/template/cpp/erase-remove.template
+after/template/cpp/file.template
 after/template/cpp/for-enum.template
 after/template/cpp/for-iterator.template
 after/template/cpp/fori.template
@@ -51,17 +56,25 @@ after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
 after/template/cpp/internals/stream-signature.template
 after/template/cpp/iss.template
+after/template/cpp/list.template
+after/template/cpp/map.template
 after/template/cpp/namespace.template
 after/template/cpp/operator-binary.template
 after/template/cpp/oss.template
+after/template/cpp/set.template
+after/template/cpp/shared_ptr.template
 after/template/cpp/singleton.template
 after/template/cpp/static_assert.template
 after/template/cpp/stream-extractor.template
 after/template/cpp/stream-inserter.template
+after/template/cpp/string.template
 after/template/cpp/throw.template
 after/template/cpp/traits.template
 after/template/cpp/try.template
+after/template/cpp/unique_ptr.template
 after/template/cpp/utf8.template
+after/template/cpp/vector.template
+after/template/cpp/weak_ptr.template
 after/template/cpp/while-getline.template
 after/template/dox/author.template
 after/template/dox/code.template
@@ -80,6 +93,7 @@ autoload/lh/cpp/brackets.vim
 autoload/lh/cpp/constructors.vim
 autoload/lh/cpp/enum.vim
 autoload/lh/cpp/ftplugin.vim
+autoload/lh/cpp/include.vim
 autoload/lh/cpp/option.vim
 autoload/lh/cpp/override.vim
 autoload/lh/cpp/style.vim
