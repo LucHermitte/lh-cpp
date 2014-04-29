@@ -133,7 +133,7 @@ function! s:InsertInclude()
     let filename = fnamemodify(filename, filename_simplify)
   endif
   try
-    call lh#include#add(filename, fullfilename=~ '\<usr\>\|\<local\>')
+    call lh#cpp#include#add(filename, fullfilename=~ '\<usr\>\|\<local\>')
   catch /^insert-include:.* is already included/
     call lh#common#warning_msg("insert-include: ".filename.", where `"
           \ .id."' is defined, is already included")
