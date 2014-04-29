@@ -18,14 +18,14 @@ VimL: let s:to_internal = lh#dev#naming#function("to_internal")
 VimL: let s:max         = lh#dev#naming#function("max")
 VimL: let s:type        = lh#dev#naming#type("type")
 VimL: let s:str_param   = lh#dev#naming#param("s")
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<algorithm>"))
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<algorithm>")')
 MuT:  if lh#dev#cpp#use_cpp11()
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<iterator>"))
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<type_traits>"))
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<iterator>")')
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<type_traits>")')
 VimL:   let s:range_ns = 'std' 
 MuT:  else
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<boost/range/begin.hpp>"))
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<boost/range/end.hpp>"))
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<boost/range/begin.hpp>")')
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<boost/range/end.hpp>")')
 VimL:   let s:range_ns = 'boost' 
 MuT:  endif
 
