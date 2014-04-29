@@ -21,9 +21,9 @@ VimL: let s:to_string   = lh#dev#naming#function("to_string")
 VimL: let s:to_internal = lh#dev#naming#function("to_internal")
 VimL: let s:max         = lh#dev#naming#function("max")
 VimL: let s:type        = lh#dev#naming#type("type")
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<string>"))
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<cstdint>"))
-VimL: call s:AddPostExpandCallback(lh#cpp#include#add("<cassert>"))
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<string>")')
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cstdint>")')
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cassert>")')
 struct <+s:enum_name+> {
     enum <+s:type+> { <+values+>, MAX__, UNDEFINED__, FIRST__=0 };
 
