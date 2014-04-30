@@ -6,18 +6,21 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:enum_name   = empty(s:Args()) ?  lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))) : (s:Args()[0])
+VimL: let s:scope       = s:Param('scope', '')
+VimL: let s:values      = map(s:Param('values', [lh#marker#txt('values')]), '"\"".v:val."\""')
 VimL: let s:lhs_        = lh#dev#naming#param("lhs")
 VimL: let s:rhs_        = lh#dev#naming#param("rhs")
 VimL: let s:value_      = lh#dev#naming#param("value")
 VimL: let s:m_value     = lh#dev#naming#member("value")
 VimL: let s:tmp         = lh#dev#naming#local("tmp")
-VimL: let s:range       = lh#dev#naming#function("range")
-VimL: let s:RangeType   = lh#dev#naming#type("range")
+VimL: let s:range       = s:Param('range', lh#dev#naming#function("range"))
+VimL: let s:RangeType   = s:Param('RangeType', lh#dev#naming#type("range"))
 VimL: let s:to_string   = lh#dev#naming#function("to_string")
 VimL: let s:to_internal = lh#dev#naming#function("to_internal")
 VimL: let s:max         = lh#dev#naming#function("max")
 VimL: let s:type        = lh#dev#naming#type("type")
 VimL: let s:str_param   = lh#dev#naming#param("s")
+VimL: let s:k_strings   = lh#dev#naming#constant(s:enum_name.'_strings')
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<algorithm>")')
 MuT:  if lh#dev#cpp#use_cpp11()
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<iterator>")')
@@ -31,28 +34,34 @@ MuT:  endif
 
 namespace  { // Anonymous namespace
     typedef char const* const* strings_iterator;
-    static char const* const k_strings[] =
-    { <+values+> };
+    static char const* const <+s:k_strings+>[] =
+    { <+join(s:values, ', ')+> };
 } // Anonymous namespace //  namespaces
 
 
-<+s:enum_name+>::<+s:enum_name+>(std::string const& <+s:str_param+>)
+<+s:scope+><+s:enum_name+>::<+s:enum_name+>(std::string const& <+s:str_param+>)
 {
-    strings_iterator const <+s:enum_name+>_it = std::find(<+s:range_ns+>::begin(::k_strings),<+s:range_ns+>::end(::k_strings), <+s:str_param+>);
-    if (<+s:enum_name+>_it == <+s:range_ns+>::end(::k_strings)) {
+    strings_iterator const <+s:enum_name+>_it = std::find(<+s:range_ns+>::begin(::<+s:k_strings+>),<+s:range_ns+>::end(::<+s:k_strings+>), <+s:str_param+>);
+    if (<+s:enum_name+>_it == <+s:range_ns+>::end(::<+s:k_strings+>)) {
 VimL: call s:Include('throw', 'cpp', '"Cannot decode '.s:enum_name.' name `"+'.s:str_param.'+"`"')
     }
-    <+s:m_value+> = <+s:type+>(std::distance(<+s:range_ns+>::begin(::k_strings), <+s:enum_name+>_it));
+    <+s:m_value+> = <+s:type+>(std::distance(<+s:range_ns+>::begin(::<+s:k_strings+>), <+s:enum_name+>_it));
     assert(<+s:m_value+> < MAX__);
 }
 
 VimL: call s:Include('array_size', 'cpp')
 
-char const* <+s:enum_name+>::<+s:to_string+>() const
+char const* <+s:scope+><+s:enum_name+>::<+s:to_string+>() const
 {
-VimL: call s:Include('static_assert', 'cpp', {'condition': 'MAX__ == array_size(::k_strings)', 'message': '"Array size mismatches number of elements in enum"'})
+VimL: call s:Include('static_assert', 'cpp', {'condition': 'MAX__ == '.s:_array_size('::'.s:k_strings), 'message': '"Array size mismatches number of elements in enum"'})
     assert(<+s:m_value+> != UNDEFINED__); // Yes, I know UNDEFINED__ > MAX__
     assert(<+s:m_value+> < MAX__);
-    return k_strings[<+s:m_value+>];
+    return <+s:k_strings+>[<+s:m_value+>];
 }
+MuT:  if lh#dev#cpp#use_cpp11()
 
+/*static*/ <+s:scope+><+s:enum_name+>::<+s:RangeType+> <+s:scope+><+s:enum_name+>::<+s:range+>() { return <+s:RangeType+>(); }
+MuT:  endif
+
+
+VimL: silent! unlet s:values

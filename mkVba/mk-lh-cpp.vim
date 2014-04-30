@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b6
+" Version:	2.0.0b7
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b6'
+let s:version = '2.0.0b7'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -123,6 +123,7 @@ ftplugin/cpp/cpp_BuildTemplates.vim
 ftplugin/cpp/cpp_Constructor.vim
 ftplugin/cpp/cpp_Doxygen.vim
 ftplugin/cpp/cpp_Doxygen_class_stuff.vim
+ftplugin/cpp/cpp_Enum.vim
 ftplugin/cpp/cpp_FindContextClass.vim
 ftplugin/cpp/cpp_GotoFunctionImpl.vim
 ftplugin/cpp/cpp_InsertAccessors.vim

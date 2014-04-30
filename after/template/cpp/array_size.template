@@ -6,7 +6,9 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 MuT:  if lh#dev#cpp#use_cpp11()
-#define array_size(tab) std::extent<decltype(tab)>::value
+VimL:     function! s:_array_size(tab)
+VimL:         return 'std::extent<decltype('.a:tab.')>::value'
+VimL:     endfunction
 MuT:  else
 // Parfois on a besoin d'une constante de compilation ;
 // dans ce cas la solution suivante est applicable :
@@ -20,4 +22,7 @@ namespace  {
     array<N> array_size_helper(T (&)[N]);
 } // namespace 
 #define array_size(array) (sizeof ::array_size_helper(array).value)
+VimL:     function! s:_array_size(tab)
+VimL:         return 'array_size('.a:tab.')'
+VimL:     endfunction
 MuT:  endif
