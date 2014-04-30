@@ -10,6 +10,7 @@ VimL: let s:enum_name   = empty(s:Args()) ? '' : (s:Args()[0])
 MuT:  if empty(s:enum_name)
 VimL:   let s:enum_name   = inputdialog('Name of the enum class ?', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
 MuT:  endif
+VimL: let s:values      = len(s:Args()) <=1 ? [lh#marker#txt('values')] : s:Args()[1:]
 VimL: let s:lhs_        = lh#dev#naming#param("lhs")
 VimL: let s:rhs_        = lh#dev#naming#param("rhs")
 VimL: let s:value_      = lh#dev#naming#param("value")
@@ -25,7 +26,7 @@ VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<string>")')
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cstdint>")')
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cassert>")')
 struct <+s:enum_name+> {
-    enum <+s:type+> { <+values+>, MAX__, UNDEFINED__, FIRST__=0 };
+    enum <+s:type+> { <+join(s:values, ', ')+>, MAX__, UNDEFINED__, FIRST__=0 };
 
     explicit <+s:enum_name+>(std::uint8_t <+s:value_+>)
         : <+s:m_value+>(<+s:type+>(<+s:value_+>))
@@ -53,6 +54,9 @@ VimL: call s:Include('throw', 'cpp', '"Invalid '.s:enum_name.' value"')
     }
 
     char const* <+s:to_string+>() const;
+MuT:  if lh#dev#cpp#use_cpp11()
+    explicit operator int() const { <s:m_value+>; }
+MuT:  endif
     <+s:type+> <+s:to_internal+>() const { return <+s:m_value+>; }
     friend bool operator<=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> <= <+s:rhs_+>.<+s:m_value+>; }
     friend bool operator>=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> >= <+s:rhs_+>.<+s:m_value+>; }
@@ -61,27 +65,45 @@ VimL: call s:Include('throw', 'cpp', '"Invalid '.s:enum_name.' value"')
     friend bool operator==(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> == <+s:rhs_+>.<+s:m_value+>; }
     friend bool operator!=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> != <+s:rhs_+>.<+s:m_value+>; }
 
-    static <+s:enum_name+> <+s:max+>  () { return MAX__; }
+    static <+s:enum_name+> <+s:max+>  () { return <+s:enum_name+>(build_max()); }
     static <+s:enum_name+> begin() { return FIRST__; }
-    static <+s:enum_name+> end  () { return MAX__  ; }
+    static <+s:enum_name+> end  () { return <+s:enum_name+>(build_max()); }
 
 MuT:  if lh#dev#cpp#use_cpp11()
           /** Helper class to provide for-range loops on <+s:enum_name+>.
            * @see \c range()
            */
-          struct <+s:RangeType+> {
-              static <+s:enum_name+> begin() { return FIRST__; }
-              static <+s:enum_name+> end  () { return MAX__  ; }
-          };
+          struct <+s:RangeType+>;
           /** Helper function to provide for-range loops on \c <+s:enum_name+>.
            * e.g.
            * @code
-           * for (value : <+s:enum_name+>::<+s:range+>())
-           *    cout << value.to_internal() << " -> " << value.to_string();
+           * for (auto value : <+s:enum_name+>::<+s:range+>())
+           *    cout << value.<+s:to_internal+>() << " -> " << value.<+s:to_string+>();
            * @endcode
            */
-      static <+s:RangeType+> <+s:range+>() { return <+s:RangeType+>(); }
+          static <+s:RangeType+> <+s:range+>();
 MuT:  endif
 private:
+    struct build_max{};
+    <+s:enum_name+>(build_max) : m_value(MAX__){}
+
     <+s:type+> <+s:m_value+>;
 };
+MuT:  if lh#dev#cpp#use_cpp11()
+
+          struct <+s:enum_name+>::<+s:RangeType+> {
+              struct iterator {
+                iterator(<+s:enum_name+> <+s:value_+>) : <+s:m_value+>(<+s:value_+>){}
+                <+s:enum_name+> operator*() const { return <+s:m_value+>; }
+                friend bool operator!=(iterator <+s:lhs_+>, iterator <+s:rhs_+>)
+                { return <+s:lhs_+>.<+s:m_value+> != <+s:rhs_+>.<+s:m_value+>;}
+                iterator& operator++() { ++<+s:m_value+>; return *this;}
+            private:
+                <+s:enum_name+> <+s:m_value+>;
+              };
+              static iterator begin() { return <+s:enum_name+>::begin(); }
+              static iterator end  () { return <+s:enum_name+>::end(); }
+          };
+MuT:  endif
+VimL: let b:cpp_last_enum = {'name': s:enum_name, 'type': s:type, 'values': s:values, 'RangeType': s:RangeType, 'range': s:range}
+VimL: silent! unlet s:values

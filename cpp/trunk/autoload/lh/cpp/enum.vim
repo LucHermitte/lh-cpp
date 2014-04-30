@@ -174,8 +174,45 @@ function! lh#cpp#enum#get_definition(name)
   let res = {'type': what.type.name, 'name': (a:name)}
   let res['values'] =  lh#list#transform(enum_values, [], 'v:1_.name')
   return res
+endfunction
+
+" Function: lh#cpp#enum#_new(...) {{{2
+function! lh#cpp#enum#_new(...)
+  try
+    " Inhibits the jump part in lh#mut#expand_and_jump()
+    if exists('b:mt_jump_to_first_markers')
+      let jump = ['b', b:mt_jump_to_first_markers]
+      let b:mt_jump_to_first_markers = 0
+    elseif exists('b:mt_jump_to_first_markers')
+      let jump = ['g', g:mt_jump_to_first_markers]
+      let g:mt_jump_to_first_markers = 0
+    else
+      let g:mt_jump_to_first_markers = 0
+    endif
+
+    " What is the current scope ?
+    let scope = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), 'any')
+    if !empty(scope) | let scope .= '::' | endif
+    " Insert the enum definition
+    let last_line = call('lh#mut#expand_and_jump', [0, 'cpp/enum2']+a:000)
+    let last_enum = b:cpp_last_enum
+    call append(last_line, '')
+    call cursor(last_line+1, 1)
+    " Goto to its associated definition file
+    call lh#cpp#GotoFunctionImpl#open_cpp_file('')
+    " And insert the non-inlined function definitions
+    call call('lh#mut#expand_and_jump', [0, 'cpp/enum2-impl', last_enum.name, last_enum])
+  finally
+    " Restores mt_jump_to_first_markers
+    if exists('jump')
+      exe 'let '.jump[0].':mt_jump_to_first_markers = '.jump[1]
+    else
+      unlet g:mt_jump_to_first_markers
+    endif
+  endtry
 
 endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
