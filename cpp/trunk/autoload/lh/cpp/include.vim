@@ -109,7 +109,9 @@ function! lh#cpp#include#add(filename, ...) abort
         " Search for after the file headers
         let line = 1
         while line <= line('$')
-          if !lh#syntax#is_a_comment_at(line, 1) && !lh#syntax#is_a_comment_at(line, len(getline(line))+1)
+          let ll = getline(line)
+          if !lh#syntax#is_a_comment_at(line, 1) && !lh#syntax#is_a_comment_at(line, len(ll)+1) && ll !~ '^\s*\*'
+            " Sometimes doxygen comments don't have a synstack
             break
           endif
           let line += 1
