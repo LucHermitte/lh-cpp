@@ -41,10 +41,7 @@ VimL: let s:doc += [{ "tag": "author"}]
 VimL: let s:doc += [{ "text": "<b>Licence</b>"}]
 VimL: let s:doc += [{ "text": "BSD 3 clauses (http://opensource.org/licenses/BSD-3-Clause)"}]
 VimL: let s:doc += [{ "text": "Copyright (c) 2014, Luc Hermitte (snippet author)" }]
-VimL: let s:doc += [{ "text": "Copyright (c) ".strftime('%Y').", ".Author()." (snippet instanciation)" }]
-VimL: let s:doc += [{ "text": "All rights reserved." }]
-VimL: call s:Include("text", "licence", "BSD-3")
-VimL: " let s:doc += [{ "text": s:licence_text }]
+VimL:  let s:doc += [{ "license": "BSD-3"}]
 VimL: call s:Include("formatted-comment", "cpp/internals", s:doc)
 struct <+s:enum_name+> {
     enum <+s:type+> { <+join(s:values, ', ')+>, MAX__, UNDEFINED__, FIRST__=0 };

@@ -19,6 +19,12 @@ VimL:               let line = lh#dox#{item.tag}(text)
 VimL:           else
 VimL:               let line = lh#dox#tag(item.tag) . " " . text
 VimL:           endif
+VimL:        elseif has_key(item, "license") 
+VimL:            let license = s:GetTemplateLines(item.license, "license/text")
+VimL:            let pat_not_text = '\c\(^'.s:Command('').'\|'.s:Special('').'\)'
+VimL:            call map(license, "v:val =~ pat_not_text ? (v:val) : lead.v:val")
+VimL:            let lines += license
+VimL:            continue
 VimL:        else
 VimL:            let line = text
 VimL:        endif
