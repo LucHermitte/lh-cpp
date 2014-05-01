@@ -23,8 +23,8 @@ VimL:        else
 VimL:            let line = text
 VimL:        endif
 VimL:        " optional entries are completly surrounded by a placeholder
-VimL:        if has_key(item,"optional") && item.optional && match(line, Marker_Txt(".\\{-}"))==-1
-VimL:            let line = Marker_Txt(line)
+VimL:        if has_key(item,"optional") && item.optional && match(line, lh#marker#txt(".\\{-}"))==-1
+VimL:            let line = lh#marker#txt(line)
 VimL:        endif
 VimL:        " special case: @ingroup is put on the /** line
 VimL:        if has_key(item,"tag") && item.tag == "ingroup"

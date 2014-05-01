@@ -6,13 +6,13 @@ VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:clsname = empty(s:Args()) ? INPUT("class name ?", Marker_Txt(expand('%:t:r'))) : (s:Args()[0])
+VimL: let s:clsname = empty(s:Args()) ? INPUT("class name ?", lh#marker#txt(expand('%:t:r'))) : (s:Args()[0])
 VimL: call CppDox_ClassWizard(s:clsname)
 VimL:"
 VimL: call s:Include("section-sep", "c", s:clsname." class")
 VimL: silent! unlet s:doc
 VimL: let s:doc = []
-VimL: let s:doc += [{ "tag": "ingroup", "text": "g".lh#option#get('dox_group', Marker_Txt('Group')) }]
+VimL: let s:doc += [{ "tag": "ingroup", "text": "g".lh#option#get('dox_group', lh#marker#txt('Group')) }]
 VimL: let s:doc += [{ "tag": "brief" }]
 VimL: let s:doc += [{ "text": "\n" }]
 VimL: let s:doc += [{ "text": "<+doc+>" }]

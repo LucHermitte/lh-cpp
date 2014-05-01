@@ -25,6 +25,27 @@ VimL: let s:type        = lh#dev#naming#type("type")
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<string>")')
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cstdint>")')
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cassert>")')
+VimL: silent! unlet s:doc
+VimL: let s:doc = []
+VimL: let s:doc += [{ "tag": "ingroup", "text": "g".lh#option#get('dox_group', lh#marker#txt('Group')) }]
+VimL: let s:doc += [{ "tag": "brief", "text": (s:enum_name)." Safe Enum" }]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "text": "This snippet has been automatically generated with vim plugin mu-template." }]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "text": "<+doc+>" }]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "tag": "invariant"}]
+VimL: let s:doc += [{ "text": "\n" }]
+VimL: let s:doc += [{ "tag": "version", "text": "$"."revision$"}]
+VimL: let s:doc += [{ "tag": "author"}]
+VimL: let s:doc += [{ "text": "<b>Licence</b>"}]
+VimL: let s:doc += [{ "text": "BSD 3 clauses (http://opensource.org/licenses/BSD-3-Clause)"}]
+VimL: let s:doc += [{ "text": "Copyright (c) 2014, Luc Hermitte (snippet author)" }]
+VimL: let s:doc += [{ "text": "Copyright (c) ".strftime('%Y').", ".Author()." (snippet instanciation)" }]
+VimL: let s:doc += [{ "text": "All rights reserved." }]
+VimL: call s:Include("text", "licence", "BSD-3")
+VimL: " let s:doc += [{ "text": s:licence_text }]
+VimL: call s:Include("formatted-comment", "cpp/internals", s:doc)
 struct <+s:enum_name+> {
     enum <+s:type+> { <+join(s:values, ', ')+>, MAX__, UNDEFINED__, FIRST__=0 };
 
