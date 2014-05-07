@@ -15,14 +15,13 @@ cd <sfile>:p:h
 try 
   let save_rtp = &rtp
   let &rtp = expand('<sfile>:p:h:h').','.&rtp
-  exe '23,$MkVimball! '.s:project.'-'.s:version
+  exe '25,$MkVimball! '.s:project.'-'.s:version
   set modifiable
   set buftype=
 finally
   let &rtp = save_rtp
 endtry
 finish
-
 after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 after/template/c/realloc.template
@@ -61,6 +60,7 @@ after/template/cpp/map.template
 after/template/cpp/namespace.template
 after/template/cpp/operator-binary.template
 after/template/cpp/oss.template
+after/template/cpp/path.template
 after/template/cpp/set.template
 after/template/cpp/shared_ptr.template
 after/template/cpp/singleton.template
