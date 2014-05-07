@@ -1,0 +1,9 @@
+VimL:" $Id$
+VimL:" boost-path File Template, Luc Hermitte, 29th Apr 2014
+VimL:" hint: boost::filesystem::path
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<boost/filesystem.hpp>")')
+boost::filesystem::path<++>
