@@ -10,6 +10,7 @@ VimL: let s:enum_name   = empty(s:Args()) ? '' : (s:Args()[0])
 MuT:  if empty(s:enum_name)
 VimL:   let s:enum_name   = inputdialog('Name of the enum class ?', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
 MuT:  endif
+VimL: let s:iterable    = CONFIRM("Shall ".s:enum_name." be iterable ?", "&Yes\n&No", 1) == 1
 VimL: let s:values      = len(s:Args()) <=1 ? [lh#marker#txt('values')] : s:Args()[1:]
 VimL: let s:lhs_        = lh#dev#naming#param("lhs")
 VimL: let s:rhs_        = lh#dev#naming#param("rhs")
@@ -23,7 +24,11 @@ VimL: let s:to_internal = lh#dev#naming#function("to_internal")
 VimL: let s:max         = lh#dev#naming#function("max")
 VimL: let s:type        = lh#dev#naming#type("type")
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<string>")')
-VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cstdint>")')
+MuT:  if lh#dev#cpp#use_cpp11()
+VimL:   call s:AddPostExpandCallback('lh#cpp#include#add("<cstdint>")')
+MuT:  else
+VimL:   call s:AddPostExpandCallback('lh#cpp#include#add("<stdint.h>")')
+MuT:  endif
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<cassert>")')
 VimL: silent! unlet s:doc
 VimL: let s:doc = []
@@ -46,7 +51,11 @@ VimL: call s:Include("formatted-comment", "cpp/internals", s:doc)
 struct <+s:enum_name+> {
     enum <+s:type+> { <+join(s:values, ', ')+>, MAX__, UNDEFINED__, FIRST__=0 };
 
+MuT:  if lh#dev#cpp#use_cpp11()
     explicit <+s:enum_name+>(std::uint8_t <+s:value_+>)
+MuT:  else
+    explicit <+s:enum_name+>(uint8_t <+s:value_+>)
+MuT:  endif
         : <+s:m_value+>(<+s:type+>(<+s:value_+>))
         {
             if (<+s:value_+> >= MAX__) {
@@ -60,6 +69,7 @@ VimL: call s:Include('throw', 'cpp', '"Invalid '.s:enum_name.' value"')
     <+s:enum_name+>()
         : <+s:m_value+>(UNDEFINED__) {}
     <+s:enum_name+>(std::string const& <+lh#dev#naming#param("s")+>);
+MuT:  if s:iterable
     <+s:enum_name+>& operator++() {
         assert(<+s:m_value+> < MAX__);
         <+s:m_value+> = <+s:enum_name+>::<+s:type+>(<+s:m_value+>+1);
@@ -70,24 +80,28 @@ VimL: call s:Include('throw', 'cpp', '"Invalid '.s:enum_name.' value"')
         ++*this;
         return <+s:tmp+>;
     }
+MuT:  endif
 
     char const* <+s:to_string+>() const;
 MuT:  if lh#dev#cpp#use_cpp11()
     explicit operator int() const { <s:m_value+>; }
 MuT:  endif
     <+s:type+> <+s:to_internal+>() const { return <+s:m_value+>; }
+MuT:  if s:iterable
     friend bool operator<=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> <= <+s:rhs_+>.<+s:m_value+>; }
     friend bool operator>=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> >= <+s:rhs_+>.<+s:m_value+>; }
     friend bool operator< (<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> <  <+s:rhs_+>.<+s:m_value+>; }
     friend bool operator> (<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> >  <+s:rhs_+>.<+s:m_value+>; }
+MuT:  endif
     friend bool operator==(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> == <+s:rhs_+>.<+s:m_value+>; }
     friend bool operator!=(<+s:enum_name+> <+s:lhs_+>, <+s:enum_name+> <+s:rhs_+>) { return <+s:lhs_+>.<+s:m_value+> != <+s:rhs_+>.<+s:m_value+>; }
 
     static <+s:enum_name+> <+s:max+>  () { return <+s:enum_name+>(build_max()); }
+MuT:  if s:iterable
     static <+s:enum_name+> begin() { return FIRST__; }
     static <+s:enum_name+> end  () { return <+s:enum_name+>(build_max()); }
 
-MuT:  if lh#dev#cpp#use_cpp11()
+MuT:      if lh#dev#cpp#use_cpp11()
           /** Helper class to provide for-range loops on <+s:enum_name+>.
            * @see \c range()
            */
@@ -100,6 +114,7 @@ MuT:  if lh#dev#cpp#use_cpp11()
            * @endcode
            */
           static <+s:RangeType+> <+s:range+>();
+MuT:      endif
 MuT:  endif
 private:
     struct build_max{};
@@ -107,7 +122,7 @@ private:
 
     <+s:type+> <+s:m_value+>;
 };
-MuT:  if lh#dev#cpp#use_cpp11()
+MuT:  if s:iterable && lh#dev#cpp#use_cpp11()
 
           struct <+s:enum_name+>::<+s:RangeType+> {
               struct iterator {
