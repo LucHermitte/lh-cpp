@@ -1,0 +1,9 @@
+VimL:" $Id$
+VimL:" unique_ptr File Template, Luc Hermitte, 22nd May 2014
+VimL:" hint: std::auto_ptr<>
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<memory>")')
+std::auto_ptr<¡s:Surround(1, '<+type+>')¡> <++>
