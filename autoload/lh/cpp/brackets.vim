@@ -54,8 +54,19 @@ function! lh#cpp#brackets#lt()
   endif
 endfunction
 
-
-
+" Callback function that specializes the behaviour of '{'
+function! lh#cpp#brackets#close_curly()
+  let c = col('.') - 1
+  let l = getline('.')
+  let l = strpart(l, 0, c)
+  let close =  l =~ 'struct\|class' ? '};' : '}'
+  if exists('b:usemarks') && b:usemarks
+    return '{!cursorhere!'.close.'!mark!'
+  else
+    " return '<>' . "\<Left>"
+    return '{!cursorhere!'.close
+  endif
+endfunction
 
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
