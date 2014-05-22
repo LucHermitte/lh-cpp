@@ -1,0 +1,10 @@
+VimL:" $Id$
+VimL:" ptr_vector File Template, Luc Hermitte <hermitte at free.fr>, 22nd May 2014
+VimL:" hint: boost::ptr_vector<>
+VimL:" hint: std::vector<>
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<boost/ptr_container/ptr_vector.hpp>")')
+boost::ptr_vector<¡s:Surround(1, '<+type+>')¡> <++>
