@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b7
+" Version:	2.0.0b8
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b7'
+let s:version = '2.0.0b8'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -28,6 +28,8 @@ after/template/c/realloc.template
 after/template/cpp/abs-rel.template
 after/template/cpp/array_size.template
 after/template/cpp/assignment-operator.template
+after/template/cpp/auto_ptr-instance.template
+after/template/cpp/auto_ptr.template
 after/template/cpp/b-e.template
 after/template/cpp/bool-operator.template
 after/template/cpp/catch.template
@@ -61,6 +63,7 @@ after/template/cpp/namespace.template
 after/template/cpp/operator-binary.template
 after/template/cpp/oss.template
 after/template/cpp/path.template
+after/template/cpp/ptr_vector.template
 after/template/cpp/set.template
 after/template/cpp/shared_ptr.template
 after/template/cpp/singleton.template
