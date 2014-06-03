@@ -1,0 +1,9 @@
+VimL:" $Id$
+VimL:" noncopyable File Template, Luc Hermitte <hermitte at free.fr>, 28th May 2014
+VimL:" hint: boost::noncopyable
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<boost/noncopyable.hpp>")')
+boost::noncopyable
