@@ -1,0 +1,15 @@
+VimL:" $Id$
+VimL:" copy-back_inserter File Template, Luc Hermitte, 23rd May 2014
+VimL:" hint: std::copy(orig.begin(), orig.end(), std::back_inserter(dest));
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<algorithm>")')
+VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<iterator>")')
+VimL: let s:orig = s:Surround(1, s:Param('origin', lh#marker#txt('origin')))
+VimL: let s:dest = s:Surround(2, s:Param('destination', lh#marker#txt('destination')))
+std::copy(<+s:orig+>.begin(),<+s:orig+>.end(), std::back_inserter(<+s:dest+>));
+VimL: unlet s:orig
+VimL: unlet s:dest
