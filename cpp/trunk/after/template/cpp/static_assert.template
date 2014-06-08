@@ -6,7 +6,7 @@ VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
 VimL: let s:_condition = s:Param('condition', lh#marker#txt("condition"))
 VimL: let s:_message   = s:Param('message', lh#marker#txt("message"))
-MuT:  if lh#dev#cpp#use_cpp11()
+MuT:  if lh#cpp#use_cpp11()
 static_assert(<+s:_condition+>, <+s:_message+>);
 MuT:  else
 BOOST_STATIC_ASSERT(<+s:_condition+>);
