@@ -5,7 +5,7 @@ VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  if lh#dev#cpp#use_cpp11()
+MuT:  if lh#cpp#use_cpp11()
 VimL:     function! s:_array_size(tab)
 VimL:         return 'std::extent<decltype('.a:tab.')>::value'
 VimL:     endfunction

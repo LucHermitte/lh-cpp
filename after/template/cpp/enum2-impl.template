@@ -22,7 +22,7 @@ VimL: let s:type        = lh#dev#naming#type("type")
 VimL: let s:str_param   = lh#dev#naming#param("s")
 VimL: let s:k_strings   = lh#dev#naming#constant(s:enum_name.'_strings')
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<algorithm>")')
-MuT:  if lh#dev#cpp#use_cpp11()
+MuT:  if lh#cpp#use_cpp11()
 VimL:   call s:AddPostExpandCallback('lh#cpp#include#add("<iterator>")')
 VimL:   call s:AddPostExpandCallback('lh#cpp#include#add("<type_traits>")')
 VimL:   let s:range_ns = 'std' 
@@ -58,7 +58,7 @@ VimL: call s:Include('static_assert', 'cpp', {'condition': 'MAX__ == '.s:_array_
     assert(<+s:m_value+> < MAX__);
     return <+s:k_strings+>[<+s:m_value+>];
 }
-MuT:  if s:iterable && lh#dev#cpp#use_cpp11()
+MuT:  if s:iterable && lh#cpp#use_cpp11()
 
 /*static*/ <+s:scope+><+s:enum_name+>::<+s:RangeType+> <+s:scope+><+s:enum_name+>::<+s:range+>() { return <+s:RangeType+>(); }
 MuT:  endif
