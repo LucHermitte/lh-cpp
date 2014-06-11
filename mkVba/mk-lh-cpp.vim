@@ -91,6 +91,7 @@ after/template/dox/function.template
 after/template/dox/group.template
 after/template/dox/html.template
 after/template/dox/tt.template
+autoload/lh/cpp.vim
 autoload/lh/cpp/AnalysisLib_Class.vim
 autoload/lh/cpp/AnalysisLib_Function.vim
 autoload/lh/cpp/GotoFunctionImpl.vim
