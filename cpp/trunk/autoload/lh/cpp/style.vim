@@ -51,15 +51,8 @@ endfunction
 " # Names conversion {{{2
 " Function: lh#cpp#style#attribute2parameter_name(attrb_name) {{{3
 function! lh#cpp#style#attribute2parameter_name(attrb_name)
-  let core_name = substitute(a:attrb_name,
-	\ lh#cpp#style#get('data','Prefix')
-	\ .'\(.*\)'.
-	\ lh#cpp#style#get('data','Suffix')
-	\ , '\1', 'g')
-  let param_name =
-	\ lh#cpp#style#get('param','Prefix')
-	\ . core_name .
-	\ lh#cpp#style#get('param','Suffix')
+  let core_name  = lh#dev#naming#variable(a:attrb_name)
+  let param_name = lh#dev#naming#param(core_name)
   if param_name == a:attrb_name
     let param_name = Marker_Txt(param_name)
   endif

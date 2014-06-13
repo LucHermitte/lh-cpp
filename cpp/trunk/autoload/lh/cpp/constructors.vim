@@ -309,11 +309,11 @@ endfunction
 
 " Function: lh#cpp#constructors#select(results) {{{3
 function! lh#cpp#constructors#select(results)
+  call lh#buffer#dialog#quit()
   if len(a:results.selection)==1 && a:results.selection[0]==0
-    call lh#buffer#dialog#quit()
     return
   endif
-  if exists('s:quit') | :quit | endif
+  " if exists('s:quit') | :quit | endif
 
   " let unmatched = b:dialog.unmatched
   " let cmd = b:cmd
@@ -330,7 +330,7 @@ function! lh#cpp#constructors#select(results)
     let attrb_name = matchstr(one_selected_attr.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
     let param_name = lh#cpp#style#attribute2parameter_name(attrb_name)
 
-    call add(sig_params, lh#dev#cpp#types#ConstCorrectType(attrb_type).param_name)
+    call add(sig_params, lh#dev#cpp#types#ConstCorrectType(attrb_type).' '.param_name)
 
     call add(init_list, attrb_name.'('.param_name.')')
     " echomsg string(selected_virt)
