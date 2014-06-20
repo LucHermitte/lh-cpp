@@ -89,7 +89,7 @@ function! s:InsertInclude()
   call filter(info, "v:val.kind =~ ".string(accepted_kinds))
   " Filter for include files only
   let accepted_files = lh#dev#option#get('file_regex_for_inclusion', &ft, '\.h')
-  call filter(info, "v:val.filename =~ ".string(accepted_files))
+  call filter(info, "v:val.filename =~? ".string(accepted_files))
   " Is there any symbol left ?
   if len(info) == 0
     call lh#common#error_msg("insert-include: no acceptable tag for `".id."'")
