@@ -51,6 +51,7 @@ inoreab <buffer> delate delta
 
 inoremap <buffer> <m-s> std::
 inoremap <buffer> <expr> <m-b> (getline('.')=~'#\s*include') ? 'boost/' : 'boost::'
+inoremap <buffer> <expr> <m-n> <sid>CurrentNamespace("\<m-n>")
 " We don't want ô (\hat o) to be expanded in comments)
 inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\<cr\>')<cr>
 
@@ -217,6 +218,10 @@ function! Cpp_TypedefTypename()
   return InsertIfNotAfter('typename ', 'typedef ', 'typedef\|<\|,')
 endfunction
 
+function! s:CurrentNamespace(default)
+  let ns = lh#dev#option#get('project_namespace', &ft, '')
+  return empty(ns) ? a:default : (ns.'::')
+endfunction
 
 " Functions }}}2
 "------------------------------------------------------------------------

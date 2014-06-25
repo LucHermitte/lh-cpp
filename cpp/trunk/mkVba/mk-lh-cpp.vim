@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b9
+" Version:	2.0.0b10
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b9'
+let s:version = '2.0.0b10'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -104,7 +104,9 @@ autoload/lh/cpp/ftplugin.vim
 autoload/lh/cpp/include.vim
 autoload/lh/cpp/option.vim
 autoload/lh/cpp/override.vim
+autoload/lh/cpp/scope.vim
 autoload/lh/cpp/style.vim
+autoload/lh/cpp/tags.vim
 autoload/lh/dox.vim
 doc/c.html
 doc/lh-cpp-readme.txt
@@ -127,6 +129,7 @@ ftplugin/c/c_switch-enum.vim
 ftplugin/c/flistmaps.vim
 ftplugin/c/previewWord.vim
 ftplugin/c/word.list
+ftplugin/cpp/cpp_AddMissingScope.vim
 ftplugin/cpp/cpp_BuildTemplates.vim
 ftplugin/cpp/cpp_Constructor.vim
 ftplugin/cpp/cpp_Doxygen.vim
