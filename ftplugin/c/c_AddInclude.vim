@@ -5,7 +5,7 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.1
+" Version:      2.0.0b10
 " Created:      22nd May 2012
 " Last Update:  $Date$
 "------------------------------------------------------------------------
@@ -26,7 +26,7 @@
 " }}}1
 "=============================================================================
 
-let s:k_version = 201
+let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_c_AddInclude")
@@ -70,34 +70,11 @@ function! s:TagsSelectPolicy()
   return select_policy
 endfunction
 
-function! s:InsertInclude()
-  let id = eval(s:TagsSelectPolicy())
-
-  try
-    let isk_save = &isk
-    set isk-=:
-    let info = taglist('.*\<'.id.'$')
-  finally
-    let &isk = isk_save
-  endtry
-  if len(info) == 0
-    call lh#common#error_msg("insert-include: no tags for `".id."'")
-    return
-  endif
-  " Filter for function definitions and #defines, ...
-  let accepted_kinds = lh#dev#option#get('tag_kinds_for_inclusion', &ft, '[dfptcs]')
-  call filter(info, "v:val.kind =~ ".string(accepted_kinds))
-  " Filter for include files only
-  let accepted_files = lh#dev#option#get('file_regex_for_inclusion', &ft, '\.h')
-  call filter(info, "v:val.filename =~? ".string(accepted_files))
-  " Is there any symbol left ?
-  if len(info) == 0
-    call lh#common#error_msg("insert-include: no acceptable tag for `".id."'")
-    return
-  endif
+function! s:InsertInclude() abort
   " If there are several choices, ask which one to use.
   " But first: check the files.
-  let info = lh#tags#uniq_sort(info)
+  let [id, info] = lh#cpp#tags#fetch("insert-include")
+
   let files = {}
   for t in info
     if ! has_key(files, t.filename)
