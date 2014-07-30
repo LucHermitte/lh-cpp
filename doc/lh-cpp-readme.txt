@@ -1,5 +1,5 @@
-*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b4)
-                        For Vim version 7.x.    Last change: 04th Dec 2013
+*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b11)
+                        For Vim version 7.x.    Last change: 30th Jul 2014
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -86,7 +86,7 @@ License:    The generated code is under license exception to GPLv3
             <http://code.google.com/p/lh-vim/wiki/License>
 
 Options:    
-    |b:usemarks|                                    (0/[1]) 
+    |[bg]:usemarks|                                 (0/[1]) 
         to enable the insertion of |markers|.
     |g:marker_prefers_select|                       (0/[1]) 
         select or echo the text within marker.
@@ -102,14 +102,14 @@ Mappings defined in this particular configuration:
     |<M-Del>|   shortcut to !jump!    ; can be redefined
     |<M-S-Del>| shortcut to !jumpB!   ; can be redefined
  imaps
-    {       {\n\n}  + |markers| (if |b:usemarks|==1) and cursor positioned
-    #{      {}      + |markers| (if |b:usemarks|==1) and cursor positioned
-    (       ()      + |markers| (if |b:usemarks|==1) and cursor positioned
-    [       []      + |markers| (if |b:usemarks|==1) and cursor positioned
-    "       ""      + |markers| (if |b:usemarks|==1) and cursor positioned
-    '       ''      + |markers| (if |b:usemarks|==1) and cursor positioned
+    {       {\n\n}  + |markers| (if |[bg]:usemarks|==1) and cursor positioned
+    #{      {}      + |markers| (if |[bg]:usemarks|==1) and cursor positioned
+    (       ()      + |markers| (if |[bg]:usemarks|==1) and cursor positioned
+    [       []      + |markers| (if |[bg]:usemarks|==1) and cursor positioned
+    "       ""      + |markers| (if |[bg]:usemarks|==1) and cursor positioned
+    '       ''      + |markers| (if |[bg]:usemarks|==1) and cursor positioned
     <F9>    toggles the 4 previous mappings   ; requires |Triggers.vim|
-    <M-F9>  toggles the value of |b:usemarks| ; requires |Triggers.vim|
+    <M-F9>  toggles the value of |[bg]:usemarks| ; requires |Triggers.vim|
 
     <       expands into <!cursor!>!mark! if the opening angle-bracket
         immediatelly follows ``#include'', a C++ cast, ``template'' or
@@ -121,7 +121,7 @@ Mappings defined in this particular configuration:
        bracket-like character used in the mapping.
     <localleader>{ 
        Insert a pair of curly brackets around the current line (/visual
-       selection). It is done in respect of |b:usemarks|.
+       selection). It is done in respect of |[bg]:usemarks|.
 
 + some mappings from auxtex.vim to manipulate brackets
     *<M-b>x* *<M-b><Delete>* : delete a pair of brackets
@@ -131,7 +131,7 @@ Mappings defined in this particular configuration:
     *<M-b><*  replaces the current pair of brackets with angle brackets
     *<M-b>\*  toggles the backslash on a pair of brackets
 
-NB: The brackets mappings only insert the markers when |b:usemarks|==1,
+NB: The brackets mappings only insert the markers when |[bg]:usemarks|==1,
     and outside comments and string contexts.
     They are buffer relative.
         
@@ -145,7 +145,7 @@ License:    The generated code is under license exception to GPLv3
             <http://code.google.com/p/lh-vim/wiki/License>
 
 Mappings and abbreviations defined: [always buffer-relative]
- abbr: if    if {\n}        + |markers| (if |b:usemarks|==1)       *C_if*
+ abbr: if    if {\n}        + |markers| (if |[bg]:usemarks|==1)       *C_if*
                             + cursor positioned
  abbr: elif   else if {\n}      + ...                          *C_elif*
  abbr: else   if {\n}           + ...                          *C_else*
@@ -157,12 +157,12 @@ Mappings and abbreviations defined: [always buffer-relative]
 
  n&vmap: <localleader>if , elif, else, wh, for & main
         Insert the control-statement around the current line (/visual
-        selection). It is also done in respect of |b:usemarks|.
+        selection). It is also done in respect of |[bg]:usemarks|.
 
  n&vmap: <localleader><localleader>if , elif, wh, for
         The current line (/visual selection) is used as the
         conditional expression of the control statement inserted.  It is
-        also done in respect of |b:usemarks|.
+        also done in respect of |[bg]:usemarks|.
 
 Options:
     * Regarding the control statements (|C_if|, |C_else|, |C_while|, 
@@ -171,7 +171,7 @@ Options:
       - the open curly-bracket  if *g:c_nl_before_curlyB*  == 1
       [By default, these options are considered equal to 0.]
 
-NB: * |b:usemarks| is still taken into account.
+NB: * |[bg]:usemarks| is still taken into account.
     * Works even if the bracketing system is not installed or deactivated
       (with <F9>).
     * Not tested with other bracketing systems than the one I propose.
@@ -284,11 +284,11 @@ Mappings and abbreviations defined: [always buffer-relative]
 
  n&vmap: <localleader>try , catch , ns (-> "namespace{\n}")
         Insert the previous text around the current line (/visual
-        selection). It also done in respect of |b:usemarks|.
+        selection). It also done in respect of |[bg]:usemarks|.
 
  n&vmap: <localleader><localleader>catch
         The current line (/visual selection) is used as the formal parameter
-        of the catch-block. It is also done in respect of |b:usemarks|.
+        of the catch-block. It is also done in respect of |[bg]:usemarks|.
 
                                                 *n_,dc* *n_,rc* *n_,sc* *n_,cc*
                                                 *v_,dc* *v_,rc* *v_,sc* *v_,cc*
@@ -748,7 +748,7 @@ If you don't like this feature ~
 -> you have several options :
 (*) you don't want template skeletons at all:
     then you can erase |mu-template.vim| and the {rtp}/after/templates/ folder
-(*) you don't want template skeletons be inserted automatically:
+(*) you don't want template skeletons to be inserted automatically:
     then add into your .vimrc: >
     let g:mt_IDontWantTemplatesAutomaticallyInserted = 1 
 <   You will still have the possibility to _explicitly_ insert a template
@@ -762,10 +762,11 @@ If you don't like this feature ~
     :MuTemplate cpp/my-cpp           " for a specific C++ skeleton
 (*) you don't want C++ skeleton (only) be inserted automatically, 
     [ie: you are OK for HTML and other skeletons] :
-    Then rename the file {rtp}/after/template/template.cpp
+    Then override the file {rtp}/after/template/cpp.template
     Don't change anything else than the extension of the file.
+    See |MuT-paths-override|.
 (*) you don't like the template skeletons I propose to you:
-    easy ! Change them.
+    easy ! Override them. See |MuT-paths-override|.
 (*) you don't want to be in insert- or select-mode and at an odd place when
     opening a new file:
     This is |mu-template|'s fault. Deactivate this feature thanks to the
@@ -793,9 +794,10 @@ If you don't like this feature ~
 (*) What the hell are those '«»' characters that appear ?
     They are |markers|. They are supposed to help us reaching the next
     position in the file where we are supposed to add code.
-    By default hit <M-Del> (/<M-S-Del>) to jump to the next (/previous) marker.
+    By default hit |<M-Del>| (/|<M-S-Del>|) to jump to the next (/previous) marker.
+    (If you are using vim and not gvim, the mappings will be binded to <C-J>)
     If you don't want them, hit <M-F9> to toggle their activation state (only
-    if |Triggers.vim| is installed), or set |b:usemarks| to 0 into your .vimrc.
+    if |Triggers.vim| is installed), or set |[bg]:usemarks| to 0 into your .vimrc.
     You should also be able to simply erase the file |bracketing.base.vim|
 (*) You want some "\n" before the '(':
     Easy: explicitly set the option |g:c_nl_before_bracket| to 1.
@@ -976,6 +978,6 @@ TODO:~
 
 
 ------------------------------------------------------------------------------
- © Luc Hermitte, 2001-2012 <http://code.google.com/p/lh-vim/wiki/lhCpp>, CC by SA 3.0
+ © Luc Hermitte, 2001-2014 <http://code.google.com/p/lh-vim/wiki/lhCpp>, CC by SA 3.0
  VIM: let b:VS_language = 'american' 
  vim:ts=8:sw=4:tw=80:fo=tcq2:isk=!-~,^*,^\|,^\":ft=help:

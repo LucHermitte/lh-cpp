@@ -179,8 +179,8 @@ endfunction
 " Add classes {{{3
 " ==========================================================================
 function! s:Cpp_newClass(name)
-  " if exists('b:usemarks') && b:usemarks
-    " let b:usemarks = 0
+  " if lh#brackets#usemarks()
+    " let bg:usemarks = 0
     " let recall_usemarks = 1
   " else
     " let recall_usemarks = 0
@@ -216,7 +216,7 @@ function! s:Cpp_newClass(name)
   call s:Cpp_emptyLine( 1 )
   call s:Cpp_littleLine( "End of class" )
   silent put = '};'
-  " if recall_usemarks == 1 | let b:usemarks = 1 | endif
+  " if recall_usemarks == 1 | let gb:usemarks = 1 | endif
   let &foldenable = old_foldenable
 endfunction
 " ==========================================================================

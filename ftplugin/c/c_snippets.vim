@@ -241,7 +241,7 @@ endif
 
 " Def_MapC(key, expr1, expr2) {{{3
 function! Def_MapC(key,expr1,expr2)
-  if exists('b:usemarks') && b:usemarks
+  if lh#brackets#usemarks()
     return "\<c-r>=MapNoContext2('".a:key."',BuildMapSeq('".a:expr2."'))\<cr>"
     " return "\<c-r>=MapNoContext2('".a:key."',BuildMapSeq(\"".a:expr2."\"))\<cr>"
   else
