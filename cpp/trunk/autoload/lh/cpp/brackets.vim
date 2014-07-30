@@ -5,7 +5,7 @@
 "               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
+" Version:	2.2.0
 " Created:	17th Mar 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -39,7 +39,7 @@ function! lh#cpp#brackets#lt()
 	\ . '\|template\s*$'
 	\ . '\|typename[^<]*$'
 	" \ . '\|\%(lexical\|dynamic\|reinterpret\|const\|static\)_cast\s*$'
-    if exists('b:usemarks') && b:usemarks
+    if lh#brackets#usemarks()
       return '<!cursorhere!>!mark!'
       " NB: InsertSeq with "\<left>" as parameter won't work in utf-8 => Prefer
       " "h" when motion is needed.
@@ -60,7 +60,7 @@ function! lh#cpp#brackets#close_curly()
   let l = getline('.')
   let l = strpart(l, 0, c)
   let close =  l =~ 'struct\|class' ? '};' : '}'
-  if exists('b:usemarks') && b:usemarks
+  if lh#brackets#usemarks()
     return '{!cursorhere!'.close.'!mark!'
   else
     " return '<>' . "\<Left>"

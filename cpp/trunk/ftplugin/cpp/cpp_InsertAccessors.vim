@@ -16,8 +16,7 @@
 "
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
-"       Drop this file into {rtp}/ftplugin/cpp
-"       Requires Vim7+, lh-cpp, lh-dev
+"       Requires Vim7+, lh-dev, lh-brackets v2.2.0
 " Options:	cf. lh_dev
 "
 " TODO:		{{{2
@@ -153,8 +152,7 @@ function! s:InsertAccessor(className, returnType, signature, instruction, commen
       elseif implPlace == 3 " use the pimpl idiom {{{
         silent AS cpp
         normal! G
-        if exists('*Marker_Txt') && 
-              \ ( (exists('b:usemarks') && b:usemarks) || !exists('b:usemarks'))
+        if exists('*Marker_Txt') && lh#brackets#usemarks()
           let instruction = Marker_Txt(';;')
         else
           let instruction = ';;'
