@@ -8,7 +8,8 @@
       "lh-vim-lib" : {"type" : "svn", "url" : "http://lh-vim.googlecode.com/svn/vim-lib/trunk"},
       "lh-brackets" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/map-tools/trunk"},
       "mu-template@lh" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/mu-template/trunk"},
-      "lh-dev" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/dev/trunk"}
+      "lh-dev" : {"type": "svn", "url": "http://lh-vim.googlecode.com/svn/dev/trunk"},
+      "VimFold4C" : {"type": "git", "url": "git@github.com:LucHermitte/VimFold4C.git"}
   },
   "description" : "C&C++ ftplugins suite",
   "homepage" : "http://code.google.com/p/lh-vim/wiki/lhCpp"
