@@ -5,11 +5,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b11
+" Version:	2.0.0b12
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b11'
+let s:version = '2.0.0b12'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -25,6 +25,7 @@ finish
 after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 after/template/c/realloc.template
+after/template/c/rand_init.template
 after/template/cpp/abs-rel.template
 after/template/cpp/array_size.template
 after/template/cpp/assignment-operator.template

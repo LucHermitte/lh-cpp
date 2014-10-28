@@ -128,6 +128,16 @@ function! lh#cpp#include#add(filename, ...) abort
   return 1
 endfunction
 
+" Function: lh#cpp#include#add_c_std(filename, ...) {{{3
+" Specialization of lh#cpp#include#add() for C standard header files <foo.h>
+" that shall become <cfoo> when included from a C++ file.
+function! lh#cpp#include#add_c_std(filename, ...) abort
+  let ft = &ft
+  let filename = (ft == 'cpp') ? ('c'.a:filename) : (a:filename.'.h')
+  let filename = '<' . filename . '>'
+  return call(function('lh#cpp#include#add'), [filename]+ a:000)
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
