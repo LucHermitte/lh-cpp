@@ -11,7 +11,7 @@ VimL:"
  * <+lh#dox#tag("file")+>    ¡expand('%:t')¡
  * <+lh#dox#author()+>
  * <+lh#dox#tag("version")+> ¡'$'¡Revision$
- * <+lh#dox#tag("since")+>   Version ¡lh#option#get('ProjectVersion', Marker_Txt('1.0'))¡
+ * <+lh#dox#since()+>
  * ¡'$'¡Id$
  */
 
