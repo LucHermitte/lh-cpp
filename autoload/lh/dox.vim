@@ -153,6 +153,13 @@ function! lh#dox#author(...)
   endif
 endfunction
 
+" Function: lh#dox#since(...) {{{3
+function! lh#dox#since(...)
+  let tag  = lh#dox#tag('since')
+  let ver  = lh#option#get('ProjectVersion', a:0==0 ? Marker_Txt('1.0') : a:1)
+  return tag . ' Version '.ver
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 

@@ -1,0 +1,8 @@
+VimL:" $Id$
+VimL:" C++ Doxygen snippet for since tag, Luc Hermitte
+VimL:" hint: @since Version
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+<+lh#dox#since()+>

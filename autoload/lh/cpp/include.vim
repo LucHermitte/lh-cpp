@@ -3,7 +3,7 @@
 " File:         autoload/lh/cpp/include.vim                       {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      001
+" Version:      002
 " Created:      28th Apr 2014
 " Last Update:  $Date$
 "------------------------------------------------------------------------
@@ -21,7 +21,7 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 1
+let s:k_version = 2
 function! lh#cpp#include#version()
   return s:k_version
 endfunction

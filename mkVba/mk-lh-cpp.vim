@@ -9,7 +9,7 @@
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b12'
+let s:version = '2.0.0b13'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try 
@@ -70,6 +70,7 @@ after/template/cpp/path.template
 after/template/cpp/ptr_vector.template
 after/template/cpp/set.template
 after/template/cpp/shared_ptr.template
+after/template/cpp/since.template
 after/template/cpp/singleton.template
 after/template/cpp/starts_with.template
 after/template/cpp/static_assert.template
