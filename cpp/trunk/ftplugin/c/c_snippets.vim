@@ -65,7 +65,7 @@ iab  <buffer> #e    <C-R>=MapNoContext("#e ",'\<esc\>0i#endif')<CR>
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
 vmap <buffer> <localleader><k0> <localleader>0
 nmap <buffer> <localleader><k0> <localleader>0
-:Brackets #if\ 0 #else\ \n#endif -insert=0 -nl -trigger=<localleader>1
+:Brackets #if\ 0 #else\n#endif -insert=0 -nl -trigger=<localleader>1
 vmap <buffer> <localleader><k1> <localleader>1
 nmap <buffer> <localleader><k1> <localleader>1
 
