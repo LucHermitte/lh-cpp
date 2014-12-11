@@ -14,7 +14,7 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:_exception_type = lh#dev#option#get('exception_type', &ft, 'std::runtime_error')
 VimL: let s:_exception_txt  = empty(s:Args()) ? lh#marker#txt('text') : (s:Args()[0])
-VimL: let s:_exception_args = lh#function#bind(lh#dev#option#get('exception_args', &ft, 'v:1_'))
+VimL: let s:_exception_args = lh#function#bind(string(lh#dev#option#get('exception_args', &ft, 'v:1_')))
 MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
 @throw <+s:_exception_type+><++>
 MuT:  else
