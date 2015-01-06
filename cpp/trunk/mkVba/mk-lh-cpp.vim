@@ -5,14 +5,14 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b12
+" Version:	2.0.0b14
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-let s:version = '2.0.0b13'
+let s:version = '2.0.0b14'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
-try 
+try
   let save_rtp = &rtp
   let &rtp = expand('<sfile>:p:h:h').','.&rtp
   exe '25,$MkVimball! '.s:project.'-'.s:version

@@ -5,21 +5,21 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0b10
+" Version:      2.0.0b14
 " Created:      22nd May 2012
 " Last Update:  $Date$
 "------------------------------------------------------------------------
 " Description:
 "       This ftplugin defines a mapping to insert missing includes (given we
 "       know which symbol shall be defined...)
-" 
+"
 "------------------------------------------------------------------------
 " Installation:
 "       Drop this file into {rtp}/ftplugin/c
 "       Requires Vim7+, lh-dev
-" History:      
+" History:
 "	v2.0.0  GPLv3 w/ exception
-" TODO:         
+" TODO:
 "       Handle the case where several files are found
 "       Move to autoload plugin
 "       Recognize commented includes
@@ -94,28 +94,13 @@ function! s:InsertInclude() abort
   let fullfilename = keys(files)[0]
   let filename = fullfilename " this is the full filename
   " echo filename
-  let includes = []
-  if exists('b:sources_root') " from mu-template & lh-suite(s)
-    let includes += [lh#path#to_dirname(b:sources_root)]
-  endif
-  if exists('b:includes')
-    let includes += b:includes
-  endif
-  if !empty(includes)
-    if filename[0] == '/' " absolute => try to remove things from b:includes and/or b:sources_root
-      let filename = lh#path#strip_start(filename, includes)
-    endif
-  else
-    let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
-    let filename = fnamemodify(filename, filename_simplify)
-  endif
   try
     call lh#cpp#include#add(filename, fullfilename=~ '\<usr\>\|\<local\>')
   catch /^insert-include:.* is already included/
     call lh#common#warning_msg("insert-include: ".filename.", where `"
           \ .id."' is defined, is already included")
   endtry
-  echo "Use CTRL-O to go back to previous cursor position" 
+  echo "Use CTRL-O to go back to previous cursor position"
 endfunction
 
 " Functions }}}2

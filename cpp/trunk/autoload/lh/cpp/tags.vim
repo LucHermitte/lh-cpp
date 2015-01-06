@@ -3,7 +3,7 @@
 " File:         autoload/lh/cpp/tags.vim                          {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      2.0.0b10
+" Version:      2.0.0b14
 " Created:      25th Jun 2014
 " Last Update:  $Date$
 "------------------------------------------------------------------------
@@ -42,6 +42,32 @@ endfunction
 
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
+" Function: lh#cpp#tags#strip_included_paths(filename, includes) {{{3
+function! lh#cpp#tags#strip_included_paths(filename, includes)
+  let filename = a:filename
+  if !empty(a:includes)
+    if filename[0] == '/' " absolute => try to remove things from b:includes and/or b:sources_root
+      let filename = lh#path#strip_start(filename, a:includes)
+    endif
+  else
+    let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
+    let filename = fnamemodify(filename, filename_simplify)
+  endif
+  return filename
+endfunction
+
+" Function: lh#cpp#tags#get_included_paths() {{{3
+function! lh#cpp#tags#get_included_paths()
+  let includes = []
+  if exists('b:sources_root') " from mu-template & lh-suite(s)
+    let includes += [lh#path#to_dirname(b:sources_root)]
+  endif
+  if exists('b:includes')
+    let includes += b:includes
+  endif
+  return includes
+endfunction
+
 " Function: lh#cpp#tags#fetch(feature) {{{3
 function! lh#cpp#tags#fetch(feature) abort
   let id = eval(s:TagsSelectPolicy())
@@ -67,6 +93,14 @@ function! lh#cpp#tags#fetch(feature) abort
     throw a:feature.": no acceptable tag for `".id."'"
   endif
 
+  " Strip the leading path that won't ever appear in included filename
+  let includes = lh#cpp#tags#get_included_paths()
+  for val in info
+    let val.filename = lh#cpp#tags#strip_included_paths(val.filename, includes)
+  endfor
+  " call map(info, "v:val.filename = lh#cpp#tags#strip_included_paths(v:val.filename, includes)")
+
+  " And remove redundant info
   let info = lh#tags#uniq_sort(info)
   return [id, info]
 endfunction
