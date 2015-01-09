@@ -1,6 +1,6 @@
 VimL:" $Id$
 VimL:" C++ namespace Template, Luc Hermitte
-VimL:" hint: namespace ns { ... } // ns 
+VimL:" hint: namespace ns { ... } // ns
 VimL: let s:value_start  = '¡'
 VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1
@@ -16,5 +16,5 @@ VimL: let s:ns_close = s:namespace =~ '^\s*$' ? ["} // Anonymous namespace"] : m
 VimL: let s:ns_join_s = s:ns_join ? " " : "\n"
 <+join(s:ns_open, s:ns_join_s)+>
 ¡s:Surround(1, '<++>')¡
-<+join(s:ns_close, s:ns_join_s)+><+s:ns_join ? (" // ".s:namespace . " namespaces") : ""+>
+<+join(s:ns_close, s:ns_join_s)+><+s:ns_join && s:namespace !~ '^\s*$'? (" // ".s:namespace . " namespace".(len(s:namespaces)>1 ? "s": "")) : ""+>
 <++>
