@@ -12,7 +12,7 @@
 " Description:	Snippets of C Control Statements
 " 
 "------------------------------------------------------------------------
-" Dependancies:	lh-vim-lib
+" Dependencies:	lh-vim-lib
 " 		a.vim			-- alternate files
 " 		VIM >= 6.00 only
 "
@@ -63,10 +63,10 @@ iab  <buffer> #e    <C-R>=MapNoContext("#e ",'\<esc\>0i#endif')<CR>
 
 "-- surrounds with "#if 0 ... endif"
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
-vmap <buffer> <localleader><k0> <localleader>0
+xmap <buffer> <localleader><k0> <localleader>0
 nmap <buffer> <localleader><k0> <localleader>0
 :Brackets #if\ 0 #else\n#endif -insert=0 -nl -trigger=<localleader>1
-vmap <buffer> <localleader><k1> <localleader>1
+xmap <buffer> <localleader><k1> <localleader>1
 nmap <buffer> <localleader><k1> <localleader>1
 
 " ------------------------------------------------------------------------
@@ -80,10 +80,10 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> if <C-R>=Def_AbbrC('if ',
 	\ '\<c-f\>if (!cursorhere!) {\n!mark!\n}!mark!')<cr>
 "--,if    insert "if" statement
-  vnoremap <buffer> <silent> <localleader>if 
+  xnoremap <buffer> <silent> <localleader>if 
 	\ <c-\><c-n>@=Surround('if (!cursorhere!) {', '}!mark!',
 	\ 1, 1, '', 1, 'if ')<cr>
-  vnoremap <buffer> <silent> <LocalLeader><localleader>if 
+  xnoremap <buffer> <silent> <LocalLeader><localleader>if 
 	\ <c-\><c-n>@=Surround('if (', '!cursorhere!) {\n!mark!\n}!mark!',
 	\ 0, 1, '', 1, 'if ')<cr>
       nmap <buffer> <LocalLeader>if V<LocalLeader>if
@@ -94,10 +94,10 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> elif <C-R>=Def_AbbrC('elif ',
 	\ '\<c-f\>else if (!cursorhere!) {\n!mark!\n}!mark!')<cr>
 "--,elif  insert else clause of if statement with following if statement
-  vnoremap <buffer> <silent> <localleader>elif 
+  xnoremap <buffer> <silent> <localleader>elif 
 	\ <c-\><c-n>@=Surround('else if (!cursorhere!) {', '}!mark!',
 	\ 1, 1, '', 1, 'elif ')<cr>
-  vnoremap <buffer> <silent> <localleader><localleader>elif 
+  xnoremap <buffer> <silent> <localleader><localleader>elif 
 	\ <c-\><c-n>@=Surround('else if (', '!cursorhere!) {\n!mark!\n}!mark!',
 	\ 0, 1, '', 1, 'elif ')<cr>
       nmap <buffer> <localleader><LocalLeader>elif 
@@ -108,7 +108,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> else <C-R>=InsertIfNotBefore('else ',
 	\ '\<c-f\>else {\n!cursorhere!\n}!mark!', 'if')<cr><c-f>
 "--,else  insert else clause of if statement
-  vnoremap <buffer> <silent> <localleader>else
+  xnoremap <buffer> <silent> <localleader>else
 	\ <c-\><c-n>@=Surround('else {', '}',
 	\ 1, 1, '``l', 1, 'else ')<cr>
       nmap <buffer> <LocalLeader>else V<LocalLeader>else
@@ -119,7 +119,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> for <C-R>=Def_AbbrC('for ',
       \ '\<c-f\>for (!cursorhere!;!mark!;!mark!) {\n!mark!\n}!mark!')<cr>
 "--,for   insert "for" statement
-  vnoremap <buffer> <silent> <localleader>for 
+  xnoremap <buffer> <silent> <localleader>for 
 	\ <c-\><c-n>@=Surround('for (!cursorhere!;!mark!;!mark!) {', '}!mark!',
 	\ 1, 1, '', 1, 'for ')<cr>
       nmap <buffer> <LocalLeader>for V<LocalLeader>for
@@ -129,11 +129,11 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> while <C-R>=Def_AbbrC('while ',
 	\ '\<c-f\>while (!cursorhere!) {\n!mark!\n}!mark!')<cr>
 "--,while insert "while" statement
-  vnoremap <buffer> <silent> <localleader>wh 
+  xnoremap <buffer> <silent> <localleader>wh 
 	\ <c-\><c-n>@=Surround('while (!cursorhere!) {', '}!mark!',
 	\ 1, 1, '', 1, 'while ')<cr>
 
-  vnoremap <buffer> <silent> <localleader><localleader>wh 
+  xnoremap <buffer> <silent> <localleader><localleader>wh 
 	\ <c-\><c-n>@=Surround('while (', 
 	\ '!cursorhere!) {\n!mark!\n}!mark!',
 	\ 0, 1, '', 1, 'while ')<cr>
@@ -148,19 +148,19 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> do <C-R>=Def_AbbrC('do ',
 	\ '\<c-f\>do {\n!cursorhere!\n} while (!mark!) ;!mark!')<cr><c-f>
 "--,do insert "do" statement
-  vnoremap <buffer> <silent> <localleader>do 
+  xnoremap <buffer> <silent> <localleader>do 
 	\ <c-\><c-n>@=Surround('do {', '!cursorhere!} while (!mark!);!mark!',
 	\ 1, 1, '', 1, 'do ')<cr>
-  vnoremap <buffer> µ 
+  xnoremap <buffer> µ 
 	\ <c-\><c-n>@=SurroundBySubstitute('do {', '!cursorhere!} while (!mark!);!mark!',
 	\ 1, 1, '', 1, 'do ')<cr>
   " problem here with fix_indent !!!
 
-  vnoremap <buffer> <silent> <localleader><localleader>do 
+  xnoremap <buffer> <silent> <localleader><localleader>do 
 	\ <c-\><c-n>@=Surround('do {\n!cursorhere!\n}\nwhile (', 
 	\ ');!mark!',
 	\ 0, 1, '', 1, 'do ')<cr>
-  vnoremap <buffer> <localleader><localleader>d2 
+  xnoremap <buffer> <localleader><localleader>d2 
 	\ <c-\><c-n>@=SurroundBySubstitute('do {\n!cursorhere!\n}\nwhile (', 
 	\ ');!mark!',
 	\ 0, 1, '', 1, 'do ')<cr>
@@ -175,13 +175,13 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
   Inoreabbr <buffer> <silent> switch <C-R>=Def_AbbrC('switch ',
 	\ '\<c-f\>switch (!cursorhere!) {\n!mark!\n}!mark!')<cr>
 "--,switch insert "switch" statement
-  vnoremap <buffer> <silent> <localleader>switch 
+  xnoremap <buffer> <silent> <localleader>switch 
 	\ <c-\><c-n>@=Surround('switch (!cursorhere!) {\ncase !mark!:',
 	\ '}!mark!', 1, 1, '', 1, 'switch ')<cr>
       nmap <buffer> <LocalLeader>switch V<LocalLeader>switch
 
 "--- {\n} --------------------------------------------------------{{{4
-  " vnoremap <buffer> <silent> <localleader>{
+  " xnoremap <buffer> <silent> <localleader>{
 	" \ <c-\><c-n>@=Surround('{!cursorhere!', '}!mark!',
 	" \ 1, 1, '', 1, ',{ ')<cr>
       " nmap <buffer> <LocalLeader>{ V<LocalLeader>{
@@ -344,7 +344,7 @@ function! InsertIfNotBefore(key, what, pattern)
 endfunction
 
 " C_SelectExpr4Surrounding() {{{3
-" todo: fin a better name for the function
+" todo: find a better name for the function
 function! C_SelectExpr4Surrounding()
   " Go to the first non blank character of the line
   :normal! ^
