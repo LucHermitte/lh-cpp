@@ -1,54 +1,54 @@
 "=============================================================================
 " $Id$
-" File:		autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
+" File:         autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
-" Created:	07th Oct 2006
-" Last Update:	$Date$ (04th Jan 2012)
+" Version:      2.0.0
+" Created:      07th Oct 2006
+" Last Update:  $Date$ (04th Jan 2012)
 "------------------------------------------------------------------------
-" Description:	
-" 	Implementation functions for ftplugin/cpp/cpp_GotoImpl
-" 
+" Description:
+"       Implementation functions for ftplugin/cpp/cpp_GotoImpl
+"
 "------------------------------------------------------------------------
-" Installation:	
-" 	Drop this file into {rtp}/autoload/lh/cpp/
-" 	Use Vim 7+
-" History:	
-" 	12th Sep 2007:
-" 	(*) Accepts spaces between "~" and class name (destructors)
-" 	v1.0.0:
-" 	(*) Code moved from ftplugin/cpp/cpp_GotoFunctionImpl.vim
-" 	(*) Fixes issues with g:alternateSearchPath in order to open the .cpp
-" 	in the correct subdirectory
-" 	(*) Don't escape '&' (from parameter's type) to build search regex 
-"	(*) Preserve line breaks between parameters
-"	(*) A message is displayed if the position of the function definition
-"	    cannot be found.
-"	v1.1.0
-"	(*) two functions moved to autoload/lh/cpp/AnalysisLib_Function
-"	v1.1.1
-"	(*) Support jump to existing destructor
-"	(*) Support jump to constructor with a initialization-list
-"	(*) Support "using namespace"
-"	(*) Don't expect the searched regex to start the line (as the return
-"	    type may need to be fully-qualified is the function definition)
-"	v2.0.0
-"	(*) GPLv3 with exception
-"	(*) parameter for the new implementation file extention
-"	(*) reuse a know buffer if it already exists -- i.e.: not limited to
-"	    readable files
+" Installation:
+"       Drop this file into {rtp}/autoload/lh/cpp/
+"       Use Vim 7+
+" History:
+"       12th Sep 2007:
+"       (*) Accepts spaces between "~" and class name (destructors)
+"       v1.0.0:
+"       (*) Code moved from ftplugin/cpp/cpp_GotoFunctionImpl.vim
+"       (*) Fixes issues with g:alternateSearchPath in order to open the .cpp
+"       in the correct subdirectory
+"       (*) Don't escape '&' (from parameter's type) to build search regex
+"       (*) Preserve line breaks between parameters
+"       (*) A message is displayed if the position of the function definition
+"           cannot be found.
+"       v1.1.0
+"       (*) two functions moved to autoload/lh/cpp/AnalysisLib_Function
+"       v1.1.1
+"       (*) Support jump to existing destructor
+"       (*) Support jump to constructor with a initialization-list
+"       (*) Support "using namespace"
+"       (*) Don't expect the searched regex to start the line (as the return
+"           type may need to be fully-qualified is the function definition)
+"       v2.0.0
+"       (*) GPLv3 with exception
+"       (*) parameter for the new implementation file extention
+"       (*) reuse a know buffer if it already exists -- i.e.: not limited to
+"           readable files
 "       (*) facultative option: extension of the file where to put the
 "           definition of the function.
 "       (*) Fix :GOTOIMPL to work even if &isk contains ":"
 " TODO:
-" 	(*) add knowledge about C99/C++11 new numeric types
-" 	(*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
-" 	    line as the function signature.
-" 	(*) Check how to convert the return, and the parameters, types to their
-" 	    fully-qualified names if required in the function definition.
+"       (*) add knowledge about C99/C++11 new numeric types
+"       (*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
+"           line as the function signature.
+"       (*) Check how to convert the return, and the parameters, types to their
+"           fully-qualified names if required in the function definition.
 " }}}1
 "=============================================================================
 
@@ -124,9 +124,9 @@ endfunction
 " The default values for 'HowToShowVirtual', 'HowToShowStatic' and
 " 'HowToShowDefaultParams' can be overridden momentarily.
 " Parameters: 'ShowVirtualon', 'ShowVirtualoff', 'ShowVirtual0', 'ShowVirtual1',
-" 	      'ShowStaticon', '..off', '..0' or '..1'
-" 	      'ShowExplicitcon', '..off', '..0' or '..1'
-" 	      'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
+"             'ShowStaticon', '..off', '..0' or '..1'
+"             'ShowExplicitcon', '..off', '..0' or '..1'
+"             'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
 " TODO: add C++11 override and final
 let s:option_value = '\%(on\|off\|\d\+\)$'
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
@@ -145,7 +145,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
   " 2- Build the result strings {{{4
   try
     let isk_save = &isk
-    set isk-=: 
+    set isk-=:
     let impl2search = s:BuildRegexFromImpl(proto,className)
     if impl2search.ispure
       call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
@@ -169,7 +169,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
 
   " call confirm(impl, '&ok', 1)
   " }}}4
-endfunction 
+endfunction
 
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#insert_impl(impl) {{{3
@@ -184,8 +184,8 @@ function! lh#cpp#GotoFunctionImpl#insert_impl(impl)
     " insertion of the text.
     let s:FunctionImpl = a:impl
     call lh#common#warning_msg(":GOTOIMPL cannot determine where the function definition should be inserted."
-	  \ ."\nUse :PASTEIMPL to paste the code prepared."
-	  \ ."\nSee ftplugin/cpp/cpp_options.vim to tune the placement heuristic")
+          \ ."\nUse :PASTEIMPL to paste the code prepared."
+          \ ."\nSee ftplugin/cpp/cpp_options.vim to tune the placement heuristic")
   endif
 endfunction
 
@@ -194,11 +194,11 @@ endfunction
 function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
   if expand('%:e') =~? 'cpp\|c\|C\|cxx'
     " already within the .cpp file
-    return 
+    return
   endif
-  try 
+  try
     " neutralize mu-template jump to marker feature {{{5
-    if exists('g:mu_template') && 
+    if exists('g:mu_template') &&
           \ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
       " NB: g:mt_jump_to_first_markers is true by default
       let mt_jump = 1
@@ -235,16 +235,16 @@ endfunction
 
 function! s:CheckOptions(...)
   " 0- Check options {{{4
-  let s:ShowVirtual		= lh#dev#option#get('ShowVirtual',       &ft, 1)
-  let s:ShowStatic		= lh#dev#option#get('ShowStatic',        &ft, 1)
-  let s:ShowExplicit		= lh#dev#option#get('ShowExplicit',      &ft, 1)
-  let s:ShowDefaultParams	= lh#dev#option#get('ShowDefaultParams', &ft, 1)
+  let s:ShowVirtual             = lh#dev#option#get('ShowVirtual',       &ft, 1)
+  let s:ShowStatic              = lh#dev#option#get('ShowStatic',        &ft, 1)
+  let s:ShowExplicit            = lh#dev#option#get('ShowExplicit',      &ft, 1)
+  let s:ShowDefaultParams       = lh#dev#option#get('ShowDefaultParams', &ft, 1)
   let expected_extension        = ''
   if 0 != a:0
     let i = 0
     while i < a:0
       let i +=  1
-      let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '') 
+      let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '')
       if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
         if !empty(expected_extension)
           call lh#common#error_msg(
@@ -309,10 +309,8 @@ function! s:Search4Impl(re_impl, scope)
     let l = search(a:re_impl, 'W')
     if l <= 0 | break | endif
 
-    " b- Get the current namespace at the found line {{{5
-    let current_ns = lh#cpp#AnalysisLib_Class#CurrentScope(l, 'namespace')
-    let imported_ns = lh#cpp#AnalysisLib_Class#used_namespaces(l)
-    let ns_list = imported_ns + [current_ns]
+    " b- Get the current namespace at the line found {{{5
+    let ns_list = lh#cpp#AnalysisLib_Class#available_namespaces(l)
 
     " c- Build the function name that must be found on the current line {{{5
     "    The function aname also contain the scope
@@ -324,8 +322,8 @@ function! s:Search4Impl(re_impl, scope)
     let fe=&foldenable
     set nofoldenable
     let mv = l."gg".virtcol('.').'|'
-    if search('(', 'W') <= 0 
-      " echoerr "Weird Error!!!" 
+    if search('(', 'W') <= 0
+      " echoerr "Weird Error!!!"
     endif
     silent exe 'normal! v'.mv.'y'
     let &foldenable=fe
@@ -336,11 +334,11 @@ function! s:Search4Impl(re_impl, scope)
 
     " e- Check if really found {{{5
     for ns in ns_list
-      " if match(required_ns, '^'.ns) == 0 
+      " if match(required_ns, '^'.ns) == 0
       " \ && (req_proto == current_proto)
       let current = ns . ((ns != "") ? '::' : '' ).current_proto
       if ("" != required_ns) && (required_ns !~ '.*::$')
-        let required_ns .=  '::' 
+        let required_ns .=  '::'
       endif
       " call confirm('required_ns='.required_ns.
       " \ "\ncurrent_proto=".current_proto.
@@ -349,8 +347,8 @@ function! s:Search4Impl(re_impl, scope)
       " \ "\n\nmv=".mv."\nproto0=".proto0."\ncurrent=".current,
       " \ '&ok', 1)
       " \ "\n\nreq_proto=".req_proto.
-      if match(current,'^'.required_ns) == 0 
-        return l 
+      if match(current,'^'.required_ns) == 0
+        return l
       endif
     endfor
     " }}}5
@@ -385,7 +383,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
   endif
   let comments = matchstr(proto.qualifier, join(re_qualifiers, '\|'))
   if !empty(comments)
-    let comments = '/*'.comments.'*/ ' 
+    let comments = '/*'.comments.'*/ '
   endif
 
   " 2- Handle default params, if any. {{{4
@@ -394,7 +392,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
   "    2 -> "/*=value*/"    : commented, spaces trimmed
   "    3 -> "/*value*/"     : commented, spaces trimmed, no equal sign
   if     s:ShowDefaultParams == 0 | let pattern = '\2'
-  elseif s:ShowDefaultParams == 1 | let pattern = '/* = \1 */\2' 
+  elseif s:ShowDefaultParams == 1 | let pattern = '/* = \1 */\2'
   elseif s:ShowDefaultParams == 2 | let pattern = '/*=\1*/\2'
   elseif s:ShowDefaultParams == 3 | let pattern = '/*\1*/\2'
   else                            | let pattern = '\2'
@@ -405,8 +403,8 @@ function! s:BuildFunctionSignature4impl(proto,className)
   for param in proto.parameters
     " TODO: param type may need to be fully-qualified, see 4.2
     let sParam = ((param.nl) ? "\n" : '')
-	  \ . (param.type) . ' ' . (param.name) 
-	  \ . substitute((param.default), '\(.\+\)', pattern, '')
+          \ . (param.type) . ' ' . (param.name)
+          \ . substitute((param.default), '\(.\+\)', pattern, '')
     " echo "param=".param
     call add(implParams, sParam)
   endfor
@@ -415,7 +413,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
 
   " 3- Add '::' to the class name (if any).{{{4
   let className = a:className . (""!=a:className ? '::' : '')
-  " let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(', 
+  " let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(',
   " \ className.'\0', '')
 
   " 4- Add scope to other types {{{4
@@ -468,27 +466,27 @@ function! s:SearchLineToAddImpl()
   if     cpp_FunctionPosition == 0 " {{{4
     return line('$') + cpp_FunctionPosArg
   elseif cpp_FunctionPosition == 1 " {{{4
-    if !exists('g:cpp_FunctionPosArg') 
+    if !exists('g:cpp_FunctionPosArg')
       call lh#common#error_msg('cpp#GotoFunctionImpl.vim: The search pattern '.
-	    \'<g:cpp_FunctionPosArg> is not defined')
+            \'<g:cpp_FunctionPosArg> is not defined')
       return -1
     endif
     let s=search(g:cpp_FunctionPosArg)
     if 0 == s
       call lh#common#error_msg("cpp#GotoFunctionImpl.vim: Can't find the pattern\n".
-	    \'   <g:cpp_FunctionPosArg>: '.g:cpp_FunctionPosArg)
+            \'   <g:cpp_FunctionPosArg>: '.g:cpp_FunctionPosArg)
       return -1
     else
       return s
     endif
   elseif cpp_FunctionPosition == 2 " {{{4
-    if     !exists('g:cpp_FunctionPosArg') 
+    if     !exists('g:cpp_FunctionPosArg')
       call lh#common#error_msg('cpp#GotoFunctionImpl.vim: No positionning '.
-	    \ 'function defined thanks to <g:cpp_FunctionPosArg>')
+            \ 'function defined thanks to <g:cpp_FunctionPosArg>')
       return -1
-    elseif !exists('*'.g:cpp_FunctionPosArg) 
+    elseif !exists('*'.g:cpp_FunctionPosArg)
       call lh#common#error_msg('cpp#GotoFunctionImpl.vim: The function '.
-	    \ '<g:cpp_FunctionPosArg> is not defined')
+            \ '<g:cpp_FunctionPosArg> is not defined')
       return -1
     endif
     exe "return ".g:cpp_FunctionPosArg."()"
@@ -515,11 +513,11 @@ function! s:InsertCodeAtLine(...)
       let impl = substitute(impl, '\(\s\)'.n0.'\%(::\|#::#\)', '\1', 'g')
     else
       call lh#common#error_msg( 'cpp#GotoFunctionImpl.vim: Namespaces mismatch!!!'.
-	    \ "\n\nCan't insert <".
-	    \ matchstr(impl0, '\%(::\|#::#\|\<\I\i*\>\)*\ze\_s*(').
-	    \ '> within the namespace <'.ns.'>')
+            \ "\n\nCan't insert <".
+            \ matchstr(impl0, '\%(::\|#::#\|\<\I\i*\>\)*\ze\_s*(').
+            \ '> within the namespace <'.ns.'>')
       " let g:impl0=impl0
-      return 
+      return
     endif
     let ns = matchstr(ns, '::\zs.*$')
     " call confirm('ns  ='.ns."\nimpl=".impl, '&Ok', 1)
@@ -540,7 +538,7 @@ function! s:InsertCodeAtLine(...)
   " Note: unlike 'put', 'append' can't insert multiple lines.
   " call append(p, impl)
   " Reindent the newly inserted lines
-  let nl = strlen(substitute(impl, "[^\n]", '', 'g')) - 1 
+  let nl = strlen(substitute(impl, "[^\n]", '', 'g')) - 1
   let p +=  1
   silent exe p.','.(p+nl).'v/^$/normal! =='
   " Restore folding

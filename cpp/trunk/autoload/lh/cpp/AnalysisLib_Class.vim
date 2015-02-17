@@ -1,17 +1,17 @@
 " ========================================================================
 " $Id$
-" File:		autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
-" Author:	Luc Hermitte <MAIL:hermitte at free.fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
+" File:         autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
+" Author:       Luc Hermitte <MAIL:hermitte at free.fr>
+"               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
-" Last Update:	$Date$ (13th Feb 2008)
+" Version:      2.0.0b15
+" Last Update:  $Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
-" Description:	
-" 	Library C++ ftplugin.
-" 	It provides functions used by other C++ ftplugins.
-" 	The theme of this library is the analysis of C++ scopes.
+" Description:
+"       Library C++ ftplugin.
+"       It provides functions used by other C++ ftplugins.
+"       The theme of this library is the analysis of C++ scopes.
 "
 " Defines: {{{2
 " (*) Function: lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type)
@@ -28,56 +28,59 @@
 "     form: "+a_public_class, #a_protected_class, -a_private_class"
 " }}}2
 "------------------------------------------------------------------------
-" Installation:	See |lh-cpp-readme.txt|
-" Dependencies:	VIM 7.0+
+" Installation: See |lh-cpp-readme.txt|
+" Dependencies: VIM 7.0+
 
-" History:	{{{2
-"	31st May 2012
-"	(*) v2.0.0 , License GPLv3 w/ extension
-" 	26th Aug 2011
-" 	(*) list of imported namespaces lh#cpp#AnalysisLib_Class#used_namespaces
-" 	31st May 2010
-" 	(*) many generic functions move to lh#dev#class#
-" 	23rd Apr 2008
-" 	(*) #Ancestors() return the list of base classes (topologicaly sorted)
-" 	13th Feb 2008
-" 	(*) new option [bg]:cpp_defines_to_ignore
-" 	12th Sep 2007 
-" 	(*) support "namespace NS1 { namespace NS2 {" on a same line
+" History:      {{{2
+"       17th Feb 2015
+"       (*) + list available namespaces
+"       (*) + simplfy_id()
+"       31st May 2012
+"       (*) v2.0.0 , License GPLv3 w/ extension
+"       26th Aug 2011
+"       (*) list of imported namespaces lh#cpp#AnalysisLib_Class#used_namespaces
+"       31st May 2010
+"       (*) many generic functions move to lh#dev#class#
+"       23rd Apr 2008
+"       (*) #Ancestors() return the list of base classes (topologicaly sorted)
+"       13th Feb 2008
+"       (*) new option [bg]:cpp_defines_to_ignore
+"       12th Sep 2007
+"       (*) support "namespace NS1 { namespace NS2 {" on a same line
 "
-" 	07th Oct 2006
-" 	(*) Renamed from ftplugin/cpp/cpp_FindContextClass.vim to
-" 	autoload/lh/cpp/AnalysisLib_Class.vim
+"       07th Oct 2006
+"       (*) Renamed from ftplugin/cpp/cpp_FindContextClass.vim to
+"       autoload/lh/cpp/AnalysisLib_Class.vim
 "
-" 	16th May 2006
-" 	(*) Bug fix: "using namespace" was misdirecting lh#cpp#AnalysisLib_Class#CurrentScope(), and
-" 	    :GOTOIMPL as a consequence.
-" 	29th Apr 2005
-" 	(*) Not misdriven anymore by:
-" 	    - forward declaration in namespaces
-" 	      -> "namespace N {class foo;} namespace M{ class bar{}; }"
-" 	09th Feb 2005
-" 	(*) class_token += enum\|union
-" 	(*) Not misdriven anymore by:
-" 	    - consecutive classes
-" 	      -> "namespace N {class foo {}; class bar{};}"
-" 	    - comments
-" 	16th dec 2002
-" 	(*) Bug fixed regarding forwarded classes.
-" 	16th oct 2002
-" 	(*) Able to handle C-definitions like 
-" 	    "typedef struct foo{...} *PFoo,Foo;"
-" 	(*) An inversion problem, with nested classes, fixed.
-" 	(*) Cpp_SearchClassDefinition becomes obsolete. Instead, use
-" 	    lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type) to search for a 
-" 	    namespace::class scope.
-" 	11th oct 2002
-" 	(*) Cpp_SearchClassDefinition supports: 
-" 	    - inheritance -> 'class A : xx B, xx C ... {'
-" 	    - and declaration on several lines of the previous inheritance
-" 	    text.
-" 	(*) Functions that will return the list of the direct base classes of
-" 	    the current class.
+"       16th May 2006
+"       (*) Bug fix: "using namespace" was misdirecting lh#cpp#AnalysisLib_Class#CurrentScope(), and
+"           :GOTOIMPL as a consequence.
+"       29th Apr 2005
+"       (*) Not misdriven anymore by:
+"           - forward declaration in namespaces
+"             -> "namespace N {class foo;} namespace M{ class bar{}; }"
+"       09th Feb 2005
+"       (*) class_token += enum\|union
+"       (*) Not misdriven anymore by:
+"           - consecutive classes
+"             -> "namespace N {class foo {}; class bar{};}"
+"           - comments
+"       16th dec 2002
+"       (*) Bug fixed regarding forwarded classes.
+"       16th oct 2002
+"       (*) Able to handle C-definitions like
+"           "typedef struct foo{...} *PFoo,Foo;"
+"       (*) An inversion problem, with nested classes, fixed.
+"       (*) Cpp_SearchClassDefinition becomes obsolete. Instead, use
+"           lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type) to search for a
+"           namespace::class scope.
+"       11th oct 2002
+"       (*) Cpp_SearchClassDefinition supports:
+"           - inheritance -> 'class A : xx B, xx C ... {'
+"           - and declaration on several lines of the previous inheritance
+"           text.
+"       (*) Functions that will return the list of the direct base classes of
+"           the current class.
 "
 " TODO: {{{2
 " (*) Support templates -> A<T>::B, etc
@@ -150,28 +153,28 @@ function! s:CurrentScope(bMove, scope_type)
   let result = line('.')
   while 1
     let result = s:SearchBracket()
-    if result <= 0 
+    if result <= 0
       exe pos
-      break 
+      break
     endif
 
     let skip_comments = '(synIDattr(synID(line("."), col("."), 0), "name") '
-	  \ . '!~? "c\\%(pp\\)\\=Structure")'
+          \ . '!~? "c\\%(pp\\)\\=Structure")'
     let skip_using_ns = '(getline(".") =~ "using\s*namespace")'
     " let result = searchpair(
-	" \ substitute(s:{a:scope_type}_part, '(', '%(', 'g')
-	" \ . s:{a:scope_type}_open, '', '{', flag,
-	" \ skip_comments)
+        " \ substitute(s:{a:scope_type}_part, '(', '%(', 'g')
+        " \ . s:{a:scope_type}_open, '', '{', flag,
+        " \ skip_comments)
     let result = searchpair(
-	\ substitute(s:both_part, '(', '%(', 'g')
-	\ . s:{a:scope_type}_open, '', '{', flag,
-	\ skip_comments.'&&'.skip_using_ns)
-    if result > 0 
+        \ substitute(s:both_part, '(', '%(', 'g')
+        \ . s:{a:scope_type}_open, '', '{', flag,
+        \ skip_comments.'&&'.skip_using_ns)
+    if result > 0
       if getline(result) !~ '.*'.s:{a:scope_type}_token.'.*'
-	exe pos
-	let result = 0
+        exe pos
+        let result = 0
       endif
-      break 
+      break
     endif
   endwhile
   return result
@@ -182,9 +185,9 @@ endfunction
 function! s:CurrentScope000(bMove,scope_type)
   let flag = a:bMove ? 'bW' : 'bnW'
   return searchpair(
-	\ substitute(s:{a:scope_type}_part, '(', '%(', 'g')
-	\ . s:{a:scope_type}_open00, '', s:{a:scope_type}_close00, flag,
-	\ s:skip_comments)
+        \ substitute(s:{a:scope_type}_part, '(', '%(', 'g')
+        \ . s:{a:scope_type}_open00, '', s:{a:scope_type}_close00, flag,
+        \ s:skip_comments)
   "Note: '\(..\)' must be changed into '\%(...\)' with search() and
   "searchpair().
 endfunction
@@ -200,13 +203,13 @@ function! s:SearchClassOrNamespaceDefinition(class_or_ns)
   while pos > 0
     let pos = s:CurrentScope(1, a:class_or_ns)
     if pos > 0
-      " in case of "ns NS1 { ns NS2 {", filter from cursor to EOL 
+      " in case of "ns NS1 { ns NS2 {", filter from cursor to EOL
       let line = getline(pos)[col('.')-1:]
       if strlen(defines) > 0
-	let line = substitute(line, defines, '', 'g')
+        let line = substitute(line, defines, '', 'g')
       endif
       let current_scope = substitute(line,
-	    \ '^.\{-}'.s:{a:class_or_ns}_part.'.*$', '\2', '')
+            \ '^.\{-}'.s:{a:class_or_ns}_part.'.*$', '\2', '')
       let scope = '::' . current_scope . scope
     endif
   endwhile
@@ -223,7 +226,7 @@ function! lh#cpp#AnalysisLib_Class#SearchClassDefinition(lineNo,...)
   exe a:lineNo
   let scope = s:SearchClassOrNamespaceDefinition('class')
   if (a:0 > 0) && (a:1 == 1)
-    let ns = s:SearchClassOrNamespaceDefinition('namespace') 
+    let ns = s:SearchClassOrNamespaceDefinition('namespace')
     let scope = ns . (((""!=scope) && (""!=ns)) ? '::' : '') . scope
   endif
   exe a:lineNo
@@ -238,15 +241,15 @@ function! lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type)
   exe a:lineNo
   if a:scope_type =~ 'any\|##'
     let scope = s:SearchClassOrNamespaceDefinition('class')
-    let ns = s:SearchClassOrNamespaceDefinition('namespace') 
-    let scope = ns . (((""!=scope) && (""!=ns)) 
-	  \ ? ((a:scope_type == '##') ? '#::#' : '::') 
-	  \ : '') . scope
+    let ns = s:SearchClassOrNamespaceDefinition('namespace')
+    let scope = ns . (((""!=scope) && (""!=ns))
+          \ ? ((a:scope_type == '##') ? '#::#' : '::')
+          \ : '') . scope
   elseif a:scope_type =~ 'class\|namespace'
     let scope = s:SearchClassOrNamespaceDefinition(a:scope_type)
   else
-    echoerr 'lh#cpp#AnalysisLib_Class#CurrentScope(): the only ' . 
-	  \ 'scope-types accepted are {class}, {namespace} and {any}!'
+    echoerr 'lh#cpp#AnalysisLib_Class#CurrentScope(): the only ' .
+          \ 'scope-types accepted are {class}, {namespace} and {any}!'
     return ''
   endif
   exe a:lineNo
@@ -351,19 +354,55 @@ endfunction
 " }}}1
 " ==========================================================================
 " List of imported namespaces {{{1
-" Function: lh#cpp#AnalysisLib_Class#used_namespace([up_to]) {{{3
+" Function: lh#cpp#AnalysisLib_Class#used_namespaces([up_to]) {{{3
 " @return list of imported namespaces
 " @todo take the "namespace xx {" scop into account
 function! lh#cpp#AnalysisLib_Class#used_namespaces(...)
   let up_to_line = (a:0>0) ? (a:1) : line('$')
-  let imported_ns = map( 
+  let imported_ns = map(
         \filter(
-        \    getline(1,up_to_line), 
+        \    getline(1,up_to_line),
         \    'v:val =~ "^\\s*using\\s\\+namespace"'),
         \ 'matchstr(v:val, "^\\s*using\\s\\+namespace\\s\\+\\zs.\\{-}\\ze\\s*;")'
         \ )
   return imported_ns
 endfunction
+
+" ==========================================================================
+" List of available namespaces {{{1
+" Function: lh#cpp#AnalysisLib_Class#available_namespaces(up_to) {{{3
+" @return list of available namespaces (imported + current)
+function! lh#cpp#AnalysisLib_Class#available_namespaces(up_to_line)
+  let current_ns = lh#cpp#AnalysisLib_Class#CurrentScope(a:up_to_line, 'namespace')
+  let imported_ns = lh#cpp#AnalysisLib_Class#used_namespaces(a:up_to_line)
+  let ns_list = imported_ns + [current_ns]
+  return ns_list
+endfunction
+
+" ==========================================================================
+" Simplify id {{{1
+" Function: lh#cpp#AnalysisLib_Class#simplify_id(id, available_scopes [, return_ns_found]) {{{3
+" Strips the best scope that matches the {id}. If
+" {return_ns_found} is set, return the matching scope as well.
+" @see tests/lh/analysis.vim
+function! lh#cpp#AnalysisLib_Class#simplify_id(id, available_scopes, ...)
+  let return_ns_found = a:0==0 ? 0 : a:1
+  let scopes = reverse(sort(a:available_scopes))
+  let re = join(
+        \ map(scopes, 'substitute(v:val, "^\\(.\\{-}\\)\\(::\\)\\=$", "^\\1\\\\(::\\\\)\\\\=", "")'),
+        \'\|')
+  let g:re = re
+  if !return_ns_found
+    return substitute(a:id, re, '', '')
+  else
+    let match = substitute(a:id, re, '&#', '')
+    if stridx(match, '#') == -1
+      let match = '#'.match
+    endif
+    return split(match, '#', 1)
+  endif
+endfunction
+
 " ==========================================================================
 " Fetch Attributes {{{1
 function! lh#cpp#AnalysisLib_Class#attributes(id)
