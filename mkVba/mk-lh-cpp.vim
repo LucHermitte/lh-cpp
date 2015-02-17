@@ -5,7 +5,7 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b14
+" Version:	2.0.0b15
 " Created:	06th Nov 2007
 " Last Update:	$Date$
 "------------------------------------------------------------------------
@@ -161,3 +161,4 @@ syntax/cpp-cxxtest.vim
 syntax/cpp-funcdef.vim
 syntax/cpp-throw-spec.vim
 syntax/cpp.vim
+tests/lh/analysis.vim
