@@ -7,6 +7,6 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
 VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<string>")')
-while¡C_nl_before_bracket()¡(std::getline(<+stream+>, <+line+>))¡C_nl_before_curlyB()¡{
+while(std::getline(<+stream+>, <+line+>)){
     ¡s:Surround(1, '<+code+>')¡
 }<++>

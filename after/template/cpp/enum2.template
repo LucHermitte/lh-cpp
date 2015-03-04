@@ -84,7 +84,7 @@ MuT:  endif
 
     char const* <+s:to_string+>() const;
 MuT:  if lh#cpp#use_cpp11()
-    explicit operator int() const { <s:m_value+>; }
+    explicit operator int() const { return <+s:m_value+>; }
 MuT:  endif
     <+s:type+> <+s:to_internal+>() const { return <+s:m_value+>; }
 MuT:  if s:iterable

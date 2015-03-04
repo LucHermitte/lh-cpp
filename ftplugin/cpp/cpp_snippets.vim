@@ -5,14 +5,14 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
+" Version:	2.0.0b16
 " Created:	15th Apr 2008
 " Last Update:	$Date$
 "------------------------------------------------------------------------
 " Description:	Snippets of C++ Control Statements
-" 
+"
 "------------------------------------------------------------------------
-" History:	
+" History:
 " for changelog: 13th Dec 2005 -> little bug in vmaps for ,,sc ,,rc ,,dc ,,cc
 " for changelog: 15th Feb 2006 -> abbr for firend -> friend
 " for changelog: 10th Apr 2006 -> "typename" after commas as well
@@ -38,6 +38,7 @@ runtime! ftplugin/c/c_snippets.vim
 "------------------------------------------------------------------------
 " Some C++ abbreviated Keywords {{{3
 " ------------------------------------------------------------------------
+" TODO: check whether there is a ":" or a "," before
 Inoreab <buffer> pub public:<CR>
 Inoreab <buffer> pro protected:<CR>
 Inoreab <buffer> pri private:<CR>
@@ -62,41 +63,44 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- namespace ---------------------------------------------------{{{4
 "--,ns insert "namespace" statement
   Inoreabbr <buffer> namespace <C-R>=InsertIfNotAfter('namespace ',
-	\ '\<c-f\>namespace <+namespace+> {<++>\n} // namespace <+namespace+>', 'using')<cr>
+	\ '\<c-f\>namespace <+namespace+>{<++>}// namespace <+namespace+>', 'using')<cr>
   " Inoreabbr <buffer> namespace <C-R>=InsertIfNotAfter('namespace ',
-	" \ '\<c-f\>namespace !cursorhere! {!mark!\n}!mark!', 'using')<cr>
-  vnoremap <buffer> <silent> <LocalLeader>ns 
-	\ <c-\><c-n>@=Surround('namespace !cursorhere! {', '!mark!\n}!mark!', 
-	\ 1, 1, '', 1, 'namespace ')<cr>
+	" \ '\<c-f\>namespace !cursorhere! {!mark!}!mark!', 'using')<cr>
+  vnoremap <buffer> <silent> <LocalLeader>ns
+	\ <c-\><c-n>@=lh#dev#style#surround('namespace !cursorhere!{', '!mark!}!mark!',
+	\ 0, 1, '', 1, 'namespace ')<cr>
       nmap <buffer> <LocalLeader>ns V<LocalLeader>ns
 
 "--- try ---------------------------------------------------------{{{4
 "--try insert "try" statement
-  command! -nargs=0 PrivateCppSearchTry :call search('try\_s*{\zs', 'b')
+  command! -nargs=0 PrivateCppSearchTry :call search('try\_s*{\_s*\zs$', 'b')
+  " Inoreabbr <buffer> <silent> try <C-R>=Def_AbbrC('try ',
+        " \ '\<c-f\>try{!cursorhere!}catch(!mark!){!mark!}!mark!\<esc\>')<CR>
   Inoreabbr <buffer> <silent> try <C-R>=Def_AbbrC('try ',
-	\ '\<c-f\>try {\n} catch (!mark!) {!mark!\n}!mark!\<esc\>'
-	\ .':PrivateCppSearchTry\<cr\>o')<CR>
+        \ '\<c-f\>try{}catch(!mark!){!mark!}!mark!\<esc\>'
+        \ .':PrivateCppSearchTry\<cr\>a\<c-f\>')<CR>
+        "
 	" \ .'?try\\_s*\\zs{\<cr\>:PopSearch\<cr\>o')<CR>
 	" pb with prev. line: { is replaced by \n when c_nl_before_curlyB=1
 	"
 	" pb with next line: !cursorhere! is badly indented
-	" \ '\<c-f\>try {\n!cursorhere!\n} catch (!mark!) {!mark!\n}!mark!')<cr>
+	" \ '\<c-f\>try {!cursorhere!} catch (!mark!) {!mark!}!mark!')<cr>
 "--,try insert "try - catch" statement
-  vnoremap <buffer> <LocalLeader>try 
-	\ <c-\><c-n>@=Surround('try {!cursorhere!', '!mark!\n} catch (!mark!) {!mark!\n}', 
-	\ 1, 1, '', 1, 'try ')<cr>
+  vnoremap <buffer> <LocalLeader>try
+	\ <c-\><c-n>@=lh#dev#style#surround('try{!cursorhere!', '!mark!}catch(!mark!){!mark!}',
+	\ 0, 1, '', 1, 'try ')<cr>
       nmap <buffer> <LocalLeader>try V<LocalLeader>try
 
 "--- catch -------------------------------------------------------{{{4
 "--catch insert "catch" statement
   Inoreabbr <buffer> catch <C-R>=Def_AbbrC('catch ',
-	\ '\<c-f\>catch (!cursorhere!) {!mark!\n}!mark!')<cr>
-  vnoremap <buffer> <LocalLeader>catch 
-	\ <c-\><c-n>@=Surround('catch (!cursorhere!) {', '!mark!\n}', 
-	\ 1, 1, '', 1, 'catch ')<cr>
+	\ '\<c-f\>catch(!cursorhere!){!mark!}!mark!')<cr>
+  vnoremap <buffer> <LocalLeader>catch
+	\ <c-\><c-n>@=lh#dev#style#surround('catch(!cursorhere!){', '!mark!}',
+	\ 0, 1, '', 1, 'catch ')<cr>
       nmap <buffer> <LocalLeader>catch V<LocalLeader>catch
-  vnoremap <buffer> <LocalLeader><LocalLeader>catch 
-	\ <c-\><c-n>@=Surround('catch (', '!cursorhere!) {!mark!\n}', 
+  vnoremap <buffer> <LocalLeader><LocalLeader>catch
+	\ <c-\><c-n>@=lh#dev#style#surround('catch(', '!cursorhere!){!mark!}',
 	\ 0, 1, '', 1, 'catch ')<cr>
       nmap <buffer> <LocalLeader><LocalLeader>catch V<LocalLeader><LocalLeader>catch
 
@@ -106,7 +110,7 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- dynamic_cast ------------------------------------------------{{{4
 "--dc insert "dynamic_cast" keyword
   vnoremap <buffer> <LocalLeader>dc
-	\ <c-\><c-n>@=Surround('dynamic_cast <!cursorhere!>(', '!mark!)', 
+	\ <c-\><c-n>@=lh#dev#style#surround('dynamic_cast<!cursorhere!>(', '!mark!)',
 	\ 0, 0, '', 1, 'dynamic_cast<')<cr>
       nmap <buffer> <LocalLeader>dc viw<LocalLeader>dc
 
@@ -117,7 +121,7 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- reinterpret_cast --------------------------------------------{{{4
 "--rc insert "reinterpret_cast" keyword
   vnoremap <buffer> <LocalLeader>rc
-	\ <c-\><c-n>@=Surround('reinterpret_cast <!cursorhere!>(', '!mark!)', 
+	\ <c-\><c-n>@=lh#dev#style#surround('reinterpret_cast<!cursorhere!>(', '!mark!)',
 	\ 0, 0, '', 1, 'reinterpret_cast<')<cr>
       nmap <buffer> <LocalLeader>rc viw<LocalLeader>rc
 
@@ -128,7 +132,7 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- static_cast -------------------------------------------------{{{4
 "--sc insert "static_cast" keyword
   vnoremap <buffer> <LocalLeader>sc
-	\ <c-\><c-n>@=Surround('static_cast <!cursorhere!>(', '!mark!)', 
+	\ <c-\><c-n>@=lh#dev#style#surround('static_cast<!cursorhere!>(', '!mark!)',
 	\ 0, 0, '', 1, 'static_cast<')<cr>
       nmap <buffer> <LocalLeader>sc viw<LocalLeader>sc
 
@@ -139,7 +143,7 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- const_cast --------------------------------------------------{{{4
 "--cc insert "const_cast" keyword
   vnoremap <buffer> <LocalLeader>cc
-	\ <c-\><c-n>@=Surround('const_cast <!cursorhere!>(', '!mark!)', 
+	\ <c-\><c-n>@=lh#dev#style#surround('const_cast<!cursorhere!>(', '!mark!)',
 	\ 0, 0, '', 1, 'const_cast<')<cr>
       nmap <buffer> <LocalLeader>cc viw<LocalLeader>cc
 
@@ -156,7 +160,7 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
   " inoremap <buffer> /**  <c-r>=Def_MapC('/**',
 	" \ '/**\<cr\>\<BS\>/\<up\>\<end\> ',
 	" \ '/**\<cr\>\<BS\>/!mark!\<up\>\<end\> ')<cr>
-  inoreab <buffer> /** <c-r>=Def_AbbrC('/**', '/**!cursorhere!\n/!mark!')<cr>
+  inoreab <buffer> /** <c-r>=Def_AbbrC('/**', '/**!cursorhere!/!mark!')<cr>
 " /*<space> inserts /** <cursor>*/
   " inoremap <buffer> /*!  <c-r>=Def_MapC('/* ',
 	" \ '/** */\<left\>\<left\>',
@@ -167,9 +171,9 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 " In std::foreach and std::find algorithms, ..., expand 'algo(container§)'
 " into:
 " todo: rely on omap-param
-" - 'algo(container.begin(),container.end()§)', 
+" - 'algo(container.begin(),container.end()§)',
 inoremap <c-x>be .<esc>%v%<left>o<right>y%%ibegin(),<esc>paend()<esc>a
-" - 'algo(container.rbegin(),container.rend()§)', 
+" - 'algo(container.rbegin(),container.rend()§)',
 inoremap <c-x>rbe .<esc>%v%<left>o<right>y%%irbegin(),<esc>parend()<esc>a
 
 " '§' represents the current position of the cursor.
@@ -194,7 +198,7 @@ function! s:ConvertToCPPCast(cast_type)
   " Strip the possible brackets around the expression
   let expr = matchstr(@a, '^(.\{-})\zs.*$')
   let expr = substitute(expr, '^(\(.*\))$', '\1', '')
-  " 
+  "
   " Build the C++-casting from the C casting
   let new_cast = substitute(@a, '(\(.\{-}\)).*',
 	\ a:cast_type.'<\1>('.escape(expr, '\&').')', '')
@@ -209,7 +213,7 @@ function! InsertIfNotAfter(key, what, pattern)
   let l = strpart(l, 0, c)
   if l =~ a:pattern.'\s*$'
     return a:key
-  else 
+  else
     return Def_AbbrC(a:key, a:what)
   endif
 endfunction

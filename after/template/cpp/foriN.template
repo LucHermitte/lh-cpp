@@ -6,6 +6,6 @@ VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1 
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-for¡C_nl_before_bracket()¡(<+std::size_t+> <+i+>=0, <+N+>=<+MAX+>; <+i+>!=<+N+> ; ++<+i+>)¡C_nl_before_curlyB()¡{
+for()¡(<+std::size_t+> <+i+>=0, <+N+>=<+MAX+>; <+i+>!=<+N+> ; ++<+i+>){
     ¡s:Surround(1, '<+code+>')¡
 }<++>

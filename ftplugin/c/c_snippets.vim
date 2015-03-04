@@ -1,26 +1,26 @@
 "=============================================================================
 " $Id$
-" File:		ftplugin/c/c_snippets.vim                               {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
+" File:         ftplugin/c/c_snippets.vim                               {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
-" Created:	14th Apr 2008
-" Last Update:	$Date$
+" Version:      2.0.0b16
+" Created:      14th Apr 2008
+" Last Update:  $Date$
 "------------------------------------------------------------------------
-" Description:	Snippets of C Control Statements
-" 
+" Description:  Snippets of C Control Statements
+"
 "------------------------------------------------------------------------
-" Dependencies:	lh-vim-lib
-" 		a.vim			-- alternate files
-" 		VIM >= 6.00 only
+" Dependencies: lh-vim-lib
+"               a.vim                   -- alternate files
+"               VIM >= 6.00 only
 "
 " History:
 " 06th,26th Mar 2006: InsertReturn() for smart insertion of return.
 " for changelog: 27th Jun 2006 -> C_SelectExpr4Surrounding used in
 "                                 <leader><leader> mappings
-" TODO:		«missing features»
+" TODO:         «missing features»
 " }}}1
 "=============================================================================
 
@@ -78,120 +78,113 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 " --- if ---------------------------------------------------------{{{4
 "--if    insert "if" statement                   {{{5
   Inoreabbr <buffer> <silent> if <C-R>=Def_AbbrC('if ',
-	\ '\<c-f\>if (!cursorhere!) {\n!mark!\n}!mark!')<cr>
+        \ '\<c-f\>if(!cursorhere!){!mark!}!mark!')<cr>
 "--,if    insert "if" statement
-  xnoremap <buffer> <silent> <localleader>if 
-	\ <c-\><c-n>@=Surround('if (!cursorhere!) {', '}!mark!',
-	\ 1, 1, '', 1, 'if ')<cr>
-  xnoremap <buffer> <silent> <LocalLeader><localleader>if 
-	\ <c-\><c-n>@=Surround('if (', '!cursorhere!) {\n!mark!\n}!mark!',
-	\ 0, 1, '', 1, 'if ')<cr>
+  xnoremap <buffer> <silent> <localleader>if
+        \ <c-\><c-n>@=lh#dev#style#surround('if(!cursorhere!){', '}!mark!',
+        \ 0, 1, '', 1, 'if ')<cr>
+  xnoremap <buffer> <silent> <LocalLeader><localleader>if
+        \ <c-\><c-n>@=lh#dev#style#surround('if(', '!cursorhere!) {!mark!}!mark!',
+        \ 0, 1, '', 1, 'if ')<cr>
       nmap <buffer> <LocalLeader>if V<LocalLeader>if
       nmap <buffer> <LocalLeader><LocalLeader>if
-	    \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>if
+            \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>if
 
 "--elif  insert «else if () { ... }»             {{{5
   Inoreabbr <buffer> <silent> elif <C-R>=Def_AbbrC('elif ',
-	\ '\<c-f\>else if (!cursorhere!) {\n!mark!\n}!mark!')<cr>
+        \ '\<c-f\>else if(!cursorhere!) {!mark!}!mark!')<cr>
 "--,elif  insert else clause of if statement with following if statement
-  xnoremap <buffer> <silent> <localleader>elif 
-	\ <c-\><c-n>@=Surround('else if (!cursorhere!) {', '}!mark!',
-	\ 1, 1, '', 1, 'elif ')<cr>
-  xnoremap <buffer> <silent> <localleader><localleader>elif 
-	\ <c-\><c-n>@=Surround('else if (', '!cursorhere!) {\n!mark!\n}!mark!',
-	\ 0, 1, '', 1, 'elif ')<cr>
-      nmap <buffer> <localleader><LocalLeader>elif 
-	    \ <Plug>C_SelectExpr4Surrounding<localleader><LocalLeader>elif
+  xnoremap <buffer> <silent> <localleader>elif
+        \ <c-\><c-n>@=lh#dev#style#surround('else if(!cursorhere!){', '}!mark!',
+        \ 0, 1, '', 1, 'elif ')<cr>
+  xnoremap <buffer> <silent> <localleader><localleader>elif
+        \ <c-\><c-n>@=lh#dev#style#surround('else if(', '!cursorhere!){!mark!}!mark!',
+        \ 0, 1, '', 1, 'elif ')<cr>
+      nmap <buffer> <localleader><LocalLeader>elif
+            \ <Plug>C_SelectExpr4Surrounding<localleader><LocalLeader>elif
       nmap <buffer> <LocalLeader>elif V<LocalLeader>elif
 
 "--else  insert else clause of if statement      {{{5
   Inoreabbr <buffer> <silent> else <C-R>=InsertIfNotBefore('else ',
-	\ '\<c-f\>else {\n!cursorhere!\n}!mark!', 'if')<cr><c-f>
+        \ '\<c-f\>else{!cursorhere!}!mark!', 'if')<cr><c-f>
 "--,else  insert else clause of if statement
   xnoremap <buffer> <silent> <localleader>else
-	\ <c-\><c-n>@=Surround('else {', '}',
-	\ 1, 1, '``l', 1, 'else ')<cr>
+        \ <c-\><c-n>@=lh#dev#style#surround('else {', '}',
+        \ 0, 1, '``l', 1, 'else ')<cr>
       nmap <buffer> <LocalLeader>else V<LocalLeader>else
 
 "--- for ---------------------------------------------------------{{{4
 "--for   insert "for" statement
 " TODO: pb when c_nl_before_bracket = 1, cursor is not placed correctly
   Inoreabbr <buffer> <silent> for <C-R>=Def_AbbrC('for ',
-      \ '\<c-f\>for (!cursorhere!;!mark!;!mark!) {\n!mark!\n}!mark!')<cr>
+      \ '\<c-f\>for(!cursorhere!;!mark!;!mark!){!mark!}!mark!')<cr>
 "--,for   insert "for" statement
-  xnoremap <buffer> <silent> <localleader>for 
-	\ <c-\><c-n>@=Surround('for (!cursorhere!;!mark!;!mark!) {', '}!mark!',
-	\ 1, 1, '', 1, 'for ')<cr>
+  xnoremap <buffer> <silent> <localleader>for
+        \ <c-\><c-n>@=lh#dev#style#surround('for(!cursorhere!;!mark!;!mark!){', '}!mark!',
+        \ 0, 1, '', 1, 'for ')<cr>
       nmap <buffer> <LocalLeader>for V<LocalLeader>for
 
 "--- while -------------------------------------------------------{{{4
 "--while insert "while" statement
   Inoreabbr <buffer> <silent> while <C-R>=Def_AbbrC('while ',
-	\ '\<c-f\>while (!cursorhere!) {\n!mark!\n}!mark!')<cr>
+        \ '\<c-f\>while(!cursorhere!){!mark!}!mark!')<cr>
 "--,while insert "while" statement
-  xnoremap <buffer> <silent> <localleader>wh 
-	\ <c-\><c-n>@=Surround('while (!cursorhere!) {', '}!mark!',
-	\ 1, 1, '', 1, 'while ')<cr>
+  xnoremap <buffer> <silent> <localleader>wh
+        \ <c-\><c-n>@=lh#dev#style#surround('while(!cursorhere!){', '}!mark!',
+        \ 0, 1, '', 1, 'while ')<cr>
 
-  xnoremap <buffer> <silent> <localleader><localleader>wh 
-	\ <c-\><c-n>@=Surround('while (', 
-	\ '!cursorhere!) {\n!mark!\n}!mark!',
-	\ 0, 1, '', 1, 'while ')<cr>
+  xnoremap <buffer> <silent> <localleader><localleader>wh
+        \ <c-\><c-n>@=lh#dev#style#surround('while(',
+        \ '!cursorhere!){!mark!}!mark!',
+        \ 0, 1, '', 1, 'while ')<cr>
   " Note: \<esc\>lcw is used to strip every spaces at the beginning of the
   " selected-area
       nmap <buffer> <LocalLeader>while V<LocalLeader>wh
-      nmap <buffer> <LocalLeader><LocalLeader>while 
-	    \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>wh
+      nmap <buffer> <LocalLeader><LocalLeader>while
+            \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>wh
 
 "--- do ----------------------------------------------------------{{{4
 "--do insert "do" statement
   Inoreabbr <buffer> <silent> do <C-R>=Def_AbbrC('do ',
-	\ '\<c-f\>do {\n!cursorhere!\n} while (!mark!) ;!mark!')<cr><c-f>
+        \ '\<c-f\>do{!cursorhere!}while(!mark!);!mark!')<cr><c-f>
 "--,do insert "do" statement
-  xnoremap <buffer> <silent> <localleader>do 
-	\ <c-\><c-n>@=Surround('do {', '!cursorhere!} while (!mark!);!mark!',
-	\ 1, 1, '', 1, 'do ')<cr>
-  xnoremap <buffer> µ 
-	\ <c-\><c-n>@=SurroundBySubstitute('do {', '!cursorhere!} while (!mark!);!mark!',
-	\ 1, 1, '', 1, 'do ')<cr>
+  xnoremap <buffer> <silent> <localleader>do
+        \ <c-\><c-n>@=lh#dev#style#surround('do{', '!cursorhere!}while(!mark!);!mark!',
+        \ 0, 1, '', 1, 'do ')<cr>
+  xnoremap <buffer> µ
+        \ <c-\><c-n>@=SurroundBySubstitute('do{', '!cursorhere!}while(!mark!);!mark!',
+        \ 0, 1, '', 1, 'do ')<cr>
   " problem here with fix_indent !!!
 
-  xnoremap <buffer> <silent> <localleader><localleader>do 
-	\ <c-\><c-n>@=Surround('do {\n!cursorhere!\n}\nwhile (', 
-	\ ');!mark!',
-	\ 0, 1, '', 1, 'do ')<cr>
-  xnoremap <buffer> <localleader><localleader>d2 
-	\ <c-\><c-n>@=SurroundBySubstitute('do {\n!cursorhere!\n}\nwhile (', 
-	\ ');!mark!',
-	\ 0, 1, '', 1, 'do ')<cr>
+  xnoremap <buffer> <silent> <localleader><localleader>do
+        \ <c-\><c-n>@=Surround('do{!cursorhere!}while(',
+        \ ');!mark!',
+        \ 0, 1, '', 1, 'do ')<cr>
+  xnoremap <buffer> <localleader><localleader>d2
+        \ <c-\><c-n>@=SurroundBySubstitute('do{!cursorhere!}while(',
+        \ ');!mark!',
+        \ 0, 1, '', 1, 'do ')<cr>
   " Note: \<esc\>lcw is used to strip every spaces at the beginning of the
   " selected-area
       nmap <buffer> <LocalLeader>do V<LocalLeader>do
-      nmap <buffer> <LocalLeader><LocalLeader>do 
-	    \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>do
+      nmap <buffer> <LocalLeader><LocalLeader>do
+            \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>do
 
 "--- switch ------------------------------------------------------{{{4
 "--switch insert "switch" statement
   Inoreabbr <buffer> <silent> switch <C-R>=Def_AbbrC('switch ',
-	\ '\<c-f\>switch (!cursorhere!) {\n!mark!\n}!mark!')<cr>
+        \ '\<c-f\>switch(!cursorhere!){!mark!}!mark!')<cr>
 "--,switch insert "switch" statement
-  xnoremap <buffer> <silent> <localleader>switch 
-	\ <c-\><c-n>@=Surround('switch (!cursorhere!) {\ncase !mark!:',
-	\ '}!mark!', 1, 1, '', 1, 'switch ')<cr>
+  xnoremap <buffer> <silent> <localleader>switch
+        \ <c-\><c-n>@=lh#dev#style#surround('switch(!cursorhere!){case !mark!:',
+        \ '}!mark!', 1, 1, '', 1, 'switch ')<cr>
       nmap <buffer> <LocalLeader>switch V<LocalLeader>switch
 
 "--- {\n} --------------------------------------------------------{{{4
   " xnoremap <buffer> <silent> <localleader>{
-	" \ <c-\><c-n>@=Surround('{!cursorhere!', '}!mark!',
-	" \ 1, 1, '', 1, ',{ ')<cr>
+        " \ <c-\><c-n>@=lh#dev#style#surround('{!cursorhere!', '}!mark!',
+        " \ 1, 1, '', 1, ',{ ')<cr>
       " nmap <buffer> <LocalLeader>{ V<LocalLeader>{
-
-"--- main --------------------------------------------------------{{{4
-"--Ymain  insert "main" routine
-  Iabbr  <buffer> Ymain  int main (int argc, char **argv!jump-and-del!<cr>{
-"--,main  insert "main" routine
-  map <buffer> <LocalLeader>main  iint main (int argc, char **argv)<cr>{
-
 
 " --- return -----------------------------------------------------{{{4
 "-- <m-r> insert "return ;"
@@ -206,7 +199,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 "             */
   if &ft !~ '^\(cpp\|java\)$'
     " inoremap <buffer> /*<space> <c-r>=Def_AbbrC('/*',
-	  " \ '/*\<cr\>\<BS\>/!mark!\<up\>\<end\>')<cr>
+          " \ '/*\<cr\>\<BS\>/!mark!\<up\>\<end\>')<cr>
     inoreab <buffer> /* <c-r>=Def_AbbrC('/*', '/*!cursorhere!\n/!mark!')<cr>
   endif
 
@@ -219,8 +212,8 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 "--<*M-v>- Surrounds a selection (/word) with C comments.
   " Todo: harmonize with EnhanceCommentify mappings
   vnoremap <buffer> <M-v>
-	\ <c-\><c-n>@=Surround('/*', '!mark!*/', 
-	\ 0, 0, '', 1, '/*')<cr>
+        \ <c-\><c-n>@=lh#dev#style#surround('/*', '!mark!*/',
+        \ 0, 0, '', 1, '/*')<cr>
       nmap <buffer> <M-v> viw<M-v>
 "}}}
 
@@ -258,14 +251,18 @@ function! Def_AbbrC(key,expr)
   endif
   " Default behaviour
   let rhs = a:expr
-  if lh#cpp#option#nl_before_bracket()
-    " let rhs = substitute(rhs, '\(BuildMapSeq\)\@<!(', '\\<cr\\>\0', 'g')
-    let rhs = substitute(rhs, '\s*(', '\\n(', 'g')
-  endif
-  if lh#cpp#option#nl_before_curlyB()
-    " let rhs = substitute(rhs, '{', '\\<cr\\>\0', 'g')
-    let rhs = substitute(rhs, '\s*{', '\\n{', 'g')
-    let rhs = substitute(rhs, '}\s*', '}\\n', 'g')
+  if 0
+    if lh#cpp#option#nl_before_bracket()
+      " let rhs = substitute(rhs, '\(BuildMapSeq\)\@<!(', '\\<cr\\>\0', 'g')
+      let rhs = substitute(rhs, '\s*(', '\\n(', 'g')
+    endif
+    if lh#cpp#option#nl_before_curlyB()
+      " let rhs = substitute(rhs, '{', '\\<cr\\>\0', 'g')
+      let rhs = substitute(rhs, '\s*{', '\\n{', 'g')
+      let rhs = substitute(rhs, '}\s*', '}\\n', 'g')
+    endif
+  else
+    let rhs = lh#dev#style#apply(rhs)
   endif
   return InsertSeq(a:key, rhs)
 endfunction
@@ -326,7 +323,7 @@ function! InsertIfNotAfter(key, what, pattern)
   let l = strpart(l, 0, c)
   if l =~ a:pattern.'\s*$'
     return a:key
-  else 
+  else
     return Def_AbbrC(a:key, a:what)
   endif
 endfunction
@@ -338,7 +335,7 @@ function! InsertIfNotBefore(key, what, pattern)
   let l = strpart(l, c)
   if l =~ '^\s*'.a:pattern
     return a:key
-  else 
+  else
     return Def_AbbrC(a:key, a:what)
   endif
 endfunction
