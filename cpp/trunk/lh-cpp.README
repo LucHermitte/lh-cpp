@@ -1,16 +1,16 @@
-			  --------------------
-			     lh-cpp v2.0.0b10
-			  --------------------
+                          --------------------
+                             lh-cpp v2.0.0b16
+                          --------------------
 
 lh-cpp is a suite of C&C++ ftplugins for Vim users.
 
-Audience      : Any C&C++ developers, 
-		and C++-ftplugins writers that desire to define complex
-		features that require a little understanding of C++
-		constructs (like function signatures, etc)
+Audience      : Any C&C++ developers,
+                and C++-ftplugins writers that desire to define complex
+                features that require a little understanding of C++
+                constructs (like function signatures, etc)
 Requirements  : Vim 7, lh-vim-lib (3.1.0), map-tools (2.0.0),
-		searchInRuntime, mu-template v3.0.0, lh-tags
-		alternate (a version is shipped with lh-cpp)
+                lh-dev (1.1.3), searchInRuntime, mu-template v3.4.0, lh-tags
+                alternate (a version is shipped with lh-cpp)
 Required by   : No other script as far as I know
 Author        : Luc Hermitte
 License       : GPLv3 with exceptions
@@ -24,9 +24,9 @@ License       : GPLv3 with exceptions
 More Help At  : http://code.google.com/p/lh-vim/wiki/lhCpp
 Vim script#336: http://www.vim.org/scripts/script.php?script_id=336
 Repository    :
-	svn checkout http://lh-vim.googlecode.com/svn/cpp/trunk lh-cpp
+        svn checkout http://lh-vim.googlecode.com/svn/cpp/trunk lh-cpp
 VAM           :
-	http://code.google.com/p/lh-vim/source/browse/map-tools/trunk/lh-cpp-info.txt
+        http://code.google.com/p/lh-vim/source/browse/map-tools/trunk/lh-cpp-info.txt
 
 See also      : lh-refactor, lh-dev, local_vimrc, BuildToolsWrapper
-		Project, EnhancedCommentify
+                Project, EnhancedCommentify

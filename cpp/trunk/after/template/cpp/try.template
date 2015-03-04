@@ -8,6 +8,6 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 try ¡C_nl_before_curlyB()¡{
     ¡s:Surround(1, '<+code+>')¡
-}¡C_nl_before_curlyB()¡catch¡C_nl_before_bracket()¡(<+std::exception const& e+>)¡C_nl_before_curlyB()¡{
+}catch(<+std::exception const& e+>){
     ¡s:Surround(2, '<+catch-code+>')¡
 }<++>

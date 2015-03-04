@@ -3,13 +3,16 @@
 " File:         autoload/lh/cpp/option.vim                        {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      200
+" Version:      2.0.0b16
 " Created:      05th Apr 2012
 " Last Update:  $Date$
 "------------------------------------------------------------------------
 " Description:
-"       Options for lh-cpp 
-" 
+"       Options for lh-cpp
+"
+" Deprecated:
+"       This nl_before_bracket API has been deprecated in favour of AddStyle!
+"
 "------------------------------------------------------------------------
 " Installation:
 "       Drop this file into {rtp}/autoload/lh/cpp
@@ -22,7 +25,7 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 1
+let s:k_version = 2
 function! lh#cpp#option#version()
   return s:k_version
 endfunction
@@ -52,15 +55,18 @@ endfunction
 " Possible values: 0 (default)/1
 " Applies to: if (){}, else{}, for (;;){}, while(){}, switch, catch, ...
 
+
 " Function: lh#cpp#option#nl_before_bracket() {{{3
 " Write each '(' on a new line; -> if \n() ... {}
 function! lh#cpp#option#nl_before_bracket()
+  call s:Deprecated()
   return lh#dev#option#get('nl_before_bracket', &ft, 0)
 endfunction
 
 " Function: lh#cpp#option#nl_before_curlyB() {{{3
 " Write each '{' on a new line; -> if ...() \n {}
 function! lh#cpp#option#nl_before_curlyB()
+  call s:Deprecated()
   return lh#dev#option#get('nl_before_curlyB', &ft, 0)
 endfunction
 
@@ -71,6 +77,14 @@ function! lh#cpp#option#multiple_namespaces_on_same_line()
 endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
+
+" # Deprecated {{{2
+let s:deprecated_notified = 0
+function! s:Deprecated()
+  echomsg "lh#cpp#option#nl_before_bracket() API has been deprecated, please use lh#dev#style#*() and AddStyle instead."
+  let s:deprecated_notified = 1
+endfunction
+
 
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
