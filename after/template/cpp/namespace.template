@@ -1,6 +1,11 @@
 VimL:" $Id$
 VimL:" C++ namespace Template, Luc Hermitte
 VimL:" hint: namespace ns { ... } // ns
+VimL:" Options:
+VimL:" - snippet parameter: {'namespace' : xxx}
+VimL:" - (bg):[cpp_]project_namespace
+VimL:" - (bg):cpp_use_nested_namespace (bool) when [bg]:cpp_std_flavour=/CXXFLAGS/CMake match C++17
+VimL:" - lh#dev#style options
 VimL: let s:value_start  = '¡'
 VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1
@@ -8,11 +13,18 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL:"
 VimL: let s:ns_join = lh#cpp#option#multiple_namespaces_on_same_line()
-VimL: let s:namespace = lh#option#get('cpp_project_namespace', Marker_Txt('ns'))
-VimL: let s:namespace = INPUT('Namespace name: ', s:namespace)
-VimL: let s:namespaces = split(s:namespace, "::")
-VimL: let s:ns_open = s:namespace =~ '^\s*$' ? ["namespace ".C_nl_before_curlyB()."{ // Anonymous namespace"] : map(copy(s:namespaces), '"namespace ".v:val.C_nl_before_curlyB()."{"')
-VimL: let s:ns_close = s:namespace =~ '^\s*$' ? ["} // Anonymous namespace"] : map(copy(s:namespaces), '"}".(s:ns_join ? "" : " // ".v:val." namespace")')
+VimL: let s:namespace = s:Param('namespace', '###')
+MuT:  if s:namespace == '###'
+VimL:    let s:namespace = lh#dev#option#get('project_namespace', &ft, lh#marker#txt('ns'))
+VimL:    let s:namespace = INPUT('Namespace name: ', lh#dev#option#get('project_namespace', &ft, lh#marker#txt('ns')))
+MuT:  endif
+MuT:  if lh#cpp#use_cpp17() && lh#option#get('cpp_use_nested_namespaces', 1)
+VimL:   let s:namespaces = [s:namespace]
+MuT:  else
+VimL:   let s:namespaces = split(s:namespace, "::")
+MuT:  endif
+VimL: let s:ns_open   = s:namespace =~ '^\s*$' ? ["namespace{// Anonymous namespace"] : map(copy(s:namespaces), '"namespace ".v:val."{"')
+VimL: let s:ns_close  = s:namespace =~ '^\s*$' ? ["}// Anonymous namespace"] : map(copy(s:namespaces), '"}".(s:ns_join ? "" : " // ".v:val." namespace")')
 VimL: let s:ns_join_s = s:ns_join ? " " : "\n"
 <+join(s:ns_open, s:ns_join_s)+>
 ¡s:Surround(1, '<++>')¡
