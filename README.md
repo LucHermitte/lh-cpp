@@ -15,7 +15,7 @@ It provides the following things:
 ### Brackets
 
 The insertion of pair of brackets-like characters is eased thanks to [lh-brackets](http://github.com/LucHermitte/lh-brackets).
-| **In mode**             | **INSERT**                                                          | **VISUAL**                                    | **NORMAL**                |
+|   In mode               |   INSERT                                                            |   VISUAL                                      |   NORMAL                  |
 |:------------------------|:--------------------------------------------------------------------|:----------------------------------------------|:--------------------------|
 | **keys**                | Expands into ..                                                     | Surrounds the selection with ... <sup>2</sup> | Surrounds the current ... |
 | `(`                     | `(<cursor>)«»`                                                      | `(<selection>)`                               | word                      |
@@ -94,13 +94,13 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
 ### Templates
   * All templates, snippets and wizards respect the naming convention set for
     the current project thanks to
-    [lh-dev styling feature](http://github.com/LucHermitte/lh-dev#naming-conventions) 
+    [lh-dev styling feature](http://github.com/LucHermitte/lh-dev#naming-conventions)
     -- see my [project style template](http://github.com/LucHermitte/mu-template/blob/master/after/template/vim/internals/vim-rc-local-cpp-style.template)
     for an idea of what is supported and possible.
   * stream inserters, stream extractor, binary operators.
   * bool operator: almost portable hack to provide a boolean operator, strongly
     inspired by Matthew Wilson's _Imperfect C++_.
-  * Generation of [enums](doc/Enums), and of switch-case statements from enum
+  * Generation of [enums](doc/Enums.md), and of switch-case statements from enum
     definition.
   * constructors: `copy-constructor`, `default-constructor`, `destructor`,
     `assignment-operator` (see `:h :Constructor`).
@@ -112,7 +112,7 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
   * When a snippet/template requires header files, they will get included
     automatically (as long as the snippet specifies the headers files required)
     ; note: so far this feature cannot detect whether a required header file is
-    already indirectly included through other included files. 
+    already indirectly included through other included files.
   * Snippets for some standard types are already provided.
   * Some snippets will try to detect the C++11 dialect (98/03/11/14/17) in
     order to adapt the result produced -- it will be done through the analysis
@@ -178,13 +178,22 @@ Bundle 'LucHermitte/lh-cpp'
 
 # Credits
 
+Many people have to be credited:
+  * the Vim & VimL gurus ;
+  * the people I've stolen scripts and functions from: Stephen Riehm, Michael
+    Sharpe, Georgi Slavchev, Johannes Zellner, Saul Lubkin ;
+  * the people that gave me many great ideas and even feedback: Gergely Kontra,
+    Leif Wickland, Robert Kelly IV [I've also stolen scripts from them] ;
+  * Thomas Ribo for his feedback and features-requirements.
+  * and many more that I have probably forgotten.
+
 # See also
   * [C++ tips on vim.wikia](http://vim.wikia.com/wiki/Category:C%2B%2B)
   * c.vim
   * **Project Management**: [local\_vimrc](https://github.com/LucHermitte/local_vimrc)
-  * **Compilation**: [BuildToolsWrappers](https://code.google.com/p/lh-vim/wiki/BTW)
-  * **Errors Highlighting**: syntastic, [compil-hints](https://code.google.com/p/lh-vim/source/browse/#svn%2Fcompil-hints%2Ftrunk) (a non-dynamic syntastic-lite plugin that'll only highlight errors found after a compilation stage)
+  * **Compilation**: [BuildToolsWrappers](http://github.com/LucHermitte/vim-build-tools-wrapper)
+  * **Errors Highlighting**: syntastic, [compil-hints](http://github.com/LucHermitte/vim-compil-hints) (a non-dynamic syntastic-lite plugin that'll only highlight errors found after a compilation stage)
   * **CMake Integration**: [lh-cmake](https://github.com/LucHermitte/lh-cmake) + [local\_vimrc](https://github.com/LucHermitte/local_vimrc) + [BuildToolsWrappers](http://github.com/LucHermitte/vim-build-tools-wrapper)
-  * **Refactoring**: refactor.vim, [my generic refactoring plugin](http://github.com/LucHermitte/lh-refactor)
+  * **Refactoring**: refactor.vim, [my generic refactoring plugin](http://github.com/LucHermitte/vim-refactor)
   * **Code Completion**: [YouCompleteMe](https://github.com/Valloric/YouCompleteMe), really, check this one!, or [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520), or [clang\_complete](https://github.com/Rip-Rip/clang_complete)
   * **Code Indexing**: [clang\_indexer](https://github.com/LucHermitte/clang_indexer) and [vim-clang](https://github.com/LucHermitte/vim-clang), [lh-tags](http://github.com/LucHermitte/lh-tags)
