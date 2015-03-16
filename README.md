@@ -15,6 +15,7 @@ It provides the following things:
 ### Brackets
 
 The insertion of pair of brackets-like characters is eased thanks to [lh-brackets](http://github.com/LucHermitte/lh-brackets).
+
 |   In mode               |   INSERT                                                            |   VISUAL                                      |   NORMAL                  |
 |:------------------------|:--------------------------------------------------------------------|:----------------------------------------------|:--------------------------|
 | **keys**                | Expands into ..                                                     | Surrounds the selection with ... <sup>2</sup> | Surrounds the current ... |
