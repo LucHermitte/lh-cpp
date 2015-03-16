@@ -188,6 +188,19 @@ Many people have to be credited:
   * Thomas Ribo for his feedback and features-requirements.
   * and many more that I have probably forgotten.
 
+# License
+
+  * Documentation is under CC-BY-SA 3.0
+  * lh-cpp is under GPLv3 with exceptions. See acompagning [license file](License.md), i.e.
+      * Plugin, snippets and templates are under GPLv3
+      * Most code generated from snippets (for control statements, proto
+        -> definition, accessors, ...) are under the License Exception
+        detailled in the [license file](License.md).
+      * However, code generated from the following wizards: `class`,
+        `singleton`, `enum` (1&2, switch, for), `abs-rel` -> is under Boost
+        Software Licence
+
+
 # See also
   * [C++ tips on vim.wikia](http://vim.wikia.com/wiki/Category:C%2B%2B)
   * c.vim
