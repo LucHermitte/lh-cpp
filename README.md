@@ -211,3 +211,5 @@ Many people have to be credited:
   * **Refactoring**: refactor.vim, [my generic refactoring plugin](http://github.com/LucHermitte/vim-refactor)
   * **Code Completion**: [YouCompleteMe](https://github.com/Valloric/YouCompleteMe), really, check this one!, or [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520), or [clang\_complete](https://github.com/Rip-Rip/clang_complete)
   * **Code Indexing**: [clang\_indexer](https://github.com/LucHermitte/clang_indexer) and [vim-clang](https://github.com/LucHermitte/vim-clang), [lh-tags](http://github.com/LucHermitte/lh-tags)
+
+[![Project Stats](https://www.openhub.net/p/21020/widgets/project_thin_badge.gif)](https://www.openhub.net/p/21020)
