@@ -1,0 +1,17 @@
+{
+  "name" : "lh-cpp",
+  "version" : "dev",
+  "author" : "Luc Hermitte <http://github.com/LucHermitte>",
+  "maintainer" : "Luc Hermitte <http://github.com/LucHermitte>",
+  "repository" : {"type": "git", "url": "git@github.com:LucHermitte/lh-cpp.git"},
+  "dependencies" : {
+      "lh-vim-lib" : {"type" : "git", "url" : "git@github.com:LucHermitte/lh-vim-lib.git"},
+      "lh-brackets" : {"type": "git", "url": "git@github.com:LucHermitte/lh-brackets.git"},
+      "lh-dev" : {"type": "git", "git": "git@github.com:LucHermitte/lh-dev.git"}
+      "mu-template@lh" : {"type": "git", "url": "git@github.com:LucHermitte/mu-template.git"},
+      "VimFold4C" : {"type": "git", "url": "git@github.com:LucHermitte/VimFold4C.git"}
+  },
+  "description" : "C&C++ ftplugins suite",
+  "homepage" : "http://github.com/LucHermitte/lh-cpp"
+}
+

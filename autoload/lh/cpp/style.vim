@@ -54,7 +54,7 @@ function! lh#cpp#style#attribute2parameter_name(attrb_name)
   let core_name  = lh#dev#naming#variable(a:attrb_name)
   let param_name = lh#dev#naming#param(core_name)
   if param_name == a:attrb_name
-    let param_name = Marker_Txt(param_name)
+    let param_name = lh#marker#txt(param_name)
   endif
   return param_name
 endfunction

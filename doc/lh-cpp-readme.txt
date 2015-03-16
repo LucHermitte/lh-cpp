@@ -1,5 +1,5 @@
-*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0b11)
-                        For Vim version 7.x.    Last change: 30th Jul 2014
+*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0)
+                        For Vim version 7.x.    Last change: 16th Mar 2015
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -52,7 +52,7 @@ Features~
 |C_folding| |C++_folding|         C & C++ folding
 |search-in-runtimepath|         Searching in various directories lists
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                         *C_settings*
     Various settings from c_set.vim~
     File:       ftplugin/c/*c_set.vim*
@@ -60,7 +60,7 @@ Features~
     Vim-options~
         'formatoptions' is set `to' `croql'
         'cindent'       is set.
-        'cinoptions'    is set to ``g0,t0'' 
+        'cinoptions'    is set to ``g0,t0''
                                 (``g0,t0,h1s'' for C++ with |cpp_set.vim|).
         'define'        is set to recognize defines and constants.
         'comments'      is set to ``sr:/*,mb:*,exl:*/,://''
@@ -75,7 +75,7 @@ Features~
         'localleader'   is set to ``,'', unless it is already defined.
         'suffixesadd'   is completed with ``.h'' and ``.c''.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                         *brackets-for-C*
 Bracketing system~
 Files:      |bracketing.base.vim| & |common_brackets.vim|
@@ -85,12 +85,12 @@ Help:       <http://code.google.com/p/lh-vim/wiki/lhBrackets>
 License:    The generated code is under license exception to GPLv3
             <http://code.google.com/p/lh-vim/wiki/License>
 
-Options:    
-    |[bg]:usemarks|                                 (0/[1]) 
+Options:
+    |[bg]:usemarks|                                 (0/[1])
         to enable the insertion of |markers|.
-    |g:marker_prefers_select|                       (0/[1]) 
+    |g:marker_prefers_select|                       (0/[1])
         select or echo the text within marker.
-    |g:marker_select_empty_marks|                   (0/[1]). 
+    |g:marker_select_empty_marks|                   (0/[1]).
         select or delete markers on !jump!
     and many more that are pointless here.
 
@@ -119,7 +119,7 @@ Mappings defined in this particular configuration:
     {, (, '', "", <localleader>[
        Surround the current selection (or word in |Normal-mode|) with the
        bracket-like character used in the mapping.
-    <localleader>{ 
+    <localleader>{
        Insert a pair of curly brackets around the current line (/visual
        selection). It is done in respect of |[bg]:usemarks|.
 
@@ -134,8 +134,8 @@ Mappings defined in this particular configuration:
 NB: The brackets mappings only insert the markers when |[bg]:usemarks|==1,
     and outside comments and string contexts.
     They are buffer relative.
-        
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C_control-statements*
 C Control statements~
 File:       ftplugin/cpp/|c_snippets.vim|
@@ -165,7 +165,7 @@ Mappings and abbreviations defined: [always buffer-relative]
         also done in respect of |[bg]:usemarks|.
 
 Options:
-    * Regarding the control statements (|C_if|, |C_else|, |C_while|, 
+    * Regarding the control statements (|C_if|, |C_else|, |C_while|,
       |C_for|, |C_switch|), a newline will be inserted before:
       - the open parenthesis    if *g:c_nl_before_bracket* == 1
       - the open curly-bracket  if *g:c_nl_before_curlyB*  == 1
@@ -185,8 +185,8 @@ NB: * |[bg]:usemarks| is still taken into account.
       abbreviations.
     * The normal- and visual-modes mappings do not respect
       |g:c_nl_before_bracket| and |g:c_nl_before_curlyB|.
-     
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C_switch_enum*
                                                     *<Plug>SwitchEnum*
 Mapping: ~
@@ -201,7 +201,7 @@ Mapping: ~
 <   will expand into: >
         switch (var)
         {
-            case YES: 
+            case YES:
                 «YES-code»;
                 break;
             case NO:
@@ -225,7 +225,7 @@ Options~
 The default mapping to |i_CTRL-X_se| can be overridden with for instance: >
     imap <buffer> <silent> <leader>se <Plug>SwitchEnum
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C_snippets*
 Other snippets and shortcuts from c_snippets.vim~
 File:       ftplugin/c/*c_snippets.vim*
@@ -246,7 +246,7 @@ Mappings and abbreviations~
 To prevent these mappings and abbreviations to be defined, set
 |g:lh_cpp_snippets| to 0.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C++_control-statements*
 C++ Control statements and other shortcuts~
 File:       ftplugin/cpp/*cpp_snippets.vim*
@@ -311,7 +311,7 @@ To prevent these mappings and abbreviations to be defined, set
 |g:lh_cpp_snippets| to 0.
 
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                         *C++_accessors* *getter* *setter*
 C++ accessors & some templates~
 Files:      *cpp_BuildTemplates.vim* , *cpp_InsertAccessors.vim*
@@ -346,12 +346,12 @@ Options:
         => strings to customize the comments
         "%a" will be substituted by the name of the attribute.
 
-    *(b|g):{ft_}implPlace* where accessor-definitions occur 
+    *(b|g):{ft_}implPlace* where accessor-definitions occur
         0 -> Near the prototype/definition (Java's way)
         1 -> Within the inline section of the header/inline/current file
         2 -> Within the implementation file (.cpp)
         3 -> Use the pimpl idiom (In the Todo-List)
-    *g:inlinesPlace* where inlines are written 
+    *g:inlinesPlace* where inlines are written
         0 -> In the inline section of the header/current file
         1 -> In the inline section of a dedicated inline file
 
@@ -363,7 +363,7 @@ Notes:
       and its mutator -- getter and setter) requires that some formating
       is respected -- you will certainly have to adapt it.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                 *C++_jump_implementation*
 Jumping to functions-implementation~
 Help:       <http://code.google.com/p/lh-vim/wiki/lhCpp_GotoImplementation
@@ -463,7 +463,7 @@ Options:
         Note: If the placement fails, it will still be possible to insert
         manually the default function-implementation thanks to |:PASTEIMPL|.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                             *C++_templates*
 C++ skeletons and wizards~
 
@@ -472,20 +472,20 @@ lh-cpp provides several template-files expanded thanks to |mu-template|.
                                                     *C++_template_new*
 New C/C++ file~
 When a new C or C++ (non-existing) file is opened, |mu-template| provides a
-default skeleton. 
+default skeleton.
 
 ... new header file~
 A header-file will have a header (where one's can put copyright information,
 RCS tags, etc.), anti-reinclusion guards. Some parts of what is generated can
 be globally overridden, or overridden only for project specific needs ; see
-|MuT-paths-override|. 
+|MuT-paths-override|.
 The variation points are:
 - the template-file {rtp}/template/c/internals/c-file-header.template
   where file header is specified ;
 - the template-file {rtp}/template/c/internals/c-header-guard.template
   where the computation of the header guard name, *s:guard* , is done ;
 - |b:sources_root| that can be used to specify the project root directory --
-  this information is used by the default header-guard name policy. 
+  this information is used by the default header-guard name policy.
 
 ... new implementation file~
 An implementation-file will have a header, and if a header-file (and even an
@@ -514,7 +514,7 @@ the class shall have:
 - Entity semantics, but clonable.
 
 See the following articles if you want some more C++ insights on the
-implications of the question: 
+implications of the question:
 - <http://akrzemi1.wordpress.com/2012/02/03/value-semantics/>
 - [French]
   <http://cpp.developpez.com/faq/cpp/?page=classes#CLASS_forme_canonique>
@@ -534,7 +534,7 @@ To-do: support C++11 move-construction and move-assignement.
 The variation points are:
 - |(bg):[{ft}_]dox_CommentLeadingChar|, |(bg):[{ft}_]dox_TagLeadingChar|,
   |(bg):[{ft}_]dox_brief|, |(bg):[{ft}_]dox_ingroup|,
-  |(bg):[{ft}_]dox_author_tag|, |(bg):[{ft}_]dox_author|, 
+  |(bg):[{ft}_]dox_author_tag|, |(bg):[{ft}_]dox_author|,
 - |(bg):dox_group|
   NB: As I've reached the conclusion that everything shall be sorted into
   doxygen groups, I force the presence of this doxygen tag.
@@ -542,7 +542,7 @@ The variation points are:
 - the template-file {rtp}/template/cpp/internals/function-comment.template
   that is used to order the documentation tags associated to generated
   functions. This template file introduced its own variation points:
-  - *(bg):[{ft_}]pre_desc_ordered_tags* 
+  - *(bg):[{ft_}]pre_desc_ordered_tags*
     default= ["ingroup", "brief", "param", "return", "throw", "invariant", "pre", "post"]
   - *(bg):[{ft_}]post_desc_ordered_tags*
     default= ["note", "warning"]
@@ -594,27 +594,27 @@ the second one. -- this command is likelly fall back in |lh-cpp| scope in
 future versions.
 
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                           *C++_Override*
-                                                          *:Override*  
+                                                          *:Override*
 Function overridding helper~
 >
     :Override
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                 *C++_unmatched_functions*
                                                 *:CppDisplayUnmatchedFunctions*
 Search for declared ad undefined functions (or the other way around)~
 >
     :CppDisplayUnmatchedFunctions
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                         *C++_inspection*
 Inspection of various properties~
 *:Ancestor* [classname]
 *:Children* [!] [namespace] [classname]
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                             *C++_options*
 C++ options~
 lh-cpp supports many options directly, or indirectly (through |mu-template|
@@ -628,8 +628,8 @@ open files. They are implemented as vim |global-variable|s.
 Other options are local, i.e. restricted to each buffer. This does not prevent
 us to have an option having the same value in several buffers, however
 changing the value of the option in one buffer won't affect the value of the
-option in other buffers. They are implemented as vim |buffer-variable|s. 
-Semantically speaking, there are two kind of local options: 
+option in other buffers. They are implemented as vim |buffer-variable|s.
+Semantically speaking, there are two kind of local options:
 - options specific to a filetype ;
 - options specific to a project.
 NB: lh-cpp doesn't use the other kinds of vim variables as options
@@ -664,7 +664,7 @@ Default options for a specific filetype shall be defined as |buffer-variable|s
 Project specific settings shall override the previous default settings in
 |local_vimrc|s.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                             *C++_doxygen-options*
 C++ options for doxygen~
 
@@ -676,14 +676,14 @@ C++ options for doxygen~
 *(bg):[{ft}_]dox_author_tag*         Name of the tag to use: ["author"]/"authors"
 *(bg):[{ft}_]dox_author*             Name(s) of the author(s).
 
-*(bg):[{ft_}]template_expand_doc* is a boolean option (default: 1) 
+*(bg):[{ft_}]template_expand_doc* is a boolean option (default: 1)
     Tells whether embedded documentation (as comments) shall be generated when
     template-files are expanded.
-    Used by: 
+    Used by:
     - the template-file {rtp}/template/cpp/internals/function-comment.template
     - the template-file {rtp}/template/cpp/internals/formatted-comment.template
- 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Michael Sharpe's a.vim~
 File: a.vim
 
@@ -692,13 +692,13 @@ Notes:
   The latest version doesn't suit as I use its private functions...
 * Otherwise, it is really nice and useful with C programming
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Georgi Slavchev's previewWord.vim~
 File:       *previewWord.vim*
 Requires:   |Triggers.vim| (supported)
 Notes:      From a vim tip on sourceforge. ; Not required by anything
 
-Option: 
+Option:
     *g:previewIfHold* ([0]/1)
         Automatic search when the cursor hold its position ?
 
@@ -709,11 +709,11 @@ Mappings:
                     hold its position.
                     Defined only if |Triggers.vim| is installed.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                             *C_folding* *C++_folding*
 C & C++ folding~
 Files: fold/c-fold.vim fold/cpp-fold.vim
-Notes:  
+Notes:
     * Initially developed by Johannes Zellner
     * To test and use them, drop them your ftplugin folders or look at
         cleaner solutions like the one used by Johannes Zellner.
@@ -730,7 +730,7 @@ The first steps with these ftplugins can be quite disorienting.
 I expect you did read the |lh-cpp-features| section before trying to write your
 first C or C++ files with the new ftplugins activated.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Step 1 : Opening a C or C++ file~
 You do ~
 >
@@ -740,7 +740,7 @@ or : >
     :e foo.h
 <
 Then you see ~
--> the new buffer filled with many things. 
+-> the new buffer filled with many things.
 Don't worry, it is a feature set by default: a template skeleton is inserted
 in the new buffer. This is done thanks to |mu-template|.
 
@@ -750,7 +750,7 @@ If you don't like this feature ~
     then you can erase |mu-template.vim| and the {rtp}/after/templates/ folder
 (*) you don't want template skeletons to be inserted automatically:
     then add into your .vimrc: >
-    let g:mt_IDontWantTemplatesAutomaticallyInserted = 1 
+    let g:mt_IDontWantTemplatesAutomaticallyInserted = 1
 <   You will still have the possibility to _explicitly_ insert a template
     skeleton with: >
     :MuTemplate c                    " for the C skeleton
@@ -760,7 +760,7 @@ If you don't like this feature ~
     :MuTemplate cpp/stream-extractor " for op<< (beta, smart & slow)
     :MuTemplate cpp/stream-inserter  " for op>> (beta, smart & slow)
     :MuTemplate cpp/my-cpp           " for a specific C++ skeleton
-(*) you don't want C++ skeleton (only) be inserted automatically, 
+(*) you don't want C++ skeleton (only) be inserted automatically,
     [ie: you are OK for HTML and other skeletons] :
     Then override the file {rtp}/after/template/cpp.template
     Don't change anything else than the extension of the file.
@@ -772,7 +772,7 @@ If you don't like this feature ~
     This is |mu-template|'s fault. Deactivate this feature thanks to the
     option: |g:mt_jump_to_first_markers|.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Step 2 : Writing code and control statements~
 You write ~
 >
@@ -824,7 +824,7 @@ lh-cpp API~
 Here are the function made available to write your own ftplugins and
 template-files.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *lh#cpp#dox#*
 
 Doxygen related functions~
@@ -836,11 +836,11 @@ The following functions are parametrized, see |C++_doxygen-options|.
  *lh#dox#tag_leading_char()*
     @see |(bg):[{ft}_]dox_TagLeadingChar|
  *lh#dox#tag()*
-    @returns |lh#dox#tag_leading_char()| + parameter 
+    @returns |lh#dox#tag_leading_char()| + parameter
 
 - Semantics options, i.e. that return a tag and sometimes more~
  *lh#dox#semantics()*
-    @returns "<p><b>Semantics</b><br>" 
+    @returns "<p><b>Semantics</b><br>"
  *lh#dox#ingroup()*
     @param name
     @see |(bg):[{ft}_]dox_ingroup|
@@ -851,17 +851,17 @@ The following functions are parametrized, see |C++_doxygen-options|.
     @return lh#dox#tag("param") + p
  *lh#dox#author()*
     @param names (optional)
-    @returns lh#dox#tag(|(bg):[{ft}_]dox_author_tag|) 
+    @returns lh#dox#tag(|(bg):[{ft}_]dox_author_tag|)
              + names or |(bg):[{ft}_]dox_author| if no names specified
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *lh#cpp#ftplugin#*
 Convinience functions for ftplugin definitions only~
  *lh#cpp#ftplugin#OptionalClass()*
     Function that can be used to write |:command|s in |ftplugins| that tries
     to deduce the name of the current C++ class if none is provided.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *lh#cpp#style*
 Functions dedicated to obtain information on the current style~
  *lh#cpp#style#get()*
@@ -872,7 +872,7 @@ Functions dedicated to obtain information on the current style~
     @param attrb_name
     Applies the chosen naming style for parameters to a attribute name.
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                             *lh#cpp#AnalysisLib_Function#*
 Functions dedicated to the analysis of C/C++ functions~
 
@@ -889,7 +889,7 @@ Functions dedicated to the analysis of C/C++ functions~
 *lh#cpp#AnalysisLib_Function#SignatureToSearchRegex()*
 *lh#cpp#AnalysisLib_Function#TrimParametersNames()*
 
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                             *lh#cpp#AnalysisLib_Class#*
 Functions dedicated to the analysis of C/C++ classes~
 *lh#cpp#AnalysisLib_Class#SearchClassDefinition()*
@@ -903,68 +903,9 @@ Functions dedicated to the analysis of C/C++ classes~
 *lh#cpp#AnalysisLib_Class#attributes()*
 
 ------------------------------------------------------------------------------
-                                                        *Files-from-lh-cpp*
-Files~
-$HOME/.vim/  (or $HOME/vimfiles/ ; cf. 'runtimepath')
-+-> doc/
-|   |   Don't forget to execute ':helptags $HOME/.vim/plugin/doc'
-|   +-> |lh-cpp.txt|: this file
-|
-+-> ftplugin/
-|   +-> c/
-|   |   +-> |c_set.vim|                                required by |cpp_set.vim|
-|   |   +-> |previewWord.vim|                          standalone
-|   |   |    Stolen from vim tips
-|   |   |    Can take advantage of |Triggers.vim|
-|   |   +-> *c_stl.vim* : attempt to detect the current function and display its
-|   |   |    signature within the status line.
-|   |   |    It hangs for a while in some contexts => it has been desactivated.
-|   |   |    Provided for VimL-hackers mainly.
-|   |   +-> |c_compile.vim|
-|   |   +-> *c_brackets.vim* : Customizes the |brackets-for-C| feature
-|   |   +-> doc/
-|   |       +-> |lh-cpp-readme.txt| : this file
-|   |           Don't forget to execute ':helptags $HOME/.vim/ftplugin/c/doc'
-|   +-> cpp/
-|       +-> |cpp_set.vim|
-|       +-> cpp_FindContextClass.vim                    required by IA
-|       +-> |cpp_options-commands.vim|                  required by BT, IA & GFi
-|       +-> |cpp_options.vim|                           required by BT, IA & GFi
-|       +-> |cpp_BuildTemplates.vim|   [BT]             required by IA
-|       +-> |cpp_InsertAccessors.vim|  [IA]
-|       +-> |cpp_GotoFunctionImpl.vim| [GFi]
-|     
-+-> plugin/
-|   +-> a.vim                                           required by IA & GFi
-|   |     old version ; manipulates buffers and windows
-|   +-> *homeLikeVC++.vim*                              standalone
-|        toggles the position of the cursor when pressing <home>.
-|        behaves like VC++ does.
-|     
-+-> macros/
-|   +-> *options.vim*                                   req. by |c_compile.vim|
-|       Defines a very common function: *LHOption()*
-|
-+-> after/template/
-    +-> template.*      \ template files for |mu-template|
-    +-> *               / 
-
-Useful files not in the archive (but available on my web site):
-$HOME/.vim/  (or $HOME/vimfiles/ ; cf. 'runtimepath')
-+-> macros/
-|   +-> menu-maps.vim
-|       Help (ft)plugin writers to define coherent mappings and menus.
-|       Supported by |c_compile.vim|
-+-> plugin/
-    +-> let-modeline.vim
-        Extend modeline to VimL variables.
-        Supported by |c_compile.vim|
-
-
-------------------------------------------------------------------------------
 Credits~
 
-Many people have to be credited: 
+Many people have to be credited:
 * the Vim & VimL gurus ;
 * the people I've stolen scripts and functions from: Stephen Riehm, Michael
   Sharpe, Georgi Slavchev, Johannes Zellner, Saul Lubkin ;
@@ -978,6 +919,6 @@ TODO:~
 
 
 ------------------------------------------------------------------------------
- © Luc Hermitte, 2001-2014 <http://code.google.com/p/lh-vim/wiki/lhCpp>, CC by SA 3.0
- VIM: let b:VS_language = 'american' 
+ © Luc Hermitte, 2001-2015 <http://github.com/LucHermitte/lh-cpp> CC by SA 3.0
+ VIM: let b:VS_language = 'american'
  vim:ts=8:sw=4:tw=80:fo=tcq2:isk=!-~,^*,^\|,^\":ft=help:
