@@ -1,17 +1,16 @@
 "=============================================================================
-" $Id$
 " File:         autoload/lh/cpp/enum.vim                          {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
+"               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
+" Version:      2.1.0
 " Created:      06th Jan 2011
-" Last Update:  $Date$
+" Last Update:  20th Mar 2015
 "------------------------------------------------------------------------
 " Description:
 "       Support autoload-plugin for :SwitchEnum.
-" 
+"
 "------------------------------------------------------------------------
 " Requirements:
 "       Requires Vim7+, lh-dev, lh-vim-lib
@@ -23,7 +22,7 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 200
+let s:k_version = 210
 function! lh#cpp#enum#version()
   return s:k_version
 endfunction
@@ -80,8 +79,8 @@ function! lh#cpp#enum#analyse_token(name, ...)
       return res
     elseif len(t_vars) == 1 && empty(t_enums)
       let res = { 'var': t_vars[0] }
-      if a:0 > 0 
-	throw "Variable ".string(a:1)." referencing another variable: ".string(res)
+      if a:0 > 0
+        throw "Variable ".string(a:1)." referencing another variable: ".string(res)
       endif
     elseif !empty(t_enums) && !empty(t_vars)
       throw "Too many compatible identifiers match the alleged ".(a:name)." enum"
@@ -99,33 +98,33 @@ function! lh#cpp#enum#analyse_token(name, ...)
   " 1.3- or searchdecl otherwise
   if empty(res)
     let pos = getpos('.')
-    try 
+    try
       let not_found = searchdecl(a:name, 1)
       if not_found | return {} | endif
       " Type or variable ?
       let line = getline('.')
       if line =~ 'enum\s\+'.(a:name)
-	" type
-	let res = (a:0 > 0) ? (a:1) : {}
-	let res['type'] = {'pos':getpos('.'), 'name': (a:name)}
-	return res
+        " type
+        let res = (a:0 > 0) ? (a:1) : {}
+        let res['type'] = {'pos':getpos('.'), 'name': (a:name)}
+        return res
       else
-	" variable!
-	" todo: factorize this common pattern
+        " variable!
+        " todo: factorize this common pattern
 let s:re_qualified_name1 = '\%(::\s*\)\=\<\I\i*\>'
 let s:re_qualified_name2 = '\s*::\s*\<\I\i*\>'
 let s:re_qualified_name  = s:re_qualified_name1.'\%('.s:re_qualified_name2.'\)*'
-	" let type = matchstr(line, '.*[(),{};]\s\*\<.*\>\ze\s\+'.a:name)
-	let type = matchstr(line, s:re_qualified_name.'\ze\s\+'.a:name)
-	if type =~ '^\s*$'
-	  throw "Cannot find an enum type related to the ".a:name." variable defined line ".line('.')
-	endif
-	let res = { 'var': {'name': (a:name), 'pos':getpos('.')}, 'type': {'name': type}}
-	if a:0 > 0 
-	  throw "Variable ".string(a:1)." referencing another variable: ".string(res)
-	endif
-	let res = lh#cpp#enum#analyse_token(type, res)
-	return res
+        " let type = matchstr(line, '.*[(),{};]\s\*\<.*\>\ze\s\+'.a:name)
+        let type = matchstr(line, s:re_qualified_name.'\ze\s\+'.a:name)
+        if type =~ '^\s*$'
+          throw "Cannot find an enum type related to the ".a:name." variable defined line ".line('.')
+        endif
+        let res = { 'var': {'name': (a:name), 'pos':getpos('.')}, 'type': {'name': type}}
+        if a:0 > 0
+          throw "Variable ".string(a:1)." referencing another variable: ".string(res)
+        endif
+        let res = lh#cpp#enum#analyse_token(type, res)
+        return res
       endif
     finally
       call setpos('.', pos)
@@ -146,7 +145,7 @@ function! lh#cpp#enum#get_definition(name)
   "     enum type { E1, E2, ...., MAX__ };
   " };
   if what.type.name =~ "::type$"
-    " 1- ask ctags 
+    " 1- ask ctags
     " TODO: check weither the else case is enough
     if has_key(what.type, 'struct')
       let super = what.type.struct

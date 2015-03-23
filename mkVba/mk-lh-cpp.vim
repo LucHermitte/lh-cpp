@@ -1,21 +1,20 @@
 "=============================================================================
-" $Id$
 " File:		mkVba/mk-lh-cpp.vim
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
+" 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b16
+"               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
+" Version:	2.1.0
 " Created:	06th Nov 2007
-" Last Update:	$Date$
+" Last Update:	20th Mar 2015
 "------------------------------------------------------------------------
-let s:version = '2.0.0b16'
+let s:version = '2.1.0'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try
   let save_rtp = &rtp
   let &rtp = expand('<sfile>:p:h:h').','.&rtp
-  exe '25,$MkVimball! '.s:project.'-'.s:version
+  exe '24,$MkVimball! '.s:project.'-'.s:version
   set modifiable
   set buftype=
 finally
