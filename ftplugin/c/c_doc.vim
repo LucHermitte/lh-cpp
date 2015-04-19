@@ -1,21 +1,20 @@
 "=============================================================================
-" $Id$
-" File:		ftplugin/c/c_doc.vim                                      {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	v2.0.0
-" Created:	22nd Jan 2004
-" Last Update:	$Date$
+" File:         ftplugin/c/c_doc.vim                                      {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
+" Version:      v2.0.0
+" Created:      22nd Jan 2004
+" Last Update:  $Date$
 "------------------------------------------------------------------------
-" Description:	Open documentation for C & C++ code
-" 
+" Description:  Open documentation for C & C++ code
+"
 "------------------------------------------------------------------------
-" Installation:	«install details»
+" Installation: ?install details?
 " History:
-"	v2.0.0  GPLv3 w/ exception + deprecation
-" TODO:		
+"       v2.0.0  GPLv3 w/ exception + deprecation
+" TODO:
 " - config variables to tell where to search the documentation
-" - fix VAM dependencies if FixPathName is still used
+" - fix VAM dependencies if lh#path#fix is still used
 " }}}1
 "=============================================================================
 
@@ -27,10 +26,10 @@ finish
 " Local stuff {{{1
 " Avoid buffer reinclusion {{{2
 if exists('b:loaded_ftplug_c_doc')  && !exists('g:force_reload_c_doc')
-  finish 
+  finish
 endif
 let b:loaded_ftplug_c_doc = 1
- 
+
 let s:cpo_save=&cpo
 set cpo&vim
 " }}}2
@@ -39,7 +38,7 @@ set cpo&vim
 
 nnoremap <buffer> <C-F1> :CHelp <c-r><c-a><cr>
 command! -buffer -nargs=1 CHelp :call s:CHelp(<f-args>)
- 
+
 " Commands and mappings }}}2
 " }}}1
 "=============================================================================
@@ -47,7 +46,7 @@ command! -buffer -nargs=1 CHelp :call s:CHelp(<f-args>)
 " Avoid global reinclusion {{{2
 if exists("g:loaded_c_doc") && !exists('g:force_reload_c_doc')
   let &cpo=s:cpo_save
-  finish 
+  finish
 endif
 let g:loaded_c_doc = 1
 " Avoid global reinclusion }}}2
@@ -66,22 +65,6 @@ function! s:Error(msg)
 endfunction
 
 
-" Load system_utils.vim {{{3
-if !exists('*FixPathName')
-  runtime plugin/system_utils.vim macros/system_utils.vim
-endif
-if !exists("*FixPathName")
-  if has('gui')
-    call confirm('<plugin/system_utils.vim> is not found on your system\n'.
-	  \ 'Check for it on <http://hermitte.free.fr/vim/general.php>',
-	  \ 'ok')
-  else
-    echohl ErrorMsg
-    echo '<plugin/system_utils.vim> is not found on your system'
-    echo 'Check for it on <http://hermitte.free.fr/vim/general.php>'
-    echohl None
-  endif
-endif
 
 " Definitions           {{{3
 let s:std_doc = 'F:/Users/Luc/Prog/C++/docs/ref & cours/SL/www.dinkumware.com/htm_cpl/'
@@ -108,12 +91,12 @@ function! s:Build_std_url(class)
   endwhile
   bw!
   let g:urls = urls
-  let nb = strlen(substitute(urls, "[^\n]", '', 'g')) 
+  let nb = strlen(substitute(urls, "[^\n]", '', 'g'))
   if     nb == 0 | return ''
   elseif nb == 1 | return s:std_doc . strpart(urls, 1)
   else
     let n = confirm('chose:', strpart(urls, 1), 1)
-    if n > 0 
+    if n > 0
       let url = matchstr(urls, '\%('."[^\n]*\n".'\)\{'.n.'}\zs'."[^\n]*")
       return s:std_doc . url
     endif
@@ -141,16 +124,16 @@ endfunction
 function! s:DisplayInBrowser(url)
   if exists('g:html_browser')
     " ... into g:html_browser if specified
-    call system(g:html_browser. " " . 
-	  \ FixPathName(a:url,0,((&sh=~'sh')?"'":'"')))
+    call system(g:html_browser. " " .
+          \ lh#path#fix(a:url,0,((&sh=~'sh')?"'":'"')))
   elseif has('win32')
     " ... into Ms's Internet Explorer ; for MsWindows only
-    " :exe ':!start explorer ' . escape(FixPathName(a:url,0), '#')
-    call system("explorer file:///" . 
-	  \ FixPathName(a:url,0,((&sh=~'sh')?"'":'"')))
+    " :exe ':!start explorer ' . escape(lh#path#fix(a:url,0), '#')
+    call system("explorer file:///" .
+          \ lh#path#fix(a:url,0,((&sh=~'sh')?"'":'"')))
   else
     call s:Error('Please set <<g:html_browser>> '
-	  \ . 'to the path of the browser you are using')
+          \ . 'to the path of the browser you are using')
   endif
 endfunction
 
