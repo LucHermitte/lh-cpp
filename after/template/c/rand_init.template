@@ -2,6 +2,6 @@ VimL:" $Id$
 VimL:" rand_init File Template, Luc Hermitte, 28th Oct 2014
 VimL:" hint: srand(time(NULL));
 VimL: let s:reindent     = 1
-VimL: call s:AddPostExpandCallback('lh#cpp#include#add_c_std("time")')
-VimL: call s:AddPostExpandCallback('lh#cpp#include#add_c_std("stdlib")')
+VimL: call s:AddPostExpandCallback('lh#dev#import#add_c_std("time")')
+VimL: call s:AddPostExpandCallback('lh#dev#import#add_c_std("stdlib")')
 srand(time(NULL));

@@ -19,7 +19,7 @@ MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
 @throw <+s:_exception_type+><++>
 MuT:  else
 MuT:    if s:_exception_type =~ 'std::.*'
-VimL:     call s:AddPostExpandCallback('lh#cpp#include#add("<stdexcept>")')
+VimL:     call s:AddPostExpandCallback('lh#dev#import#add("<stdexcept>")')
 MuT:    endif
 throw <+s:_exception_type+>(<+lh#function#execute(s:_exception_args, s:_exception_txt)+>);<++>
 MuT:  endif

@@ -1,0 +1,8 @@
+VimL:" $Id$
+VimL:" otb-sug-snippet File Template, Luc Hermitte, 21st May 2012
+VimL:" hint: Software Guide : BeginCodeSnippet
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+// Software Guide : BeginCodeSnippet
+¡s:Surround(1, '<+code+>')¡
+// Software Guide : EndCodeSnippet

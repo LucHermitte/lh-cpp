@@ -5,5 +5,5 @@ VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: call s:AddPostExpandCallback('lh#cpp#include#add("<memory>")')
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<memory>")')
 std::auto_ptr<¡s:Surround(1, '<+type+>')¡> <+ptr+>(new ¡s:Surround(1, '<+type+>')¡(<+args+>));

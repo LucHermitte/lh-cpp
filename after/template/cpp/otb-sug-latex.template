@@ -1,0 +1,10 @@
+VimL:" $Id$
+VimL:" otb-sug-latex File Template, Luc Hermitte, 21st May 2012
+VimL:" hint: Software Guide : BeginLatex
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+// Software Guide : BeginLatex
+//
+¡s:Surround(1, '//  <+doc+>')¡
+//
+// Software Guide : EndLatex
