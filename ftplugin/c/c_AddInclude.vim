@@ -26,6 +26,7 @@
 " }}}1
 "=============================================================================
 
+finish " This ftplugin has been deprecated in favour of lh-dev/ImportModule feature
 let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
