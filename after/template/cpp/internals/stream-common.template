@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" «stream-common» File Template, Luc Hermitte
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'

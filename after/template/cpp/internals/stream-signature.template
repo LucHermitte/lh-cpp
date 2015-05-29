@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" «stream-signature» File Template, Luc Hermitte, 04th Jun 2004
 VimL: let s:stream_param = lh#dev#naming#param(s:direction."s")
 <+s:friend.s:type+> & operator<+s:op+>(¡s:type.' & '.s:stream_param¡, <+s:const.s:clsname+> & <+lh#dev#naming#param("v")+>)

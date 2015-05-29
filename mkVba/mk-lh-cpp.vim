@@ -4,11 +4,11 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:	2.1.0
+" Version:	2.1.1
 " Created:	06th Nov 2007
-" Last Update:	20th Mar 2015
+" Last Update:	29th May 2015
 "------------------------------------------------------------------------
-let s:version = '2.1.0'
+let s:version = '2.1.1'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try
@@ -71,6 +71,7 @@ after/template/cpp/set.template
 after/template/cpp/shared_ptr.template
 after/template/cpp/since.template
 after/template/cpp/singleton.template
+after/template/cpp/sort.template
 after/template/cpp/starts_with.template
 after/template/cpp/static_assert.template
 after/template/cpp/stream-extractor.template

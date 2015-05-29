@@ -1,0 +1,12 @@
+VimL:" std::sort File Template, Luc Hermitte, 28th May 2015
+VimL:" hint: std::sort(range.begin(), range.end());
+VimL:" todo: support for std::begin() and std::end()
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<algorithm>")')
+VimL: let s:range = s:Surround(1, s:Param('range', lh#marker#txt('range')))
+std::sort(<+s:range+>.begin(),<+s:range+>.end());
+VimL: unlet s:range
