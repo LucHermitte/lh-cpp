@@ -150,7 +150,7 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
 
 ## Installation
   * Requirements: Vim 7.+, [lh-vim-lib](http://github.com/LucHermitte/lh-vim-lib), [lh-brackets](http://github.com/LucHermitte/lh-brackets), [mu-template](http://github.com/LucHermitte/mu-template), [lh-dev](http://github.com/LucHermitte/lh-dev)
-  * With [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager), install mu-template@lh. This is the preferred method because of the various dependencies.
+  * With [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager), install lh-cpp. This is the preferred method because of the various dependencies.
 ```vim
 ActivateAddons lh-cpp
 ```
