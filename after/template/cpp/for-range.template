@@ -1,0 +1,16 @@
+VimL:" range-based for loop File Template, Luc Hermitte, 07th Jul 2015
+VimL:" hint: for(auto&& e : range)
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: let s:type = s:Param("type", lh#marker#txt('auto&&'))
+VimL: let s:elem = s:Param("elem", lh#marker#txt('e'))
+VimL: let s:range = s:Param("range", lh#marker#txt('range'))
+for (<+s:type+> <+s:elem+> : <+s:range+>) {
+    ¡s:Surround(1, '<++>')¡
+}<++>
+VimL: unlet s:type
+VimL: unlet s:elem
+VimL: unlet s:range

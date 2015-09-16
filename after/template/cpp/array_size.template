@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" array_size definition File Template, Luc Hermitte, 25th Apr 2014
 VimL:" hint: std::extent<decltype(tab)>::value
 VimL: let s:value_start = 'Â¡'
@@ -9,10 +8,12 @@ MuT:  if lh#cpp#use_cpp11()
 VimL:     function! s:_array_size(tab)
 VimL:         return 'std::extent<decltype('.a:tab.')>::value'
 VimL:     endfunction
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<type_traits>")')
+<+s:_array_size(s:Surround(1, s:Param("array", lh#marker#txt('array'))))+>
 MuT:  else
 // Parfois on a besoin d'une constante de compilation ;
 // dans ce cas la solution suivante est applicable :
-// Falk Tannhäuser, fclc++, 
+// Falk Tannhäuser, fclc++,
 //   Message-ID: <3FCB378C.1A1C6066@crf.canon.fr>
 namespace  {
     template <std::size_t N>
@@ -20,7 +21,7 @@ namespace  {
 
     template<typename T, std::size_t N>
     array<N> array_size_helper(T (&)[N]);
-} // namespace 
+} // namespace
 #define array_size(array) (sizeof ::array_size_helper(array).value)
 VimL:     function! s:_array_size(tab)
 VimL:         return 'array_size('.a:tab.')'

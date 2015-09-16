@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ Singleton-Class Template, Luc Hermitte
 VimL:" «Meyers singleton», cf. More Effective C++ Item 26
 VimL:" For a more precise definition, cf. A. Alexandrescu's Modern C++ Design
@@ -10,6 +9,9 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:clsname = empty(s:Args()) ? INPUT("singleton name ?", Marker_Txt(expand('%:t:r'))) : (s:Args()[0])
 VimL: call CppDox_SingletonWizard(s:clsname)
+MuT:  if g:CppDox_inherits =~ 'boost::noncopyable'
+VimL:    call s:AddPostExpandCallback('lh#dev#import#add("<boost/noncopyable.hpp>")')
+MuT:  endif
 VimL:"
 VimL: call s:Include("section-sep", "c", s:clsname." singleton")
 /**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
