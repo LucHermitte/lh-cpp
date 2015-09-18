@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" cin File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std::cin
 VimL: let s:value_start = '¡'
@@ -6,4 +5,4 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<iostream>")')
-std::cin << <++>;
+std::cin >> <++>;
