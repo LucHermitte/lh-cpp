@@ -1,13 +1,15 @@
 "=============================================================================
-" $Id$
-" File:		ftplugin/cpp/cpp_Doxygen.vim                              {{{1
+" File:		ftplugin/c/c_Doxygen.vim                                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
-" Version:	2.0.0b1
+" 		<URL:http://github.com/LucHermitte/lh-cpp>
+" License:      GPLv3 with exceptions
+"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+" Version:	2.1.2
+let s:k_version = 212
 " Created:	22nd Nov 2005
-" Last Update:	$Date$ (08th Feb 2008)
+" Last Update:	26th Oct 2015
 "------------------------------------------------------------------------
-" Description:	
+" Description:
 " 	Provides the command :DOX that expands a doxygened documentation for
 " 	the current C|C++ function.
 "
@@ -26,7 +28,7 @@
 " 	- [bg]:[&ft_]dox_ingroup
 " 	- [bg]:[&ft_]dox_brief
 " 	- [bg]:[&ft_]dox_throw
-" 
+"
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
 " Dependencies:	Mu-template
@@ -39,11 +41,11 @@ endif
 
 "=============================================================================
 " Avoid buffer reinclusion {{{1
-if exists('b:loaded_ftplug_cpp_Doxygen') && !exists('g:force_reload_cpp_Doxygen')
+if exists('b:loaded_ftplug_c_Doxygen') && !exists('g:force_reload_c_Doxygen')
   finish
 endif
-let b:loaded_ftplug_cpp_Doxygen = 1
- 
+let b:loaded_ftplug_c_Doxygen = s:k_version
+
 let s:cpo_save=&cpo
 set cpo&vim
 " }}}1
@@ -56,16 +58,16 @@ set cpo&vim
 " todo: detect returned type
 
 command! -buffer -nargs=0 DOX :call s:Doxygenize()
- 
+
 " Commands and mappings }}}1
 "=============================================================================
 " Avoid global reinclusion {{{1
-if exists("s:loaded_cpp_Doxygen") 
-      \ && !exists('g:force_reload_cpp_Doxygen')
+if exists("s:loaded_c_Doxygen")
+      \ && !exists('g:force_reload_c_Doxygen')
   let &cpo=s:cpo_save
-  finish 
+  finish
 endif
-let s:loaded_cpp_Doxygen_vim = 1
+let s:loaded_c_Doxygen_vim = 1
 " Avoid global reinclusion }}}1
 "------------------------------------------------------------------------
 " Functions {{{1
@@ -123,7 +125,7 @@ function! s:Doxygenize()
           \  lh#dox#tag("param")
           \ . s:ParameterDirection(param.type)
           \ . ' ' . param.name
-          \ . '  ' . Marker_Txt((param.name).'-explanations') 
+          \ . '  ' . Marker_Txt((param.name).'-explanations')
     call add (g:CppDox_Params_snippet, sValue)
     " pointer ? -> default non null precondition
     " todo: add an option if we don't want that by default (or even better, use
@@ -132,7 +134,7 @@ function! s:Doxygenize()
       let sValue =
             \  lh#dox#tag("pre")
             \ . ' <tt>'.(param.name).' != NULL</tt>'
-            \ . Marker_Txt() 
+            \ . Marker_Txt()
       call add(g:CppDox_preconditions_snippet, sValue)
     endif
   endfor
@@ -146,19 +148,19 @@ function! s:Doxygenize()
   if ret =~ 'void\|^$'
     let g:CppDox_return_snippet = ''
   else
-    let g:CppDox_return_snippet	  = lh#dox#tag('return ').Marker_Txt(ret) 
+    let g:CppDox_return_snippet	  = lh#dox#tag('return ').Marker_Txt(ret)
   endif
 
   " todo
   " empty => @throw None
   " list => n x @throw list
   " non-existant => markerthrow
-  if !has_key(info, 'throw') || len(info.throw) == 0 
+  if !has_key(info, 'throw') || len(info.throw) == 0
     let g:CppDox_exceptions_snippet = lh#dox#throw()
   else
     let throws = info.throw
     let empty_marker = Marker_Txt('')
-    if len(throws) == 1 && strlen(throws[0]) == 0 
+    if len(throws) == 1 && strlen(throws[0]) == 0
       let g:CppDox_exceptions_snippet = lh#dox#throw('None').empty_marker
     else
       call map(throws, 'lh#dox#throw(v:val). empty_marker')

@@ -4,7 +4,7 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:	2.1.1
+" Version:	2.1.2
 " Created:	06th Nov 2007
 " Last Update:	29th May 2015
 "------------------------------------------------------------------------
@@ -116,6 +116,7 @@ fold/c-fold.vim
 fold/cpp-fold.vim
 ftplugin/c/LoadHeaderFile.vim
 ftplugin/c/c_AddInclude.vim
+ftplugin/c/c_Doxygen.vim
 ftplugin/c/c_UnmatchedFunctions.vim
 ftplugin/c/c_complete_include.vim
 ftplugin/c/c_doc.vim
@@ -134,7 +135,6 @@ ftplugin/c/word.list
 ftplugin/cpp/cpp_AddMissingScope.vim
 ftplugin/cpp/cpp_BuildTemplates.vim
 ftplugin/cpp/cpp_Constructor.vim
-ftplugin/cpp/cpp_Doxygen.vim
 ftplugin/cpp/cpp_Doxygen_class_stuff.vim
 ftplugin/cpp/cpp_Enum.vim
 ftplugin/cpp/cpp_FindContextClass.vim

@@ -1,13 +1,12 @@
 "=============================================================================
-" $Id$
 " File:         autoload/lh/cpp/dox.vim                           {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
+" 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " Version:	2.0.0
 " Created:      22nd Feb 2011
-" Last Update:  $Date$
+" Last Update:  26th Oct 2015
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
