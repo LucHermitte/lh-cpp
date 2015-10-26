@@ -15,6 +15,7 @@ let s:k_version = 212
 "
 " 	:DOX tries to guess various things like:
 " 	- the direction ([in], [out], [in,out]) of the parameters
+" 	- pointers that should not be null
 " 	- ...
 "
 " 	It also comes with the following template-file:
@@ -94,93 +95,97 @@ function! s:ParameterDirection(type)
   " First strip any namespace/scope stuff
 
   " Support for boost smart pointers, custom types, ...
-  if     a:type =~ '\%(\<const\>\s*[&*]\=\|const_\%(reference\|iterator\)\|&&\|\%(unique\|auto\)_ptr\)\s*$'
-        \ . '\|^\s*\(\<const\>\)'
+  if     a:type =~ '\%(\<const\(expr\)\=\>\s*[&*]\=\|const_\%(reference\|iterator\)\|&&\|\%(unique\|auto\)_ptr\)\s*$'
+        \ . '\|^\s*\(\<const\(expr\)\=\>\)'
     return '[in]'
   elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\|_ptr\)\s*$'
-    return '[' . Marker_Txt('in,') . 'out]'
+    return '[' . lh#marker#txt('in,') . 'out]'
   elseif lh#dev#cpp#types#IsBaseType(a:type, 0)
     return '[in]'
   else
-    return Marker_Txt('[in]')
+    return lh#marker#txt('[in]')
   endif
 endfunction
 
 " Function: s:Doxygenize()                            {{{2
-function! s:Doxygenize()
-  " Obtain informations from the function at the current cursor position.
-  let proto  = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0)
-  let info   = lh#cpp#AnalysisLib_Function#AnalysePrototype(proto)
-  let params = info.parameters
-  let ret    = info.return
+function! s:Doxygenize() abort
+  let cleanup = lh#on#exit()
+        \.restore('g:CppDox_Params_snippet')
+        \.restore('g:CppDox_preconditions_snippet')
+        \.restore('g:CppDox_return_snippet')
+        \.restore('g:CppDox_exceptions_snippet')
+        \.restore('g:CppDox_ingroup_snippet')
+        \.restore('g:CppDox_brief_snippet')
+  try
+    " Obtain informations from the function at the current cursor position.
+    let proto  = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0)
+    let info   = lh#cpp#AnalysisLib_Function#AnalysePrototype(proto)
+    let params = info.parameters
+    let ret    = info.return
 
-  " Build data to insert
-  "
-  " Parameters & preconditions
-  let g:CppDox_Params_snippet = []
-  let g:CppDox_preconditions_snippet = []
-  for param in params
-    " @param
-    let sValue =
-          \  lh#dox#tag("param")
-          \ . s:ParameterDirection(param.type)
-          \ . ' ' . param.name
-          \ . '  ' . Marker_Txt((param.name).'-explanations')
-    call add (g:CppDox_Params_snippet, sValue)
-    " pointer ? -> default non null precondition
-    " todo: add an option if we don't want that by default (or even better, use
-    " clang to check whether an assert is being used for that purpose...)
-    if lh#dev#cpp#types#IsPointer(param.type)
+    " Build data to insert
+    "
+    " Parameters & preconditions
+    let g:CppDox_Params_snippet = []
+    let g:CppDox_preconditions_snippet = []
+    for param in params
+      " @param
       let sValue =
-            \  lh#dox#tag("pre")
-            \ . ' <tt>'.(param.name).' != NULL</tt>'
-            \ . Marker_Txt()
-      call add(g:CppDox_preconditions_snippet, sValue)
-    endif
-  endfor
+            \  lh#dox#tag("param")
+            \ . s:ParameterDirection(param.type)
+            \ . ' ' . param.name
+            \ . '  ' . lh#marker#txt((param.name).'-explanations')
+      call add (g:CppDox_Params_snippet, sValue)
+      " pointer ? -> default non null precondition
+      " todo: add an option if we don't want that by default (or even better, use
+      " clang to check whether an assert is being used for that purpose...)
+      if lh#dev#cpp#types#IsPointer(param.type)
+        let sValue =
+              \  lh#dox#tag("pre")
+              \ . ' <tt>'.(param.name).' != NULL</tt>'
+              \ . lh#marker#txt()
+        call add(g:CppDox_preconditions_snippet, sValue)
+      endif
+    endfor
 
-  " Ingroup
-  let g:CppDox_ingroup_snippet = lh#dox#ingroup()
+    " Ingroup
+    let g:CppDox_ingroup_snippet = lh#dox#ingroup()
 
-  " Brief
-  let g:CppDox_brief_snippet = lh#dox#brief('')
+    " Brief
+    let g:CppDox_brief_snippet = lh#dox#brief('')
 
-  if ret =~ 'void\|^$'
-    let g:CppDox_return_snippet = ''
-  else
-    let g:CppDox_return_snippet	  = lh#dox#tag('return ').Marker_Txt(ret)
-  endif
-
-  " todo
-  " empty => @throw None
-  " list => n x @throw list
-  " non-existant => markerthrow
-  if !has_key(info, 'throw') || len(info.throw) == 0
-    let g:CppDox_exceptions_snippet = lh#dox#throw()
-  else
-    let throws = info.throw
-    let empty_marker = Marker_Txt('')
-    if len(throws) == 1 && strlen(throws[0]) == 0
-      let g:CppDox_exceptions_snippet = lh#dox#throw('None').empty_marker
+    if ret =~ 'void\|^$'
+      let g:CppDox_return_snippet = ''
     else
-      call map(throws, 'lh#dox#throw(v:val). empty_marker')
-      let g:CppDox_exceptions_snippet = throws
+      let g:CppDox_return_snippet	  = lh#dox#tag('return ').lh#marker#txt(ret)
     endif
-  endif
 
-  " goto begining of the function
-  :put!=''
-  " Load the template
-  :MuTemplate dox/function
+    " todo
+    " empty => @throw None
+    " list => n x @throw list
+    " non-existant => markerthrow
+    " noexcept
+    if !has_key(info, 'throw') || len(info.throw) == 0
+      let g:CppDox_exceptions_snippet = lh#dox#throw()
+    else
+      let throws = info.throw
+      let empty_marker = lh#marker#txt('')
+      if len(throws) == 1 && strlen(throws[0]) == 0
+        let g:CppDox_exceptions_snippet = lh#dox#throw('None').empty_marker
+      else
+        call map(throws, 'lh#dox#throw(v:val). empty_marker')
+        let g:CppDox_exceptions_snippet = throws
+      endif
+    endif
 
-  " release parameters of the template-file
-  unlet g:CppDox_Params_snippet
-  unlet g:CppDox_preconditions_snippet
-  unlet g:CppDox_return_snippet
-  unlet g:CppDox_exceptions_snippet
-  unlet g:CppDox_ingroup_snippet
-  unlet g:CppDox_brief_snippet
+    " goto begining of the function
+    :put!=''
+    " Load the template
+    :MuTemplate dox/function
 
+  finally
+    call cleanup.finalize()
+  endtry
 endfunction
 
 " Functions }}}1
