@@ -1,0 +1,12 @@
+VimL:" google-benchmark File Template, Luc Hermitte, 27th Oct 2015
+VimL:" hint: static void BM_<+test+>(benchmark::State & state) {
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+static void BM_<+bench+>(benchmark::State & state) {
+    while (state.KeepRunning()) {
+        <++>
+    }
+}
+BENCHMARK(BM_<+bench+>);
