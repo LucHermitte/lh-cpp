@@ -2,15 +2,16 @@
 " File:		ftplugin/c/c_set.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
-" Last Update:	$Date$
+" Version:	2.1.3
+let s:k_version = 213
+" Last Update:	28th Oct 2015
 "
 " Purpose:	ftplugin for C (-like) programming
 "
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
-" Dependancies:
-" 		LoadHeaderFile.vim	
+" Dependencies:
+" 		LoadHeaderFile.vim
 " 		flist & flistmaps.vim	-- Dr Chips
 " 		VIM >= 6.00 only
 " ========================================================================
@@ -24,9 +25,9 @@
 " Buffer local definitions {{{1
 " ========================================================================
 if exists("b:loaded_c_set") && !exists('g:force_reload_c_set')
-  finish 
+  finish
 endif
-let b:loaded_c_set = 1
+let b:loaded_c_set = s:k_version
 let s:cpo_save = &cpo
 set cpo&vim
 
@@ -45,7 +46,7 @@ let b:did_ftplugin = 1
 setlocal formatoptions=croql
 setlocal cindent
 setlocal cinoptions=g0,t0
-setlocal define=^\(#\s*define\|[a-z]*\s*const\s*[a-z]*\)
+setlocal define=^\(#\s*define\|[a-z]*\s*const\(expr\)\=\s*[a-z]*\)
 setlocal comments=sr:/*,mb:*,exl:*/,:///,://
 " setlocal isk+=#		" so #if is considered as a keyword, etc
 " setlocal isk-=-		" so ptr- (in ptr->member) is not
@@ -58,10 +59,10 @@ setlocal suffixesadd+=.h,.c
 setlocal cmdheight=3
 setlocal nosmd
 
-" Dictionary from Dr.-Ing. Fritz Mehner 
+" Dictionary from Dr.-Ing. Fritz Mehner
 let s:dictionary=expand("<sfile>:p:h").'/word.list'
 if filereadable(s:dictionary)
-  let &dictionary=s:dictionary
+  let &l:dictionary=s:dictionary
   setlocal complete+=k
 endif
 setlocal complete-=i
@@ -75,9 +76,9 @@ setlocal complete-=i
 "
 ""so <sfile>:p:h/LoadHeaderFile.vim
 if exists("*LoadHeaderFile")
-  nnoremap <buffer> <buffer> <C-F12> 
+  nnoremap <buffer> <buffer> <C-F12>
 	\ :call LoadHeaderFile(getline('.'),0)<cr>
-  inoremap <buffer> <buffer> <C-F12> 
+  inoremap <buffer> <buffer> <C-F12>
 	\ <esc>:call LoadHeaderFile(getline('.'),0)<cr>
 endif
 
