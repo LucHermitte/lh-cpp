@@ -21,16 +21,18 @@ finally
   let &rtp = save_rtp
 endtry
 finish
+addon-info.json
 after/plugin/a.vim
-after/template/c/realloc.template
+after/template/c/assert.template
 after/template/c/rand_init.template
+after/template/c/realloc.template
 after/template/cpp/abs-rel.template
 after/template/cpp/array_size.template
 after/template/cpp/assignment-operator.template
 after/template/cpp/auto_ptr-instance.template
 after/template/cpp/auto_ptr.template
-after/template/cpp/benchmark.template
 after/template/cpp/b-e.template
+after/template/cpp/benchmark.template
 after/template/cpp/bool-operator.template
 after/template/cpp/catch.template
 after/template/cpp/cerr.template
@@ -147,7 +149,6 @@ ftplugin/cpp/cpp_refactor.vim
 ftplugin/cpp/cpp_set.vim
 ftplugin/cpp/cpp_snippets.vim
 ftplugin/idl_set.vim
-addon-info.json
 lh-cpp.README
 mkVba/mk-lh-cpp.vim
 plugin/a-old.vim
