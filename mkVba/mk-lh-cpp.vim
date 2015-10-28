@@ -8,7 +8,7 @@
 " Created:	06th Nov 2007
 " Last Update:	27th Oct 2015
 "------------------------------------------------------------------------
-let s:version = '2.1.1'
+let s:version = '2.1.3'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try
@@ -21,7 +21,6 @@ finally
   let &rtp = save_rtp
 endtry
 finish
-after/ftplugin/c/c_brackets.vim
 after/plugin/a.vim
 after/template/c/realloc.template
 after/template/c/rand_init.template
@@ -93,6 +92,7 @@ after/template/dox/file.template
 after/template/dox/function.template
 after/template/dox/group.template
 after/template/dox/html.template
+after/template/dox/since.template
 after/template/dox/tt.template
 autoload/lh/cpp.vim
 autoload/lh/cpp/AnalysisLib_Class.vim
@@ -113,8 +113,6 @@ autoload/lh/cpp/tags.vim
 autoload/lh/dox.vim
 doc/c.html
 doc/lh-cpp-readme.txt
-fold/c-fold.vim
-fold/cpp-fold.vim
 ftplugin/c/LoadHeaderFile.vim
 ftplugin/c/c_AddInclude.vim
 ftplugin/c/c_Doxygen.vim
@@ -149,7 +147,7 @@ ftplugin/cpp/cpp_refactor.vim
 ftplugin/cpp/cpp_set.vim
 ftplugin/cpp/cpp_snippets.vim
 ftplugin/idl_set.vim
-lh-cpp-addon-info.txt
+addon-info.json
 lh-cpp.README
 mkVba/mk-lh-cpp.vim
 plugin/a-old.vim
