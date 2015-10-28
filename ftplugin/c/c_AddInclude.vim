@@ -1,13 +1,13 @@
 "=============================================================================
-" $Id$
 " File:         ftplugin/c/c_AddInclude.vim                       {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0b14
+" Version:      2.1.3
+let s:k_version = 213
 " Created:      22nd May 2012
-" Last Update:  $Date$
+" Last Update:  28th Oct 2015
 "------------------------------------------------------------------------
 " Description:
 "       This ftplugin defines a mapping to insert missing includes (given we
@@ -27,7 +27,6 @@
 "=============================================================================
 
 finish " This ftplugin has been deprecated in favour of lh-dev/ImportModule feature
-let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_c_AddInclude")
@@ -66,11 +65,6 @@ let g:loaded_ftplug_c_AddInclude = s:k_version
 " Keep here only the functions are are required when the ftplugin is
 " loaded, like functions that help building a vim-menu for this
 " ftplugin.
-function! s:TagsSelectPolicy()
-  let select_policy = lh#option#get('tags_select', "expand('<cword>')", 'bg')
-  return select_policy
-endfunction
-
 function! s:InsertInclude() abort
   " If there are several choices, ask which one to use.
   " But first: check the files.
