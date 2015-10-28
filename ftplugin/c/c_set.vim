@@ -1,5 +1,4 @@
 " ========================================================================
-" $Id$
 " File:		ftplugin/c/c_set.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>

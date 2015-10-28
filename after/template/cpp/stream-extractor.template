@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ stream-extractor (operator>>) Template, Luc Hermitte, 04th Jun 2004
 VimL:" hint: istream& operator>>(istream &, class-type)
 VimL: let s:value_start = '¡'

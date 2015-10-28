@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" b-e File Template, Luc Hermitte, 30th Jun 2011
 VimL:" hint: <+container+>.begin(), <+container+>.end()
 VimL: let s:marker_open  = '<+'

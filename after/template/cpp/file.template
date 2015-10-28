@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" file File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: i/ofstream
 VimL: let s:value_start = '¡'

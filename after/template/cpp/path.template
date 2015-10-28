@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" boost-path File Template, Luc Hermitte, 29th Apr 2014
 VimL:" hint: boost::filesystem::path
 VimL: let s:value_start = '¡'

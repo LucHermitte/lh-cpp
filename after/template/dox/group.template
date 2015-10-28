@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" Doxygen local group File-Template, Luc Hermitte, 26th Jan 2011
 VimL:" hint: Doxygen local group 
 VimL: let s:marker_open  = '<+'

@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" cout File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std::cout
 VimL: let s:value_start = '¡'

@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" unique_ptr File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std::unique_ptr<>
 VimL: let s:value_start = '¡'

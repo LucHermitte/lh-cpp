@@ -1,4 +1,3 @@
-VimL:" $Id: default-constructor.template 529 2012-03-23 19:10:41Z luc.hermitte $
 VimL:" default-constructor File Template, Luc Hermitte, 21st Aug 2011
 VimL:" hint: T(T const&);
 VimL: let s:marker_open  = "<+"

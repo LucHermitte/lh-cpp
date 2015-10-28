@@ -1,5 +1,4 @@
 " ========================================================================
-" $Id$
 " File:         autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
 " Author:       Luc Hermitte <MAIL:hermitte at free.fr>
 "               <URL:http://code.google.com/p/lh-vim/>

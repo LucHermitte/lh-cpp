@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" starts_with File Template, Luc Hermitte <hermitte at free.fr>, 28th May 2014
 VimL:" hint: boost::algorithm::starts_with
 VimL: let s:value_start = '¡'

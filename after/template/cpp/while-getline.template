@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" while-getline File Template, Luc Hermitte, 06th Sep 2012
 VimL:" hint: while(std::getline(stream,line)) { action; }
 VimL: let s:value_start = '¡'

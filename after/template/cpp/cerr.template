@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" cerr File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std::cerr
 VimL: let s:value_start = '¡'

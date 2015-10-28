@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" ptr_vector File Template, Luc Hermitte <hermitte at free.fr>, 22nd May 2014
 VimL:" hint: boost::ptr_vector<>
 VimL:" hint: std::vector<>

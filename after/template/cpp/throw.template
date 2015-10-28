@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:"{throw default exceptions for project} Template-File, Luc Hermitte
 VimL:" hint: throw std::runtime_error/@throw (depending on context)
 VimL:"

@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" shared_ptr File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std/boost::shared_ptr<>
 VimL: let s:value_start = '¡'

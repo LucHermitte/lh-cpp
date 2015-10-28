@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" bool-operator Template, Luc Hermitte
 VimL:" hint: safe bool operator
 VimL: let s:reindent     = 1

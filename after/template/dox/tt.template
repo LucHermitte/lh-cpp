@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" doxygen <tt/> File Template, Luc Hermitte, 11th Apr 2012
 VimL:" hint: <tt>|</tt>
 VimL: let s:text = s:Surround(1, Marker_Txt())

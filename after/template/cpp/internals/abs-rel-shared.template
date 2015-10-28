@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" Shared definition for Absolute and relative Classes Template, Luc Hermitte
 VimL:" Used to define Date and Duration, Point and Distance, ... 
 VimL: let s:value_start = '¡'

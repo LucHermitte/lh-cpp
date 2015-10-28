@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" assignment-operator File Template, Luc Hermitte, 21st Aug 2011
 VimL:" hint: T& operator=(T const&);
 VimL: let s:marker_open  = "<+"

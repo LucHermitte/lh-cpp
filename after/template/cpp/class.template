@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ Class Template, Luc Hermitte
 VimL:" hint: Class Wizard (asks for class semantics)
 VimL: let s:value_start = '¡'

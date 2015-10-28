@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:"{std::ostringstream oss; oss << } Template-File, Luc Hermitte
 VimL:" hint: std::ostringstream oss; oss << ...
 VimL: let s:value_start  = '¡'

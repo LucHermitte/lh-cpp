@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" enum2-impl File Template, Luc Hermitte, 23rd Apr 2014
 VimL:" hint: enum2 code that goes into .cpp files
 VimL: let s:value_start = '¡'

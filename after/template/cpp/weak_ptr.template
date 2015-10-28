@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" weak_ptr File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std/boost::weak_ptr<>
 VimL: let s:value_start = '¡'

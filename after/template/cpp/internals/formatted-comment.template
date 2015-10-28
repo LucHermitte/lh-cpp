@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ formatted-comment template-routine, Luc Hermitte, 23rd Mar 2012
 VimL:" Meant to be used as a function whose parameter is a list of things to print.
 VimL:" Default output format=doxygen; override this template for  other formats.

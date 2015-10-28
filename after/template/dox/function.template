@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ Doxygen snippet for functions, Luc Hermitte
 VimL:" Meant to be used through the command :DOX
 VimL:" hint: /** @ingroup, @params, @exceptions, ... */

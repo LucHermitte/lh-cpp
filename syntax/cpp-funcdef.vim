@@ -1,5 +1,4 @@
 "=============================================================================
-" $Id$
 " File:		syntax/cpp-funcdef.vim                                    {{{1
 " Author:	Olivier Teuliere
 " 		<URL:http://vim.wikia.com/wiki/Highlighting_of_method_names_in_the_definition>

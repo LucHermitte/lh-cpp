@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ binary operator snippet, Luc Hermitte, 30th Sep 2013
 VimL:" hint: operatorX(T lhs, T const& rhs) { return lhs X= rhs; }
 VimL: let s:marker_open  = '<+'

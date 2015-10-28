@@ -1,5 +1,4 @@
 " ========================================================================
-" $Id$
 " File:		ftplugin/cpp/cpp_GotoFunctionImpl.vim                 {{{1
 " Authors:	{{{2
 " 		From an original mapping by Leif Wickland (VIM-TIP#335)

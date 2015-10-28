@@ -1,5 +1,4 @@
 "=============================================================================
-" $Id$
 " File:		plugin/homeLikeVC++.vim
 " Author:	Luc Hermitte <EMAIL:hermitte at free.fr>
 "		<URL:http://code.google.com/p/lh-vim/>

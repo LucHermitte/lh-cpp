@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ stream-inserter (operator<<) Template, Luc Hermitte, 04th Jun 2004
 VimL:" hint: ostream& operator<<(ostream &, class-type)
 VimL: let s:value_start = '¡'

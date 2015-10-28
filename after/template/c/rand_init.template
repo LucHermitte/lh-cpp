@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" rand_init File Template, Luc Hermitte, 28th Oct 2014
 VimL:" hint: srand(time(NULL));
 VimL: let s:reindent     = 1

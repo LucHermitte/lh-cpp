@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:"{catch(...){...}} Template-File, Luc Hermitte
 VimL:" hint: catch(...){...}
 VimL: let s:value_start  = '¡'

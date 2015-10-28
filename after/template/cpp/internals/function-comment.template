@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" function-comment File Template, Luc Hermitte, 22nd Aug 2011
 VimL:" template to generate function comments, default format=doxygen
 VimL: let s:fn_comments=s:Args()[0]

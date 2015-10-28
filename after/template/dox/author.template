@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ Doxygen snippet for authors, Luc Hermitte
 VimL:" hint: @author
 VimL: let s:marker_open  = '<+'

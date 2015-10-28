@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" destructor File Template, Luc Hermitte, 23rd Mar 2012
 VimL:" hint: ~T();
 VimL: let s:marker_open  = "<+"

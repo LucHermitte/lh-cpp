@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" realloc File Template, Luc Hermitte, 20th Aug 2012
 VimL:" hint: new_p = realloc(pn size); if (!new_p) {free(p); +reset all 
 VimL: let s:marker_open  = '<+'

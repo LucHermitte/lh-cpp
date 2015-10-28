@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" noncopyable File Template, Luc Hermitte <hermitte at free.fr>, 28th May 2014
 VimL:" hint: boost::noncopyable
 VimL: let s:value_start = '¡'

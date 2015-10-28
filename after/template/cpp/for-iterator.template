@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ for-loop on iterators Template, Luc Hermitte
 VimL:" hint: for (T::iterator b=c.begin(), e=c.end(); b!=e; ++b) { ... }
 VimL: let s:value_start  = '¡'

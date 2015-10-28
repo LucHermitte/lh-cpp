@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" copy-and-swap File Template, Luc Hermitte, 21st Aug 2011
 VimL:" hint: assign op + swap
 VimL: " todo: recognize C++11 in order to add the proper nothrow specification

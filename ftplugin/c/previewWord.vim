@@ -1,5 +1,4 @@
 "=============================================================================
-" $Id$
 " File:		ftplugin/c/previewWord.vim
 " Author: 	Georgi Slavchev <EMAIL:goyko@gbg.bg>
 " 		From <URL:http://vim.sf.net>

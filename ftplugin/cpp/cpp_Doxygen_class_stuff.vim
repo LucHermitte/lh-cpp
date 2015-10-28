@@ -1,5 +1,4 @@
 "=============================================================================
-" $Id$
 " File:         ftplugin/cpp/cpp_Doxygen_class_stuff.vim                {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>

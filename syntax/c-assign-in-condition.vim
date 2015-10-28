@@ -1,5 +1,4 @@
 "=============================================================================
-" $Id$
 " File:		syntax/c-assign-in-condition.vim                         {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>

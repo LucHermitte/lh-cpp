@@ -1,5 +1,4 @@
 "=============================================================================
-" $Id$
 " File:		plugin/omap-param.vim                                     {{{1
 " Maintainer:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>

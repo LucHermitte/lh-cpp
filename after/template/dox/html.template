@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" doxygen <+html+> snippets, Luc Hermitte, 11th Apr 2012
 VimL:" hint: <html-tag>|</html-tag>
 VimL: let s:marker_open  = '<+'

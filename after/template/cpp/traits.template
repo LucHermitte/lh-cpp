@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" traits-class File Template, Luc Hermitte, 20th Jan 2011
 VimL:" hint: traits-class
 VimL: let s:value_start = '¡'

@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" erase-remove File Template, Luc Hermitte, 06th Nov 2012
 VimL:" hint: erase-remove idiom
 VimL: let s:reindent     = 1

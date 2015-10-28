@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" static_assert File Template, Luc Hermitte, 23rd Apr 2014
 VimL:" hint: static_assert(cond, msg)/BOOST_STATIC_ASSERT(cond)
 VimL: let s:marker_open  = '<+'

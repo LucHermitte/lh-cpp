@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ Doxygen snippet for since tag, Luc Hermitte
 VimL:" hint: @since Version
 VimL: let s:value_start = '¡'

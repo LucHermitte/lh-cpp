@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" list File Template, Luc Hermitte, 28th Apr 2014
 VimL:" hint: std::list<>
 VimL: let s:value_start = '¡'
