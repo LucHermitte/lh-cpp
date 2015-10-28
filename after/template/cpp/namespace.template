@@ -1,4 +1,3 @@
-VimL:" $Id$
 VimL:" C++ namespace Template, Luc Hermitte
 VimL:" hint: namespace ns { ... } // ns
 VimL:" Options:
@@ -29,4 +28,4 @@ VimL: let s:ns_join_s = s:ns_join ? " " : "\n"
 <+join(s:ns_open, s:ns_join_s)+>
 ¡s:Surround(1, '<++>')¡
 <+join(s:ns_close, s:ns_join_s)+><+s:ns_join && s:namespace !~ '^\s*$'? (" // ".s:namespace . " namespace".(len(s:namespaces)>1 ? "s": "")) : ""+>
-<++>
+<+s:TerminalPlaceHolder()+>
