@@ -7,4 +7,4 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 for(<+std::size_t+> <+i+>=0, <+N+>=<+MAX+>; <+i+>!=<+N+> ; ++<+i+>){
     ¡s:Surround(1, '<+code+>')¡
-}<++>
+}<+s:TerminalPlaceHolder()+>

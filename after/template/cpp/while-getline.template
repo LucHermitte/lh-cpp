@@ -8,4 +8,4 @@ VimL: let s:reindent     = 1
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<string>")')
 while(std::getline(<+stream+>, <+line+>)){
     ¡s:Surround(1, '<+code+>')¡
-}<++>
+}<+s:TerminalPlaceHolder()+>

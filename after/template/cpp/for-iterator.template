@@ -17,4 +17,4 @@ for (<+container-type+>::<+const_+>iterator ¡s:begin¡ = ¡s:cont¡.begin(), ¡
     )
 {
 ¡s:Surround(1, '<++>')¡
-}<++>
+}<+s:TerminalPlaceHolder()+>
