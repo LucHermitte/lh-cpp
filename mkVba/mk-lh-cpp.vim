@@ -4,11 +4,11 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:	2.1.3
+" Version:	2.1.4
 " Created:	06th Nov 2007
 " Last Update:	27th Oct 2015
 "------------------------------------------------------------------------
-let s:version = '2.1.3'
+let s:version = '2.1.4'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try
