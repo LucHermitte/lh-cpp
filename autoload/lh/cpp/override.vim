@@ -1,23 +1,24 @@
 "=============================================================================
-" File:		autoload/lh/cpp/override.vim                              {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
-" Created:	15th Apr 2008
-" Last Update:	$Date$
+" File:         autoload/lh/cpp/override.vim                              {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
+" Version:      2.1.3
+" Created:      15th Apr 2008
+" Last Update:  30th Oct 2015
 "------------------------------------------------------------------------
-" Description:	«description»
-" 
+" Description:  «description»
+"
 "------------------------------------------------------------------------
-" Installation:	
-" 	ctags requirements: fields: m: implementation, i: inheritance
-" History:	«history»
-" TODO:		
+" Installation:
+"       ctags requirements: fields: m: implementation, i: inheritance
+" History:      «history»
+" TODO:
 " (*) Cache the LoadTags accesses until the related tags file is updated
 " (*) Sort result:
 "     - first: the less overridden functions
 "     - last: the ones already overridden for the current class
 " (*) Build and insert the prototypes ; try to fetch the doc as well
+" (*) Add override C++11 keyword
 " }}}1
 "=============================================================================
 
@@ -63,19 +64,19 @@ function! s:OverrideableFunctions(classname)
       let fn2.name  = name
 
       if !has_key(result, name)
-	let result[name] = [ fn2 ]
+        let result[name] = [ fn2 ]
       else
-	for overload in result[name]
-	  if lh#cpp#AnalysisLib_Function#IsSame(overload, fn2)
-	    " an override
-	    call add(overload.contexts, context)
+        for overload in result[name]
+          if lh#cpp#AnalysisLib_Function#IsSame(overload, fn2)
+            " an override
+            call add(overload.contexts, context)
             " echomsg "SAME: " . string(overload). " -- " . string(fn2)
-	  else
-	    " new overload
-	    call add(result[name], fn2)
+          else
+            " new overload
+            call add(result[name], fn2)
             " echomsg "DIFF: " . string(overload). " -- " . string(fn2)
-	  endif
-	endfor
+          endif
+        endfor
       endif
     endfor
     " echomsg "fct(".base."=".string(virtual_fcts)
@@ -94,13 +95,13 @@ function! s:OverrideableFunctions(classname)
     let fn.name = name
     if has_key(result, name)
       for overload in result[name]
-	if lh#cpp#AnalysisLib_Function#IsSame(overload, fn)
-	  " an override
-	  let overload.overriden = 1
+        if lh#cpp#AnalysisLib_Function#IsSame(overload, fn)
+          " an override
+          let overload.overriden = 1
           echomsg "SAME: " . string(overload). " -- " . string(fn)
         else
           echomsg "DIFF: " . string(overload). " -- " . string(fn)
-	endif
+        endif
       endfor
     endif
   endfor
@@ -116,14 +117,14 @@ endfunction
 function! s:OverrideFunction(function_tag)
   " a- open the related file in a new window
   let filename = a:function_tag.filename
-  exe 'sp '.filename
-  try 
+  call lh#window#create_window_with('sp '.filename)
+  try
     " b- search the exact signature
     let signature = a:function_tag.fullsignature
     let g:signature = signature
     let regex_signature = lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature, '').regex
     " todo: support embedded comment within the optional "= 0" part
-    let regex_signature .= '\s*\(=\s*0\s*\)\=;' 
+    let regex_signature .= '\s*\(=\s*0\s*\)\=;'
     let lineno = search(regex_signature)
     if lineno <= 0
       throw "Override: cannot find ".signature." declaration in ".filename
@@ -196,9 +197,9 @@ function! s:AddToMenu(lines, fns)
 
   " 2- Build the result
   for fn in fns
-    let line = s:Overriden(fn).s:Access(fn).' '.fn.fullsignature 
-	  \ . repeat(' ', max_length-lh#encoding#strlen(fn.fullsignature))
-	  \ . ' ' . string(fn.contexts)
+    let line = s:Overriden(fn).s:Access(fn).' '.fn.fullsignature
+          \ . repeat(' ', max_length-lh#encoding#strlen(fn.fullsignature))
+          \ . ' ' . string(fn.contexts)
     call add(a:lines, line)
   endfor
 endfunction
@@ -215,13 +216,13 @@ function! s:Display(className, declarations)
   let choices = s:BuildMenu(a:declarations)
   " return
   let b_id = lh#buffer#dialog#new(
-	\ 'C++Override('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
-	\ 'Overrideable functions for '.a:className,
-	\ 'bot below',
-	\ 1,
-	\ 'lh#cpp#override#select',
-	\ choices
-	\)
+        \ 'C++Override('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
+        \ 'Overrideable functions for '.a:className,
+        \ 'bot below',
+        \ 1,
+        \ 'lh#cpp#override#select',
+        \ choices
+        \)
   call lh#buffer#dialog#add_help(b_id, '@| !==already overridden function in '.a:className, 'long')
   call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in one of the ancestor class', 'long')
   " Added the lonely functions to the b_id
@@ -275,7 +276,7 @@ function! lh#cpp#override#select(results)
   for selection in a:results.selection
     " echomsg '-> '.choices[selection]
     " echomsg '-> '.info[selection-1].filename . ": ".info[selection-1].cmd
-    " 
+    "
     let selected_virt = a:results.dialog.declarations[selection-1]
     " echomsg string(selected_virt)
     call extend(lines, s:OverrideFunction(selected_virt))
