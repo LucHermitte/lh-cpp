@@ -1,0 +1,10 @@
+VimL:" std::copy File Template, Luc Hermitte, 04th Nov 2015
+VimL:" hint: std::copy(first, last, dest)
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<algorithm>")')
+VimL: let s:container = empty(s:Args()) ? s:Surround(1, lh#marker#txt('container')): (s:Args()[0])
+std::copy(<+s:container+>.begin(),<+s:container+>.end(), <+dest+>);
+VimL: unlet s:container
