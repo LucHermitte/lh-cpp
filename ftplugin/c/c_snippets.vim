@@ -4,9 +4,10 @@
 "               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0b16
+" Version:      2.1.6
+let s:k_version = '216'
 " Created:      14th Apr 2008
-" Last Update:  $Date$
+" Last Update:  06th Nov 2015
 "------------------------------------------------------------------------
 " Description:  Snippets of C Control Statements
 "
@@ -30,7 +31,7 @@ if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_sni
 endif
 let s:cpo_save=&cpo
 set cpo&vim
-let b:loaded_ftplug_c_snippets = 200
+let b:loaded_ftplug_c_snippets = s:k_version
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -50,15 +51,15 @@ inoreab <buffer> earse      erase
 " Pre-processor
 "
 "-- insert "#define" at start of line
-iab  <buffer> <m-d>  <C-R>=MapNoContext("\<M-d> ",'\<esc\>0i#define')<CR>
-iab  <buffer> #d     <C-R>=MapNoContext("#d ",'\<esc\>0i#define')<CR>
+iab  <buffer> <m-d>  <C-R>=lh#map#no_context("\<M-d> ",'\<esc\>0i#define')<CR>
+iab  <buffer> #d     <C-R>=lh#map#no_context("#d ",'\<esc\>0i#define')<CR>
 "-- insert "#include" at start of line
-iab  <buffer> <m-i>  <C-R>=MapNoContext("\<M-i> ",'\<esc\>0i#include')<CR>
-iab  <buffer> #n    <C-R>=MapNoContext("#n ",'\<esc\>0i#include')<CR>
+iab  <buffer> <m-i>  <C-R>=lh#map#no_context("\<M-i> ",'\<esc\>0i#include')<CR>
+iab  <buffer> #n    <C-R>=lh#map#no_context("#n ",'\<esc\>0i#include')<CR>
 
 "-- insert "#ifdef/endif" at start of line
-iab  <buffer> #i    <C-R>=MapNoContext('#i ','\<esc\>0i#ifdef')<CR>
-iab  <buffer> #e    <C-R>=MapNoContext("#e ",'\<esc\>0i#endif')<CR>
+iab  <buffer> #i    <C-R>=lh#map#no_context('#i ','\<esc\>0i#ifdef')<CR>
+iab  <buffer> #e    <C-R>=lh#map#no_context("#e ",'\<esc\>0i#endif')<CR>
 
 "-- surrounds with "#if 0 ... endif"
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
@@ -72,11 +73,11 @@ nmap <buffer> <localleader><k1> <localleader>1
 " Control statements {{{3
 " ------------------------------------------------------------------------
 "
-nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
+nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surrounding()<cr>
 
 " --- if ---------------------------------------------------------{{{4
 "--if    insert "if" statement                   {{{5
-  Inoreabbr <buffer> <silent> if <C-R>=Def_AbbrC('if ',
+  Inoreabbr <buffer> <silent> if <C-R>=lh#cpp#snippets#def_abbr('if ',
         \ '\<c-f\>if(!cursorhere!){!mark!}!mark!')<cr>
 "--,if    insert "if" statement
   xnoremap <buffer> <silent> <localleader>if
@@ -90,7 +91,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
             \ <Plug>C_SelectExpr4Surrounding<LocalLeader><LocalLeader>if
 
 "--elif  insert «else if () { ... }»             {{{5
-  Inoreabbr <buffer> <silent> elif <C-R>=Def_AbbrC('elif ',
+  Inoreabbr <buffer> <silent> elif <C-R>=lh#cpp#snippets#def_abbr('elif ',
         \ '\<c-f\>else if(!cursorhere!) {!mark!}!mark!')<cr>
 "--,elif  insert else clause of if statement with following if statement
   xnoremap <buffer> <silent> <localleader>elif
@@ -104,7 +105,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
       nmap <buffer> <LocalLeader>elif V<LocalLeader>elif
 
 "--else  insert else clause of if statement      {{{5
-  Inoreabbr <buffer> <silent> else <C-R>=InsertIfNotBefore('else ',
+  Inoreabbr <buffer> <silent> else <C-R>=lh#cpp#snippets#insert_if_not_before('else ',
         \ '\<c-f\>else{!cursorhere!}!mark!', 'if')<cr><c-f>
 "--,else  insert else clause of if statement
   xnoremap <buffer> <silent> <localleader>else
@@ -115,7 +116,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 "--- for ---------------------------------------------------------{{{4
 "--for   insert "for" statement
 " TODO: pb when c_nl_before_bracket = 1, cursor is not placed correctly
-  Inoreabbr <buffer> <silent> for <C-R>=Def_AbbrC('for ',
+  Inoreabbr <buffer> <silent> for <C-R>=lh#cpp#snippets#def_abbr('for ',
       \ '\<c-f\>for(!cursorhere!;!mark!;!mark!){!mark!}!mark!')<cr>
 "--,for   insert "for" statement
   xnoremap <buffer> <silent> <localleader>for
@@ -125,7 +126,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 
 "--- while -------------------------------------------------------{{{4
 "--while insert "while" statement
-  Inoreabbr <buffer> <silent> while <C-R>=Def_AbbrC('while ',
+  Inoreabbr <buffer> <silent> while <C-R>=lh#cpp#snippets#def_abbr('while ',
         \ '\<c-f\>while(!cursorhere!){!mark!}!mark!')<cr>
 "--,while insert "while" statement
   xnoremap <buffer> <silent> <localleader>wh
@@ -144,7 +145,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 
 "--- do ----------------------------------------------------------{{{4
 "--do insert "do" statement
-  Inoreabbr <buffer> <silent> do <C-R>=Def_AbbrC('do ',
+  Inoreabbr <buffer> <silent> do <C-R>=lh#cpp#snippets#def_abbr('do ',
         \ '\<c-f\>do{!cursorhere!}while(!mark!);!mark!')<cr><c-f>
 "--,do insert "do" statement
   xnoremap <buffer> <silent> <localleader>do
@@ -171,7 +172,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 
 "--- switch ------------------------------------------------------{{{4
 "--switch insert "switch" statement
-  Inoreabbr <buffer> <silent> switch <C-R>=Def_AbbrC('switch ',
+  Inoreabbr <buffer> <silent> switch <C-R>=lh#cpp#snippets#def_abbr('switch ',
         \ '\<c-f\>switch(!cursorhere!){!mark!}!mark!')<cr>
 "--,switch insert "switch" statement
   xnoremap <buffer> <silent> <localleader>switch
@@ -187,19 +188,19 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call C_SelectExpr4Surrounding()<cr>
 
 " --- return -----------------------------------------------------{{{4
 "-- <m-r> insert "return ;"
-  inoremap <buffer> <m-r> <c-r>=InsertReturn()<cr>
+  inoremap <buffer> <m-r> <c-r>=lh#cpp#snippets#insert_return()<cr>
 
 " --- ?: ---------------------------------------------------------{{{4
 "-- ?: insert "? : ;"
-  inoremap <buffer> ?: <c-r>=BuildMapSeq('() ?!mark!:!mark!\<esc\>F(a')<cr>
+  inoremap <buffer> ?: <c-r>=lh#map#build_map_seq('() ?!mark!:!mark!\<esc\>F(a')<cr>
 
 "--- Commentaires automatiques -----------------------------------{{{4
 "--/* insert /* <curseur>
 "             */
   if &ft !~ '^\(cpp\|java\)$'
-    " inoremap <buffer> /*<space> <c-r>=Def_AbbrC('/*',
+    " inoremap <buffer> /*<space> <c-r>=lh#cpp#snippets#def_abbr('/*',
           " \ '/*\<cr\>\<BS\>/!mark!\<up\>\<end\>')<cr>
-    inoreab <buffer> /* <c-r>=Def_AbbrC('/*', '/*!cursorhere!\n/!mark!')<cr>
+    inoreab <buffer> /* <c-r>=lh#cpp#snippets#def_abbr('/*', "/*!cursorhere!\n/!mark!")<cr>
   endif
 
 "--/*- insert /*-----[  ]-------*/
@@ -230,137 +231,7 @@ endif
 " Avoid global reinclusion }}}2
 "------------------------------------------------------------------------
 " Functions {{{2
-
-" Def_MapC(key, expr1, expr2) {{{3
-function! Def_MapC(key,expr1,expr2)
-  if lh#brackets#usemarks()
-    return "\<c-r>=MapNoContext2('".a:key."',BuildMapSeq('".a:expr2."'))\<cr>"
-    " return "\<c-r>=MapNoContext2('".a:key."',BuildMapSeq(\"".a:expr2."\"))\<cr>"
-  else
-    return "\<c-r>=MapNoContext2('".a:key."', '".a:expr1."')\<cr>"
-    " return "\<c-r>=MapNoContext2('".a:key."', \"".a:expr1."\")\<cr>"
-  endif
-endfunction
-
-" Def_AbbrC(key,expr) {{{3
-function! Def_AbbrC(key,expr)
-  " Special handling of preprocessor context
-  if getline('.') =~ '^\s*#'
-    return a:key
-  endif
-  " Default behaviour
-  let rhs = a:expr
-  if 0
-    if lh#cpp#option#nl_before_bracket()
-      " let rhs = substitute(rhs, '\(BuildMapSeq\)\@<!(', '\\<cr\\>\0', 'g')
-      let rhs = substitute(rhs, '\s*(', '\\n(', 'g')
-    endif
-    if lh#cpp#option#nl_before_curlyB()
-      " let rhs = substitute(rhs, '{', '\\<cr\\>\0', 'g')
-      let rhs = substitute(rhs, '\s*{', '\\n{', 'g')
-      let rhs = substitute(rhs, '}\s*', '}\\n', 'g')
-    endif
-  else
-    let rhs = lh#dev#style#apply(rhs)
-  endif
-  return InsertSeq(a:key, rhs)
-endfunction
-
-" Goto_ReturnSemiColon() {{{3
-function! Goto_ReturnSemiColon()
-  let p = getpos('.')
-  let r = search('return.*;', 'e')
-  if r == 0 | call setpos('.', p) | endif
-endfunction
-
-" InsertReturn() {{{3
-function! InsertReturn()
-  let c = col('.') - 1
-  let l = getline('.')
-  let l = strpart(l, c)
-  if l =~ '^\s*$'
-    return BuildMapSeq('return ;!mark!\<esc\>==0:call Goto_ReturnSemiColon()\<cr\>i')
-  else
-    let spacesLen = strlen(matchstr(l, '^\s*'))
-    let stripCmd = (spacesLen!=0) ? '\<esc\>'.'ct'.l[spacesLen] : ''
-    echo stripCmd
-    if stridx(l, ';') != -1
-      return BuildMapSeq(stripCmd.'return \<esc\>==0:call Goto_ReturnSemiColon()\<cr\>a')
-    elseif stridx(l, '}') != -1
-      return BuildMapSeq(stripCmd.'return ;!mark!\<esc\>==0:call Goto_ReturnSemiColon()\<cr\>i')
-    else
-      return BuildMapSeq(stripCmd.'return \<esc\>==A;')
-    endif
-  endif
-endfunction
-
-" InsertReturn0() {{{3
-function! InsertReturn0()
-  let c = col('.') - 1
-  let l = getline('.')
-  let l = strpart(l, c)
-  if l =~ '^\s*$'
-    return BuildMapSeq('return ;!mark!\<esc\>==0f;i')
-  else
-    let spacesLen = strlen(matchstr(l, '^\s*'))
-    let stripCmd = (spacesLen!=0) ? '\<esc\>'.'ct'.l[spacesLen] : ''
-    echo stripCmd
-    if stridx(l, ';') != -1
-      return BuildMapSeq(stripCmd.'return \<esc\>==0f;a')
-    elseif stridx(l, '}') != -1
-      return BuildMapSeq(stripCmd.'return ;!mark!\<esc\>==0f;i')
-    else
-      return BuildMapSeq(stripCmd.'return \<esc\>==A;')
-    endif
-  endif
-endfunction
-
-" InsertIfNotAfter(key, what, pattern) {{{3
-function! InsertIfNotAfter(key, what, pattern)
-  let c = col('.') - 1
-  let l = getline('.')
-  let l = strpart(l, 0, c)
-  if l =~ a:pattern.'\s*$'
-    return a:key
-  else
-    return Def_AbbrC(a:key, a:what)
-  endif
-endfunction
-
-" InsertIfNotBefore(key, what, pattern) {{{3
-function! InsertIfNotBefore(key, what, pattern)
-  let c = col('.') - 1
-  let l = getline('.')
-  let l = strpart(l, c)
-  if l =~ '^\s*'.a:pattern
-    return a:key
-  else
-    return Def_AbbrC(a:key, a:what)
-  endif
-endfunction
-
-" C_SelectExpr4Surrounding() {{{3
-" todo: find a better name for the function
-function! C_SelectExpr4Surrounding()
-  " Go to the first non blank character of the line
-  :normal! ^
-  " Search either the first semin-colon or the end of the line.
-  :call search(';\|\s*$', 'c')
-  " If we are not at the end of the line
-  if getline('.')[col('.')-1] =~ ';\|\s'
-    " If it is followed by blanck characters
-    if strpart(getline('.'), col('.')) =~ '^\s*$'
-      " then trim the ';' (or the space) and every thing after
-      exe "normal! \"_d$"
-    else
-      " otherwise replace the ';' by a newline character, and goto the end of
-      " the previous line (where the line has been cut)
-      exe "normal! \"_s\n\<esc>k$"
-    endif
-  endif
-  " And then select till the first non blank character of the line
-  :normal! v^
-endfunction
+" See autoload/lh/cpp/snippets.vim
 
 " Functions }}}2
 "------------------------------------------------------------------------

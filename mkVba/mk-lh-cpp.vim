@@ -4,7 +4,7 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:	2.1.5
+" Version:	2.1.6
 " Created:	06th Nov 2007
 " Last Update:	03rd Nov 2015
 "------------------------------------------------------------------------

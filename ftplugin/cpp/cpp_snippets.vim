@@ -4,9 +4,9 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b16
+" Version:	2.1.6
 " Created:	15th Apr 2008
-" Last Update:	$Date$
+" Last Update:	03rd Nov 2015
 "------------------------------------------------------------------------
 " Description:	Snippets of C++ Control Statements
 "
@@ -37,10 +37,10 @@ runtime! ftplugin/c/c_snippets.vim
 "------------------------------------------------------------------------
 " Some C++ abbreviated Keywords {{{3
 " ------------------------------------------------------------------------
-" TODO: check whether there is a ":" or a "," before
-Inoreab <buffer> pub public:<CR>
-Inoreab <buffer> pro protected:<CR>
-Inoreab <buffer> pri private:<CR>
+" TODO: check whether the line is empty
+Inoreab <buffer> pub <c-r>='public'.lh#cpp#snippets#insert_if_not_after(' ', ':\<CR\>', '[:,]')<cr>
+Inoreab <buffer> pro <c-r>='protected'.lh#cpp#snippets#insert_if_not_after(' ', ':\<CR\>', '[:,]')<cr>
+Inoreab <buffer> pri <c-r>='private'.lh#cpp#snippets#insert_if_not_after(' ', ':\<CR\>', '[:,]')<cr>
 
 Iabbr <buffer> tpl template <
 
@@ -51,9 +51,9 @@ inoreab <buffer> delate delta
 
 inoremap <buffer> <m-s> std::
 inoremap <buffer> <expr> <m-b> (getline('.')=~'#\s*include') ? 'boost/' : 'boost::'
-inoremap <buffer> <expr> <m-n> <sid>CurrentNamespace("\<m-n>")
+inoremap <buffer> <expr> <m-n> lh#cpp#snippets#current_namespace("\<m-n>")
 " We don't want ô (\hat o) to be expanded in comments)
-inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\<cr\>')<cr>
+inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippets#typedef_typename()\<cr\>')<cr>
 
 
 "------------------------------------------------------------------------
@@ -61,9 +61,9 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "------------------------------------------------------------------------
 "--- namespace ---------------------------------------------------{{{4
 "--,ns insert "namespace" statement
-  Inoreabbr <buffer> namespace <C-R>=InsertIfNotAfter('namespace ',
+  Inoreabbr <buffer> namespace <C-R>=lh#cpp#snippets#insert_if_not_after('namespace ',
 	\ '\<c-f\>namespace <+namespace+>{<++>}// namespace <+namespace+>', 'using')<cr>
-  " Inoreabbr <buffer> namespace <C-R>=InsertIfNotAfter('namespace ',
+  " Inoreabbr <buffer> namespace <C-R>=lh#cpp#snippets#insert_if_not_after('namespace ',
 	" \ '\<c-f\>namespace !cursorhere! {!mark!}!mark!', 'using')<cr>
   vnoremap <buffer> <silent> <LocalLeader>ns
 	\ <c-\><c-n>@=lh#dev#style#surround('namespace !cursorhere!{', '!mark!}!mark!',
@@ -73,9 +73,9 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 "--- try ---------------------------------------------------------{{{4
 "--try insert "try" statement
   command! -nargs=0 PrivateCppSearchTry :call search('try\_s*{\_s*\zs$', 'b')
-  " Inoreabbr <buffer> <silent> try <C-R>=Def_AbbrC('try ',
+  " Inoreabbr <buffer> <silent> try <C-R>=lh#cpp#snippets#def_abbr('try ',
         " \ '\<c-f\>try{!cursorhere!}catch(!mark!){!mark!}!mark!\<esc\>')<CR>
-  Inoreabbr <buffer> <silent> try <C-R>=Def_AbbrC('try ',
+  Inoreabbr <buffer> <silent> try <C-R>=lh#cpp#snippets#def_abbr('try ',
         \ '\<c-f\>try{}catch(!mark!){!mark!}!mark!\<esc\>'
         \ .':PrivateCppSearchTry\<cr\>a\<c-f\>')<CR>
         "
@@ -92,7 +92,7 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 
 "--- catch -------------------------------------------------------{{{4
 "--catch insert "catch" statement
-  Inoreabbr <buffer> catch <C-R>=Def_AbbrC('catch ',
+  Inoreabbr <buffer> catch <C-R>=lh#cpp#snippets#def_abbr('catch ',
 	\ '\<c-f\>catch(!cursorhere!){!mark!}!mark!')<cr>
   vnoremap <buffer> <LocalLeader>catch
 	\ <c-\><c-n>@=lh#dev#style#surround('catch(!cursorhere!){', '!mark!}',
@@ -156,15 +156,15 @@ inoremap <buffer> <m-t> <c-r>=InsertSeq('<m-t>', '\<c-r\>=Cpp_TypedefTypename()\
 " /**       inserts /** <cursor>
 "                    */
 " but only outside the scope of C++ comments and strings
-  " inoremap <buffer> /**  <c-r>=Def_MapC('/**',
+  " inoremap <buffer> /**  <c-r>=lh#cpp#snippets#def_map('/**',
 	" \ '/**\<cr\>\<BS\>/\<up\>\<end\> ',
 	" \ '/**\<cr\>\<BS\>/!mark!\<up\>\<end\> ')<cr>
-  inoreab <buffer> /** <c-r>=Def_AbbrC('/**', '/**!cursorhere!/!mark!')<cr>
+  inoreab <buffer> /** <c-r>=lh#cpp#snippets#def_abbr('/**', '/**!cursorhere!/!mark!')<cr>
 " /*<space> inserts /** <cursor>*/
-  " inoremap <buffer> /*!  <c-r>=Def_MapC('/* ',
+  " inoremap <buffer> /*!  <c-r>=lh#cpp#snippets#def_map('/* ',
 	" \ '/** */\<left\>\<left\>',
 	" \ '/** */!mark!\<esc\>F*i')<cr>
-  inoreab <buffer> /*! <c-r>=Def_AbbrC('/*!', '/**!cursorhere!*/!mark!')<cr>
+  inoreab <buffer> /*! <c-r>=lh#cpp#snippets#def_abbr('/*!', '/**!cursorhere!*/!mark!')<cr>
 
 "--- Std oriented stuff-------------------------------------------{{{4
 " In std::foreach and std::find algorithms, ..., expand 'algo(container§)'
@@ -189,6 +189,7 @@ endif
 " Avoid global reinclusion }}}2
 "------------------------------------------------------------------------
 " Functions {{{2
+" See autoload/lh/cpp/snippets.vim
 
 function! s:ConvertToCPPCast(cast_type)
   " Extract text to convert
@@ -204,26 +205,6 @@ function! s:ConvertToCPPCast(cast_type)
   " Do the replacement
   exe "normal! gvs".new_cast."\<esc>"
   let @a = save_a
-endfunction
-
-function! InsertIfNotAfter(key, what, pattern)
-  let c = col('.') - 1
-  let l = getline('.')
-  let l = strpart(l, 0, c)
-  if l =~ a:pattern.'\s*$'
-    return a:key
-  else
-    return Def_AbbrC(a:key, a:what)
-  endif
-endfunction
-
-function! Cpp_TypedefTypename()
-  return InsertIfNotAfter('typename ', 'typedef ', 'typedef\|<\|,')
-endfunction
-
-function! s:CurrentNamespace(default)
-  let ns = lh#dev#option#get('project_namespace', &ft, '')
-  return empty(ns) ? a:default : (ns.'::')
 endfunction
 
 " Functions }}}2
