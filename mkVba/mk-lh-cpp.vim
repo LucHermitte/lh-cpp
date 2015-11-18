@@ -4,11 +4,11 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:	2.1.6
+" Version:	2.1.7
 " Created:	06th Nov 2007
-" Last Update:	03rd Nov 2015
+" Last Update:	18th Nov 2015
 "------------------------------------------------------------------------
-let s:version = '2.1.5'
+let s:version = '2.1.7'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try
@@ -21,6 +21,7 @@ finally
   let &rtp = save_rtp
 endtry
 finish
+VimFlavor
 addon-info.json
 after/plugin/a.vim
 after/template/c/assert.template
@@ -38,10 +39,10 @@ after/template/cpp/catch.template
 after/template/cpp/cerr.template
 after/template/cpp/cin.template
 after/template/cpp/class.template
-after/template/cpp/copy.template
 after/template/cpp/copy-and-swap.template
 after/template/cpp/copy-back_inserter.template
 after/template/cpp/copy-constructor.template
+after/template/cpp/copy.template
 after/template/cpp/cout.template
 after/template/cpp/default-constructor.template
 after/template/cpp/destructor.template
