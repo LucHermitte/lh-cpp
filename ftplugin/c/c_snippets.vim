@@ -14,7 +14,7 @@ let s:k_version = '218'
 "------------------------------------------------------------------------
 " Dependencies: lh-vim-lib
 "               a.vim                   -- alternate files
-"               VIM >= 6.00 only
+"               VIM >= 7.3 only
 "
 " History:
 " 06th,26th Mar 2006: InsertReturn() for smart insertion of return.
@@ -65,7 +65,7 @@ iab  <buffer> #e    <C-R>=lh#map#no_context("#e ",'\<esc\>0i#endif')<CR>
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
 xmap <buffer> <localleader><k0> <localleader>0
 nmap <buffer> <localleader><k0> <localleader>0
-:Brackets #if\ 0 #else\n#endif -insert=0 -nl -trigger=<localleader>1
+:Brackets #if\ 0 #else!mark!\n#endif -insert=0 -nl -trigger=<localleader>1
 xmap <buffer> <localleader><k1> <localleader>1
 nmap <buffer> <localleader><k1> <localleader>1
 
