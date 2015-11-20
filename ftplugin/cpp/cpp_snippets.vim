@@ -157,11 +157,23 @@ inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippet
 "--- Std oriented stuff-------------------------------------------{{{4
 " In std::foreach and std::find algorithms, ..., expand 'algo(container§)'
 " into:
-" todo: rely on omap-param
+" TODO: support begin(container) (std:: or boost::) as well
 " - 'algo(container.begin(),container.end()§)',
-inoremap <c-x>be .<esc>%v%<left>o<right>y%%ibegin(),<esc>paend()<esc>a
+" imap <buffer> <c-x>be .<esc>ci,<c-r>"begin(),<c-r>"end()
+imap <buffer> <c-x>be <c-r>=lh#cpp#snippets#_begin_end('begin')<cr>
+xmap <buffer> <c-x>be <c-\><c-n>ci,<c-r>".begin(),<c-r>".end()
+nmap <buffer> <c-x>be viw<c-x>be
+
 " - 'algo(container.rbegin(),container.rend()§)',
-inoremap <c-x>rbe .<esc>%v%<left>o<right>y%%irbegin(),<esc>parend()<esc>a
+imap <buffer> <c-x>rbe <c-r>=lh#cpp#snippets#_begin_end('rbegin')<cr>
+xmap <buffer> <c-x>rbe <c-\><c-n>ci,<c-r>".rbegin(),<c-r>".rend()
+nmap <buffer> <c-x>rbe viw<c-x>rbe
+
+" - 'algo(container.cbegin(),container.cend()§)',
+imap <buffer> <c-x>cbe <c-r>=lh#cpp#snippets#_begin_end('cbegin')<cr>
+xmap <buffer> <c-x>cbe <c-\><c-n>ci,<c-r>".cbegin(),<c-r>".cend()
+nmap <buffer> <c-x>cbe viw<c-x>cbe
+
 
 " '§' represents the current position of the cursor.
 

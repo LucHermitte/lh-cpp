@@ -147,6 +147,59 @@ function! lh#cpp#snippets#select_expr_4_surrounding() abort
   :normal! v^
 endfunction
 
+" Function: lh#cpp#snippets#begin_end() {{{3
+" In std::foreach and std::find algorithms, ..., expand 'algo(container§)'
+" into:
+" - 'algo(container.begin(),container.end()§)',
+" - 'algo(container.rbegin(),container.rend()§)',
+" - 'algo(container.cbegin(),container.cend()§)',
+" - 'algo(begin.(container),end.(container)§)',
+" - 'algo(rbegin.(container),rend.(container)§)',
+" - 'algo(cbegin.(container),cend.(container)§)',
+"
+" Objectives: support redo/repeat
+function! s:BeginEnd(cont, function)
+  return printf('%s.%s()', a:cont, a:function)
+endfunction
+
+let s:k_end = {
+      \ 'begin'  : 'end',
+      \ 'rbegin' : 'rend',
+      \ 'cbegin' : 'cend',
+      \ 'crbegin': 'crend'
+      \ }
+
+function! lh#cpp#snippets#_begin_end(begin) abort
+  let saved_pos = getpos('.')
+  let pos = searchpos('[,()]', 'bnW')
+  if pos == [0,0]
+    throw "Not within a function call"
+  endif
+
+  let g:saved_pos = saved_pos
+  let g:pos = pos
+
+  if saved_pos[1] == pos[0] && saved_pos[2] == pos[1]+1
+    if lh#position#char_at(pos[0], pos[1]) == ')'
+      throw "Do you really want to call begin/end on function results! (".string(pos).")"
+    endif
+    " No container under the cursor => use placeholders
+    let cont = lh#marker#txt('container')
+    return s:BeginEnd(cont, a:begin). ', ' .s:BeginEnd(cont, s:k_end[a:begin])
+  endif
+
+  " Let's suppose same line
+  " TODO: handle "\_s*"
+  if saved_pos[1] == pos[0]
+    let cont = getline(pos[0])[pos[1] : (saved_pos[2]-2)]
+    let len = lh#encoding#strlen(cont)
+    let res = repeat("\<bs>", len) . s:BeginEnd(cont, a:begin). ', ' .s:BeginEnd(cont, s:k_end[a:begin])
+    return res
+  endif
+
+  throw "Unexpected case"
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
