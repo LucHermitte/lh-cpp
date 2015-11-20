@@ -1,13 +1,13 @@
 "=============================================================================
 " File:         ftplugin/c/c_snippets.vim                               {{{1
-" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"               <URL:http://code.google.com/p/lh-vim/>
+" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.1.6
-let s:k_version = '216'
+"               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
+" Version:      2.1.8
+let s:k_version = '218'
 " Created:      14th Apr 2008
-" Last Update:  06th Nov 2015
+" Last Update:  20th Nov 2015
 "------------------------------------------------------------------------
 " Description:  Snippets of C Control Statements
 "
@@ -26,7 +26,7 @@ let s:k_version = '216'
 
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
-if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_snippets')) || lh#option#get("lh_cpp_snippets", 1, "g") == 0
+if (exists("b:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_snippets')) || get(g:, 'lh_cpp_snippets', 1) == 0
   finish
 endif
 let s:cpo_save=&cpo
@@ -51,10 +51,10 @@ inoreab <buffer> earse      erase
 " Pre-processor
 "
 "-- insert "#define" at start of line
-iab  <buffer> <m-d>  <C-R>=lh#map#no_context("\<M-d> ",'\<esc\>0i#define')<CR>
+" iab  <buffer> <m-d>  <C-R>=lh#map#no_context("\<M-d> ",'\<esc\>0i#define')<CR>
 iab  <buffer> #d     <C-R>=lh#map#no_context("#d ",'\<esc\>0i#define')<CR>
 "-- insert "#include" at start of line
-iab  <buffer> <m-i>  <C-R>=lh#map#no_context("\<M-i> ",'\<esc\>0i#include')<CR>
+" iab  <buffer> <m-i>  <C-R>=lh#map#no_context("\<M-i> ",'\<esc\>0i#include')<CR>
 iab  <buffer> #n    <C-R>=lh#map#no_context("#n ",'\<esc\>0i#include')<CR>
 
 "-- insert "#ifdef/endif" at start of line
@@ -195,26 +195,17 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
   inoremap <buffer> ?: <c-r>=lh#map#build_map_seq('() ?!mark!:!mark!\<esc\>F(a')<cr>
 
 "--- Commentaires automatiques -----------------------------------{{{4
-"--/* insert /* <curseur>
-"             */
-  if &ft !~ '^\(cpp\|java\)$'
-    " inoremap <buffer> /*<space> <c-r>=lh#cpp#snippets#def_abbr('/*',
-          " \ '/*\<cr\>\<BS\>/!mark!\<up\>\<end\>')<cr>
-    inoreab <buffer> /* <c-r>=lh#cpp#snippets#def_abbr('/*', "/*!cursorhere!\n/!mark!")<cr>
-  endif
+"--/* insert /*<curseur>*/
+  Brackets /* */ -visual=0
+  Brackets /* */ -visual=0 -trigger=<kDivide><kMultiply>
+"--<*M-v>- Surrounds a selection (/word) with C comments.
+  Brackets /* */ -insert=0 -trigger=<m-v>
 
 "--/*- insert /*-----[  ]-------*/
   inoreab <buffer> /- 0<c-d>/*<esc>75a-<esc>a*/<esc>45<left>R[
 
 "--/*= insert /*=====[  ]=======*/
   inoreab <buffer> /= 0<c-d>/*<esc>75a=<esc>a*/<esc>45<left>R[
-
-"--<*M-v>- Surrounds a selection (/word) with C comments.
-  " Todo: harmonize with EnhanceCommentify mappings
-  vnoremap <buffer> <M-v>
-        \ <c-\><c-n>@=lh#dev#style#surround('/*', '!mark!*/',
-        \ 0, 0, '', 1, '/*')<cr>
-      nmap <buffer> <M-v> viw<M-v>
 "}}}
 
 "------------------------------------------------------------------------

@@ -1,12 +1,13 @@
 "=============================================================================
 " File:		ftplugin/cpp/cpp_snippets.vim                            {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
+"		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.1.6
+"               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
+" Version:	2.1.8
+let s:k_version = '218'
 " Created:	15th Apr 2008
-" Last Update:	03rd Nov 2015
+" Last Update:	20th Nov 2015
 "------------------------------------------------------------------------
 " Description:	Snippets of C++ Control Statements
 "
@@ -21,11 +22,12 @@
 
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
-if (exists("b:loaded_ftplug_cpp_snippets") && !exists('g:force_reload_ftplug_cpp_snippets')) || lh#option#get("lh_cpp_snippets", 1, "g") == 0
+if (exists("b:loaded_ftplug_cpp_snippets") && !exists('g:force_reload_ftplug_cpp_snippets')) || get(g:, 'lh_cpp_snippets', 1) == 0
   finish
 endif
 let s:cpo_save=&cpo
 set cpo&vim
+let b:loaded_ftplug_cpp_snippets = s:k_version
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -152,20 +154,6 @@ inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippet
 "
 
 " Misc {{{3
-"--- Comments ; Javadoc/DOC++/Doxygen style ----------------------{{{4
-" /**       inserts /** <cursor>
-"                    */
-" but only outside the scope of C++ comments and strings
-  " inoremap <buffer> /**  <c-r>=lh#cpp#snippets#def_map('/**',
-	" \ '/**\<cr\>\<BS\>/\<up\>\<end\> ',
-	" \ '/**\<cr\>\<BS\>/!mark!\<up\>\<end\> ')<cr>
-  inoreab <buffer> /** <c-r>=lh#cpp#snippets#def_abbr('/**', '/**!cursorhere!/!mark!')<cr>
-" /*<space> inserts /** <cursor>*/
-  " inoremap <buffer> /*!  <c-r>=lh#cpp#snippets#def_map('/* ',
-	" \ '/** */\<left\>\<left\>',
-	" \ '/** */!mark!\<esc\>F*i')<cr>
-  inoreab <buffer> /*! <c-r>=lh#cpp#snippets#def_abbr('/*!', '/**!cursorhere!*/!mark!')<cr>
-
 "--- Std oriented stuff-------------------------------------------{{{4
 " In std::foreach and std::find algorithms, ..., expand 'algo(container§)'
 " into:
