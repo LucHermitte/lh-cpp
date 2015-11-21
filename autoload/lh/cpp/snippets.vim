@@ -4,10 +4,10 @@
 "		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:      2.1.6.
-let s:k_version = '216'
+" Version:      2.1.7.
+let s:k_version = '217'
 " Created:      03rd Nov 2015
-" Last Update:  06th Nov 2015
+" Last Update:  21st Nov 2015
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -158,8 +158,28 @@ endfunction
 " - 'algo(cbegin.(container),cend.(container)§)',
 "
 " Objectives: support redo/repeat
+let s:k_begin_end_fmt = {
+      \ 'c++98': '%1.%2()',
+      \ 'std': 'std::%2(%1)',
+      \ 'boost': 'boost::%2(%1)',
+      \ 'adl': '%2(%1)'
+      \ }
+
+function! s:Style()
+  let style = lh#dev#option#get('begin_end_style', &ft)
+  if lh#option#is_unset(style)
+    unlet style
+    let style
+          \ = lh#cpp#use_cpp1() ? 'std'
+          \ :                     'c++98'
+    " \ : lh#cpp#is_boost_used() ? 'boost'
+  endif
+  return style
+endfunction
+
 function! s:BeginEnd(cont, function)
-  return printf('%s.%s()', a:cont, a:function)
+  let style = s:Style()
+  return lh#fmt#printf(s:k_begin_end_fmt[style], a:cont, a:function)
 endfunction
 
 let s:k_end = {
@@ -171,33 +191,58 @@ let s:k_end = {
 
 function! lh#cpp#snippets#_begin_end(begin) abort
   let saved_pos = getpos('.')
-  let pos = searchpos('[,()]', 'bnW')
-  if pos == [0,0]
-    throw "Not within a function call"
+
+  if searchpair('(',',',')','bcW','lh#syntax#skip()') == 0 &&
+        \ searchpair('(',',',')','bW','lh#syntax#skip()') == 0
+    " Test necessary because 'c' flag and Skip() don't always work well together
+    throw "Not on a parameter"
   endif
+  call search('.')
 
-  let g:saved_pos = saved_pos
-  let g:pos = pos
+  let pos = [line('.'), col('.')]
+  call setpos('.', saved_pos)
 
-  if saved_pos[1] == pos[0] && saved_pos[2] == pos[1]+1
-    if lh#position#char_at(pos[0], pos[1]) == ')'
-      throw "Do you really want to call begin/end on function results! (".string(pos).")"
-    endif
+  " let g:saved_pos = saved_pos
+  " let g:pos = pos
+
+  if saved_pos[1] == pos[0] && saved_pos[2] == pos[1]
     " No container under the cursor => use placeholders
     let cont = lh#marker#txt('container')
     return s:BeginEnd(cont, a:begin). ', ' .s:BeginEnd(cont, s:k_end[a:begin])
   endif
 
-  " Let's suppose same line
-  " TODO: handle "\_s*"
-  if saved_pos[1] == pos[0]
-    let cont = getline(pos[0])[pos[1] : (saved_pos[2]-2)]
-    let len = lh#encoding#strlen(cont)
-    let res = repeat("\<bs>", len) . s:BeginEnd(cont, a:begin). ', ' .s:BeginEnd(cont, s:k_end[a:begin])
-    return res
+  if lh#position#char_at(saved_pos[1], saved_pos[2]-1) == ')'
+    let choice = WHICH('CONFIRM', 'Do you really want to call begin() *and* end() on a function result?', "&Yes\n&No", 2)
+    if choice == 'No'
+      return ""
+    endif
   endif
 
-  throw "Unexpected case"
+  " Let's suppose same line
+  " TODO:
+  " - add \s after ",", but not after "(" => use apply style on
+  "   - previous.head,
+  "   - and ', '.head
+  "
+  " Extract container name (and leading whitespace) from the two positions
+  let cont = lh#position#extract(pos, saved_pos[1:2])
+  " Number of characters to delete = len - nb of "\n"
+  let len = lh#encoding#strlen(cont)
+        \ - len(substitute(cont, "[^\n]", '', 'g'))
+  " trim trailing spaces, but not those at the start
+  let [all, head, cont; rest] = matchlist(cont, '\v^(\_s*)(.{-})\_s*$')
+  " Build the string to "insert"
+  let res = repeat("\<bs>", len)
+        \ . head . s:BeginEnd(cont, a:begin).
+        \ ', '.head .s:BeginEnd(cont, s:k_end[a:begin])
+  if pos[0] != saved_pos[1]
+    " When <bs> clear characters at the start of the line, it jumps over indent
+    " => we force sw to 1
+    let sw=shiftwidth()
+    set sw=1
+    let res .= "\<c-o>:set sw=".sw."\<cr>"
+  endif
+  return res
 endfunction
 
 "------------------------------------------------------------------------
