@@ -1,4 +1,5 @@
-# Features
+# lh-cpp [![Build Status](https://secure.travis-ci.org/LucHermitte/lh-cpp.png?branch=master)](http://travis-ci.org/LucHermitte/lh-cpp) [![Project Stats](https://www.openhub.net/p/21020/widgets/project_thin_badge.gif)](https://www.openhub.net/p/21020)
+## Features
 
 lh-cpp is an heterogeneous suite of helpers for C and C++ programming.
 
@@ -7,12 +8,14 @@ It provides the following things:
   * a few [templates](#templates)
   * a few [advanced wizards, and high-level features](#wizards-and-other-high-level-features) to Generate classes and singletons, to Generate ready to fill-in function comments for Doxygen, Jump to a function implementation, Search for un-implemented or undeclared functions, _etc._
   * [syntax highlighting](#syntax-highlighting) for identified counter-idioms and bad practices (catch by value, assignments in conditions, throw specifications)
-  * an [API](#api) to build even more complex wizards and advanced features
+  * an [API](doc/API.md) to build even more complex wizards and advanced features
 
-## Text insertion facilities
+  An exhaustive [list of all options](doc/options.md) is also available.
+
+### Text insertion facilities
 
 
-### Brackets
+#### Brackets
 
 The insertion of pair of brackets-like characters is eased thanks to [lh-brackets](http://github.com/LucHermitte/lh-brackets).
 
@@ -31,7 +34,7 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
 | `''` (2 single quotes)  |                                                                     | `'<selection>'`                               | word                      |
 | `;`                     | closes all parenthesis after the cursor -- if there is nothing else |                                               |                           |
 
-#### Notes:
+##### Notes:
   * <sup>1</sup> Not defined to avoid hijacking default vim key bindings.
   * <sup>2</sup> The visual mode mappings do not surround the current marker/placeholder selected, but trigger the INSERT-mode mappings instead.
   * <sup>3</sup> The exact behavior of this mapping has changed with release r719 (on Google Code). Now, no newline is inserted by default. However, hitting `<cr>` in the middle of a pair of curly-bracket will expand into `{\n<cursor>\n}`.
@@ -40,9 +43,9 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
 
 
 
-### Code snippets
+#### Code snippets
 
-#### INSERT-mode snippets abbreviations
+##### INSERT-mode snippets abbreviations
 There exist, over the WWW, a lot of configurations and mappings regarding C programming. Once again you will find shortcuts for `if`, `else`, `elif`  (I know it is not a C keyword, but `else if` are), `for`, `while`, `do`, `switch`, and `main`. In C++, snippets are also provided for `try`, `catch`, and `namespace`.
 What is unique is the fact that when you type `if` in insert mode, it will automatically expand into ...
 ```C++
@@ -54,13 +57,13 @@ if () {
 
 Most of these same snippets, and a few variations, are also provided as template-files for [mu-template](http://github.com/LucHermitte/mu-template). This time, you just need to type the first letters of the snippet/template name, and trigger the expansion (with `<c-r><tab>` by default). If several snippets match (like _c/for_, _c/fori_, _cpp/fori_ and _cpp/for-iterator_ when you try to expand `fo`), mu-template will ask you to choose which (matching) snippet you want to expand.
 
-#### Instruction surrounding mappings
+##### Instruction surrounding mappings
 In visual mode, `,if` wraps the selection within the curly brackets and inserts `if ()` just before. In normal mode `,if` does the same thing under the consideration that the selection is considered to be the current line under the cursor. Actually, it is not `,if` but `<LocalLeader>if,` with `maplocalleader` assigned by default to the coma `,`.
 
-#### Expression-condition surrounding mappings
+##### Expression-condition surrounding mappings
 In the same idea, `<LocalLeader><LocalLeader>if` surrounds the selection with `if (` and `) {\n«»\n}«»`.
 
-#### Other notes
+##### Other notes
 All the three mode oriented mappings respect and force the indentation regarding the current setting and what was typed.
 
 More precisely, regarding the value of the buffer relative option b:usemarks (_cf._ [lh-brackets](http://github.com/LucHermitte/lh-brackets)), `if` could be expanded into:
@@ -73,7 +76,7 @@ if () {
 The exact style (Alman, Stroustroup, ...) regarding whether brackets are on a
 new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://github.com/LucHermitte/lh-dev#formatting-of-brackets-characters).
 
-### Miscellaneous shortcuts
+#### Miscellaneous shortcuts
   * `tpl` expands into `template <<cursor>>«»` ;
   * `<m-t>` inserts `typedef`, or `typename` depending on what is before the cursor ;
   * `<m-r>` inserts `return`, and tries to correctly place the semicolon, and a placeholder, depending on what follows the cursor ;
@@ -92,7 +95,7 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
   * `<C-X>i` will look for the symbol under the cursor (or selected) in the current ctag database and it will try to automatically include the header file where the symbol is defined.
   * `<M-i>` will look for the symbol under the cursor (or selected) in the current ctag database and it will try to automatically prepend it with its missing complete scope.
 
-### Templates
+#### Templates
   * All templates, snippets and wizards respect the naming convention set for
     the current project thanks to
     [lh-dev styling feature](http://github.com/LucHermitte/lh-dev#naming-conventions)
@@ -117,12 +120,16 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
   * Snippets for some standard types are already provided.
   * Some snippets will try to detect the C++11 dialect (98/03/11/14/17) in
     order to adapt the result produced -- it will be done through the analysis
-    of the option `(bg):cpp_std_flavour`, or the analysis of `$CXXFLAGS`, or
-    through the analysis of CMake `CXXFLAGS` variables (this will require
+    of the [option `(bg):cpp_std_flavour`](doc/option.md#bgcpp_std_flavour-and-cxxflags) , or
+    the analysis of `$CXXFLAGS`, or through the analysis of CMake `CXXFLAGS`
+    variables (this will require
     [lh-cmake](http://github.com/LucHermitte/lh-cmake), and the project to be
     configured to CMake.)
 
-### Wizards and other high-level features
+I'll try to maintain an up-to-date [documentation](snippets.md) of the
+snippets as most of them have options.
+
+#### Wizards and other high-level features
   * [class](doc/template/Class.md): builds a class skeleton based on the selected (simplified) semantics (value copyable, stack-based non copyable, entity non-copyable, entity clonable)
   * [singleton](doc/template/Singleton.md): my very own way to define singletons based on my conclusions on this anti-pattern -- you may prefer Loki's or ACE's solutions
   * [:DOX](doc/Doxygen.md): analyses a function signature (parameters, return type, throw specification) and provide a default Doxygenized documentation
@@ -132,13 +139,13 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
   * [:Override](doc/Override.md): Ask which inherited virtual function should be overridden in the current class (feature still in its very early stages)
   * `:Constructor` (that takes the following parameters: `init`, `default`, `copy`, `assign`), or `:ConstructorInit`, `:ConstructorDefault`, `:ConstructorCopy`, `AssignmentOperator`. They'll analyse the list of know attributes (from a ctags database) to generate the related construction functions.
 
-## Syntax highlighting
+### Syntax highlighting
   * assign in condition (bad practice)
   * catch by value (bad practice)
   * throw specifications ([do you really know what they are about, and still want them?](http://www.gotw.ca/gotw/082.htm))
   * function definitions
 
-## Miscellaneous
+### Miscellaneous
   * home like VC++: mappings that override `<home>` and `<end>` to mimic how these keys behave in VC++.
   * omap-param: defines the o-mappings `,i` and `,a` to select the current parameter (in a list of parameters).
   * a.vim,
@@ -146,13 +153,16 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
   * lh-cpp imports a [C&C++ Folding plugin](https://github.com/LucHermitte/VimFold4C), which is still experimental.
   * [lh-dev](http://github.com/LucHermitte/lh-dev), which is required by lh-cpp, provides a few commands like `:NameConvert` that permits to change the naming style of a symbol. The possible styles are: `upper_camel_case`, `lower_camel_case`, `snake`/`underscore`, `variable`, `local`, `global`, `member`, `constant`, `static`, `param`, `getter`, `setter`)
 
-## API
-
-## Installation
+### Installation
   * Requirements: Vim 7.+, [lh-vim-lib](http://github.com/LucHermitte/lh-vim-lib), [lh-brackets](http://github.com/LucHermitte/lh-brackets), [mu-template](http://github.com/LucHermitte/mu-template), [lh-dev](http://github.com/LucHermitte/lh-dev)
   * With [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager), install lh-cpp. This is the preferred method because of the various dependencies.
 ```vim
 ActivateAddons lh-cpp
+```
+  * or with [vim-flavor](http://github.com/kana/vim-flavor) which also support
+    dependencies:
+```
+flavor LucHermitte/lh-cpp
 ```
   * or you can clone the git repositories (expecting I haven't forgotten anything):
 ```
@@ -177,7 +187,7 @@ Bundle 'tomtom/stakeholders_vim'
 Bundle 'LucHermitte/lh-cpp'
 ```
 
-# Credits
+## Credits
 
 Many people have to be credited:
   * the Vim & VimL gurus ;
@@ -188,7 +198,7 @@ Many people have to be credited:
   * Thomas Ribo for his feedback and features-requirements.
   * and many more that I have probably forgotten.
 
-# License
+## License
 
   * Documentation is under CC-BY-SA 3.0
   * lh-cpp is under GPLv3 with exceptions. See acompagning [license file](License.md), i.e.
@@ -201,7 +211,7 @@ Many people have to be credited:
         Software Licence
 
 
-# See also
+## See also
   * [C++ tips on vim.wikia](http://vim.wikia.com/wiki/Category:C%2B%2B)
   * c.vim
   * **Project Management**: [local\_vimrc](https://github.com/LucHermitte/local_vimrc)
@@ -212,4 +222,3 @@ Many people have to be credited:
   * **Code Completion**: [YouCompleteMe](https://github.com/Valloric/YouCompleteMe), really, check this one!, or [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520), or [clang\_complete](https://github.com/Rip-Rip/clang_complete)
   * **Code Indexing**: [clang\_indexer](https://github.com/LucHermitte/clang_indexer) and [vim-clang](https://github.com/LucHermitte/vim-clang), [lh-tags](http://github.com/LucHermitte/lh-tags)
 
-[![Project Stats](https://www.openhub.net/p/21020/widgets/project_thin_badge.gif)](https://www.openhub.net/p/21020)

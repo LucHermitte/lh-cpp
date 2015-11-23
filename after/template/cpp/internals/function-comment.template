@@ -3,7 +3,7 @@ VimL:" template to generate function comments, default format=doxygen
 VimL: let s:fn_comments=s:Args()[0]
 VimL: "
 VimL: function! s:_AddItemToDoc(tagname, data)
-VimL:   let text = empty(a:data) ? "\n" : a:data 
+VimL:   let text = empty(a:data) ? "\n" : a:data
 VimL:   if empty(a:tagname)
 VimL:      return [{"text": text}]
 VimL:   else
@@ -33,12 +33,12 @@ VimL: "
 VimL: function! s:_GenerateDoc(data)
 VimL:   " echomsg "\n-->".string(a:data)
 VimL:   " tags ordered => determine the order in which they are displayed
-VimL:   let pre_tags_default = [ "ingroup", "brief", "param", "return", "throw", "invariant", "pre", "post"]
+VimL:   let pre_tags_default = [ "ingroup", "brief", "tparam", "param", "return", "throw", "invariant", "pre", "post"]
 VimL:   let post_tags_default = ["note", "warning"]
 VimL:   let doc = []
 VimL:   let tags = lh#dev#option#get("pre_desc_ordered_tags", &ft, pre_tags_default)
 VimL:   for tag in tags
-VimL:     let doc +=  s:_AddToDoc(tag, a:data) 
+VimL:     let doc +=  s:_AddToDoc(tag, a:data)
 VimL:   endfor
 VimL:   if has_key(s:fn_comments, "text")
 VimL:     if empty(s:fn_comments.text)
@@ -51,7 +51,7 @@ VimL:     endif
 VimL:   endif
 VimL:   let tags = lh#dev#option#get("post_desc_ordered_tags", &ft, post_tags_default)
 VimL:   for tag in tags
-VimL:     let doc +=  s:_AddToDoc(tag, a:data) 
+VimL:     let doc +=  s:_AddToDoc(tag, a:data)
 VimL:   endfor
 VimL:   " and finally, generate!
 VimL:   call s:Include("formatted-comment", "cpp/internals", doc)

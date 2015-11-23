@@ -1,7 +1,7 @@
 VimL:" C++ formatted-comment template-routine, Luc Hermitte, 23rd Mar 2012
 VimL:" Meant to be used as a function whose parameter is a list of things to print.
 VimL:" Default output format=doxygen; override this template for  other formats.
-VimL:" hint: /** stuff from the list... =/
+VimL:" hint: /** stuff from the list... */
 VimL: let s:reindent     = 1
 VimL: function! s:_LoopOverDoxItems(doc)
 VimL:    " echomsg "-->".string(a:doc)

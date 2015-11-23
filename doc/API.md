@@ -10,18 +10,18 @@ type/function/construct available.
 
 #### Examples
 See for instance:
-- [`array_size` snippet](doc/snippets.md#array_size)
-- [`namespace` snippet](doc/snippets.md#namespace)
-- [`shared_ptr` snippet](doc/snippets.md#shared_ptr)
-- [`static_assert` snippet](doc/snippets.md#static_assert)
-- [`begin`-`end` expander](doc/features.md#begin_end)
+- [`array_size` snippet](snippets.md#array_size)
+- [`namespace` snippet](snippets.md#namespace)
+- [`shared_ptr` snippet](snippets.md#shared_ptr)
+- [`static_assert` snippet](snippets.md#static_assert)
+- [`begin`-`end` expander](features.md#begin_end)
 
 #### Functions
 ##### `lh#cpp#get_flavour()`
 __Returns__: the current C++ flavour (03, 05, 11, 14, or 17)
 
 The flavour is obtained from [`(bg)_cpp_std_flavour`, `$CXXFLAGS`, or
-`$CMAKE_CXXFLAGS`](doc/options.md#bg-cpp_std_flavour-and-CXXFLAGS).
+`$CMAKE_CXXFLAGS`](options.md#bgcpp_std_flavour-and-cxxflags).
 
 ##### `lh#cpp#use_TR1()`
 __Returns__: whether TR1 (or more is supported).
