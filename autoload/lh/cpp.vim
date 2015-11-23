@@ -2,20 +2,17 @@
 " File:         autoload/lh/cpp.vim                               {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      001
+" License:      GPLv3 with exceptions
+"               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
+" Version:      2.1.7
+let s:k_version = '217'
 " Created:      08th Jun 2014
-" Last Update:  $Date$
+" Last Update:  23rd Nov 2015
 "------------------------------------------------------------------------
 " Description:
-"       «description»
-" 
-"------------------------------------------------------------------------
-" Installation:
-"       Drop this file into {rtp}/autoload/lh
-"       Requires Vim7+
-"       «install details»
-" History:      «history»
-" TODO:         «missing features»
+"       Various C++ related functions
+"
+" - C++ flavour detection
 " }}}1
 "=============================================================================
 
@@ -24,7 +21,6 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 1
 function! lh#cpp#version()
   return s:k_version
 endfunction
@@ -62,7 +58,7 @@ function! lh#cpp#get_flavour()
 
   let flavour = s:CheckFlavour()
   if flavour != 0 | return flavour | endif
-  
+
   " then, check $CXXFLAGS
   if exists('$CXXFLAGS')
     let std=matchstr($CXXFLAGS, '-std=\zs\S\+\ze')
