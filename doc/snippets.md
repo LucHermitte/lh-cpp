@@ -100,6 +100,10 @@
  * [Placeholders](http://github.com/LucHermitte/lh-brackets) are represented
    within «French quotation marks».
 
+ * Default snippets from
+   [mu-template](http://github.com/LucHermitte/mu-template) aren't documented
+   yet.
+
 ### Control Statements
 ##### cpp/catch
 **Produces:**
@@ -626,15 +630,135 @@ BOOST_STATIC_ASSERT(cond)
 
 ### Doxygen
 ##### dox/author
+**Produces:** `@author`
+
+**Options:**
+  * [`(bg):({ft_}dox_author_tag)`](options.mg#bgft_dox_author_tag)
+  * [`(bg):({ft_}dox_author)`](options.mg#bgft_dox_author)
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Relies on:**
+  * [`lh#dox#author()`](API.md#lhdoxauthor)
+
 ##### dox/code
+**Produces:** `<code>«code»</code>`
+
+**Parameters:**
+  * «code», default: empty placeholder «»
+
+**Options:**
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Surround:**
+  1. The selection can be surrounded by `<code>` tags.
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+
 ##### dox/em
+**Produces:** `<em>«text»</em>`
+
+**Parameters:**
+  * «text», default: empty placeholder «»
+
+**Options:**
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Surround:**
+  1. The selection can be surrounded by `<em>` tags.
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+
 ##### dox/file
+**Produces:** `/** @file ... */`
+
+**Options:**
+  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
+  * [`(bg):ProjectVersion`](options.md#bgproject_version) , default: «1.0»
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Notes:**
+  * The filename written with the `@file` tag is deduced from `expand(%:t)`
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+  * [`lh#dox#since()`](API.md#lhdoxsince)
+
+**TODO:**
+  * Recognize SVN/CVS context to not always include RCS tags like `$Id$`
+
 ##### dox/function
+**Produces:** `/** @ingroup, @params, @exceptions, @pre, ... */`
+
+**Note:**
+  * This snippet is used to organize the various elements computed by [`:DOX`](features.md#DOX)
+  * Its internal are likelly to change in the future to factorize the code with
+    `autoload/lh/dox.vim` and other snippets like
+    [cpp/internals/function-comment](#cppinternalsfunction-comment)
+
 ##### dox/group
+**Produces:** Doxygen local group
+```C++
+//@{
+«»
+//@}
+```
+
+**Surround:**
+  1. The selection can be surrounded by the group tags
+
 ##### dox/html
+**Produces:** `<html-tag>«text»</html-tag>`
+
+**Parameters:**
+  * «text», default: empty placeholder «»
+
+**Options:**
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Surround:**
+  1. The selection can be surrounded by the html-tags
+  2. The selection can become the HTML tags
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+
 ##### dox/ingroup
+**Produces:** `/**@ingroup ... */`
+
+**Options:**
+  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+
 ##### dox/since
+**Produces:** `@since Version`
+
+**Options:**
+  * [`(bg):ProjectVersion`](options.md#bgproject_version) , default: «1.0»
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+  * [`lh#dox#since()`](API.md#lhdoxsince)
+
 ##### dox/tt
+**Produces:** `<tt>«text»</tt>`
+
+**Parameters:**
+  * «text», default: empty placeholder «»
+
+**Options:**
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Surround:**
+  1. The selection can be surrounded by `<tt>` tags.
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
 
 ### Miscelleanous
 ##### cpp/benchmark
