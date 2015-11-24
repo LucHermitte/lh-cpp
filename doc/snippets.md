@@ -1,6 +1,6 @@
-## lh-cpp Snippets, templates and wizards
+# lh-cpp Snippets, templates and wizards
 
-### Contents
+## Contents
 
   * [Remarks](#remarks)
   * [Control Statements](#control-statements)
@@ -90,7 +90,7 @@
       * [cpp/internals/stream-implementation](#cppinternalsstream-implementation)
       * [cpp/internals/stream-signature](#cppinternalsstream-signature)
 
-### Remarks
+## Remarks
 
  * Styling options from
    [lh-dev](http://github.com/LucHermitte/lh-dev#options-1) are applied on the
@@ -104,8 +104,8 @@
    [mu-template](http://github.com/LucHermitte/mu-template) aren't documented
    yet.
 
-### Control Statements
-##### cpp/catch
+## Control Statements
+#### cpp/catch
 **Produces:**
 ```C++
 catch(«...») {
@@ -116,7 +116,7 @@ catch(«...») {
 **Surround:**
   1. The selection can be surrounded to become the catch-code
 
-##### cpp/for-enum
+#### cpp/for-enum
 **Produces:**
 ```C++
 for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type()
@@ -133,7 +133,7 @@ for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type()
 **Note:**
   *  This snippet is meant to be used with [cpp/enum](#cppenum) snippets
 
-##### cpp/for-iterator
+#### cpp/for-iterator
 **Produces:**
 ```C++
 for («classname»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
@@ -150,7 +150,7 @@ for («classname»::«const_»iterator «b»=«code».begin(), «exception_type�
 **Notes:**
   *  Container name («code»), and iterators names («b» and «exception_type»(«exception_args»)) are asked to the end user
 
-##### cpp/for-range
+#### cpp/for-range
 **Produces:**
 ```C++
 for («type» «elem» : «range») {
@@ -166,7 +166,7 @@ for («type» «elem» : «range») {
 **Surround:**
   1. The selection can be surrounded to become the loop code
 
-##### cpp/fori
+#### cpp/fori
 **Produces:**
 ```C++
 for («int» «i»=0;«i»!=«N»;++«i») {
@@ -177,7 +177,7 @@ for («int» «i»=0;«i»!=«N»;++«i») {
 **Surround:**
   1. The selection can be surrounded to become the loop code
 
-##### cpp/foriN
+#### cpp/foriN
 **Produces:**
 ```C++
 for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
@@ -188,7 +188,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
 **Surround:**
   1. The selection can be surrounded to become the loop code
 
-##### cpp/namespace
+#### cpp/namespace
 **Produces:** `namespace «ns» { ... } // «ns»`
 
 **Parameters:**
@@ -209,7 +209,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * If C++17 flavour is selected, and `(bg):cpp_use_nested_namespaces` is true,
     then C++17 a _nested namespace_ will be used.
 
-##### cpp/throw
+#### cpp/throw
 **Produces:**
   * `throw «exception_type»(«exception_args»);` (within code context)
   * or `@throw` (within Doxygen comments)«»
@@ -227,7 +227,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
 **Variation Points:**
   * 'throw', 'cpp', '"Cannot decode'.s:enum_name.'"'
 
-##### cpp/try
+#### cpp/try
 **Produces:**
 ```C++
 try {
@@ -241,7 +241,7 @@ try {
   1. The selection can be surrounded to become the try-code
   2. The selection can be surrounded to become the catch-code
 
-##### cpp/while-getline
+#### cpp/while-getline
 **Produces:**
 ```C++
 while(std::getline(«stream»,«line»)) {
@@ -256,8 +256,8 @@ while(std::getline(«stream»,«line»)) {
   * `<string>`
 
 
-### Standard (and boost) Types
-##### cpp/auto_ptr
+## Standard (and boost) Types
+#### cpp/auto_ptr
 **Produces:** `std::auto_ptr<«type»>`
 
 **Surround:**
@@ -266,7 +266,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<memory>`
 
-##### cpp/auto_ptr-instance
+#### cpp/auto_ptr-instance
 **Produces:** `std::auto_ptr<«type»> ptr(new «type»(args));`
 
 **Surround:**
@@ -278,7 +278,7 @@ while(std::getline(«stream»,«line»)) {
 **Notes:**
   * I hesitate to called it `cpp/make_auto_ptr`
 
-##### cpp/file
+#### cpp/file
 **Produces:** `«i»fstream f(«filename»);`
 
 **Surround:**
@@ -287,7 +287,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<fstream>`
 
-##### cpp/list
+#### cpp/list
 **Produces:** `std::list<«type»> «»`
 
 **Surround:**
@@ -296,7 +296,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<list>`
 
-##### cpp/map
+#### cpp/map
 **Produces:** `std::map<«key»,«value»> «»`
 
 **Surround:**
@@ -306,19 +306,19 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<map>`
 
-##### cpp/noncopyable
+#### cpp/noncopyable
 **Produces:** `boost::noncopyable`
 
 **Also includes:**
   * `<boost/noncopyable.hpp>`
 
-##### cpp/path
+#### cpp/path
 **Produces:** `boost::filesystem::path`
 
 **Also includes:**
   * `<boost/filesystem.hpp>`
 
-##### cpp/ptr_vector
+#### cpp/ptr_vector
 **Produces:** `boost::ptr_vector<«type»> «»`
 
 **Surround:**
@@ -327,7 +327,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * lh#dev#import#add("<boost/ptr_container/ptr_vector.hpp>")
 
-##### cpp/set
+#### cpp/set
 **Produces:** `std::set<«type»> «»`
 
 **Surround:**
@@ -336,7 +336,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * <set>
 
-##### cpp/shared_ptr
+#### cpp/shared_ptr
 **Produces:**
   * `std::shared_ptr<«type»> «»`, in [C++11 or more](options.md#bgcpp_std_flavour)
   * `boost::shared_ptr<«type»> «»`, otherwise
@@ -351,13 +351,13 @@ while(std::getline(«stream»,«line»)) {
   * `<memory>` in C++11
   * `<boost/shared_ptr.hpp>` otherwise
 
-##### cpp/string
+#### cpp/string
 **Produces:** `std::string «»`
 
 **Also includes:**
   * `<string>`
 
-##### cpp/unique_ptr
+#### cpp/unique_ptr
 **Produces:** `std::unique_ptr<«type»>`
 
 **Surround:**
@@ -366,7 +366,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<memory>`
 
-##### cpp/vector
+#### cpp/vector
 **Produces:** `std::vector<«type»> «»`
 
 **Surround:**
@@ -375,7 +375,7 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<vector>`
 
-##### cpp/weak_ptr
+#### cpp/weak_ptr
 **Produces:**
   * `std::weak_ptr<«type»> «»`, in [C++11 or more](options.md#bgcpp_std_flavour)
   * `boost::weak_ptr<«type»> «»`, otherwise
@@ -391,8 +391,8 @@ while(std::getline(«stream»,«line»)) {
   * `<boost/shared_ptr.hpp>` otherwise
 
 
-### Standard (and boost) Functions and Idioms
-##### c/assert
+## Standard (and boost) Functions and Idioms
+#### c/assert
 **Produces:** `assert(«assertion»)`
 
 **Surround:**
@@ -401,14 +401,14 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<assert.h>`
 
-##### c/rand_init
+#### c/rand_init
 **Produces:** `srand(time(NULL));`
 
 **Also includes:**
   * `<time.h>` in C, `<ctime>` in C++
   * `<stdlib.h>` in C, `<cstdlib>` in C++
 
-##### c/realloc
+#### c/realloc
 **Produces:**
 ```C++
 type lhs = (type) realloc(ptr, size); macro
@@ -434,7 +434,7 @@ ptr = lhs;
     * `"false"`, default `false`
     * `"macro"`, default: an empty string, expected value: `\\`
 
-##### cpp/array_size
+#### cpp/array_size
 **Produces:**
 ```C++
 // C++98/03
@@ -466,7 +466,7 @@ std::size(«array»)
   * Define the unsafe C equivalent `c/array_size`:
     `sizeof «array»/sizeof «array»[0]`
 
-##### cpp/b-e
+#### cpp/b-e
 **Produces:**
   * or `std::begin(«container»), std::end(«container»)`
     if [C++11 flavour](options.md#bgcpp_std_flavour) is used, or
@@ -490,19 +490,19 @@ std::size(«array»)
 **TODO:**
   * Surround container
 
-##### cpp/cerr
+#### cpp/cerr
 **Produces:** `std::cerr <<`
 
 **Also includes:**
   * `<iostream>`
 
-##### cpp/cin
+#### cpp/cin
 **Produces:** `std::cin >>`
 
 **Also includes:**
   * `<iostream>`
 
-##### cpp/copy
+#### cpp/copy
 **Produces:** `std::copy(first, last, dest)`
 
 **Parameters:**
@@ -517,7 +517,7 @@ std::size(«array»)
 **TODO:**
   * Use `cpp/b-e` snippet
 
-##### cpp/copy-back_inserter
+#### cpp/copy-back_inserter
 **Produces:** `std::copy(«origin».begin(), «origin».end(), std::back_inserter(«dest»));`
 
 **Parameters:**
@@ -535,19 +535,19 @@ std::size(«array»)
 **TODO:**
   * Use `cpp/b-e` snippet
 
-##### cpp/cout
+#### cpp/cout
 **Produces:** `std::cout <<`
 
 **Also includes:**
   * `<iostream>`
 
-##### cpp/ends_with
+#### cpp/ends_with
 **Produces:** `boost::algorithm::ends_with(«input», «prefix_searched»)`
 
 **Also includes:**
   * `<boost/algorithm/string/predicate.hpp>`
 
-##### cpp/erase-remove
+#### cpp/erase-remove
 **Produces:** `erase-remove idiom`
 
 **Parameters:**
@@ -562,7 +562,7 @@ std::size(«array»)
 **TODO:**
   * Use `cpp/b-e` snippet
 
-##### cpp/iss
+#### cpp/iss
 **Produces:**
 ```C++
 std::istringstream iss(str);
@@ -573,7 +573,7 @@ if (iss >> «»)
 **Also includes:**
   * `<sstream>`
 
-##### cpp/oss
+#### cpp/oss
 **Produces:**
 ```C++
 std::ostringstream oss(str);
@@ -583,7 +583,7 @@ oss << «»;
 **Also includes:**
   * `<sstream>`
 
-##### cpp/sort
+#### cpp/sort
 **Produces:** `std::sort(range.begin(), range.end());`
 
 **Parameters:**
@@ -598,13 +598,13 @@ oss << «»;
 **TODO:**
   * Use `cpp/b-e` snippet
 
-##### cpp/starts_with
+#### cpp/starts_with
 **Produces:** `boost::algorithm::starts_with(«input», «prefix_searched»)`
 
 **Also includes:**
   * `<boost/algorithm/string/predicate.hpp>`
 
-##### cpp/static_assert
+#### cpp/static_assert
 **Produces:**
 ```C++
 // C++11
@@ -623,10 +623,10 @@ BOOST_STATIC_ASSERT(cond)
 **Also includes:**
   * `<boost/static_assert.hpp>`, in C++98/03
 
-### Classes
+## Classes
 
-#### Class Elements
-##### cpp/assignment-operator
+### Class Elements
+#### cpp/assignment-operator
 **Produces:** `«classname»& operator=(«classname» const&);`
 
 **Parameters:**
@@ -641,7 +641,7 @@ BOOST_STATIC_ASSERT(cond)
   * [`cpp/copy-and-swap`](#cppcopy-and-swap) snippet, if the idiom is used
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
-##### cpp/bool-operator
+#### cpp/bool-operator
 **Produces:** A safe `bool operator` compatible with C++98/03
 
 **Notes:**
@@ -654,7 +654,7 @@ BOOST_STATIC_ASSERT(cond)
 **TODO:**
   *  Detect C++11 to produce an `explicit bool operator()` instead.
 
-##### cpp/copy-and-swap
+#### cpp/copy-and-swap
 **Produces:** `assignment operator + swap`
 ```C++
 // + comments generated with cpp/function-comment
@@ -682,7 +682,7 @@ void swap(T & other);
     (snippet/option) as some frameworks have their own macro/keyword for
     `noexcept`)
 
-##### cpp/copy-constructor
+#### cpp/copy-constructor
 **Produces:** `T(T const&);`
 
 **Parameters:**
@@ -698,7 +698,7 @@ void swap(T & other);
 **TODO:**
   * Add move copy-constructor, and move assignment-operator
 
-##### cpp/default-constructor
+#### cpp/default-constructor
 **Produces:** `T();`
 
 **Parameters:**
@@ -711,7 +711,7 @@ void swap(T & other);
 **Variation Points:**
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
-##### cpp/destructor
+#### cpp/destructor
 **Produces:** `«virtual »~T();`
 
 **Parameters:**
@@ -730,7 +730,7 @@ void swap(T & other);
     (snippet/option) as some frameworks have their own macro/keyword for
     `noexcept`)
 
-##### cpp/operator-binary
+#### cpp/operator-binary
 **Produces:**
 ```C++
 «classname» operator«X»(«classname» lhs, «classname» const& rhs)
@@ -753,23 +753,23 @@ void swap(T & other);
 **TODO:**
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
-##### cpp/stream-extractor
+#### cpp/stream-extractor
 **Produces:** `istream& operator>>(istream &, class-type)`
 
 **Relies on:**
   * [`cpp/internals/stream-common`](#cppinternalsstream-common)
 
-##### cpp/stream-inserter
+#### cpp/stream-inserter
 **Produces:** `ostream& operator<<(ostream &, class-type)`
 
 **Relies on:**
   * [`cpp/internals/stream-common`](#cppinternalsstream-common)
 
-#### Class Patterns
+### Class Patterns
 **Note:** Unlike other snippets, class patterns are often under a BSL license
 
-##### cpp/abs-rel
-##### cpp/class
+#### cpp/abs-rel
+#### cpp/class
 **Produces:** Wizard that produces a class definition, and asks for class
 semantics to the user:
  * Value semantics (stack-based, copyable, comparable)
@@ -804,21 +804,21 @@ semantics to the user:
     * value-semantics, responsible for one resource
     * value-semantics, with RAII encapsulated resource(s)
 
-##### cpp/enum
+#### cpp/enum
 TBW:
 
 **See:** [lh-cpp enums generation](Enums.md)
 
-##### cpp/enum2
+#### cpp/enum2
 TBW:
 
 **See:** [lh-cpp enums generation](Enums.md)
-##### cpp/enum2-impl
+#### cpp/enum2-impl
 TBW:
 
 **See:** [lh-cpp enums generation](Enums.md)
 
-##### cpp/singleton
+#### cpp/singleton
 **Produces:** Wizard that produces a singleton class definition
 
 **Parameters:**
@@ -850,7 +850,7 @@ TBW:
     wizard glob compatible files to ask the use which one he prefers
   * Use [cpp/internals/function-comment](#cppinternalsfunction-comment)
 
-##### cpp/traits
+#### cpp/traits
 **Produces:** traits-class
 ```C++
 /** «name» traits class.
@@ -859,8 +859,8 @@ template <typename «T»> struct «name»_traits
 { <++> };
 ```
 
-### Doxygen
-##### dox/author
+## Doxygen
+#### dox/author
 **Produces:** `@author`
 
 **Options:**
@@ -871,7 +871,7 @@ template <typename «T»> struct «name»_traits
 **Relies on:**
   * [`lh#dox#author()`](API.md#lhdoxauthor)
 
-##### dox/code
+#### dox/code
 **Produces:** `<code>«code»</code>`
 
 **Parameters:**
@@ -886,7 +886,7 @@ template <typename «T»> struct «name»_traits
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
-##### dox/em
+#### dox/em
 **Produces:** `<em>«text»</em>`
 
 **Parameters:**
@@ -901,7 +901,7 @@ template <typename «T»> struct «name»_traits
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
-##### dox/file
+#### dox/file
 **Produces:** `/** @file ... */`
 
 **Options:**
@@ -919,7 +919,7 @@ template <typename «T»> struct «name»_traits
 **TODO:**
   * Recognize SVN/CVS context to not always include RCS tags like `$Id$`
 
-##### dox/function
+#### dox/function
 **Produces:** `/** @ingroup, @params, @exceptions, @pre, ... */`
 
 **Note:**
@@ -928,7 +928,7 @@ template <typename «T»> struct «name»_traits
     `autoload/lh/dox.vim` and other snippets like
     [cpp/internals/function-comment](#cppinternalsfunction-comment)
 
-##### dox/group
+#### dox/group
 **Produces:** Doxygen local group
 ```C++
 //@{
@@ -939,7 +939,7 @@ template <typename «T»> struct «name»_traits
 **Surround:**
   1. The selection can be surrounded by the group tags
 
-##### dox/html
+#### dox/html
 **Produces:** `<html-tag>«text»</html-tag>`
 
 **Parameters:**
@@ -955,7 +955,7 @@ template <typename «T»> struct «name»_traits
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
-##### dox/ingroup
+#### dox/ingroup
 **Produces:** `/**@ingroup ... */`
 
 **Options:**
@@ -965,7 +965,7 @@ template <typename «T»> struct «name»_traits
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
-##### dox/since
+#### dox/since
 **Produces:** `@since Version`
 
 **Options:**
@@ -976,7 +976,7 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#tag()`](API.md#lhdoxtag)
   * [`lh#dox#since()`](API.md#lhdoxsince)
 
-##### dox/tt
+#### dox/tt
 **Produces:** `<tt>«text»</tt>`
 
 **Parameters:**
@@ -991,17 +991,17 @@ template <typename «T»> struct «name»_traits
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
-### Miscellaneous
-##### cpp/benchmark
-##### cpp/otb-sug-latex
-##### cpp/otb-sug-snippet
-##### cpp/utf8
+## Miscellaneous
+#### cpp/benchmark
+#### cpp/otb-sug-latex
+#### cpp/otb-sug-snippet
+#### cpp/utf8
 
-### Internal templates
-##### cpp/internals/abs-rel-shared
-##### cpp/internals/formatted-comment
-##### cpp/internals/function-comment
-##### cpp/internals/stream-common
+## Internal templates
+#### cpp/internals/abs-rel-shared
+#### cpp/internals/formatted-comment
+#### cpp/internals/function-comment
+#### cpp/internals/stream-common
 **Produces:** The empty definition for a stream operation.
 
 **Parameters**
@@ -1019,7 +1019,7 @@ template <typename «T»> struct «name»_traits
   * [`cpp/internals/stream-signature`](#cppinternalsstream-signature)
   * [`cpp/internals/stream-implementation`](#cppinternalsstream-implementation)
 
-##### cpp/internals/stream-implementation
+#### cpp/internals/stream-implementation
 **Produces:**
 ```C++
 {
@@ -1039,7 +1039,7 @@ template <typename «T»> struct «name»_traits
   * `<istream>` if `s:direction == "i"`
   * or `<ostream>` if `s:direction == "o"`
 
-##### cpp/internals/stream-signature
+#### cpp/internals/stream-signature
 **Produces:**
 ```C++
 «s:friend»«s:type»& operator«s:op»(«s:type» & «s:stream_param», «s:clsname» «s:const»& v)
