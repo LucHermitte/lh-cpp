@@ -22,4 +22,4 @@ if (! <+s:_args.lhs+>) {<+s:_args.macro+>
 	<+error_message+>;<+s:_args.macro+>
 	return <+s:_args.false+>;<+s:_args.macro+>
 }<+s:_args.macro+>
-<+s:_args.ptr+> = <+s:_args.lhs+>;<+s:_args.macro+>
+<+s:_args.ptr+> = <+s:_args.lhs+>;
