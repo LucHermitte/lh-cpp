@@ -131,7 +131,7 @@ Tells which style to use to generate a couple of calls to `begin()`/`end()`:
 - "`boost`": -> `boost::begin(container)`
 - "`adl`": -> `begin(container)`
 
-**See:** `CTRL-X_be`, `CTRL-X_cbe`, `CTRL-X_rbe`, `CTRL-X_crbe`
+**See:** `CTRL-X_be`, `CTRL-X_cbe`, `CTRL-X_rbe`, `CTRL-X_crbe`, [`cpp/b-e` snippet](snippets.md#cppb-e)
 
 #### `(bg):c_menu_name`, `(bg):c_menu_priority`, `(bg):cpp_menu_name`, `(bg):cpp_menu_priority`
 These options tells where the |menu| for all C and C++ item goes.

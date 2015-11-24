@@ -2,6 +2,10 @@ VimL:" b-e File Template, Luc Hermitte, 30th Jun 2011
 VimL:" hint: <+container+>.begin(), <+container+>.end()
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:container = empty(s:Args()) ? s:Surround(1, Marker_Txt('container')): (s:Args()[0])
-<+s:container+>.begin(), <+s:container+>.end()<++>
+VimL: let s:container = s:Param("container", lh#marker#txt('container'))
+VimL: let s:begin = lh#cpp#snippets#_select_begin_end(s:container, 'begin')
+VimL: let s:end   = lh#cpp#snippets#_select_begin_end(s:container, 'end')
+<+s:begin+>, <+s:end+><++>
 VimL: unlet s:container
+VimL: unlet s:begin
+VimL: unlet s:end

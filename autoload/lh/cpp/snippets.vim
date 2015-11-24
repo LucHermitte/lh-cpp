@@ -170,14 +170,14 @@ function! s:Style()
   if lh#option#is_unset(style)
     unlet style
     let style
-          \ = lh#cpp#use_cpp1() ? 'std'
+          \ = lh#cpp#use_cpp11() ? 'std'
           \ :                     'c++98'
     " \ : lh#cpp#is_boost_used() ? 'boost'
   endif
   return style
 endfunction
 
-function! s:BeginEnd(cont, function)
+function! lh#cpp#snippets#_select_begin_end(cont, function)
   let style = s:Style()
   return lh#fmt#printf(s:k_begin_end_fmt[style], a:cont, a:function)
 endfunction
@@ -208,7 +208,7 @@ function! lh#cpp#snippets#_begin_end(begin) abort
   if saved_pos[1] == pos[0] && saved_pos[2] == pos[1]
     " No container under the cursor => use placeholders
     let cont = lh#marker#txt('container')
-    return s:BeginEnd(cont, a:begin). ', ' .s:BeginEnd(cont, s:k_end[a:begin])
+    return lh#cpp#snippets#_select_begin_end(cont, a:begin). ', ' .lh#cpp#snippets#_select_begin_end(cont, s:k_end[a:begin])
   endif
 
   if lh#position#char_at(saved_pos[1], saved_pos[2]-1) == ')'
@@ -233,8 +233,8 @@ function! lh#cpp#snippets#_begin_end(begin) abort
   let [all, head, cont; rest] = matchlist(cont, '\v^(\_s*)(.{-})\_s*$')
   " Build the string to "insert"
   let res = repeat("\<bs>", len)
-        \ . head . s:BeginEnd(cont, a:begin).
-        \ ', '.head .s:BeginEnd(cont, s:k_end[a:begin])
+        \ . head . lh#cpp#snippets#_select_begin_end(cont, a:begin).
+        \ ', '.head .lh#cpp#snippets#_select_begin_end(cont, s:k_end[a:begin])
   if pos[0] != saved_pos[1]
     " When <bs> clear characters at the start of the line, it jumps over indent
     " => we force sw to 1
