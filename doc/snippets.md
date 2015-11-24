@@ -1,14 +1,37 @@
 ## lh-cpp Snippets, templates and wizards
 
+### Remarks
+
+ * Styling options from
+   [lh-dev](http://github.com/LucHermitte/lh-dev#options-1) are applied on the
+   snippets. In other words, the code presented here may be formatted
+   differently regarding spaces and newlines.
+
+ * [Placeholders](http://github.com/LucHermitte/lh-brackets) are represented
+   within «French quotation marks».
+
 ### Control Statements
 ##### cpp/catch
-**Produces:** `catch(«...»){«catch-code»}`
+**Produces:**
+```C++
+catch(«...») {
+    «catch-code»
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the catch-code
 
 ##### cpp/for-enum
-**Produces:** `for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type(); «exception_type»(«exception_args»)!=«Enum»::MAX__; ++«exception_type»(«exception_args»)) { «code» }`
+**Produces:**
+```C++
+for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type()
+   ; «exception_type»(«exception_args»)!=«Enum»::MAX__
+   ; ++«exception_type»(«exception_args»))
+{
+    «code»
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the loop code
@@ -17,7 +40,15 @@
   *  This snippet is meant to be used with [cpp/enum](#cppenum) snippets
 
 ##### cpp/for-iterator
-**Produces:** `for («T»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end(); «b»!=«exception_type»(«exception_args»); ++«b») { «code» }`
+**Produces:**
+```C++
+for («T»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
+    ; «b»!=«exception_type»(«exception_args»)
+    ; ++«b»)
+{
+    «code»
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the loop code
@@ -26,7 +57,12 @@
   *  Container name («code»), and iterators names («b» and «exception_type»(«exception_args»)) are asked to the end user
 
 ##### cpp/for-range
-**Produces:** `for(«type» «elem» : «range») { «code» }`
+**Produces:**
+```C++
+for («type» «elem» : «range») {
+    «code»
+}
+```
 
 **Parameters:**
   * _type_, default: `auto&&`
@@ -37,13 +73,23 @@
   1. The selection can be surrounded to become the loop code
 
 ##### cpp/fori
-**Produces:** `for («int» «i»=0;«i»!=«N»;++«i») { «code» }`
+**Produces:**
+```C++
+for («int» «i»=0;«i»!=«N»;++«i») {
+    «code»
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the loop code
 
 ##### cpp/foriN
-**Produces:** `for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») { «code» }`
+**Produces:**
+```C++
+for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
+    «code»
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the loop code
@@ -58,7 +104,7 @@
   * [`(bg):[{ft}_]project_namespace`](options.md#bgft_project_namespace), which
     defaults to `«ns»`
   * [`lh#cpp#use_cpp17()`](options.md#bgcpp_std_flavour)
-  * [`(bg):cpp_use_nested_namespaces`](options.md#bgcpp_use_nested_namespaces_)
+  * [`(bg):cpp_use_nested_namespaces`](options.md#bgcpp_use_nested_namespaces)
 
 **Surround:**
   1. The selection can be surrounded to become the namespace code
@@ -71,7 +117,7 @@
 
 ##### cpp/throw
 **Produces:**
-  * `throw «exception_type»(«exception_args»)` (within code context)
+  * `throw «exception_type»(«exception_args»);` (within code context)
   * or `@throw` (within Doxygen comments)«»
 
 **Parameters:**
@@ -88,14 +134,26 @@
   * 'throw', 'cpp', '"Cannot decode'.s:enum_name.'"'
 
 ##### cpp/try
-**Produces:** `try { «code» } catch(«std::exception const& e») { «catch-code» }`
+**Produces:**
+```C++
+try {
+    «code»
+} catch(«std::exception const& e») {
+    «catch-code»
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the try-code
   2. The selection can be surrounded to become the catch-code
 
 ##### cpp/while-getline
-**Produces:** `while(std::getline(«stream»,«line»)) { «code»; }`
+**Produces:**
+```C++
+while(std::getline(«stream»,«line»)) {
+    «code»;
+}
+```
 
 **Surround:**
   1. The selection can be surrounded to become the loop code
