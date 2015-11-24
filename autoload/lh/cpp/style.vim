@@ -8,14 +8,14 @@
 " Created:	10th Feb 2009
 " Last Update:	$Date$
 "------------------------------------------------------------------------
-" Description:	
+" Description:
 " 	General coding style functions
-" 
+"
 "------------------------------------------------------------------------
-" History:	
+" History:
 " 	v1.1.0: Creation
 "	v2.0.0: License GPLv3 w/ extension
-" TODO:		
+" TODO:
 " 	- Refactor to build on top of lh#dev
 " 	- Integrate style preferences used by InsertAccessors
 " }}}1

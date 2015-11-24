@@ -1,5 +1,46 @@
 ## lh-cpp Options
 
+### Contents
+
+  * [Options types](#Options-types)
+  * [Option list](#Option-list)
+    * [`(bg):cpp_std_flavour` and `$CXXFLAGS`](#bgcpp_std_flavour-and-CXXFLAGS)
+    * [`(bg):({ft}_)FunctionPosArg`, `(bg):({ft}_)FunctionPosition`](#bgft_FunctionPosArg-bgft_FunctionPosition)
+    * [`(bg):ProjectVersion`](#bgProjectVersion)
+    * [`(bg):({ft}_)ShowDefaultParams`, `(bg):({ft}_)ShowExplicit`, `(bg):({ft}_)ShowStatic`, `(bg):({ft}_)ShowVirtual`](#bgft_ShowDefaultParams-bgft_ShowExplicit-bgft_ShowStatic-bgft_ShowVirtual)
+    * [`(bg):accessor_comment_get`, `(bg):accessor_comment_set`, `(bg):accessor_comment_ref`](#bgaccessor_comment_get-bgaccessor_comment_set-bgaccessor_comment_ref)
+    * [`(bg):({ft}_)alternateSearchPath`](#bgft_alternateSearchPath)
+    * [`(bg):({ft}_)begin_end_style`](#bgft_begin_end_style)
+    * [`(bg):c_menu_name`, `(bg):c_menu_priority`, `(bg):cpp_menu_name`, `(bg):cpp_menu_priority`](#bgc_menu_name-bgc_menu_priority-bgcpp_menu_name-bgcpp_menu_priority)
+    * [`(bg):cpp_defines_to_ignore`](#bgcpp_defines_to_ignore)
+    * [`(bg):cpp_use_nested_namespaces`](#bgcpp_use_nested_namespaces)
+    * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_CommentLeadingChar)
+    * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_TagLeadingChar)
+    * [`(bg):({ft}_)dox_author_tag`](#bgft_dox_author_tag)
+    * [`(bg):({ft}_)dox_author`](#bgft_dox_author)
+    * [`(bg):({ft}_)dox_brief`](#bgft_dox_brief)
+    * [`(bg):({ft}_)dox_group`](#bgft_dox_group)
+    * [`(bg):({ft}_)dox_ingroup`](#bgft_dox_ingroup)
+    * [`(bg):({ft}_)dox_throw`](#bgft_dox_throw)
+    * [`(bg):({ft}_)exception_args`](#bgft_exception_args)
+    * [`(bg):({ft}_)exception_type`](#bgft_exception_type)
+    * [`(bg):({ft}_)ext_4_impl_file`](#bgft_ext_4_impl_file)
+    * [`(bg):({ft}_)file_regex_for_inclusion`](#bgft_file_regex_for_inclusion)
+    * [`(bg):({ft}_)filename_simplify_for_inclusion`](#bgft_filename_simplify_for_inclusion)
+    * [`(bg):({ft}_)gcov_files_path`](#bgft_gcov_files_path)
+    * [`(bg):({ft}_)implPlace`](#bgft_implPlace)
+    * [`g:inlinesPlace`](#ginlinesPlace)
+    * [`(bg):({ft}_)includes`](#bgft_includes)
+    * [`(bg):({ft}_)multiple_namespaces_on_same_line`](#bgft_multiple_namespaces_on_same_line)
+    * [`(bg):({ft}_)nl_before_bracket` (deprecated)](#bgft_nl_before_bracket-deprecated)
+    * [`(bg):({ft}_)nl_before_curlyB` (deprecated)](#bgft_nl_before_curlyB-deprecated)
+    * [`(bg):({ft}_)pre_desc_ordered_tags`, `(bg):({ft}_post_desc_ordered_tags)`](#bgft_pre_desc_ordered_tags-bgft_post_desc_ordered_tags)
+    * [`(bg):({ft}_)project_namespace`](#bgft_project_namespace)
+    * [`(bg):({ft}_)tag_kinds_for_inclusion`](#bgft_tag_kinds_for_inclusion)
+    * [`(bg):tags_select`](#bgtags_select)
+    * [`(bg):({ft}_)template_expand_doc`](#bgft_template_expand_doc)
+    * [`(bg):xsltproc`](#bgxsltproc)
+
 ### Options types
 
 - Global options: `g:`_{option-name}_  
