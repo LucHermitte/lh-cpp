@@ -766,13 +766,98 @@ void swap(T & other);
   * [`cpp/internals/stream-common`](#cppinternalsstream-common)
 
 #### Class Patterns
+**Note:** Unlike other snippets, class patterns are often under a BSL license
+
 ##### cpp/abs-rel
 ##### cpp/class
+**Produces:** Wizard that produces a class definition, and asks for class
+semantics to the user:
+ * Value semantics (stack-based, copyable, comparable)
+ * Stack based semantics (non-copyable)
+ * Entity semantics (reference semantics, non-copyable)
+ * Entity semantics (reference semantics, clone-able)
+
+**Parameters:**
+  * _singleton name_, default: asked to the user
+
+**Options:**
+  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Variation Points/Relies on:**
+  * mu-template "c/section-sep" snippet
+  * [cpp/internals/formatted-comment](#cppinternalsformatted-comment)
+  * [cpp/internals/function-comment](#cppinternalsfunction-comment)
+  * [cpp/copy-constructor](#cppcopy-constructor)
+  * [cpp/copy-and-swap](#cppcopy-and-swap)
+  * [cpp/destructor](#cppdestructor)
+
+**Also includes:**
+  * `<boost/noncopyable.hpp>`
+
+**Todo:**
+  * Have all class variations in their own template-file, and have the
+    wizard glob compatible files to ask the use which one he prefers
+  * Enhance the semantics (see _Big Rule of Two_ in C++98/03, Rule of _All or
+    Nothing_ is C++11). We should have:
+    * value-semantics, no resources
+    * value-semantics, responsible for one resource
+    * value-semantics, with RAII encapsulated resource(s)
+
 ##### cpp/enum
+TBW:
+
+**See:** [lh-cpp enums generation](Enums.md)
+
 ##### cpp/enum2
+TBW:
+
+**See:** [lh-cpp enums generation](Enums.md)
 ##### cpp/enum2-impl
+TBW:
+
+**See:** [lh-cpp enums generation](Enums.md)
+
 ##### cpp/singleton
+**Produces:** Wizard that produces a singleton class definition
+
+**Parameters:**
+  * _singleton name_, default: asked to the user
+
+**Options:**
+  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
+  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+
+**Notes:**
+  * A Doxygen documentation skeleton is inserted
+  * The user is asked to choose the kind of singleton implementation he desires
+    * Scott Meyer's singleton (local-static, MT-safe (C++11), lazy-construction
+      supported)
+    * My own appreciation of what a singleton shall look like (MT-safe, no lazy
+      construction, but explicit initialisation)
+
+**Also includes:**
+  * `<boost/noncopyable.hpp>`
+
+**Variation Points:**
+  * mu-template "c/section-sep" snippet
+
+**Relies on:**
+  * `CppDox_SingletonWizard()`
+
+**Todo:**
+  * Have all singleton variations in their own template-file, and have the
+    wizard glob compatible files to ask the use which one he prefers
+  * Use [cpp/internals/function-comment](#cppinternalsfunction-comment)
+
 ##### cpp/traits
+**Produces:** traits-class
+```C++
+/** «name» traits class.
+ */
+template <typename «T»> struct «name»_traits
+{ <++> };
+```
 
 ### Doxygen
 ##### dox/author
