@@ -1,5 +1,5 @@
 VimL:" default-constructor File Template, Luc Hermitte, 21st Aug 2011
-VimL:" hint: T(T const&);
+VimL:" hint: T();
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
