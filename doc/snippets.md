@@ -225,7 +225,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * `<stdexcept>` if `exception_type` starts with `std::`
 
 **Variation Points:**
-  * 'throw', 'cpp', '"Cannot decode'.s:enum_name.'"'
+  * [`cpp/throw`](#cppthrow)
 
 #### cpp/try
 **Produces:**
