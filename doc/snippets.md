@@ -163,38 +163,151 @@ while(std::getline(«stream»,«line»)) {
 
 
 ### Standard (and boost) Types
-##### cpp/auto__ptr
-##### cpp/auto__ptr-instance
+##### cpp/auto_ptr
+**Produces:** `std::auto_ptr<«type»>`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<memory>`
+
+##### cpp/auto_ptr-instance
+**Produces:** `std::auto_ptr<«type»> ptr(new «type»(args));`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<memory>`
+
+**Notes:**
+  * I hesitate to called it `cpp/make_auto_ptr`
+
 ##### cpp/file
+**Produces:** `«i»fstream f(«filename»);`
+
+**Surround:**
+  1. The selection can be surrounded to become the filename
+
+**Also includes:**
+  * `<fstream>`
+
 ##### cpp/list
+**Produces:** `std::list<«type»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<list>`
+
 ##### cpp/map
+**Produces:** `std::map<«key»,«value»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+  2. The selection can be surrounded to become the key type
+
+**Also includes:**
+  * `<map>`
+
 ##### cpp/noncopyable
+**Produces:** `boost::noncopyable`
+
+**Also includes:**
+  * `<boost/noncopyable.hpp>`
+
 ##### cpp/path
-##### cpp/ptr__vector
+**Produces:** `boost::filesystem::path`
+
+**Also includes:**
+  * `<boost/filesystem.hpp>`
+
+##### cpp/ptr_vector
+**Produces:** `boost::ptr_vector<«type»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * lh#dev#import#add("<boost/ptr_container/ptr_vector.hpp>")
+
 ##### cpp/set
-##### cpp/shared__ptr
+**Produces:** `std::set<«type»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * <set>
+
+##### cpp/shared_ptr
+**Produces:**
+  * `std::shared_ptr<«type»> «»`, in [C++11 or more](options.md#bgcpp_std_flavour)
+  * `boost::shared_ptr<«type»> «»`, otherwise
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<memory>` in C++11
+  * `<boost/shared_ptr.hpp>` otherwise
+
 ##### cpp/string
-##### cpp/unique__ptr
+**Produces:** `std::string «»`
+
+**Also includes:**
+  * `<string>`
+
+##### cpp/unique_ptr
+**Produces:** `std::unique_ptr<«type»>`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<memory>`
+
 ##### cpp/vector
-##### cpp/weak__ptr
+**Produces:** `std::vector<«type»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<vector>`
+
+##### cpp/weak_ptr
+**Produces:**
+  * `std::weak_ptr<«type»> «»`, in [C++11 or more](options.md#bgcpp_std_flavour)
+  * `boost::weak_ptr<«type»> «»`, otherwise
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+
+**Also includes:**
+  * `<memory>` in C++11
+  * `<boost/shared_ptr.hpp>` otherwise
+
 
 ### Standard (and boost) Functions and Idioms
 ##### c/assert
-##### c/rand__init
+##### c/rand_init
 ##### c/realloc
-##### cpp/array__size
+##### cpp/array_size
 ##### cpp/b-e
 ##### cpp/cerr
 ##### cpp/cin
 ##### cpp/copy
 ##### cpp/cout
-##### cpp/ends__with
+##### cpp/ends_with
 ##### cpp/erase-remove
 ##### cpp/iss
 ##### cpp/oss
 ##### cpp/sort
-##### cpp/starts__with
-##### cpp/static__assert
+##### cpp/starts_with
+##### cpp/static_assert
 
 ### Classes
 
@@ -202,7 +315,7 @@ while(std::getline(«stream»,«line»)) {
 ##### cpp/assignment-operator
 ##### cpp/bool-operator
 ##### cpp/copy-and-swap
-##### cpp/copy-back__inserter
+##### cpp/copy-back_inserter
 ##### cpp/copy-constructor
 ##### cpp/default-constructor
 ##### cpp/destructor
