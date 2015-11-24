@@ -639,7 +639,7 @@ BOOST_STATIC_ASSERT(cond)
 
 **Variation Points:**
   * [`cpp/copy-and-swap`](#cppcopy-and-swap) snippet, if the idiom is used
-  * [`cpp/function-comment`](#cppfunction-comment) snippet
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 ##### cpp/bool-operator
 **Produces:** A safe `bool operator` compatible with C++98/03
@@ -675,7 +675,7 @@ void swap(T & other);
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
 
 **Variation Points:**
-  * [`cpp/function-comment`](#cppfunction-comment) snippet
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 **TODO:**
   * Detect C++11 to insert `noexcept` (through a variation point
@@ -693,7 +693,7 @@ void swap(T & other);
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
 
 **Variation Points:**
-  * [`cpp/function-comment`](#cppfunction-comment) snippet
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 **TODO:**
   * Add move copy-constructor, and move assignment-operator
@@ -709,7 +709,7 @@ void swap(T & other);
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
 
 **Variation Points:**
-  * [`cpp/function-comment`](#cppfunction-comment) snippet
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 ##### cpp/destructor
 **Produces:** `«virtual »~T();`
@@ -720,7 +720,7 @@ void swap(T & other);
   2. «`is_virtual`»: boolean, default: «virtual »
 
 **Variation Points:**
-  * [`cpp/function-comment`](#cppfunction-comment) snippet
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 **Options:**
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
@@ -751,7 +751,7 @@ void swap(T & other);
      [some experimentations I've done](http://github.com/LucHermitte/LucHermitte.github.io/source/_posts/code/test-arithmetic-operators).
 
 **TODO:**
-  * Use [`cpp/function-comment`](#cppfunction-comment) snippet
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 ##### cpp/stream-extractor
 **Produces:** `istream& operator>>(istream &, class-type)`
