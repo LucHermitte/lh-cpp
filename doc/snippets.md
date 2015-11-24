@@ -38,6 +38,7 @@
       * [cpp/cerr](#cppcerr)
       * [cpp/cin](#cppcin)
       * [cpp/copy](#cppcopy)
+      * [cpp/copy-back_inserter](#cppcopy-back_inserter)
       * [cpp/cout](#cppcout)
       * [cpp/ends_with](#cppends_with)
       * [cpp/erase-remove](#cpperase-remove)
@@ -51,7 +52,6 @@
       * [cpp/assignment-operator](#cppassignment-operator)
       * [cpp/bool-operator](#cppbool-operator)
       * [cpp/copy-and-swap](#cppcopy-and-swap)
-      * [cpp/copy-back_inserter](#cppcopy-back_inserter)
       * [cpp/copy-constructor](#cppcopy-constructor)
       * [cpp/default-constructor](#cppdefault-constructor)
       * [cpp/destructor](#cppdestructor)
@@ -77,7 +77,7 @@
       * [dox/ingroup](#doxingroup)
       * [dox/since](#doxsince)
       * [dox/tt](#doxtt)
-  * [Miscelleanous](#miscelleanous)
+  * [Miscellaneous](#miscelleanous)
       * [cpp/benchmark](#cppbenchmark)
       * [cpp/otb-sug-latex](#cppotb-sug-latex)
       * [cpp/otb-sug-snippet](#cppotb-sug-snippet)
@@ -136,7 +136,7 @@ for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type()
 ##### cpp/for-iterator
 **Produces:**
 ```C++
-for («T»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
+for («classname»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
     ; «b»!=«exception_type»(«exception_args»)
     ; ++«b»)
 {
@@ -169,7 +169,7 @@ for («type» «elem» : «range») {
 ##### cpp/fori
 **Produces:**
 ```C++
-for («int» «i»=0;«i»!=«N»;++«i») {
+for («int» «`is_virtual`»: boolean, default: «virtual »=0;«`is_virtual`»: boolean, default: «virtual »!=«N»;++«`is_virtual`»: boolean, default: «virtual ») {
     «code»
 }
 ```
@@ -180,7 +180,7 @@ for («int» «i»=0;«i»!=«N»;++«i») {
 ##### cpp/foriN
 **Produces:**
 ```C++
-for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
+for («std::size_t» «`is_virtual`»: boolean, default: «virtual »=0, «N»=...;«`is_virtual`»: boolean, default: «virtual »!=«N»;++«`is_virtual`»: boolean, default: «virtual ») {
     «code»
 }
 ```
@@ -279,7 +279,7 @@ while(std::getline(«stream»,«line»)) {
   * I hesitate to called it `cpp/make_auto_ptr`
 
 ##### cpp/file
-**Produces:** `«i»fstream f(«filename»);`
+**Produces:** `«`is_virtual`»: boolean, default: «virtual »fstream f(«filename»);`
 
 **Surround:**
   1. The selection can be surrounded to become the filename
@@ -426,7 +426,7 @@ ptr = lhs;
   * A dictionary that contains:
     * `"ptr"`, default `«p»`
     * `"lhs"`, default `new ` + _ptr_
-    * `"type"`, default `«T»`
+    * `"type"`, default `«classname»`
     * `"count"`, default `«count»`
     * `"size"`, default _count_ `* sizeof(`_type_`)`
     * `"realloc"`, default `realloc`
@@ -513,6 +513,24 @@ std::size(«array»)
 
 **Also includes:**
   * `<algorithm>`
+
+**TODO:**
+  * Use `cpp/b-e` snippet
+
+##### cpp/copy-back_inserter
+**Produces:** `std::copy(«origin».begin(), «origin».end(), std::back_inserter(«dest»));`
+
+**Parameters:**
+  * _origin_, default: «origin»
+  * _dest_, default: «destination»
+
+**Surround:**
+  1. The selection can be surrounded to become the container name
+  2. The selection can be surrounded to become the destination name
+
+**Also includes:**
+  * `<algorithm>`
+  * `<iterator>`
 
 **TODO:**
   * Use `cpp/b-e` snippet
@@ -609,15 +627,143 @@ BOOST_STATIC_ASSERT(cond)
 
 #### Class Elements
 ##### cpp/assignment-operator
+**Produces:** `«classname»& operator=(«classname» const&);`
+
+**Parameters:**
+  1. «classname», the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+  2. `«use_copy_and_swap»`: boolean, default: asked to the end-user
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**Variation Points:**
+  * [`cpp/copy-and-swap`](#cppcopy-and-swap) snippet, if the idiom is used
+  * [`cpp/function-comment`](#cppfunction-comment) snippet
+
 ##### cpp/bool-operator
+**Produces:** A safe `bool operator` compatible with C++98/03
+
+**Notes:**
+  * The code produced follows the pattern presented by Matthew Wilson in
+    _Imperfect C++_, Addisson-Welsey, §24.6
+
+**See:**
+  * The [snippet code](../after/template/cpp/bool-operator.template)
+
+**TODO:**
+  *  Detect C++11 to produce an `explicit bool operator()` instead.
+
 ##### cpp/copy-and-swap
-##### cpp/copy-back_inserter
+**Produces:** `assignment operator + swap`
+```C++
+// + comments generated with cpp/function-comment
+T& operator=(R rhs) {
+    this->swap(rhs);
+    return * this;
+}
+
+// + comments generated with cpp/function-comment
+void swap(T & other);
+```
+
+**Parameters:**
+  1. «classname», the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**Variation Points:**
+  * [`cpp/function-comment`](#cppfunction-comment) snippet
+
+**TODO:**
+  * Detect C++11 to insert `noexcept` (through a variation point
+    (snippet/option) as some frameworks have their own macro/keyword for
+    `noexcept`)
+
 ##### cpp/copy-constructor
+**Produces:** `T(T const&);`
+
+**Parameters:**
+  1. «classname», the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**Variation Points:**
+  * [`cpp/function-comment`](#cppfunction-comment) snippet
+
+**TODO:**
+  * Add move copy-constructor, and move assignment-operator
+
 ##### cpp/default-constructor
+**Produces:** `T();`
+
+**Parameters:**
+  1. «classname», the classname, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**Variation Points:**
+  * [`cpp/function-comment`](#cppfunction-comment) snippet
+
 ##### cpp/destructor
+**Produces:** `«virtual »~T();`
+
+**Parameters:**
+  1. «classname», the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+  2. «`is_virtual`»: boolean, default: «virtual »
+
+**Variation Points:**
+  * [`cpp/function-comment`](#cppfunction-comment) snippet
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**TODO:**
+  * Detect C++11 to insert `noexcept` (through a variation point
+    (snippet/option) as some frameworks have their own macro/keyword for
+    `noexcept`)
+
 ##### cpp/operator-binary
+**Produces:**
+```C++
+«classname» operator«X»(«classname» lhs, «classname» const& rhs)
+{ return lhs «X»= rhs; }
+```
+
+**Parameters:**
+  * «operator»: binary operation name, default: «X»
+  * «classname», the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#search_closest_class`](API.md#lhcppanalysislib_classsearch_closest_class)
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**Note:**
+  *  The code generated may change to encompass C++11 best practices and
+     performances. See
+     [some experimentations I've done](http://github.com/LucHermitte/LucHermitte.github.io/source/_posts/code/test-arithmetic-operators).
+
+**TODO:**
+  * Use [`cpp/function-comment`](#cppfunction-comment) snippet
+
 ##### cpp/stream-extractor
+**Produces:** `istream& operator>>(istream &, class-type)`
+
+**Relies on:**
+  * [`cpp/internals/stream-common`](#cppinternalsstream-common)
+
 ##### cpp/stream-inserter
+**Produces:** `ostream& operator<<(ostream &, class-type)`
+
+**Relies on:**
+  * [`cpp/internals/stream-common`](#cppinternalsstream-common)
 
 #### Class Patterns
 ##### cpp/abs-rel
@@ -693,7 +839,7 @@ BOOST_STATIC_ASSERT(cond)
 
 **Note:**
   * This snippet is used to organize the various elements computed by [`:DOX`](features.md#DOX)
-  * Its internal are likelly to change in the future to factorize the code with
+  * Its internal are likely to change in the future to factorize the code with
     `autoload/lh/dox.vim` and other snippets like
     [cpp/internals/function-comment](#cppinternalsfunction-comment)
 
@@ -760,7 +906,7 @@ BOOST_STATIC_ASSERT(cond)
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
-### Miscelleanous
+### Miscellaneous
 ##### cpp/benchmark
 ##### cpp/otb-sug-latex
 ##### cpp/otb-sug-snippet
@@ -771,5 +917,57 @@ BOOST_STATIC_ASSERT(cond)
 ##### cpp/internals/formatted-comment
 ##### cpp/internals/function-comment
 ##### cpp/internals/stream-common
+**Produces:** The empty definition for a stream operation.
+
+**Parameters**
+  * `s:direction`: `i` or `o`
+
+**Notes:**
+  * `s:clsname`: The name of the current class/type is searched with
+    `Cpp_SearchClassDefinition()`, it will be asked to the user if none is
+    found
+  * `s:friend` is assigned to `friend` if a class was found
+  * `s:const` is assigned to `const` if a class was found
+  * `s:op`, `s:type` and `s:stream_param` are deduced from `s:direction`
+
+**Relies on:**
+  * [`cpp/internals/stream-signature`](#cppinternalsstream-signature)
+  * [`cpp/internals/stream-implementation`](#cppinternalsstream-implementation)
+
 ##### cpp/internals/stream-implementation
+**Produces:**
+```C++
+{
+   return «s:stream_param» «s:op» «fields»;
+}
+```
+
+**Parameters**
+  * `s:stream_param`: `is` or `os`
+  * `s:op`: `>>` or `<<`
+  * `s:direction`: `i` or `o`
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
+**Also includes:**
+  * `<istream>` if `s:direction == "i"`
+  * or `<ostream>` if `s:direction == "o"`
+
 ##### cpp/internals/stream-signature
+**Produces:**
+```C++
+«s:friend»«s:type»& operator«s:op»(«s:type» & «s:stream_param», «s:clsname» «s:const»& v)
+```
+
+**Parameters**
+  * `s:clsname`: The name of the class/type the operator applies to.
+  * `s:stream_param`: `is` or `os`
+  * `s:type`: `std::istream` or `std::ostream`
+  * `s:op`: `>>` or `<<`
+  * `s:friend`: `friend` or empty string
+  * `s:const`: `const` or empty string
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
