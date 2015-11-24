@@ -169,7 +169,7 @@ for («type» «elem» : «range») {
 ##### cpp/fori
 **Produces:**
 ```C++
-for («int» «`is_virtual`»: boolean, default: «virtual »=0;«`is_virtual`»: boolean, default: «virtual »!=«N»;++«`is_virtual`»: boolean, default: «virtual ») {
+for («int» «i»=0;«i»!=«N»;++«i») {
     «code»
 }
 ```
@@ -180,7 +180,7 @@ for («int» «`is_virtual`»: boolean, default: «virtual »=0;«`is_virtual`»
 ##### cpp/foriN
 **Produces:**
 ```C++
-for («std::size_t» «`is_virtual`»: boolean, default: «virtual »=0, «N»=...;«`is_virtual`»: boolean, default: «virtual »!=«N»;++«`is_virtual`»: boolean, default: «virtual ») {
+for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
     «code»
 }
 ```
@@ -279,7 +279,7 @@ while(std::getline(«stream»,«line»)) {
   * I hesitate to called it `cpp/make_auto_ptr`
 
 ##### cpp/file
-**Produces:** `«`is_virtual`»: boolean, default: «virtual »fstream f(«filename»);`
+**Produces:** `«i»fstream f(«filename»);`
 
 **Surround:**
   1. The selection can be surrounded to become the filename
