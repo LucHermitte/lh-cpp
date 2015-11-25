@@ -55,7 +55,14 @@ if () {
 ... in respect of the context. I.e.: within comments or strings (delimited by single or double quotes) `if` is not expanded. If keyword characters precede the typing, `if` is not expanded as well. Thus variables like `tarif` can be used without getting any headache.
 
 
-Most of these same snippets, and a few variations, are also provided as template-files for [mu-template](http://github.com/LucHermitte/mu-template). This time, you just need to type the first letters of the snippet/template name, and trigger the expansion (with `<c-r><tab>` by default). If several snippets match (like _c/for_, _c/fori_, _cpp/fori_ and _cpp/for-iterator_ when you try to expand `fo`), mu-template will ask you to choose which (matching) snippet you want to expand.
+Most of these same snippets, and a few variations, are
+[also provided](doc/snippets.md#control-statements) as template-files for
+[mu-template](http://github.com/LucHermitte/mu-template).
+This time, you just need to type the first letters of the snippet/template
+name, and trigger the expansion (with `<c-r><tab>` by default). If several
+snippets match (like _c/for_, _c/fori_, _cpp/fori_ and _cpp/for-iterator_ when
+you try to expand `fo`), mu-template will ask you to choose which (matching)
+snippet you want to expand.
 
 ##### Instruction surrounding mappings
 In visual mode, `,if` wraps the selection within the curly brackets and inserts `if ()` just before. In normal mode `,if` does the same thing under the consideration that the selection is considered to be the current line under the cursor. Actually, it is not `,if` but `<LocalLeader>if,` with `maplocalleader` assigned by default to the coma `,`.
@@ -102,22 +109,25 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
     -- see my [project style template](http://github.com/LucHermitte/mu-template/blob/master/after/template/vim/internals/vim-rc-local-cpp-style.template)
     for an idea of what is supported and possible.
   * stream inserters, stream extractor, binary operators.
-  * bool operator: almost portable hack to provide a boolean operator, strongly
-    inspired by Matthew Wilson's _Imperfect C++_.
+  * [bool operator](doc/snippets.md#cppbool-operator): almost portable hack to
+    provide a boolean operator, strongly inspired by Matthew Wilson's
+    _Imperfect C++_.
   * Generation of [enums](doc/Enums.md), and of switch-case statements from enum
     definition.
-  * constructors: `copy-constructor`, `default-constructor`, `destructor`,
-    `assignment-operator` (see `:h :Constructor`).
-  * Various standard types and functions (and a few from boost) have a snippet
-    that'll automatically include the related header file there are are
-    defined. NB: at this time, inclusions are not optimized as
-    IncludeWhatYouUse would optimize them for us. You can have an idea of the
-    snippets provided by browsing [lh-cpp repository here](after/template/cpp).
+  * constructors: [`copy-constructor`](doc/snippets.md#cppcopy-constructor),
+    [`default-constructor`](doc/snippets.md#cppdefault-constructor),
+    [`destructor`](doc/snippets.md#cppdestructor),
+    [`assignment-operator`](doc/snippets.md#cppassignment-operator)
+    (see `:h :Constructor`).
+  * Various [standard types](doc/snippets.md#standard-and-boost-types) and
+    [functions](doc/snippets.md#standard-and-boost-functions-and-idioms) (and a
+    few from boost) have a snippet that'll automatically include the related
+    header file there are are defined. NB: at this time, inclusions are not
+    optimized as IncludeWhatYouUse would optimize them for us.
   * When a snippet/template requires header files, they will get included
     automatically (as long as the snippet specifies the headers files required)
     ; note: so far this feature cannot detect whether a required header file is
     already indirectly included through other included files.
-  * Snippets for some standard types are already provided.
   * Some snippets will try to detect the C++11 dialect (98/03/11/14/17) in
     order to adapt the result produced -- it will be done through the analysis
     of the [option `(bg):cpp_std_flavour`](doc/option.md#bgcpp_std_flavour-and-cxxflags) , or
@@ -126,12 +136,12 @@ new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://git
     [lh-cmake](http://github.com/LucHermitte/lh-cmake), and the project to be
     configured to CMake.)
 
-I'll try to maintain an up-to-date [documentation](snippets.md) of the
+I'll try to maintain an up-to-date [documentation](doc/snippets.md) of the
 snippets as most of them have options.
 
 #### Wizards and other high-level features
-  * [class](doc/template/Class.md): builds a class skeleton based on the selected (simplified) semantics (value copyable, stack-based non copyable, entity non-copyable, entity clonable)
-  * [singleton](doc/template/Singleton.md): my very own way to define singletons based on my conclusions on this anti-pattern -- you may prefer Loki's or ACE's solutions
+  * [class](doc/snippets.md#cppclass): builds a class skeleton based on the selected (simplified) semantics (value copyable, stack-based non copyable, entity non-copyable, entity clonable)
+  * [singleton](doc/snippets.md#cppsingleton): my very own way to define singletons based on my conclusions on this anti-pattern -- you may prefer Loki's or ACE's solutions
   * [:DOX](doc/Doxygen.md): analyses a function signature (parameters, return type, throw specification) and provide a default Doxygenized documentation
   * [:GOTOIMPL](doc/GotoImplementation.md), :MOVETOIMPL: search and jump to a function definition from its declaration, provide a default one in the _ad'hoc_ implementation file if no definition is found
   * [:ADDATTRIBUTE](doc/Accessors.md): old facility that helps define const-correct accessors and mutator, will be reworked. [lh-refactor](http://github.com/LucHermitte/vim-refactor) provides more ergonomic mappings for this purpose.
@@ -150,8 +160,13 @@ snippets as most of them have options.
   * omap-param: defines the o-mappings `,i` and `,a` to select the current parameter (in a list of parameters).
   * a.vim,
   * SiR,
-  * lh-cpp imports a [C&C++ Folding plugin](https://github.com/LucHermitte/VimFold4C), which is still experimental.
-  * [lh-dev](http://github.com/LucHermitte/lh-dev), which is required by lh-cpp, provides a few commands like `:NameConvert` that permits to change the naming style of a symbol. The possible styles are: `upper_camel_case`, `lower_camel_case`, `snake`/`underscore`, `variable`, `local`, `global`, `member`, `constant`, `static`, `param`, `getter`, `setter`)
+  * lh-cpp imports a [C&C++ Folding plugin](https://github.com/LucHermitte/VimFold4C),
+    which is still experimental.
+  * [lh-dev](http://github.com/LucHermitte/lh-dev), which is required by
+    lh-cpp, provides a few commands like `:NameConvert` that permits to change
+    the naming style of a symbol. The possible styles are: `upper_camel_case`,
+    `lower_camel_case`, `snake`/`underscore`, `variable`, `local`, `global`,
+    `member`, `constant`, `static`, `param`, `getter`, `setter`)
 
 ### Installation
   * Requirements: Vim 7.+, [lh-vim-lib](http://github.com/LucHermitte/lh-vim-lib), [lh-brackets](http://github.com/LucHermitte/lh-brackets), [mu-template](http://github.com/LucHermitte/mu-template), [lh-dev](http://github.com/LucHermitte/lh-dev)
@@ -159,7 +174,7 @@ snippets as most of them have options.
 ```vim
 ActivateAddons lh-cpp
 ```
-  * or with [vim-flavor](http://github.com/kana/vim-flavor) which also support
+  * or with [vim-flavor](http://github.com/kana/vim-flavor) which also supports
     dependencies:
 ```
 flavor LucHermitte/lh-cpp
