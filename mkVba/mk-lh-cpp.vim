@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.1.7
 " Created:	06th Nov 2007
-" Last Update:	18th Nov 2015
+" Last Update:	25th Nov 2015
 "------------------------------------------------------------------------
 let s:version = '2.1.7'
 let s:project = 'lh-cpp'
@@ -165,3 +165,4 @@ syntax/cpp-funcdef.vim
 syntax/cpp-throw-spec.vim
 syntax/cpp.vim
 tests/lh/analysis.vim
+tests/lh/snippets.vim

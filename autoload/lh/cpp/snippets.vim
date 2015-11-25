@@ -246,6 +246,45 @@ function! lh#cpp#snippets#_begin_end(begin) abort
 endfunction
 
 "------------------------------------------------------------------------
+" # Functions for mu-template template-files {{{2
+
+
+function! lh#cpp#snippets#parents(parents) abort
+  let list = []
+  for parent in a:parents
+    for [name, data] in items(parent)
+      let list += [
+            \  get(data, 'visibility', 'public') . ' '
+            \ .(get(data, 'virtual', 0) ? 'virtual ' : '')
+            \ .name
+            \ ]
+    endfor
+  endfor
+  let res = ''
+  if !empty(list)
+    if len(list) > 1
+      let res = "\n"
+    endif
+    let res .= ': '.join(list, "\n, ")
+  endif
+  return res
+endfunction
+
+" Function: lh#cpp#snippets#noexcept([condition]) {{{3
+function! lh#cpp#snippets#noexcept(...) abort
+  let noexcept = lh#dev#option#get('cpp_noexcept', &ft)
+  let args = empty(a:000) ? '' : '('.a:1.')'
+  if lh#option#is_set(noexcept)
+    return lh#fmt#printf(noexcept, args)
+  endif
+  if lh#cpp#use_cpp11()
+    return 'noexcept'.args
+  else
+    return 'throw()'
+  endif
+endfunction
+
+"------------------------------------------------------------------------
 " ## Internal functions {{{1
 
 " # snippet functions {{{2
