@@ -104,6 +104,10 @@
    [mu-template](http://github.com/LucHermitte/mu-template) aren't documented
    yet.
 
+ * About variation points ... TBD
+ * About so called snippet _parameter_ ... TBD
+ * About surrounding numbers ... TBD
+
 ## Control Statements
 #### cpp/catch
 **Produces:**
@@ -789,6 +793,26 @@ void swap(T & other);
 **Note:** Unlike other snippets, class patterns are often under a BSL license
 
 #### cpp/abs-rel
+#### cpp/base-class
+**Produces:** A base class to inherit from with:
+ * A virtual public destructor
+ * A protected default constructor (unless specified otherwise)
+ * Non-copy-ability enforced
+
+**Parameters:**
+  * Any parameter passed to
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+**Options:**
+  * Any options used by
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
+    particular:
+    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+
+**Relies on:**
+  * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
 #### cpp/class
 **Produces:** Wizard that produces a class definition, and asks for class
 semantics to the user:
@@ -1019,6 +1043,8 @@ template <typename «T»> struct «name»_traits
 
 ## Internal templates
 #### cpp/internals/abs-rel-shared
+#### cpp/internals/class-skeleton
+TBD
 #### cpp/internals/formatted-comment
 #### cpp/internals/function-comment
 #### cpp/internals/stream-common
