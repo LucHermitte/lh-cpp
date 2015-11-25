@@ -136,7 +136,7 @@ for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type()
 #### cpp/for-iterator
 **Produces:**
 ```C++
-for («classname»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
+for («clsname»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
     ; «b»!=«exception_type»(«exception_args»)
     ; ++«b»)
 {
@@ -426,7 +426,7 @@ ptr = lhs;
   * A dictionary that contains:
     * `"ptr"`, default `«p»`
     * `"lhs"`, default `new ` + _ptr_
-    * `"type"`, default `«classname»`
+    * `"type"`, default `«clsname»`
     * `"count"`, default `«count»`
     * `"size"`, default _count_ `* sizeof(`_type_`)`
     * `"realloc"`, default `realloc`
@@ -627,12 +627,15 @@ BOOST_STATIC_ASSERT(cond)
 
 ### Class Elements
 #### cpp/assignment-operator
-**Produces:** `«classname»& operator=(«classname» const&);`
+**Produces:** `«clsname»& operator=(«clsname» const&);`
 
 **Parameters:**
-  1. «classname», the class name, default: automatically deduced by
+  1. «clsname», the class name, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
   2. `«use_copy_and_swap»`: boolean, default: asked to the end-user
+  * "copy-constructor": (dictionary)
+    * "visibility": *"public"*/"protected"/"private"
+    * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
@@ -640,6 +643,11 @@ BOOST_STATIC_ASSERT(cond)
 **Variation Points:**
   * [`cpp/copy-and-swap`](#cppcopy-and-swap) snippet, if the idiom is used
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
+
+**TODO:**
+  * Detect C++11 to insert `noexcept` (through a variation point
+    (snippet/option) as some frameworks have their own macro/keyword for
+    `noexcept`)
 
 #### cpp/bool-operator
 **Produces:** A safe `bool operator` compatible with C++98/03
@@ -668,7 +676,7 @@ void swap(T & other);
 ```
 
 **Parameters:**
-  1. «classname», the class name, default: automatically deduced by
+  1. «clsname», the class name, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
 
 **Options:**
@@ -686,8 +694,11 @@ void swap(T & other);
 **Produces:** `T(T const&);`
 
 **Parameters:**
-  1. «classname», the class name, default: automatically deduced by
+  1. «clsname», the class name, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+  * "copy-constructor": (dictionary)
+    * "visibility": *"public"*/"protected"/"private"
+    * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
@@ -697,49 +708,58 @@ void swap(T & other);
 
 **TODO:**
   * Add move copy-constructor, and move assignment-operator
+  * Detect C++11 to insert `noexcept` (through a variation point
+    (snippet/option) as some frameworks have their own macro/keyword for
+    `noexcept`)
 
 #### cpp/default-constructor
 **Produces:** `T();`
 
 **Parameters:**
-  1. «classname», the classname, default: automatically deduced by
+  1. «clsname», the classname, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+  * "default-constructor": (dictionary)
+    * "visibility": *"public"*/"protected"/"private"
+    * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
 
 **Variation Points:**
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
-
-#### cpp/destructor
-**Produces:** `«virtual »~T();`
-
-**Parameters:**
-  1. «classname», the class name, default: automatically deduced by
-    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
-  2. «`is_virtual`»: boolean, default: «virtual »
-
-**Variation Points:**
-  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
-
-**Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
 
 **TODO:**
   * Detect C++11 to insert `noexcept` (through a variation point
     (snippet/option) as some frameworks have their own macro/keyword for
     `noexcept`)
 
+#### cpp/destructor
+**Produces:** `«virtual »~T();`
+
+**Parameters:**
+  1. «clsname», the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+  2. «`is_virtual`»: boolean, default: «virtual »
+  * "copy-constructor": (dictionary)
+    * "visibility": *"public"*/"protected"/"private"
+    * "how": *""*/"deleted"/"defaulted"/"pure"
+
+**Variation Points:**
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
+
+**Options:**
+  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+
 #### cpp/operator-binary
 **Produces:**
 ```C++
-«classname» operator«X»(«classname» lhs, «classname» const& rhs)
+«clsname» operator«X»(«clsname» lhs, «clsname» const& rhs)
 { return lhs «X»= rhs; }
 ```
 
 **Parameters:**
   * «operator»: binary operation name, default: «X»
-  * «classname», the class name, default: automatically deduced by
+  * «clsname», the class name, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#search_closest_class`](API.md#lhcppanalysislib_classsearch_closest_class)
 
 **Options:**

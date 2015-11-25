@@ -4,17 +4,29 @@ VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
 VimL: " in case the class name is already known, no need to extract it
-MuT:  if empty(s:Args())
-VimL:   let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
-VimL:   let s:virtual = Marker_Txt("virtual ")
+VimL: let s:destructor = s:Param("destructor", lh#option#unset())
+MuT:  if lh#option#is_set(s:destructor)
+VimL:     let s:virtual = get(s:destructor, "virtual", 0)
+VimL:     let s:how     = get(s:destructor, "how", "")
+VimL:     " Let's suppose s:clsname is set
 MuT:  else
-VimL:   let s:clsname = s:Args()[0].name
-VimL:   let s:virtual = s:Args()[0].virtual
+MuT:    if empty(s:Args())
+VimL:     let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
+VimL:     let s:virtual = lh#marker#txt()("virtual ")
+MuT:    else
+VimL:     let s:clsname = s:Args()[0].name
+VimL:     let s:virtual = s:Args()[0].virtual
+MuT:    endif
+VimL:   let s:how       = ""
 MuT:  endif
+VimL: let s:virtual = type(s:virtual) == type("str") ? s:virtual : ((s:virtual) ? "virtual " : "")
+VimL: let s:pure      = s:how == "pure"      ? " = 0"                      : ""
+VimL: let s:deleted   = s:how == "deleted"   ? lh#cpp#snippets#deleted()   : ""
+VimL: let s:defaulted = s:how == "defaulted" ? lh#cpp#snippets#defaulted() : ""
 VimL: let s:fn_comments = { }
-VimL: let s:fn_comments.brief = s:virtual."Destructor." 
+VimL: let s:fn_comments.brief = s:virtual."Destructor."
 VimL: if empty(s:virtual) | let s:fn_comments.warning = ["this class is not meant to be publicly inherited"] | endif
 VimL: let s:fn_comments.throw = "Nothing"
 VimL: " let s:fn_comments.text  = []
 VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:virtual+>~<+s:clsname+>() ;
+<+s:virtual+>~<+s:clsname+>()<+s:pure+><+s:deleted+><+s:defaulted+>;

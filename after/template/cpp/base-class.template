@@ -1,0 +1,13 @@
+VimL:" base-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
+VimL:" hint: base class to inherit from
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:default_constructor = s:Param("default-constructor", {})
+MuT:  if empty(s:default_constructor)
+VimL:    let s:default_constructor = {"visibility": "protected"}
+MuT:  endif
+VimL: call s:PushArgs({"destructor": {"virtual": 1, "how": "pure"}})
+VimL: call s:PushArgs({"noncopyable": 1})
+VimL: call s:Include("class-skeleton", "cpp/internals")
