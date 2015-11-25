@@ -284,6 +284,35 @@ function! lh#cpp#snippets#noexcept(...) abort
   endif
 endfunction
 
+" Function: lh#cpp#snippets#deleted() {{{3
+function! lh#cpp#snippets#deleted() abort
+  let deleted = lh#dev#option#get('cpp_deleted', &ft)
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(deleted)
+    return deleted
+  endif
+  if lh#cpp#use_cpp11()
+    return '= delete'
+  else
+    return '/* = delete */'
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#defaulted() {{{3
+function! lh#cpp#snippets#defaulted() abort
+  let defaulted = lh#dev#option#get('cpp_defaulted', &ft)
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(defaulted)
+    return defaulted
+  endif
+  if lh#cpp#use_cpp11()
+    return '= default'
+  else
+    " Don't know how to default functions in C++98
+    return '/* = default */'
+  endif
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 

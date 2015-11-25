@@ -51,6 +51,60 @@ function! s:Test_noexcept()
 endfunction
 
 "------------------------------------------------------------------------
+function! s:Test_deleted()
+  let cleanup = lh#on#exit()
+        \.restore_option('cpp_deleted')
+        \.restore_option('cpp_std_flavour')
+        \.restore('$CXXFLAGS')
+  silent! unlet g:cpp_std_flavour
+  silent! unlet b:cpp_std_flavour
+  silent! unlet g:cpp_deleted
+  silent! unlet b:cpp_deleted
+  let $CXXFLAGS = ''
+  try
+    AssertEquals(lh#cpp#snippets#deleted(), '/* = delete */')
+
+    let b:cpp_std_flavour = 11
+    AssertEquals(lh#cpp#snippets#deleted(), '= delete')
+
+    let g:cpp_deleted = 'ITK_DELETE'
+    AssertEquals(lh#cpp#snippets#deleted(), 'ITK_DELETE')
+
+    unlet b:cpp_std_flavour
+    AssertEquals(lh#cpp#snippets#deleted(), 'ITK_DELETE')
+  finally
+    call cleanup.finalize()
+  endtry
+endfunction
+
+"------------------------------------------------------------------------
+function! s:Test_defaulted()
+  let cleanup = lh#on#exit()
+        \.restore_option('cpp_defaulted')
+        \.restore_option('cpp_std_flavour')
+        \.restore('$CXXFLAGS')
+  silent! unlet g:cpp_std_flavour
+  silent! unlet b:cpp_std_flavour
+  silent! unlet g:cpp_defaulted
+  silent! unlet b:cpp_defaulted
+  let $CXXFLAGS = ''
+  try
+    AssertEquals(lh#cpp#snippets#defaulted(), '/* = default */')
+
+    let b:cpp_std_flavour = 11
+    AssertEquals(lh#cpp#snippets#defaulted(), '= default')
+
+    let g:cpp_defaulted = 'ITK_DEFAULT'
+    AssertEquals(lh#cpp#snippets#defaulted(), 'ITK_DEFAULT')
+
+    unlet b:cpp_std_flavour
+    AssertEquals(lh#cpp#snippets#defaulted(), 'ITK_DEFAULT')
+  finally
+    call cleanup.finalize()
+  endtry
+endfunction
+
+"------------------------------------------------------------------------
 " Function: s:Test_parents() {{{3
 function! s:Test_parents() abort
   let parents = []
