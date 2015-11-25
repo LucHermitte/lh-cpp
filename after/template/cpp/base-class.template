@@ -6,7 +6,7 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:default_constructor = s:Param("default-constructor", {})
 MuT:  if empty(s:default_constructor)
-VimL:    let s:default_constructor = {"visibility": "protected"}
+VimL:    let s:default_constructor["visibility"] = "protected"
 MuT:  endif
 VimL: call s:PushArgs({"destructor": {"virtual": 1, "how": "pure"}})
 VimL: call s:PushArgs({"noncopyable": 1})

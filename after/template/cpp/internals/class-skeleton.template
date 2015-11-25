@@ -26,10 +26,13 @@ VimL: " --------[ Any Functions
 VimL: silent! unlet s:functions
 VimL: let s:functions = s:Param("functions", [])
 VimL: " --------[ Special Functions
-VimL: let s:copy_constructor    = s:Param("copy-constructor",    {})
-VimL: let s:assignment_operator = s:Param("assignment-operator", {})
-VimL: let s:special_functions = ["default-constructor", "copy-constructor", "assignment-operator", "destructor"]
+VimL: let s:default_constructor = s:Param("default-constructor", {"visibility": "none"})
+VimL: let s:copy_constructor    = s:Param("copy-constructor",    {"visibility": "none"})
+VimL: let s:assignment_operator = s:Param("assignment-operator", {"visibility": "none"})
+VimL: " In reverse order because of how Include() works
+VimL: let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]
 VimL: let s:spe_func_data = map(copy(s:special_functions), "extend(copy(s:Param(v:val, {})), {'name': v:val})")
+VimL: let g:spe_func_data = s:spe_func_data
 VimL: let s:pub_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "public" && get(v:val, "how", "") != "deleted"')
 VimL: let s:pro_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "protected"')
 VimL: let s:pri_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "private" || get(v:val, "how", "") == "deleted"')

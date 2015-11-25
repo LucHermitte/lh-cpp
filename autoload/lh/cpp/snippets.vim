@@ -262,9 +262,7 @@ function! lh#cpp#snippets#parents(parents) abort
   endfor
   let res = ''
   if !empty(list)
-    if len(list) > 1
-      let res = "\n"
-    endif
+    let res = len(list) > 1 ? "\n" : " "
     let res .= ': '.join(list, "\n, ")
   endif
   return res

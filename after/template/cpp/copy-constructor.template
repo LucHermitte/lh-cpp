@@ -9,7 +9,7 @@ MuT:  if empty(s:clsname)
 VimL:   let s:clsname = empty(s:Args()) ? INPUT("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r")))) : (s:Args()[0])
 MuT:  endif
 MuT:  if get(s:Param("copy-constructor", {}), "how", "") == "deleted"
-<+s:clsname+>(<+s:clsname+> const&)<+lh#cpp#snippets#deleted()+>;
+<+s:clsname+>(<+s:clsname+> const&) <+lh#cpp#snippets#deleted()+>;
 MuT:  else
 VimL:   let s:lead = lh#dox#comment_leading_char()." "
 VimL:   let s:param = lh#dev#naming#param("rhs")

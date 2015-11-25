@@ -9,7 +9,7 @@ MuT:  if empty(s:clsname)
 VimL:   let s:clsname = empty(s:Args()) ? INPUT("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r")))) : (s:Args()[0])
 MuT:  endif
 MuT:  if get(s:Param("assignment-operator", {}), "how", "") == "deleted"
-<+s:clsname+>& operator=(<+s:clsname+> const&)<+lh#cpp#snippets#deleted()+>;
+<+s:clsname+>& operator=(<+s:clsname+> const&) <+lh#cpp#snippets#deleted()+>;
 MuT:  else
 VimL:   let s:use_copyandswap = len(s:Args())>=2 ? (s:Args()[0]) : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
 MuT:   if 1 == s:use_copyandswap

@@ -111,7 +111,7 @@ function! s:Test_parents() abort
   AssertEquals(lh#cpp#snippets#parents(parents), "")
 
   let parents += [ {"boost::noncopyable" : {"how": "include", "visibility": "private"}}]
-  AssertEquals(lh#cpp#snippets#parents(parents), ": private boost::noncopyable")
+  AssertEquals(lh#cpp#snippets#parents(parents), " : private boost::noncopyable")
 
   let parents += [ {"SomeBase" : {}}]
   AssertEquals(lh#cpp#snippets#parents(parents), "\n: private boost::noncopyable\n, public SomeBase")

@@ -42,7 +42,7 @@ VimL: " not documented, this is :DOX's job
     <+s:clsname+>(<+define the params, and document me w/ :DOX+>);
 
 VimL: " todo: support using default implementations
-MuT: if g:CppDox_do_copy 
+MuT: if g:CppDox_do_copy
 VimL:     call s:Include("copy-constructor", "cpp", s:clsname)
 VimL:     call s:Inject([""])
 VimL:     call s:Include("copy-and-swap", "cpp", s:clsname)
