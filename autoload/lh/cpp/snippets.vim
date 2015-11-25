@@ -272,7 +272,7 @@ endfunction
 
 " Function: lh#cpp#snippets#noexcept([condition]) {{{3
 function! lh#cpp#snippets#noexcept(...) abort
-  let noexcept = lh#dev#option#get('cpp_noexcept', &ft)
+  let noexcept = lh#option#get('cpp_noexcept', &ft)
   let args = empty(a:000) ? '' : '('.a:1.')'
   if lh#option#is_set(noexcept)
     return lh#fmt#printf(noexcept, args)
@@ -286,7 +286,7 @@ endfunction
 
 " Function: lh#cpp#snippets#deleted() {{{3
 function! lh#cpp#snippets#deleted() abort
-  let deleted = lh#dev#option#get('cpp_deleted', &ft)
+  let deleted = lh#option#get('cpp_deleted', &ft)
   let args = empty(a:000) ? '' : a:1
   if lh#option#is_set(deleted)
     return deleted

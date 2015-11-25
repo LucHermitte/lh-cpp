@@ -16,7 +16,9 @@
     * [`(bg):({ft}_)alternateSearchPath`](#bgft_alternatesearchpath)
     * [`(bg):({ft}_)begin_end_style`](#bgft_begin_end_style)
     * [`(bg):c_menu_name`, `(bg):c_menu_priority`, `(bg):cpp_menu_name`, `(bg):cpp_menu_priority`](#bgc_menu_name-bgc_menu_priority-bgcpp_menu_name-bgcpp_menu_priority)
+    * [`(bg):cpp_defaulted`](#bgcpp_defaulted)
     * [`(bg):cpp_defines_to_ignore`](#bgcpp_defines_to_ignore)
+    * [`(bg):cpp_deleted`](#bgcpp_deleted)
     * [`(bg):cpp_use_nested_namespaces`](#bgcpp_use_nested_namespaces)
     * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_commentleadingchar)
     * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_tagleadingchar)
@@ -137,6 +139,14 @@ Tells which style to use to generate a couple of calls to `begin()`/`end()`:
 These options tells where the |menu| for all C and C++ item goes.
 See `:h :menu`
 
+#### `(bg):cpp_defaulted`
+String option.
+
+**Default Value:** `= default`
+
+**See:** API function
+[`lh#cpp#snippets#defaulted()`](API.md#lhcppsnippetsdefaulted)
+
 #### `(bg):cpp_defines_to_ignore`
 Regex (default: none) that specifies which patterns (`#define`) shall be
 ignored when parsing the source code to detect the current scope
@@ -145,6 +155,23 @@ ignored when parsing the source code to detect the current scope
 **See:** API functions
 - [`lh#cpp#AnalysisLib_Class#SearchClassDefinition()`](API.md#lh-cpp-analysislib_class-searchclassdefinition)
 - [`lh#cpp#AnalysisLib_Class#CurrentScope()`](API.md#lh-cpp-analysislib_class-currentscope)
+
+#### `(bg):cpp_deleted`
+String option.
+
+**Default Value:** `= delete`
+
+**See:** API function
+[`lh#cpp#snippets#deleted()`](API.md#lhcppsnippetsdeleted)
+
+#### `(bg):cpp_noexcept`
+String format option (for
+[`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
+
+**Default Value:** `noexcept%1` in C++11, `throw()` in C++98
+
+**See:**
+  * [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
 
 #### `(bg):cpp_use_nested_namespaces`
 Boolean option that enables the generation of _nested_ namespaces in C++17
