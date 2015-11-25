@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'pp'
 
 
-RSpec.describe "C++ base class wizard", :cpp, :class, :base do
+RSpec.describe "C++ non virtual base class wizard", :cpp, :class, :abstract do
   let (:filename) { "test.cpp" }
 
   before :each do
@@ -27,20 +27,15 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
     expect(vim.echo('lh#dev#naming#type("toto")')).to eq "Toto"
   end
 
-  specify "base_class noncopyable", :cpp98, :cpp11, :noncopyable do
+  specify "base-class-non-virtual noncopyable", :cpp98, :cpp11, :noncopyable do
     vim.command('silent! unlet g:cpp_noncopyable_class')
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
-    expect(vim.command('MuTemplate cpp/base-class')).to eq ""
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class-non-virtual")')).to match(/base-class-non-virtual.template/)
+    expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
     class «Test» : private boost::noncopyable
     {
     public:
 
-        /**
-         * Virtual destructor.
-         * @throw Nothing
-         */
-        virtual ~«Test»();
 
     protected:
 
@@ -49,25 +44,26 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
          * «@throw »
          */
         «Test»();
+        /**
+         * Destructor.
+         * @throw Nothing
+         * @note This class is not meant to be destroyed polymorphically
+         */
+        ~«Test»();
     };
     EOF
   end
 
-  specify "base_class C++98 alone", :cpp98, :deleted do
+  specify "base-class-non-virtual C++98 alone", :cpp98, :deleted do
     vim.command('let g:cpp_noncopyable_class=""')
     vim.command('let g:cpp_std_flavour = 03')
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
-    expect(vim.command('MuTemplate cpp/base-class')).to eq ""
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class-non-virtual")')).to match(/base-class-non-virtual.template/)
+    expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
     class «Test»
     {
     public:
 
-        /**
-         * Virtual destructor.
-         * @throw Nothing
-         */
-        virtual ~«Test»();
 
     protected:
 
@@ -76,6 +72,12 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
          * «@throw »
          */
         «Test»();
+        /**
+         * Destructor.
+         * @throw Nothing
+         * @note This class is not meant to be destroyed polymorphically
+         */
+        ~«Test»();
 
     private:
 
@@ -85,21 +87,16 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
     EOF
   end
 
-  specify "base_class C++11 alone", :cpp11, :deleted do
+  specify "base-class-non-virtual C++11 alone", :cpp11, :deleted do
     vim.command('let g:cpp_noncopyable_class = ""')
     vim.command('let g:cpp_std_flavour = 11')
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
-    expect(vim.command('MuTemplate cpp/base-class')).to eq ""
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class-non-virtual")')).to match(/base-class-non-virtual.template/)
+    expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
     class «Test»
     {
     public:
 
-        /**
-         * Virtual destructor.
-         * @throw Nothing
-         */
-        virtual ~«Test»();
 
     protected:
 
@@ -108,6 +105,12 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
          * «@throw »
          */
         «Test»();
+        /**
+         * Destructor.
+         * @throw Nothing
+         * @note This class is not meant to be destroyed polymorphically
+         */
+        ~«Test»();
 
     private:
 
@@ -121,3 +124,5 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
 end
 
 # vim:set sw=2:
+
+

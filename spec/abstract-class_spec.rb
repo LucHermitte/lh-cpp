@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'pp'
 
 
-RSpec.describe "C++ base class wizard", :cpp, :class, :base do
+RSpec.describe "C++ abstract class wizard", :cpp, :class, :abstract do
   let (:filename) { "test.cpp" }
 
   before :each do
@@ -27,10 +27,10 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
     expect(vim.echo('lh#dev#naming#type("toto")')).to eq "Toto"
   end
 
-  specify "base_class noncopyable", :cpp98, :cpp11, :noncopyable do
+  specify "abstract-class noncopyable", :cpp98, :cpp11, :noncopyable do
     vim.command('silent! unlet g:cpp_noncopyable_class')
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
-    expect(vim.command('MuTemplate cpp/base-class')).to eq ""
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/abstract-class")')).to match(/abstract-class.template/)
+    expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
     class «Test» : private boost::noncopyable
     {
@@ -40,7 +40,7 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
          * Virtual destructor.
          * @throw Nothing
          */
-        virtual ~«Test»();
+        virtual ~«Test»() = 0;
 
     protected:
 
@@ -53,11 +53,11 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
     EOF
   end
 
-  specify "base_class C++98 alone", :cpp98, :deleted do
+  specify "abstract-class C++98 alone", :cpp98, :deleted do
     vim.command('let g:cpp_noncopyable_class=""')
     vim.command('let g:cpp_std_flavour = 03')
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
-    expect(vim.command('MuTemplate cpp/base-class')).to eq ""
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/abstract-class")')).to match(/abstract-class.template/)
+    expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
     class «Test»
     {
@@ -67,7 +67,7 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
          * Virtual destructor.
          * @throw Nothing
          */
-        virtual ~«Test»();
+        virtual ~«Test»() = 0;
 
     protected:
 
@@ -85,11 +85,11 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
     EOF
   end
 
-  specify "base_class C++11 alone", :cpp11, :deleted do
+  specify "abstract-class C++11 alone", :cpp11, :deleted do
     vim.command('let g:cpp_noncopyable_class = ""')
     vim.command('let g:cpp_std_flavour = 11')
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
-    expect(vim.command('MuTemplate cpp/base-class')).to eq ""
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/abstract-class")')).to match(/abstract-class.template/)
+    expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
     class «Test»
     {
@@ -99,7 +99,7 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
          * Virtual destructor.
          * @throw Nothing
          */
-        virtual ~«Test»();
+        virtual ~«Test»() = 0;
 
     protected:
 
@@ -121,3 +121,4 @@ RSpec.describe "C++ base class wizard", :cpp, :class, :base do
 end
 
 # vim:set sw=2:
+

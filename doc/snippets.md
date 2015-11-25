@@ -793,9 +793,50 @@ void swap(T & other);
 **Note:** Unlike other snippets, class patterns are often under a BSL license
 
 #### cpp/abs-rel
+#### cpp/abstract-class
+**Produces:** A base class to inherit from with:
+ * A virtual pure public destructor
+ * A protected default constructor (unless specified otherwise)
+ * Non-copy-ability enforced
+
+**Parameters:**
+  * Any parameter passed to
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+**Options:**
+  * Any options used by
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
+    particular:
+    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+
+**Relies on:**
+  * [`cpp/base-class`](#cppbase-class)
+  * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
 #### cpp/base-class
 **Produces:** A base class to inherit from with:
- * A virtual public destructor
+ * A virtual public destructor, not necessarily pure (see [`cpp/abstract-class`](#cppabstract-class))
+ * A protected default constructor (unless specified otherwise)
+ * Non-copy-ability enforced
+
+**Parameters:**
+  * Any parameter passed to
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+**Options:**
+  * Any options used by
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
+    particular:
+    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+
+**Relies on:**
+  * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+#### cpp/base-class-non-virtuam
+**Produces:** A base class to inherit from with:
+ * A protected non-virtual destructor
  * A protected default constructor (unless specified otherwise)
  * Non-copy-ability enforced
 

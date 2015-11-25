@@ -9,6 +9,7 @@ MuT:  if lh#option#is_set(s:destructor)
 VimL:     let s:virtual = get(s:destructor, "virtual", 0)
 VimL:     let s:how     = get(s:destructor, "how", "")
 VimL:     " Let's suppose s:clsname is set
+VimL:     let s:visibility = get(s:destructor, "visibility", "public")
 MuT:  else
 MuT:    if empty(s:Args())
 VimL:     let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
@@ -18,6 +19,8 @@ VimL:     let s:clsname = s:Args()[0].name
 VimL:     let s:virtual = s:Args()[0].virtual
 MuT:    endif
 VimL:   let s:how       = ""
+VimL:   " TODO: autodetect last visibility
+VimL:   let s:visibility = "public"
 MuT:  endif
 VimL: let s:virtual = type(s:virtual) == type("str") ? s:virtual : ((s:virtual) ? "virtual " : "")
 VimL: let s:pure      = s:how == "pure"      ? " = 0"                          : ""
@@ -25,7 +28,11 @@ VimL: let s:deleted   = s:how == "deleted"   ? " ".lh#cpp#snippets#deleted()   :
 VimL: let s:defaulted = s:how == "defaulted" ? " ".lh#cpp#snippets#defaulted() : ""
 VimL: let s:fn_comments = { }
 VimL: let s:fn_comments.brief = substitute(s:virtual."Destructor.", '\v(.)(.*)', '\u\1\L\2', '')
-VimL: if empty(s:virtual) | let s:fn_comments.warning = ["this class is not meant to be publicly inherited"] | endif
+MuT:  if s:visibility == "protected"
+VimL:     let s:fn_comments.note = ["This class is not meant to be destroyed polymorphically"]
+MuT:  elseif empty(s:virtual)
+VimL:     let s:fn_comments.warning = ["this class is not meant to be publicly inherited"]
+MuT:  endif
 VimL: let s:fn_comments.throw = "Nothing"
 VimL: " let s:fn_comments.text  = []
 VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)

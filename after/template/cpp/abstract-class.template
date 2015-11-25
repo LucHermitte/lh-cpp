@@ -1,0 +1,10 @@
+VimL:" abstract-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
+VimL:" hint: abstract (base) class to inherit from
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:destructor = s:Param("destructor", {})
+VimL: let s:destructor["visibility"] = "public"
+VimL: let s:destructor["how"] = "pure"
+VimL: call s:Include("base-class", "cpp")
