@@ -32,6 +32,7 @@ RSpec.describe "C++ non virtual base class wizard", :cpp, :class, :abstract do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class-non-virtual")')).to match(/base-class-non-virtual.template/)
     expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
+    #include <boost/noncopyable.hpp>
     class «Test» : private boost::noncopyable
     {
     public:

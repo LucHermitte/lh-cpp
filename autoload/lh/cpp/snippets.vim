@@ -248,8 +248,23 @@ endfunction
 "------------------------------------------------------------------------
 " # Functions for mu-template template-files {{{2
 
+" Function: lh#cpp#snippets#_merge_include_data(name_and_maybe_more, data2) {{{3
+function! lh#cpp#snippets#_merge_include_data(name_and_maybe_more, data2) abort
+  let data = copy(a:data2)
+  if type(a:name_and_maybe_more) == type({})
+    " No "name" key => error
+    let name = a:name_and_maybe_more.name
+    call extend(data, a:name_and_maybe_more)
+    call remove(data, 'name')
+  else
+    let name = a:name_and_maybe_more
+  endif
+  return {name : data}
+endfunction
 
+" Function: lh#cpp#snippets#parents(parents) {{{3
 function! lh#cpp#snippets#parents(parents) abort
+  let includes = []
   let list = []
   for parent in a:parents
     for [name, data] in items(parent)
@@ -258,6 +273,9 @@ function! lh#cpp#snippets#parents(parents) abort
             \ .(get(data, 'virtual', 0) ? 'virtual ' : '')
             \ .name
             \ ]
+      if has_key(data, 'includes')
+        call lh#list#flat_extend(includes, data['includes'])
+      endif
     endfor
   endfor
   let res = ''
@@ -265,7 +283,8 @@ function! lh#cpp#snippets#parents(parents) abort
     let res = len(list) > 1 ? "\n" : " "
     let res .= ': '.join(list, "\n, ")
   endif
-  return res
+  call lh#list#unique_sort(includes)
+  return [res, includes]
 endfunction
 
 " Function: lh#cpp#snippets#noexcept([condition]) {{{3

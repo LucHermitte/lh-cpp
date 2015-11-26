@@ -32,6 +32,7 @@ RSpec.describe "C++ abstract class wizard", :cpp, :class, :abstract do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/abstract-class")')).to match(/abstract-class.template/)
     expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
+    #include <boost/noncopyable.hpp>
     class «Test» : private boost::noncopyable
     {
     public:
