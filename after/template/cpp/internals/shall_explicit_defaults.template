@@ -1,0 +1,11 @@
+VimL:" shall_explicit_defaults File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 26th Nov 2015
+VimL:" hint: wraps call to lh#cpp#snippets#shall_explicit_defaults()
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+MuT:  if lh#cpp#snippets#shall_explicit_defaults()
+VimL:    let s:default_explicit = {"visibility": "public", "how": "defaulted"}
+MuT:  else
+VimL:    let s:default_explicit = {"visibility": "none"}
+MuT:  endif

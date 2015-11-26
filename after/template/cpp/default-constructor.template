@@ -9,10 +9,15 @@ MuT:  if empty(s:clsname)
 VimL:   let s:clsname = empty(s:Args()) ? INPUT("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r")))) : (s:Args()[0])
 MuT:  endif
 VimL: let s:lead = lh#dox#comment_leading_char().' '
-VimL: let s:param = lh#dev#naming#param("rhs")
-VimL: let s:fn_comments = { }
-VimL: let s:fn_comments.brief = "Default constructor."
-VimL: let s:fn_comments.throw = {"optional": 1}
-VimL: " let s:fn_comments.text  = []
-VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:clsname+>();
+VimL: let s:default_constructor = s:Param("default-constructor", {})
+VimL: let s:how = get(s:default_constructor, "how", "")
+MuT:  if s:how !~ "defaulted\\|deleted"
+VimL:   let s:fn_comments = { }
+VimL:   let s:fn_comments.brief = "Default constructor."
+VimL:   let s:fn_comments.throw = {"optional": 1}
+VimL:   " let s:fn_comments.text  = []
+VimL:   call s:Include("function-comment", "cpp/internals",s:fn_comments)
+MuT:  else
+VimL:   let s:how = " ".lh#cpp#snippets#{s:how}()
+MuT:  endif
+<+s:clsname+>()<+s:how+>;

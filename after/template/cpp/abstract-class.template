@@ -5,6 +5,7 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:destructor = s:Param("destructor", {})
+VimL: " Override any previous setting on visibility and 'how'
 VimL: let s:destructor["visibility"] = "public"
 VimL: let s:destructor["how"] = "pure"
 VimL: call s:Include("base-class", "cpp")

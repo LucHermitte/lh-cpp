@@ -28,11 +28,14 @@ after/template/c/assert.template
 after/template/c/rand_init.template
 after/template/c/realloc.template
 after/template/cpp/abs-rel.template
+after/template/cpp/abstract-class.template
 after/template/cpp/array_size.template
 after/template/cpp/assignment-operator.template
 after/template/cpp/auto_ptr-instance.template
 after/template/cpp/auto_ptr.template
 after/template/cpp/b-e.template
+after/template/cpp/base-class-non-virtual.template
+after/template/cpp/base-class.template
 after/template/cpp/benchmark.template
 after/template/cpp/bool-operator.template
 after/template/cpp/catch.template
@@ -57,8 +60,10 @@ after/template/cpp/for-iterator.template
 after/template/cpp/fori.template
 after/template/cpp/foriN.template
 after/template/cpp/internals/abs-rel-shared.template
+after/template/cpp/internals/class-skeleton.template
 after/template/cpp/internals/formatted-comment.template
 after/template/cpp/internals/function-comment.template
+after/template/cpp/internals/shall_explicit_defaults.template
 after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
 after/template/cpp/internals/stream-signature.template
@@ -86,6 +91,7 @@ after/template/cpp/traits.template
 after/template/cpp/try.template
 after/template/cpp/unique_ptr.template
 after/template/cpp/utf8.template
+after/template/cpp/value-class.template
 after/template/cpp/vector.template
 after/template/cpp/weak_ptr.template
 after/template/cpp/while-getline.template

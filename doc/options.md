@@ -19,6 +19,9 @@
     * [`(bg):cpp_defaulted`](#bgcpp_defaulted)
     * [`(bg):cpp_defines_to_ignore`](#bgcpp_defines_to_ignore)
     * [`(bg):cpp_deleted`](#bgcpp_deleted)
+    * [`(bg):cpp_noexcept`](#bgcpp_noexcept)
+    * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
+    * [`(bg):cpp_explicit_default`](#bgcpp_explicit_default)
     * [`(bg):cpp_use_nested_namespaces`](#bgcpp_use_nested_namespaces)
     * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_commentleadingchar)
     * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_tagleadingchar)
@@ -173,9 +176,37 @@ String format option (for
 **See:**
   * [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
 
+#### `(bg):cpp_noncopyable_class`
+Policy option that is used to tell how classes are made non-copyable.
+  * by inheriting from a dedicated noncopyable class
+  * by explictly deleting copy operations (with `= delete` in C++11, or with
+    declared but undefined private copy operations). This done by setting the
+    option to an empty string.
+
+**Default value:** `{"name": "boost:noncopyable", "include": "<boost/noncopyable.hpp>"}`
+
+**See:**
+  * [`cpp/base-class.template`](snippets.md#cppbaseclass.template)
+  * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template)
+
+#### `(bg):cpp_explicit_default`
+Boolean option that forces to explicitly add `= default` in snippets when C++11
+is detected.
+
+**Warning:** For now, this option has priority over
+[`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class). i.e. deleted copy operations will still appear even if the class inherits from a _non-copyable_ class.
+
+**Default value:** 0 (false)
+
+**See:**
+  * [`lh#cpp#snippets#shall_explicit_defaults()`](API.md#lhcppsnippetsshall_explicit_defaults) which encapsulates its use.
+  * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template) which uses its result
+
 #### `(bg):cpp_use_nested_namespaces`
 Boolean option that enables the generation of _nested_ namespaces in C++17
-codes with [`namespace` snippet](snippets.md#cppnamespace). Default is 1 (true).
+codes with [`namespace` snippet](snippets.md#cppnamespace).
+
+__Default value_:_ is 1 (true).
 
 #### `(bg):({ft}_)dox_CommentLeadingChar`
 Tells which character to use on each line of a Doxygen comment.

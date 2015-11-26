@@ -5,6 +5,6 @@ VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:destructor = s:Param("destructor", {"visibility": "none"})
+VimL: let s:destructor = s:Param("destructor", {})
 VimL: if get(s:destructor, "virtual", 0) | throw "Value classes aren't expected to belong to polymorphic hierarchies" | endif
 VimL: call s:Include("class-skeleton", "cpp/internals")

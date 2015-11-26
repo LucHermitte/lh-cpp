@@ -8,7 +8,7 @@ VimL: let s:default_constructor = s:Param("default-constructor", {})
 MuT:  if empty(s:default_constructor)
 VimL:    let s:default_constructor["visibility"] = "protected"
 MuT:  endif
-VimL: let s:destructor = s:Param("destructor", {})
+VimL: let s:destructor = s:Param("destructor", {"how": ""})
 VimL: let s:destructor["visibility"] = "public"
 VimL: let s:destructor["virtual"] = 1
 VimL: call s:PushArgs({"noncopyable": 1})

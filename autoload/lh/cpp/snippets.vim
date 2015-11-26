@@ -330,6 +330,16 @@ function! lh#cpp#snippets#defaulted() abort
   endif
 endfunction
 
+" Function: lh#cpp#snippets#pure() {{{3
+function! lh#cpp#snippets#pure() abort
+  return "= 0"
+endfunction
+
+" Function: lh#cpp#snippets#shall_explicit_defaults() {{{3
+function! lh#cpp#snippets#shall_explicit_defaults() abort
+  return lh#cpp#use_cpp11() && lh#option#get("cpp_explicit_default", 0)
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
