@@ -5,7 +5,7 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 MuT:  if lh#cpp#snippets#shall_explicit_defaults()
-VimL:    let s:default_explicit = {"visibility": "public", "how": "defaulted"}
+MuT:    let default_explicit = {"visibility": "public", "how": "defaulted"}
 MuT:  else
-VimL:    let s:default_explicit = {"visibility": "none"}
+MuT:    let default_explicit = {"visibility": "none"}
 MuT:  endif

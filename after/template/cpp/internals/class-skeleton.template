@@ -7,12 +7,10 @@ VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
 VimL: let s:clsname = s:Param("clsname", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
 VimL: " =====[ Parents
-VimL: silent! unlet s:parents
-VimL: let s:parents = s:Param("parents", [])
-VimL: let s:noncopyable = s:Param("noncopyable", 0)
+MuT:  let s:parents = s:Param("parents", [])
+MuT:  let s:noncopyable = s:Param("noncopyable", 0)
 MuT:  if s:noncopyable
-VimL:   silent! unlet s:noncopyable_class
-VimL:   let s:noncopyable_class = lh#option#get("cpp_noncopyable_class", {"name": "boost::noncopyable", "includes": "<boost/noncopyable.hpp>"})
+MuT:    let s:noncopyable_class = lh#option#get("cpp_noncopyable_class", {"name": "boost::noncopyable", "includes": "<boost/noncopyable.hpp>"})
 VimL:   " TODO: support auto import of noncopyable file
 MuT:    if empty(s:noncopyable_class)
 VimL:     call s:PushArgs({"copy-constructor": {"how": "deleted"}})
@@ -25,21 +23,20 @@ VimL:       call s:PushArgs({"assignment-operator": {"how": "deleted"}})
 MuT:      endif
 MuT:    endif
 MuT:  endif
-VimL: let s:parents_data = lh#cpp#snippets#parents(s:parents)
+MuT:  let s:parents_data = lh#cpp#snippets#parents(s:parents)
 VimL: call lh#list#for_each_call(s:parents_data[1], "lh#mut#_add_post_expand_callback(\"lh#dev#import#add(v:val)\")")
 VimL: " =====[ Functions
 VimL: " --------[ Any Functions
-VimL: silent! unlet s:functions
-VimL: let s:functions = s:Param("functions", [])
+MuT:  let s:functions = s:Param("functions", [])
 VimL: " --------[ Special Functions
 VimL: call s:Include('shall_explicit_defaults', 'cpp/internals')
 VimL: " In reverse order because of how Include() works
-VimL: let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]
-VimL: let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'name': v:val})")
+MuT:  let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]
+MuT:  let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'name': v:val})")
 VimL: for spe in s:spe_func_data | call lh#dict#add_new(spe, s:default_explicit) | endfor
-VimL: let s:pub_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "public" && get(v:val, "how", "") != "deleted"')
-VimL: let s:pro_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "protected"')
-VimL: let s:pri_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "private" || get(v:val, "how", "") == "deleted"')
+MuT:  let s:pub_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "public" && get(v:val, "how", "") != "deleted"')
+MuT:  let s:pro_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "protected"')
+MuT:  let s:pri_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "private" || get(v:val, "how", "") == "deleted"')
 VimL: " =====[ The Skeleton
 class <+s:clsname+><+s:parents_data[0]+>
 {
@@ -59,4 +56,3 @@ private:
 VimL:   call lh#list#for_each_call(s:pri_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
 MuT:  endif
 };
-VimL: unlet s:default_explicit

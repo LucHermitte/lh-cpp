@@ -1,5 +1,5 @@
 flavor 'LucHermitte/lh-vim-lib', '>= 3.3.17'
 flavor 'LucHermitte/lh-brackets', '>= 2.3.4'
 flavor 'LucHermitte/lh-dev', '>= 1.3.5'
-flavor 'LucHermitte/mu-template', '>= 3.5.3'
+flavor 'LucHermitte/mu-template', '>= 3.6.0'
 flavor 'LucHermitte/VimFold4C', '>= 3.0.9'

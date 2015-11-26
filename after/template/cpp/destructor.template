@@ -4,27 +4,27 @@ VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
 VimL: " in case the class name is already known, no need to extract it
-VimL: let s:destructor = s:Param("destructor", lh#option#unset())
+MuT:  let s:destructor = s:Param("destructor", lh#option#unset())
 MuT:  if lh#option#is_set(s:destructor)
-VimL:     let s:virtual = get(s:destructor, "virtual", 0)
-VimL:     let s:how     = get(s:destructor, "how", "")
+MuT:      let s:virtual = get(s:destructor, "virtual", 0)
+MuT:      let s:how     = get(s:destructor, "how", "")
 VimL:     " Let's suppose s:clsname is set
 VimL:     let s:visibility = get(s:destructor, "visibility", "public")
 MuT:  else
 MuT:    if empty(s:Args())
-VimL:     let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
-VimL:     let s:virtual = lh#marker#txt("virtual ")
+MuT:      let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
+MuT:      let s:virtual = lh#marker#txt("virtual ")
 MuT:    else
-VimL:     let s:clsname = s:Args()[0].name
-VimL:     let s:virtual = s:Args()[0].virtual
+MuT:      let s:clsname = s:Args()[0].name
+MuT:      let s:virtual = s:Args()[0].virtual
 MuT:    endif
 VimL:   let s:how       = ""
 VimL:   " TODO: autodetect last visibility
 VimL:   let s:visibility = "public"
 MuT:  endif
-VimL: let s:virtual = type(s:virtual) == type("str") ? s:virtual : ((s:virtual) ? "virtual " : "")
-VimL: let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""
-VimL: let s:fn_comments = { }
+MuT:  let s:virtual = type(s:virtual) == type("str") ? s:virtual : ((s:virtual) ? "virtual " : "")
+MuT:  let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""
+MuT:  let s:fn_comments = { }
 VimL: let s:fn_comments.brief = substitute(s:virtual."Destructor.", '\v(.)(.*)', '\u\1\L\2', '')
 MuT:  if s:visibility == "protected"
 VimL:     let s:fn_comments.note = ["This class is not meant to be destroyed polymorphically"]
