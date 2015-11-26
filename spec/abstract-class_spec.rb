@@ -20,7 +20,7 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
 
   specify "abstract-class noncopyable, with implicit definitions", :cpp98, :cpp11, :noncopyable do
     vim.command('silent! unlet g:cpp_noncopyable_class')
-    expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
+    expect(vim.command('MuTemplate cpp/abstract-class')).to match(/^$|#include <boost\/noncopyable.hpp> added/)
     assert_buffer_contents <<-EOF
     #include <boost/noncopyable.hpp>
     class «Test» : private boost::noncopyable
@@ -48,7 +48,7 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.command('silent! unlet g:cpp_noncopyable_class')
     vim.command("let g:cpp_std_flavour = 11")
     vim.command("let g:cpp_explicit_default = 1")
-    expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
+    expect(vim.command('MuTemplate cpp/abstract-class')).to match(/^$|#include <boost\/noncopyable.hpp> added/)
     assert_buffer_contents <<-EOF
     #include <boost/noncopyable.hpp>
     class «Test» : private boost::noncopyable
