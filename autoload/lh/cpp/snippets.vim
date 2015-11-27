@@ -290,10 +290,12 @@ endfunction
 " Function: lh#cpp#snippets#constructor_name(class) {{{3
 function! lh#cpp#snippets#constructor_name(class) abort
   " Assert len(values(a:class)) == 1
-  let data = values(a:class)[0]
-  let res = join([data.namespace, data.name, data.name], '::')
+  let data = split(keys(a:class)[0], '::')
+  let data += [data[-1]]
+  let res = join(data, '::')
   return res
 endfunction
+
 " Function: lh#cpp#snippets#_filter_functions(list, visibility) {{{3
 " Function: lh#cpp#snippets#_filter_functions(list, field, value)
 function! lh#cpp#snippets#_filter_functions(list, ...) abort

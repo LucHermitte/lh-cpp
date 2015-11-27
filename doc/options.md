@@ -22,6 +22,7 @@
     * [`(bg):cpp_noexcept`](#bgcpp_noexcept)
     * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
     * [`(bg):cpp_explicit_default`](#bgcpp_explicit_default)
+    * [`(bg):cpp_root_exception`](#bgcpp_root_exception)
     * [`(bg):cpp_use_nested_namespaces`](#bgcpp_use_nested_namespaces)
     * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_commentleadingchar)
     * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_tagleadingchar)
@@ -201,6 +202,9 @@ is detected.
 **See:**
   * [`lh#cpp#snippets#shall_explicit_defaults()`](API.md#lhcppsnippetsshall_explicit_defaults) which encapsulates its use.
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template) which uses its result
+
+#### `(bg):cpp_root_exception`
+TDB
 
 #### `(bg):cpp_use_nested_namespaces`
 Boolean option that enables the generation of _nested_ namespaces in C++17

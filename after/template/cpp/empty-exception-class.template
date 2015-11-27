@@ -4,7 +4,8 @@ VimL: let s:default_constructor = s:Param("default-constructor", {"visibility": 
 VimL: let s:destructor = s:Param("destructor", {})
 VimL: let s:destructor.virtual = 1
 MuT:  let s:parents = s:Param("parents", [])
-MuT:  let s:parent_exception = {"std::runtime_error": {"name": "runtime_error", "namespace": "std", "includes": "<stdexcept>"}}
+MuT:  let s:default_exception = lh#option#get('cpp_root_exception', {"std::runtime_error": {"includes": "<stdexcept>"}})
+MuT:  let s:parent_exception = s:Param("root-exception", s:default_exception)
 VimL: let s:parents += [s:parent_exception]
 VimL: call s:Include('list-constructors', 'cpp/internals')
 MuT:  let s:functions = s:Param("functions", [])
