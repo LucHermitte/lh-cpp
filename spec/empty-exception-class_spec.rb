@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'pp'
 
 
-RSpec.describe "C++ exception class wizard", :empty_exception, :cpp, :class do
+RSpec.describe "C++ empty-exception class wizard", :empty_exception, :cpp, :class do
   let (:filename) { "test.cpp" }
 
   before :each do
@@ -15,11 +15,11 @@ RSpec.describe "C++ exception class wizard", :empty_exception, :cpp, :class do
     vim.command('silent! unlet g:cpp_explicit_default')
     vim.command('silent! unlet g:cpp_std_flavour')
     clear_buffer
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/base-class")')).to match(/base-class.template/)
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/empty-exception-class")')).to match(/empty-exception-class.template/)
   end
 
 
-  specify "base_class noncopyable, with implicit definitions, C++98", :cpp98 do
+  specify "empty_exception_class noncopyable, with implicit definitions, C++98", :cpp98 do
     expect(vim.command('MuTemplate cpp/empty-exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
     #include <stdexcept>
@@ -32,7 +32,7 @@ RSpec.describe "C++ exception class wizard", :empty_exception, :cpp, :class do
     EOF
   end
 
-  specify "base_class noncopyable, with implicit definitions, C++11", :cpp11 do
+  specify "empty_exception_class noncopyable, with implicit definitions, C++11", :cpp11 do
     vim.command('let g:cpp_std_flavour = 11')
     expect(vim.command('MuTemplate cpp/empty-exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
@@ -46,7 +46,7 @@ RSpec.describe "C++ exception class wizard", :empty_exception, :cpp, :class do
     EOF
   end
 
-  specify "base_class noncopyable, no implicit definitions, C++11", :cpp11, :defaulted do
+  specify "empty_exception_class noncopyable, no implicit definitions, C++11", :cpp11, :defaulted do
     vim.command('let g:cpp_std_flavour = 11')
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/empty-exception-class')).to match(/^$|#include <stdexcept> added/)
