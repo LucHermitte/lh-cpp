@@ -1,0 +1,20 @@
+VimL:" list-constructors File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 27th Nov 2015
+VimL:" hint: Routine template-file, returns: s:constructors
+VimL: "let g:args = deepcopy(s:args)
+MuT:  let s:flat_args     = lh#list#flatten(s:args)
+MuT:  let s:constructors  = filter(copy(s:flat_args), 'match(keys(v:val), "constructor") >= 0')
+VimL: "let g:constructors0 = deepcopy(s:constructors)
+VimL: " Ignore removed (none) constructors
+VimL: call filter(s:constructors, "empty(lh#cpp#snippets#_filter_functions(v:val, 'none'))")
+VimL: "let g:constructors1 = deepcopy(s:constructors)
+VimL: " Ignore defaulted constructors
+VimL: call filter(s:constructors, "empty(lh#cpp#snippets#_filter_functions(v:val, 'how', 'defaulted'))")
+VimL: "let g:constructors2 = deepcopy(s:constructors)
+MuT:  let s:ctr_functions = filter(copy(s:flat_args), 'has_key(v:val,"functions")')
+VimL: "let g:ctr_functions = deepcopy(s:ctr_functions)
+MuT:  if !empty(s:ctr_functions)
+VimL:   let s:ctr_functions2 = lh#list#accumulate2(s:ctr_functions, {}, 'extend(v:1_, v:2_)')
+VimL:   let s:ctr_functions3 = filter(copy(s:ctr_functions2['functions']), 'get(v:val, "kind", "") == "constructor"')
+VimL:   call extend(s:constructors, s:ctr_functions3)
+MuT:  endif
+VimL: "let g:constructors3 = deepcopy(s:constructors)

@@ -1,0 +1,17 @@
+VimL:" «function» File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 27th Nov 2015
+VimL:" hint: «function-hint»
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let g:args = s:args
+MuT:  let s:function = s:Param("function", {})
+MuT:  let s:kind = get(s:function, "kind", "")
+MuT:  if s:kind == "constructor"
+MuT:    let s:how = get(s:function, "how", "")
+MuT:    let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""
+MuT:    let s:clsname = s:Param("clsname", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
+<+s:clsname+>(<+s:Param("parameters", lh#marker#txt("ctr-parameters"))+>)<+s:how+>;
+MuT:  else
+MuT:    let s:signature = get(s:function, "signature", "")
+<+s:signature+>;
+MuT:  endif
+VimL: " TODO: definition, comments

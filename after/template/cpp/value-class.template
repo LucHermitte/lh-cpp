@@ -1,6 +1,5 @@
 VimL:" value-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
 VimL:" hint: Value Class ((implicitly) copyable, no hierarchy)
-VimL:" TODO: support explicitly defaulted special functions
 MuT:  let s:destructor = s:Param("destructor", {})
 VimL: if get(s:destructor, "virtual", 0) | throw "Value classes aren't expected to belong to polymorphic hierarchies" | endif
 VimL: call s:Include("class-skeleton", "cpp/internals")

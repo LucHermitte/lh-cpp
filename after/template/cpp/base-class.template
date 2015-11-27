@@ -7,5 +7,4 @@ MuT:  endif
 MuT:  let s:destructor = s:Param("destructor", {"how": ""})
 VimL: let s:destructor["visibility"] = "public"
 VimL: let s:destructor["virtual"] = 1
-VimL: call s:PushArgs({"noncopyable": 1})
-VimL: call s:Include("class-skeleton", "cpp/internals")
+VimL: call s:Include("class-skeleton", "cpp/internals", {"noncopyable": 1})

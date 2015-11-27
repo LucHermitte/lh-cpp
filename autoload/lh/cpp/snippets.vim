@@ -287,6 +287,40 @@ function! lh#cpp#snippets#parents(parents) abort
   return [res, includes]
 endfunction
 
+" Function: lh#cpp#snippets#constructor_name(class) {{{3
+function! lh#cpp#snippets#constructor_name(class) abort
+  " Assert len(values(a:class)) == 1
+  let data = values(a:class)[0]
+  let res = join([data.namespace, data.name, data.name], '::')
+  return res
+endfunction
+" Function: lh#cpp#snippets#_filter_functions(list, visibility) {{{3
+" Function: lh#cpp#snippets#_filter_functions(list, field, value)
+function! lh#cpp#snippets#_filter_functions(list, ...) abort
+  if a:0 == 1
+    let value = a:1
+    let field = 'visibility'
+    let default = 'public'
+  elseif a:0 == 2
+    let value = a:2
+    let field = a:1
+    let default = ''
+  else
+    throw "lh-cpp: incorrect number of arguments: (".string(a:000).')'
+  endif
+  let res = copy(a:list)
+  if value == "public"
+    call filter(res, 'get(v:val, field, "public") == value && get(v:val, "how", "") != "deleted"')
+  elseif value == "protected"
+    call filter(res, 'get(v:val, field, "public") == value')
+  elseif value == "private"
+    call filter(res, 'get(v:val, field, "public") == value || get(v:val, "how", "") == "deleted"')
+  else "visi=none, or other fields
+    call filter(res, 'get(v:val, field, default) == value')
+  endif
+  return res
+endfunction
+
 " Function: lh#cpp#snippets#noexcept([condition]) {{{3
 function! lh#cpp#snippets#noexcept(...) abort
   let noexcept = lh#option#get('cpp_noexcept')
@@ -312,6 +346,20 @@ function! lh#cpp#snippets#deleted() abort
     return '= delete'
   else
     return '/* = delete */'
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#override() {{{3
+function! lh#cpp#snippets#override() abort
+  let override = lh#option#get('cpp_override')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(override)
+    return override
+  endif
+  if lh#cpp#use_cpp11()
+    return 'override'
+  else
+    return '/* override */'
   endif
 endfunction
 

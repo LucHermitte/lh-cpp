@@ -60,10 +60,15 @@
       * [cpp/stream-inserter](#cppstream-inserter)
     * [Class Patterns](#class-patterns)
       * [cpp/abs-rel](#cppabs-rel)
+      * [cpp/abstract-class](#cppabstract-class)
+      * [cpp/base-class](#cppbase-class)
+      * [cpp/base-class-non-virtuam](#cppbase-class-non-virtuam)
       * [cpp/class](#cppclass)
+      * [cpp/empty-exception-class](#cppempty-exception-class)
       * [cpp/enum](#cppenum)
       * [cpp/enum2](#cppenum2)
       * [cpp/enum2-impl](#cppenum2-impl)
+      * [cpp/exception-class](#cppexception-class)
       * [cpp/singleton](#cppsingleton)
       * [cpp/traits](#cpptraits)
   * [Doxygen](#doxygen)
@@ -77,13 +82,14 @@
       * [dox/ingroup](#doxingroup)
       * [dox/since](#doxsince)
       * [dox/tt](#doxtt)
-  * [Miscellaneous](#miscelleanous)
+  * [Miscellaneous](#miscellaneous)
       * [cpp/benchmark](#cppbenchmark)
       * [cpp/otb-sug-latex](#cppotb-sug-latex)
       * [cpp/otb-sug-snippet](#cppotb-sug-snippet)
       * [cpp/utf8](#cpputf8)
   * [Internal templates](#internal-templates)
       * [cpp/internals/abs-rel-shared](#cppinternalsabs-rel-shared)
+      * [cpp/internals/class-skeleton](#cppinternalsclass-skeleton)
       * [cpp/internals/formatted-comment](#cppinternalsformatted-comment)
       * [cpp/internals/function-comment](#cppinternalsfunction-comment)
       * [cpp/internals/stream-common](#cppinternalsstream-common)
@@ -889,20 +895,24 @@ semantics to the user:
     * value-semantics, responsible for one resource
     * value-semantics, with RAII encapsulated resource(s)
 
+#### cpp/empty-exception-class
+TBD:
 #### cpp/enum
-TBW:
+TBD:
 
 **See:** [lh-cpp enums generation](Enums.md)
 
 #### cpp/enum2
-TBW:
+TBD:
 
 **See:** [lh-cpp enums generation](Enums.md)
 #### cpp/enum2-impl
-TBW:
+TBD:
 
 **See:** [lh-cpp enums generation](Enums.md)
 
+#### cpp/exception-class
+TBD:
 #### cpp/singleton
 **Produces:** Wizard that produces a singleton class definition
 

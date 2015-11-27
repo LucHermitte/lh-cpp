@@ -1,5 +1,9 @@
 VimL:" class-skeleton File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
-VimL:" hint: «class-skeleton-hint»
+VimL:" hint: Routine Skeleton for C++ classes
+VimL:" TODO: find a way to order members
+VimL:" TODO: attributes (with getter is required)
+VimL:" TODO: fill function comments
+VimL:" TODO: option to disable comments in defaulted functions
 VimL: let s:value_start  = "¡"
 VimL: let s:value_end    = s:value_start
 VimL: let s:marker_open  = "<+"
@@ -28,31 +32,38 @@ VimL: call lh#list#for_each_call(s:parents_data[1], "lh#mut#_add_post_expand_cal
 VimL: " =====[ Functions
 VimL: " --------[ Any Functions
 MuT:  let s:functions = s:Param("functions", [])
+VimL: call reverse(s:functions)
+MuT:  let s:pub_functions = lh#cpp#snippets#_filter_functions(s:functions, "public")
+MuT:  let s:pro_functions = lh#cpp#snippets#_filter_functions(s:functions, "protected")
+MuT:  let s:pri_functions = lh#cpp#snippets#_filter_functions(s:functions, "private")
 VimL: " --------[ Special Functions
 VimL: call s:Include('shall_explicit_defaults', 'cpp/internals')
 VimL: " In reverse order because of how Include() works
 MuT:  let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]
 MuT:  let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'name': v:val})")
 VimL: for spe in s:spe_func_data | call lh#dict#add_new(spe, s:default_explicit) | endfor
-MuT:  let s:pub_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "public" && get(v:val, "how", "") != "deleted"')
-MuT:  let s:pro_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "protected"')
-MuT:  let s:pri_special_functions = filter(copy(s:spe_func_data), 'get(v:val, "visibility", "public") == "private" || get(v:val, "how", "") == "deleted"')
+MuT:  let s:pub_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "public")
+MuT:  let s:pro_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "protected")
+MuT:  let s:pri_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "private")
 VimL: " =====[ The Skeleton
 class <+s:clsname+><+s:parents_data[0]+>
 {
 public:
 
 VimL: call lh#list#for_each_call(s:pub_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
-MuT:  if !empty(s:pro_special_functions)
+VimL: for fn in s:pub_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
+MuT:  if !empty(s:pro_special_functions) || !empty(s:pro_functions)
 
 protected:
 
 VimL:   call lh#list#for_each_call(s:pro_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
+VimL:   for fn in s:pro_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
 MuT:  endif
-MuT:  if !empty(s:pri_special_functions)
+MuT:  if !empty(s:pri_special_functions) || !empty(s:pri_functions)
 
 private:
 
 VimL:   call lh#list#for_each_call(s:pri_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
+VimL:   for fn in s:pri_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
 MuT:  endif
 };
