@@ -385,6 +385,21 @@ function! lh#cpp#snippets#pure() abort
   return "= 0"
 endfunction
 
+" Function: lh#cpp#snippets#return_ptr_type() {{{3
+function! lh#cpp#snippets#return_ptr_type(type) abort
+  let return_type = lh#option#get('cpp_return_type')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(return_type)
+    return printf(return_type, a:type)
+  endif
+  call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
+  if lh#cpp#use_cpp11()
+    return 'std::unique_ptr<'.a:type.'>'
+  else
+    return 'std::auto_ptr<'.a:type.'>'
+  endif
+endfunction
+
 " Function: lh#cpp#snippets#shall_explicit_defaults() {{{3
 function! lh#cpp#snippets#shall_explicit_defaults() abort
   return lh#cpp#use_cpp11() && lh#option#get("cpp_explicit_default", 0)

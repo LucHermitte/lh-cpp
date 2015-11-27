@@ -40,6 +40,28 @@ function! s:Verbose(expr)
 endfunction
 
 " # API {{{2
+" Function: lh#cpp#override#root_function(classname, funcname) {{{3
+function! lh#cpp#override#root_function(classname, funcname) abort
+  let result = []
+  " todo: do not sort ancestors (find the inheritance (tree) order) because
+  " some virtual functions are not marked virtual in childs
+  let ancestors = lh#dev#class#ancestors(a:classname)
+  for base in ancestors
+    " - "::" because "inherits:" does not resolves the contextual namespaces
+    "   (see omnicppcomplete for a better Ancestors function ?)
+    " - "\>" strips the symbols from nested classes
+    let base_pattern = ((base =~ '::') ? '^' : '::') . base . '\>'
+    let functions = lh#cpp#AnalysisLib_Function#LoadTags(base_pattern)
+    let declarations = lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
+    " Only keep the searched function
+    let virtual_fcts = filter(declarations, 'v:val.implementation =~ "virtual"')
+    call filter(virtual_fcts, 'v:val.name =~ a:classname')
+    let result += virtual_fcts
+  endfor
+  " TODO: keep the root function only
+  return result
+endfunction
+
 " Function: s:OverrideableFunctions(classname) {{{3
 function! s:OverrideableFunctions(classname)
   let result = {}

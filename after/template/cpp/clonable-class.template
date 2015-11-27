@@ -1,0 +1,18 @@
+VimL:" clonable-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 27th Nov 2015
+VimL:" hint: base class with clone function
+MuT:  let s:clsname     = s:Param("clsname", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
+MuT:  let s:functions   = s:Param("functions", [])
+MuT:  let s:parents     = s:Param("parents", [])
+MuT:  let s:pub_parents = filter(copy(s:parents), '!empty(lh#cpp#snippets#_filter_functions(v:val, "public"))')
+MuT:  if !empty(s:pub_parents)
+MuT:    let s:override = ' '.lh#cpp#snippets#override()
+MuT:  else
+MuT:    let s:override = ''
+MuT:  endif
+MuT:  let s:copy_constructor = s:Param("copy-constructor", {})
+VimL: let s:copy_constructor.visibility = 'protected'
+VimL: " TODO "how" will eventually depend on detected non-copyable attributes
+VimL:  let s:copy_constructor.how        = 'defaulted'
+VimL: " TODO: keep base returned type -> see ctags :Override ?
+VimL: call add(s:functions, {"signature": "virtual ".lh#cpp#snippets#return_ptr_type(s:clsname)." ".lh#dev#naming#function("clone")."() const".s:override})
+VimL: call s:Include("base-class", "cpp")
