@@ -40,30 +40,32 @@ VimL: " --------[ Special Functions
 VimL: call s:Include('shall_explicit_defaults', 'cpp/internals')
 VimL: " In reverse order because of how Include() works
 MuT:  let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]
-MuT:  let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'name': v:val})")
+MuT:  let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'kind': v:val})")
 VimL: for spe in s:spe_func_data | call lh#dict#add_new(spe, s:default_explicit) | endfor
 MuT:  let s:pub_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "public")
 MuT:  let s:pro_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "protected")
 MuT:  let s:pri_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "private")
+VimL: call extend(s:pub_functions, map(copy(s:pub_special_functions), 'v:val'))
+VimL: call extend(s:pro_functions, map(copy(s:pro_special_functions), 'v:val'))
+VimL: call extend(s:pri_functions, map(copy(s:pri_special_functions), 'v:val'))
 VimL: " =====[ The Skeleton
 class <+s:clsname+><+s:parents_data[0]+>
 {
 public:
 
-VimL: call lh#list#for_each_call(s:pub_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
 VimL: for fn in s:pub_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
-MuT:  if !empty(s:pro_special_functions) || !empty(s:pro_functions)
+MuT:  if !empty(s:pro_functions)
 
 protected:
 
-VimL:   call lh#list#for_each_call(s:pro_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
+VimL:   "call lh#list#for_each_call(s:pro_special_functions, 'lh#mut#_include(v:val.kind, "cpp")')
 VimL:   for fn in s:pro_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
 MuT:  endif
-MuT:  if !empty(s:pri_special_functions) || !empty(s:pri_functions)
+MuT:  if !empty(s:pri_functions)
 
 private:
 
-VimL:   call lh#list#for_each_call(s:pri_special_functions, 'lh#mut#_include(v:val.name, "cpp")')
+VimL:   "call lh#list#for_each_call(s:pri_special_functions, 'lh#mut#_include(v:val.kind, "cpp")')
 VimL:   for fn in s:pri_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
 MuT:  endif
 };
