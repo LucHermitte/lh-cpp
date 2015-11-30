@@ -1,0 +1,22 @@
+VimL:" init-constructor File Template, Luc Hermitte, 30th Nov 2015
+VimL:" hint: Constructor(parameters): m_attributes(params){}
+VimL: let s:value_start  = '¡'
+VimL: let s:value_end    = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: " in case the class name is already known, no need to extract it
+VimL: let s:clsname = s:Param("clsname", "")
+MuT:  if empty(s:clsname)
+VimL:   let s:clsname = INPUT("class name ?", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
+MuT:  endif
+MuT:  let s:parameters = s:Param("parameters", lh#option#unset())
+MuT:  if lh#option#is_set(s:parameters)
+MuT:    "let s:attributes = map(copy(s:parameters), 'lh#dev#naming#member(v:val)')
+MuT:    let s:parameterList = lh#cpp#snippets#build_param_list(s:parameters)
+MuT:    let s:definition = (empty(s:parameters)? "" : (len(s:parameters)>1?"\n": "").": ").join(map(copy(s:parameters), 'lh#dev#naming#member(v:val.name)."(".lh#dev#naming#param(v:val.name).")"'), "\n, ").'{}'
+MuT:  else
+MuT:    let s:parameterList = lh#marker#txt('ctr-parameters')
+MuT:    let s:definition = ';'
+MuT:  endif
+<+s:clsname+>(<+s:parameterList+>)<+s:definition+>

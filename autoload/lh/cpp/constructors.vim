@@ -1,29 +1,29 @@
 "=============================================================================
-" File:		autoload/lh/cpp/constructors.vim                          {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
+" File:         autoload/lh/cpp/constructors.vim                          {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b4
-" Created:	09th Feb 2009
-" Last Update:	$Date$
+" Version:      2.0.0b4
+" Created:      09th Feb 2009
+" Last Update:  $Date$
 "------------------------------------------------------------------------
 " Description:
-" 	Helper MMIs to generate constructors 
-" 	Deported functions used by ftplugin/cpp/cpp_Constructor.vim
-" 
+"       Helper MMIs to generate constructors
+"       Deported functions used by ftplugin/cpp/cpp_Constructor.vim
+"
 "------------------------------------------------------------------------
-" History:	
-" 	v1.1.0: Creation
-"	v2.0.0  31st May 2012
-"	        License GPLv3 w/ extension
-"	v.2.0.0b4
-"	        New commands: :ConstructorCopy, :ConstructorDefault,
-"	        :ConstructorInit, :AssignmentOperator
+" History:
+"       v1.1.0: Creation
+"       v2.0.0  31st May 2012
+"               License GPLv3 w/ extension
+"       v.2.0.0b4
+"               New commands: :ConstructorCopy, :ConstructorDefault,
+"               :ConstructorInit, :AssignmentOperator
 " Requirements:
 "       - mu-template 3.0.8
 "       - lh-dev
-" TODO:		
+" TODO:
 " - select all attributes by default
 " - permit to change the order of the attributes in the constructor parameters
 "   list (with <c-up>, <c-down> for instance
@@ -128,7 +128,7 @@ function! lh#cpp#constructors#AssignmentOperator()
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
   " 3- Insert the copy-constructor declaration
-  try 
+  try
     let mt_jump = g:mt_jump_to_first_markers
     let g:mt_jump_to_first_markers = 0
     exe 'MuTemplate cpp/assignment-operator '.classname.' 0'
@@ -167,7 +167,7 @@ function! lh#cpp#constructors#GenericConstructor(kind)
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
   " 3- Insert the copy-constructor declaration
-  try 
+  try
     let mt_jump = g:mt_jump_to_first_markers
     let g:mt_jump_to_first_markers = 0
     exe 'MuTemplate cpp/'.a:kind.'-constructor'
@@ -205,6 +205,7 @@ endfunction
 function! lh#cpp#constructors#_complete(A,L,P)
   return ['init', 'copy', 'default', 'assign']
 endfunction
+
 " # GUI {{{2
 
 " ==========================[ Menu ]====================================
@@ -242,8 +243,8 @@ function! s:AddToMenu(lines, attrs)
 
   " 2- Build the result
   for attr in attrs
-    let line = s:Access(attr).' '.attr.fullsignature 
-	  \ . repeat(' ', max_length-lh#encoding#strlen(attr.fullsignature))
+    let line = s:Access(attr).' '.attr.fullsignature
+          \ . repeat(' ', max_length-lh#encoding#strlen(attr.fullsignature))
     call add(a:lines, line)
   endfor
 endfunction
@@ -260,13 +261,13 @@ function! s:Display(className, declarations)
   let choices = s:BuildMenu(a:declarations)
   " return
   let b_id = lh#buffer#dialog#new(
-	\ 'C++Constructor('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
-	\ 'Construct-Initializable fields for '.a:className,
-	\ 'bot below',
-	\ 1,
-	\ 'lh#cpp#constructors#select',
-	\ choices
-	\)
+        \ 'C++Constructor('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
+        \ 'Construct-Initializable fields for '.a:className,
+        \ 'bot below',
+        \ 1,
+        \ 'lh#cpp#constructors#select',
+        \ choices
+        \)
   call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in one of the ancestor class', 'long')
   " Added the lonely functions to the b_id
   let b_id['declarations'] = a:declarations
@@ -323,7 +324,7 @@ function! lh#cpp#constructors#select(results)
   for selection in a:results.selection
     " echomsg '-> '.choices[selection]
     " echomsg '-> '.info[selection-1].filename . ": ".info[selection-1].cmd
-    " 
+    "
     let one_selected_attr = a:results.dialog.declarations[selection-1]
     let attrb_type = matchstr(one_selected_attr.fullsignature, '^\s*\zs.\{-}\s\+\ze\S\+\s*$')
     let attrb_name = matchstr(one_selected_attr.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
@@ -340,7 +341,7 @@ function! lh#cpp#constructors#select(results)
 
   " 0- prepare the init-ctr signature
   let len = eval(lh#list#accumulate(sig_params, 'strlen', 'join(v:1_,  "+")'))
-   \ + lh#encoding#strlen(a:results.dialog.classname) + 2*len(sig_params) 
+   \ + lh#encoding#strlen(a:results.dialog.classname) + 2*len(sig_params)
    \ + 3 " ();
   if len > &tw-&sw
     let sig = [a:results.dialog.classname . '(' ]
@@ -352,7 +353,7 @@ function! lh#cpp#constructors#select(results)
     let header_lines = [substitute(sig, '\s\+', ' ', 'g')]
   endif
   let impl_lines       = deepcopy(header_lines)
-  let header_lines[-1] .= ';' 
+  let header_lines[-1] .= ';'
 
   " 1- insert it in the .h
   " Go back to the original buffer, and insert the built lines
@@ -376,6 +377,7 @@ function! lh#cpp#constructors#select(results)
 endfunction
 
 "------------------------------------------------------------------------
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

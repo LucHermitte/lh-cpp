@@ -405,7 +405,44 @@ function! lh#cpp#snippets#shall_explicit_defaults() abort
   return lh#cpp#use_cpp11() && lh#option#get("cpp_explicit_default", 0)
 endfunction
 
+" Function: lh#cpp#snippets#build_param_list(parameters) {{{3
+" Fields:
+" - name
+" - type
+" - default
+" - nl (bool)
+function! lh#cpp#snippets#build_param_list(parameters) abort
+  " 1- Handle default params, if any. {{{4
+  let l:ShowDefaultParams       = lh#dev#option#get('ShowDefaultParams', &ft, 1)
+  "    0 -> ""              : ignored
+  "    1 -> "/* = value */" : commented
+  "    2 -> "/*=value*/"    : commented, spaces trimmed
+  "    3 -> "/*value*/"     : commented, spaces trimmed, no equal sign
+  if     l:ShowDefaultParams == 0 | let pattern = ''
+  elseif l:ShowDefaultParams == 1 | let pattern = '/* = \1 */'
+  elseif l:ShowDefaultParams == 2 | let pattern = '/*=\1*/'
+  elseif l:ShowDefaultParams == 3 | let pattern = '/*\1*/'
+  else                            | let pattern = ''
+  endif
+
+  " 2- Build the string to return {{{4
+  let implParams = []
+  for param in a:parameters
+    let sParam = (get(param, 'nl', '0') ? "\n" : '')
+          \ . get(param, 'type', lh#marker#txt('type')) . ' ' . lh#dev#naming#param(param.name)
+
+    if has_key(param, 'default')
+      let sParam .= substitute(param.default, '\v(.+)', pattern, '')
+    endif
+    " echo "param=".param
+    call add(implParams, sParam)
+  endfor
+  let implParamsStr = join(implParams, ', ')
+  return implParamsStr
+endfunction
+
 "------------------------------------------------------------------------
+"
 " ## Internal functions {{{1
 
 " # snippet functions {{{2
