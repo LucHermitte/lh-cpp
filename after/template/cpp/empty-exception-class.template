@@ -12,6 +12,8 @@ MuT:  let s:functions = s:Param("functions", [])
 MuT:  if lh#cpp#use_cpp11() && empty(s:constructors)
 VimL:   call insert(s:functions, {"signature": "using ". lh#cpp#snippets#constructor_name(s:parent_exception) })
 MuT:  else
-VimL:   call insert(s:functions, {"kind": "constructor", "parameters": "<++>"})
+VimL:   " override any previous "parameters" argument
+VimL:   " TODO: search for new attributes => parameters ; and merge with parent parameters
+VimL:   call insert(s:functions, {"kind": "init-constructor", 'parameters': lh#option#unset()})
 MuT:  endif
 VimL: call s:Include("class-skeleton", "cpp/internals")
