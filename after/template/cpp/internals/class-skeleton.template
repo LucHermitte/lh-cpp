@@ -17,16 +17,17 @@ MuT:  if s:noncopyable
 MuT:    let s:noncopyable_class = lh#option#get("cpp_noncopyable_class", {"name": "boost::noncopyable", "includes": "<boost/noncopyable.hpp>"})
 VimL:   " TODO: support auto import of noncopyable file
 MuT:    if empty(s:noncopyable_class)
-VimL:     call s:PushArgs({"copy-constructor": {"how": "deleted"}})
-VimL:     call s:PushArgs({"assignment-operator": {"how": "deleted"}})
+VimL:     call lh#dict#add_new(s:Param("copy-constructor", {}), {"how": "deleted"})
+VimL:     call lh#dict#add_new(s:Param("assignment-operator", {}), {"how": "deleted"})
 MuT:    else
 VimL:     let s:parents += [ lh#cpp#snippets#_merge_include_data(s:noncopyable_class, {"visibility": "private"})]
 MuT:      if lh#cpp#snippets#shall_explicit_defaults()
-VimL:       call s:PushArgs({"copy-constructor": {"how": "deleted"}})
-VimL:       call s:PushArgs({"assignment-operator": {"how": "deleted"}})
+VimL:       call lh#dict#add_new(s:Param("copy-constructor", {}), {"how": "deleted"})
+VimL:       call lh#dict#add_new(s:Param("assignment-operator", {}), {"how": "deleted"})
 MuT:      endif
 MuT:    endif
 MuT:  endif
+VimL: let g:args=deepcopy(s:args)
 MuT:  let s:parents_data = lh#cpp#snippets#parents(s:parents)
 VimL: call lh#list#for_each_call(s:parents_data[1], "lh#mut#_add_post_expand_callback(\"lh#dev#import#add(v:val)\")")
 VimL: " =====[ Functions

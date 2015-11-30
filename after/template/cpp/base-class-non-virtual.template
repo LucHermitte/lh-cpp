@@ -4,12 +4,10 @@ VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:default_constructor = s:Param("default-constructor", {})
-MuT:  if empty(s:default_constructor)
-VimL:    let s:default_constructor["visibility"] = "protected"
-MuT:  endif
+VimL: " Set default-constructor to protected if not already set
+MuT:  let s:default_constructor = s:Param("default-constructor", {})
+VimL: call lh#dict#add_new(s:default_constructor, {"visibility": "protected"})
+VimL: " Force destructor to protected, (and no how)
 VimL: let s:destructor = s:Param("destructor", {})
 VimL: let s:destructor["visibility"] = "protected"
-VimL: call s:PushArgs({"noncopyable": 1})
-VimL: call s:Include("class-skeleton", "cpp/internals")
-
+VimL: call s:Include("class-skeleton", "cpp/internals", {"noncopyable": 1})
