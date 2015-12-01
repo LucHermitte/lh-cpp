@@ -413,7 +413,7 @@ function! lh#cpp#snippets#make_ptr(type_dynamic, type_static, args) abort
   call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
   if lh#cpp#use_cpp14()
     " upcast is implicit with unique_ptr => using only the dynamic type
-    let make_ptr = 'std::make_unique<%2>(%3)'
+    let make_ptr = 'std::make_unique(%3)'
   elseif lh#cpp#use_cpp11()
     " upcast is implicit with unique_ptr => using only the dynamic type
     let make_ptr = 'std::unique_ptr<%2>(new %2(%3))'
