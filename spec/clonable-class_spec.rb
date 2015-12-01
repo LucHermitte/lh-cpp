@@ -234,7 +234,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     expect(system("ctags --c++-kinds=+p --fields=+imaS --extra=+q --language-force=C++ -f tags #{filename}")).to be true
     vim.command("let b:tags_dirname = expand('%:p:h')")
 
-    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "child", "parents": [{"base": {}}]})')).to match(/^$|#include <stdexcept> added/)
+    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "child", "parents": [{"base": {}}]})')).to match(/^$|memory is already included/)
     # pp vim.echo('g:root_clones')
 
     assert_buffer_contents <<-EOF
