@@ -55,7 +55,7 @@ Vimrunner::RSpec.configure do |config|
 
     has_redo = vim.echo('has("patch-7.4.849")')
     if has_redo != "1"
-      puts "WARNING: this flavor of vim won't permit lh-brackets to support redo"
+      puts "WARNING: this flavor of vim won't permit to support redo"
     end
     vim
   end

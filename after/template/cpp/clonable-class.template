@@ -4,15 +4,26 @@ MuT:  let s:clsname     = s:Param("clsname", lh#marker#txt(lh#dev#naming#type(ex
 MuT:  let s:functions   = s:Param("functions", [])
 MuT:  let s:parents     = s:Param("parents", [])
 MuT:  let s:pub_parents = filter(copy(s:parents), '!empty(lh#cpp#snippets#_filter_functions(v:val, "public"))')
-MuT:  if !empty(s:pub_parents)
+MuT:  let s:clone_funcname = lh#dev#naming#function("clone")
+VimL: " s:clsname in not yet under ctags DB, but fortunately we know the first level parents
+MuT:  let s:root_clones = lh#cpp#override#root_function(lh#list#flatten(map(copy(s:pub_parents), 'keys(v:val)')), s:clone_funcname)
+VimL: let g:root_clones = s:root_clones
+MuT:  if !empty(s:root_clones)
 MuT:    let s:override = ' '.lh#cpp#snippets#override()
+MuT:    let s:static_type = s:root_clones[-1].class
+VimL:   call insert(s:functions, {"kind": "init-constructor", 'parameters': lh#option#unset()})
+VimL:   " Remove default-consructor unless already set visible
+MuT:    let s:default_constructor = s:Param("default-constructor", {})
+VimL:   call lh#dict#add_new(s:default_constructor, {"visibility": "none"})
 MuT:  else
 MuT:    let s:override = ''
+MuT:    let s:static_type = s:clsname
 MuT:  endif
+MuT:  let s:ret_type = lh#cpp#snippets#return_ptr_type(s:static_type)
 MuT:  let s:copy_constructor = s:Param("copy-constructor", {})
 VimL: let s:copy_constructor.visibility = 'protected'
 VimL: " TODO "how" will eventually depend on detected non-copyable attributes
 VimL:  let s:copy_constructor.how        = 'defaulted'
 VimL: " TODO: keep base returned type -> see ctags :Override ?
-VimL: call add(s:functions, {"signature": "virtual ".lh#cpp#snippets#return_ptr_type(s:clsname)." ".lh#dev#naming#function("clone")."() const".s:override})
+VimL: call add(s:functions, {"signature": "virtual ".s:ret_type." ".s:clone_funcname."() const".s:override, "implementation": 'return '.lh#cpp#snippets#make_ptr(s:clsname, s:static_type, '*this').';'})
 VimL: call s:Include("base-class", "cpp")
