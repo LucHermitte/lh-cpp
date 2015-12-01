@@ -50,6 +50,7 @@ endfunction
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
 " # snippets functions {{{2
+
 " Function: lh#cpp#snippets#def_abbr(key, expr) {{{3
 function! lh#cpp#snippets#def_abbr(key, expr) abort
   if getline('.') =~ '^\s*#'
@@ -385,7 +386,7 @@ function! lh#cpp#snippets#pure() abort
   return "= 0"
 endfunction
 
-" Function: lh#cpp#snippets#return_ptr_type() {{{3
+" Function: lh#cpp#snippets#return_ptr_type(type) {{{3
 function! lh#cpp#snippets#return_ptr_type(type) abort
   let return_type = lh#option#get('cpp_return_type')
   let args = empty(a:000) ? '' : a:1
@@ -398,6 +399,28 @@ function! lh#cpp#snippets#return_ptr_type(type) abort
   else
     return 'std::auto_ptr<'.a:type.'>'
   endif
+endfunction
+
+" Function: lh#cpp#snippets#make_ptr(type, args) {{{3
+function! lh#cpp#snippets#make_ptr(type_dynamic, type_static, args) abort
+  let make_ptr = lh#option#get('cpp_make_ptr')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(make_ptr)
+    return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
+  else
+    unlet make_ptr
+  endif
+  call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
+  if lh#cpp#use_cpp14()
+    " upcast is implicit with unique_ptr => using only the dynamic type
+    let make_ptr = 'std::make_unique<%2>(%3)'
+  elseif lh#cpp#use_cpp11()
+    " upcast is implicit with unique_ptr => using only the dynamic type
+    let make_ptr = 'std::unique_ptr<%2>(new %2(%3))'
+  else
+    let make_ptr = 'std::auto_ptr<%1>(new %2(%3))'
+  endif
+  return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
 endfunction
 
 " Function: lh#cpp#snippets#shall_explicit_defaults() {{{3
@@ -451,6 +474,19 @@ function! lh#cpp#snippets#_goto_return_semicolon() abort
   let p = getpos('.')
   let r = search('return.*;', 'e')
   if r == 0 | call setpos('.', p) | endif
+endfunction
+
+" Function: lh#cpp#snippets#_has_a_non_copyable_parent(parents) {{{3
+" I'll just test is there is a public parent. From there, let's suppose public
+" base classes are noncopyable.
+" I'll trust the end-user to have objects from hierarchies to respect
+" entity-semantics and be noncopyable (or possibly clonable)
+" NB: I should may be test for a private inheritance to a "\cNon_*Copyable"
+" class.
+function! lh#cpp#snippets#_has_a_non_copyable_parent(parents) abort
+  let public_parents = filter(copy(a:parents), 'get(v:val, "visibility", "public") == "public"')
+  let res = ! empty(public_parents)
+  return res
 endfunction
 
 "------------------------------------------------------------------------
