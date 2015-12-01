@@ -12,6 +12,10 @@ MuT:    " let s:clsname = s:Param("clsname", lh#cpp#AnalysisLib_Class#CurrentSco
 VimL:   "<+s:clsname+>(<+s:Param("parameters", lh#marker#txt("ctr-parameters"))+>)<+s:how+>;
 MuT:  else
 MuT:    let s:signature = get(s:function, "signature", "")
-<+s:signature+>;
+MuT:    let s:implementation = get(s:function, "implementation", ";")
+MuT:    if s:implementation != ';'
+VimL:     let s:implementation = '{'.s:implementation.'}'
+MuT:    endif
+<+s:signature+><+s:implementation+>
 MuT:  endif
-VimL: " TODO: definition, comments
+VimL: " TODO: definition in separate file, comments
