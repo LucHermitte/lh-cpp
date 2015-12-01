@@ -177,7 +177,7 @@ ActivateAddons lh-cpp
   * or with [vim-flavor](http://github.com/kana/vim-flavor) which also supports
     dependencies:
 ```
-flavor LucHermitte/lh-cpp
+flavor 'LucHermitte/lh-cpp'
 ```
   * or you can clone the git repositories (expecting I haven't forgotten anything):
 ```
