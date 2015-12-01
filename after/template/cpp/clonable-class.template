@@ -23,7 +23,7 @@ MuT:  let s:ret_type = lh#cpp#snippets#return_ptr_type(s:static_type)
 MuT:  let s:copy_constructor = s:Param("copy-constructor", {})
 VimL: let s:copy_constructor.visibility = 'protected'
 VimL: " TODO "how" will eventually depend on detected non-copyable attributes
-VimL:  let s:copy_constructor.how        = 'defaulted'
-VimL: " TODO: keep base returned type -> see ctags :Override ?
+VimL: let s:copy_constructor.how        = 'defaulted'
+VimL: " TODO: if abstract class => pure virtual clone function
 VimL: call add(s:functions, {"signature": "virtual ".s:ret_type." ".s:clone_funcname."() const".s:override, "implementation": 'return '.lh#cpp#snippets#make_ptr(s:clsname, s:static_type, '*this').';'})
 VimL: call s:Include("base-class", "cpp")

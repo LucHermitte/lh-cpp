@@ -35,7 +35,9 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::auto_ptr<«Test»> clone() const;
+        virtual std::auto_ptr<«Test»> clone() const {
+            return std::auto_ptr<«Test»>(new «Test»(*this));
+        }
 
     protected:
 
@@ -49,7 +51,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     EOF
   end
 
-  specify "clonable_class noncopyable, no implicit definitions", :cpp11, :noncopyable, :defaulted do
+  specify "clonable_class noncopyable, no implicit definitions, C++11", :cpp11, :noncopyable, :defaulted do
     vim.command('silent! unlet g:cpp_noncopyable_class')
     vim.command("let g:cpp_std_flavour = 11")
     vim.command("let g:cpp_explicit_default = 1")
@@ -66,7 +68,42 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const;
+        virtual std::unique_ptr<«Test»> clone() const {
+            return std::unique_ptr<«Test»>(new «Test»(*this));
+        }
+
+    protected:
+
+        «Test»() = default;
+        «Test»(«Test» const&) = default;
+
+    private:
+
+        «Test»& operator=(«Test» const&) = delete;
+    };
+    EOF
+  end
+
+  specify "clonable_class noncopyable, no implicit definitions, C++14", :cpp14, :noncopyable, :defaulted do
+    vim.command('silent! unlet g:cpp_noncopyable_class')
+    vim.command("let g:cpp_std_flavour = 14")
+    vim.command("let g:cpp_explicit_default = 1")
+    expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
+    assert_buffer_contents <<-EOF
+    #include <memory>
+    #include <boost/noncopyable.hpp>
+    class «Test» : private boost::noncopyable
+    {
+    public:
+
+        /**
+         * Virtual destructor.
+         * @throw Nothing
+         */
+        virtual ~«Test»();
+        virtual std::unique_ptr<«Test»> clone() const {
+            return std::make_unique(*this);
+        }
 
     protected:
 
@@ -95,7 +132,9 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::auto_ptr<«Test»> clone() const;
+        virtual std::auto_ptr<«Test»> clone() const {
+            return std::auto_ptr<«Test»>(new «Test»(*this));
+        }
 
     protected:
 
@@ -128,7 +167,9 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const;
+        virtual std::unique_ptr<«Test»> clone() const {
+            return std::unique_ptr<«Test»>(new «Test»(*this));
+        }
 
     protected:
 
@@ -162,7 +203,9 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const;
+        virtual std::unique_ptr<«Test»> clone() const {
+            return std::unique_ptr<«Test»>(new «Test»(*this));
+        }
 
     protected:
 
@@ -181,7 +224,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   specify "clonable_class base noncopyable, with implicit definitions + child", :cpp98, :cpp11, :noncopyable, :clonable_child do
     vim.command('silent! unlet g:cpp_noncopyable_class')
     # expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
-    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "base"})')).to match(/^$|#include <stdexcept> added/)
+    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "base"})')).to match(/^$|#include <memory> added/)
     # vim.feedkeys('\<esc>G')
     # vim.type('<c-\><c-n>$:put=""<cr>$:put=""<cr>G')
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
