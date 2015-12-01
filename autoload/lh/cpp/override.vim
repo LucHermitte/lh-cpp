@@ -2,9 +2,9 @@
 " File:         autoload/lh/cpp/override.vim                              {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "               <URL:http://code.google.com/p/lh-vim/>
-" Version:      2.1.3
+" Version:      2.1.7
 " Created:      15th Apr 2008
-" Last Update:  30th Oct 2015
+" Last Update:  01st Dec 2015
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -40,25 +40,23 @@ function! s:Verbose(expr)
 endfunction
 
 " # API {{{2
-" Function: lh#cpp#override#root_function(classname, funcname) {{{3
+" Function: lh#cpp#override#root_function(classname/ancestors, funcname) {{{3
 function! lh#cpp#override#root_function(classname, funcname) abort
   let result = []
   " todo: do not sort ancestors (find the inheritance (tree) order) because
   " some virtual functions are not marked virtual in childs
-  let ancestors = lh#dev#class#ancestors(a:classname)
+  let ancestors = type(a:classname) == type([]) ? a:classname : lh#dev#class#ancestors(a:classname)
   for base in ancestors
-    " - "::" because "inherits:" does not resolves the contextual namespaces
-    "   (see omnicppcomplete for a better Ancestors function ?)
-    " - "\>" strips the symbols from nested classes
-    let base_pattern = ((base =~ '::') ? '^' : '::') . base . '\>'
-    let functions = lh#cpp#AnalysisLib_Function#LoadTags(base_pattern)
-    let declarations = lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
-    " Only keep the searched function
-    let virtual_fcts = filter(declarations, 'v:val.implementation =~ "virtual"')
-    call filter(virtual_fcts, 'v:val.name =~ a:classname')
-    let result += virtual_fcts
+    let functions = taglist('\v<'.base.'>::<'.a:funcname.'>')
+    " Shall we make sure they are virtual ?
+    " call filter(functions, 'v:val.implementation =~ "virtual"')
+    " Shall we make sure the name is correct ?
+    " call filter(virtual_fcts, 'v:val.name =~ a:funcname')
+    let result += functions
   endfor
-  " TODO: keep the root function only
+  " TODO: filter the root function only. Let's suppose for now that it's the
+  " last one.
+  " We may have to take care of diamong of hell.
   return result
 endfunction
 
