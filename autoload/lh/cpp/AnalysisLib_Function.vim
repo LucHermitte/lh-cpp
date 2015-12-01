@@ -1,61 +1,61 @@
 "=============================================================================
-" File:		autoload/lh/cpp/AnalysisLib_Function.vim                  {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
+" File:         autoload/lh/cpp/AnalysisLib_Function.vim                  {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
-" Created:	05th Oct 2006
-" Last Update:	$Date$ (04th Jan 2012)
+" Version:      2.0.0
+" Created:      05th Oct 2006
+" Last Update:  $Date$ (04th Jan 2012)
 "------------------------------------------------------------------------
-" Description:	
-" 	This plugin defines VimL functions specialized in the analysis of C++
-" 	code.
-" 	It can be seen as a library plugin.
+" Description:
+"       This plugin defines VimL functions specialized in the analysis of C++
+"       code.
+"       It can be seen as a library plugin.
 "
 " Functions Defined:
-" 	Scope: lh#cpp#AnalysisLib_Function#
-" 
-" 	GetFunctionPrototype(lineno, onlyDeclaration)
-" 		@param lineno		Number of the line where the prototype is fetched
-" 		@param onlyDeclaration	Restrict to function declarations (1), or
-" 				       definition are accepted (0)
-" 		@return The exact prototype found at the given line
+"       Scope: lh#cpp#AnalysisLib_Function#
 "
-" 	GetListOfParams(prototype)
-" 		@param prototype	Prototype to analyse
-" 		@return a list of [ {type}, {name}, {default value} ], one
-" 			for each parameter specified in the prototype
+"       GetFunctionPrototype(lineno, onlyDeclaration)
+"               @param lineno           Number of the line where the prototype is fetched
+"               @param onlyDeclaration  Restrict to function declarations (1), or
+"                                      definition are accepted (0)
+"               @return The exact prototype found at the given line
 "
-" 	AnalysePrototype(prototype)
-" 		@param prototype	Prototype to analyse
-" 		@return a |dictionary| made of the following fields:
-"			- qualifier: "" / "virtual" / "static" / "explicit"
-"			- return: type of the value returned by the function
-"			- name: list of the scopes + the name of the function
-"			- parameters: @see GetListOfParams
-"			- const: 0/1 whether the function is a const-member "			function
-"			- throw: list of exception specified in the signature
-" 
+"       GetListOfParams(prototype)
+"               @param prototype        Prototype to analyse
+"               @return a list of [ {type}, {name}, {default value} ], one
+"                       for each parameter specified in the prototype
+"
+"       AnalysePrototype(prototype)
+"               @param prototype        Prototype to analyse
+"               @return a |dictionary| made of the following fields:
+"                       - qualifier: "" / "virtual" / "static" / "explicit"
+"                       - return: type of the value returned by the function
+"                       - name: list of the scopes + the name of the function
+"                       - parameters: @see GetListOfParams
+"                       - const: 0/1 whether the function is a const-member "                   function
+"                       - throw: list of exception specified in the signature
+"
 "------------------------------------------------------------------------
-" Installation:	
-" 	Drop it into: {rtp}/autoload
-" 	Requirements: Vim7
-" History:	
-"	v2.0.0
-"	(*) GPLv3 w/ exception
-"	(*) AnalysePrototype() accepts spaces between functionname and (
-"	v1.1.1
-"	(*) lh#cpp#AnalysisLib_Function#GetListOfParams() is not messed up by
-"	throw-spec ; TODO support new C++11 noexcept spec
-"	v1.0.1:
-"	(*) Remembers the parameter is on a new line
-"	v1.0.0: First version
-"		Code extracted from cpp_GotoFunctionImpl
-" TODO:		
-" 	(*) Support template, function types, friends
-" 	(*) add knowledge about C++11 new qualifiers & co (=delete,
-" 	noexcept, override, etc)
+" Installation:
+"       Drop it into: {rtp}/autoload
+"       Requirements: Vim7
+" History:
+"       v2.0.0
+"       (*) GPLv3 w/ exception
+"       (*) AnalysePrototype() accepts spaces between functionname and (
+"       v1.1.1
+"       (*) lh#cpp#AnalysisLib_Function#GetListOfParams() is not messed up by
+"       throw-spec ; TODO support new C++11 noexcept spec
+"       v1.0.1:
+"       (*) Remembers the parameter is on a new line
+"       v1.0.0: First version
+"               Code extracted from cpp_GotoFunctionImpl
+" TODO:
+"       (*) Support template, function types, friends
+"       (*) add knowledge about C++11 new qualifiers & co (=delete,
+"       noexcept, override, etc)
 " }}}1
 "=============================================================================
 
@@ -83,7 +83,7 @@ endfunction
 "------------------------------------------------------------------------
 " # Public {{{2
 " Function: lh#cpp#AnalysisLib_Function#GetFunctionPrototype " {{{3
-" Todo: 
+" Todo:
 " * Retrieve the type even when it is not on the same line as the function
 "   identifier.
 " * Retrieve the const modifier even when it is not on the same line as the
@@ -91,6 +91,40 @@ endfunction
 function! lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, onlyDeclaration)
   " deprecated
   return lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
+endfunction
+
+" Function: lh#cpp#AnalysisLib_Function#get_prototype(pos, onlyDeclaration) {{{3
+" @WARNING: never tested/used function
+function! lh#cpp#AnalysisLib_Function#get_prototype(pos, on) abort
+  if type(pos) == type(0)
+    let lineno = pos
+    return lh#dev#c#function#get_prototype(lineno, a:onlyDeclaration)
+  elseif type(pos) == type({}) " this is a tag definition
+    " TODO: extract this position rollback code to its own function
+    let cleanup = lh#on#exit()
+    let filename = pos.filename
+    let nb_windows = winnr('$')
+    let crt_win = winnr()
+    call lh#buffer#jump(filename, 'sp')
+    if winnr('$') != nb_windows
+      call cleanup.register(':q')
+    elseif crt_win != winnr()
+      call cleanup.register(':'.crt_win.'wincmd w')
+    endif
+    try
+      if pos.cmd == '^/'
+        let lineno = search(cmd, 'n')
+      elseif pos.cmd == ':'
+        let lineno = eval(pos.cmd[1:])
+      endif
+      if 0 == lineno
+        throw "lh-cpp: Impossible to find where prototype for ".(pos.name). " is"
+      endif
+      return lh#dev#c#function#get_prototype(lineno, a:onlyDeclaration)
+    finally
+      call cleanup.finalize()
+    endtry
+  endif
 endfunction
 " }}}3
 
@@ -107,7 +141,7 @@ endfunction
 " Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype) {{{3
 " todo: beware of exception specifications
 " todo: check about of functions types ; to be done with templates... ?
-" todo: Arrays of pointers	 : "T (*p)[n]"
+" todo: Arrays of pointers       : "T (*p)[n]"
 function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
   " 1- Strip comments and parenthesis
   let prototype = a:prototype
@@ -197,7 +231,7 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
   let sThrowSpec = matchstr(prototype, s:re_throw_spec)
   let lThrowSpec = split(sThrowSpec, '\s*,\s*')
   if len(lThrowSpec) == 0 && match(prototype, s:re_throw_spec) > 0
-    let lThrowSpec = [ '' ] 
+    let lThrowSpec = [ '' ]
   endif
 
   " 7- Pure member function ?                    {{{5
@@ -206,14 +240,14 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
   " 8- Result                                    {{{5
   " let result = [ qualifier, retType, lName, params]
   let result = {
-	\ "qualifier" : qualifier, 
-	\ "return"    : retType,
-	\ "name"      : lName,
-	\ "parameters": params,
-	\ "const"     : isConst,
-	\ "pure"      : isPure,
-	\ "throw"     : lThrowSpec
-	\}
+        \ "qualifier" : qualifier,
+        \ "return"    : retType,
+        \ "name"      : lName,
+        \ "parameters": params,
+        \ "const"     : isConst,
+        \ "pure"      : isPure,
+        \ "throw"     : lThrowSpec
+        \}
   return result
 endfunction
 " }}}3
@@ -247,7 +281,7 @@ function! lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
     call add(params, s:ParamToString(param))
   endfor
   let sig = a:fn.name.'(' . join(params, ', ') .')'
-  if a:fn.const 
+  if a:fn.const
     let sig .= ' const'
   endif
   return sig
@@ -256,13 +290,13 @@ endfunction
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
 " function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
-  " return a:def.name == a:decl[0].name 
-	" \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl[0].parameters) 
+  " return a:def.name == a:decl[0].name
+        " \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl[0].parameters)
 " endfunction
 function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
-  let res = a:def.name == a:decl.name 
-	\ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl.parameters) 
-  " if a:def.name == a:decl.name 
+  let res = a:def.name == a:decl.name
+        \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl.parameters)
+  " if a:def.name == a:decl.name
     " echomsg res ."[".(a:def.name)."] <- " . string(a:def.parameters) . ' <--> ' . string(a:decl.parameters)
   " endif
   return res
@@ -272,13 +306,13 @@ endfunction
 " Function: lh#cpp#AnalysisLib_Function#LoadTags(id) {{{3
 function! s:ConvertTag(t)
   let fn_data = {
-	\ 'name'          : a:t.name,
-	\ 'parameters'    : lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature),
-	\ 'const'         : match(a:t.signature, s:re_const_member_fn) != -1,
-	\ 'filename'      : a:t.filename,
-	\ 'implementation': (has_key(a:t, 'implementation') ? (a:t.implementation) : ''),
-	\ 'class': (has_key(a:t, 'class') ? (a:t.class) : ''),
-	\ 'cmd'           :a:t.cmd }
+        \ 'name'          : a:t.name,
+        \ 'parameters'    : lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature),
+        \ 'const'         : match(a:t.signature, s:re_const_member_fn) != -1,
+        \ 'filename'      : a:t.filename,
+        \ 'implementation': get(a:t, 'implementation', '')
+        \ 'class'         : get(a:t, 'class', '')
+        \ 'cmd'           : a:t.cmd }
   return fn_data
 endfunction
 
@@ -289,15 +323,15 @@ function! lh#cpp#AnalysisLib_Function#LoadTags(id)
   for t in tags
     try
       if     'p' == t.kind
-	let fn_data = s:ConvertTag(t)
-	if has_key(t, 'access')
-	  let fn_data['access'] = t.access
-	endif
-	call add(declarations , fn_data )
+        let fn_data = s:ConvertTag(t)
+        if has_key(t, 'access')
+          let fn_data['access'] = t.access
+        endif
+        call add(declarations , fn_data )
       elseif 'f' == t.kind
-	let fn_data = s:ConvertTag(t)
-	call add(definitions , fn_data )
-	" else ignore
+        let fn_data = s:ConvertTag(t)
+        call add(definitions , fn_data )
+        " else ignore
       endif
     catch /.*/
       echomsg "lh#cpp#AnalysisLib_Function#LoadTags(): ".v:exception." in ".string(t)
@@ -367,7 +401,7 @@ endfunction
 " - template types like std::auto_ptr<foo::bar>
 function! s:Type2Regex(type, param)
   let type = a:type
-  " 
+  "
   " let id = (""!=ptr) ? ' ( \* \%(\<\I\i*\>\)\= ) ' : ' \%(\<\I\i*\>\)\= '
   let id =  strlen(a:param) ? ' \%(\<\I\i*\>\)\= ' : ''
   " arrays
@@ -419,8 +453,8 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   let impl2search = substitute(impl2search, '\s\{2,}', ' ', 'g')
   let g:impl2search2 = impl2search
 
-  let impl2search = substitute(' \zs'.impl2search, ' ', 
-	\ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
+  let impl2search = substitute(' \zs'.impl2search, ' ',
+        \ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
   " Note: \%(\) is like \(\) but the subexpressions are not counted.
   " Note: ' \zs' inserted at the start of the regex helps ignore any comments
   " before the signature of the function.
@@ -465,8 +499,8 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   " Default parameters -> comment => ignored along with spaces {{{4
   let impl2search = substitute(impl2search, '\%(\<operator\>\s*\)\@<!=[^,)]\+', '', 'g')
   " virtual, static and explicit -> comment => ignored along with spaces {{{4
-  let impl2search = substitute(impl2search, 
-	\ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
+  let impl2search = substitute(impl2search,
+        \ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
   " Trim the variables names {{{4
   " Todo: \(un\)signed \(short\|long\) \(int\|float\|double\)
   "       const, *
@@ -488,15 +522,15 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   " and finally inject the class name patten in the search pattern
   " NB: operators have a special treatment
   let impl2search = substitute(impl2search,
-	\ '\%(\\\~\)\=\<\I\i*\>\_s*(\|\<operator\>', 
-	\ escape(className, '\' ) .'\0', '')
+        \ '\%(\\\~\)\=\<\I\i*\>\_s*(\|\<operator\>',
+        \ escape(className, '\' ) .'\0', '')
   " echo impl2search
   let g:impl2search1 = impl2search
 
   " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{4
-  " let impl2search = substitute(' \zs'.impl2search, ' ', 
-  let impl2search = substitute(impl2search, ' ', 
-	\ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
+  " let impl2search = substitute(' \zs'.impl2search, ' ',
+  let impl2search = substitute(impl2search, ' ',
+        \ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
   " Note: \%(\) is like \(\) but the subexpressions are not counted.
   " Note: ' \zs' inserted at the start of the regex helps ignore any comments
   " before the signature of the function.
@@ -521,13 +555,13 @@ let s:re = '^\s*\%(\<const\>\s*\)\='.
 " }}}4
 function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str)
   " Stuff Supported: {{{4
-  " - Simple parameters		 : "T p"
-  " - Arrays			 : "T p[][n]"
-  " - Arrays of pointers	 : "T (*p)[n]"
+  " - Simple parameters          : "T p"
+  " - Arrays                     : "T p[][n]"
+  " - Arrays of pointers         : "T (*p)[n]"
   " - Scopes within complex types: "T1::T2"
     " Todo: support templates like "A<B,C>"
-    " Todo: support functions like "T (*NameF)(P1, P2, ...)" , 
-    " 				   "T (CL::* pmf)(params)"
+    " Todo: support functions like "T (*NameF)(P1, P2, ...)" ,
+    "                              "T (CL::* pmf)(params)"
   " }}}4
   " Cut the signature in order to concentrate on the most outer parenthesis
   let head = matchstr(a:str, '^[^(]*(')
@@ -547,22 +581,22 @@ function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str)
       let p = match(field, '\[.\{-}\]', p)
       if -1 == p | break | endif
       let array = array . escape(matchstr(field, '\[.\{-}\]', p), '[]')
-      let p = p + 1 
+      let p = p + 1
     endwhile " }}}4
     " Extract the type of the parameter and only the type
     let type = matchstr(field, s:re)
     " let type = matchstr(field, '^\s*\(\<const\>\s*\)\='.
-	  " \ '\(\('.s:type_simple.'\|\s\+\)\+\|\<\I\i*\>\)'.
-	  " \ '\(\<const\>\|\*\|&\|\s\+\)*')
+          " \ '\(\('.s:type_simple.'\|\s\+\)\+\|\<\I\i*\>\)'.
+          " \ '\(\<const\>\|\*\|&\|\s\+\)*')
     " Check for special pointers stuff "T (*p_id)"
     let ptr = matchstr(field, '(\s*\*\s*\(\<\I\i*\>\)\=\s*)')
     let id = (""!=ptr) ? ' ( \* \%(\<\I\i*\>\)\= ) ' : ' \%(\<\I\i*\>\)\= '
     " Build the regex containing the parameter type, spaces, etc
     let params_types = params_types.','.
-	  \ escape(type, '*')
-	  \ . id
-	  \ . array
-	  " \ type.'\%(\<\I\i*\>\)\= '
+          \ escape(type, '*')
+          \ . id
+          \ . array
+          " \ type.'\%(\<\I\i*\>\)\= '
   endwhile
 
   " Return the final regex to search.
