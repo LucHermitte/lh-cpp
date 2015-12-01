@@ -7,7 +7,7 @@ compiler:
     - gcc # for ctags
 before_install:
     - sudo apt-get install vim-gtk
-    - git clone git@github.com:universal-ctags/ctags.git
+    - git clone https://github.com/universal-ctags/ctags.git
     - (cd ctags && autoreconf -f -i -v && ./configure --prefix="$HOME" && make -j 4 install)
 before_script:
     - "export DISPLAY=:99.0"
