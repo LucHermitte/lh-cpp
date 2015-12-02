@@ -1,0 +1,5 @@
+VimL:" includes File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 02nd Dec 2015
+VimL:" hint: include skel-routine
+VimL: " Parameter: list/string: files to include
+MuT:  let s:includes = lh#list#flatten([s:Param("includes", [])])
+VimL: for inc in s:includes | call s:AddPostExpandCallback('lh#dev#import#add("'.inc.'")') | endfor
