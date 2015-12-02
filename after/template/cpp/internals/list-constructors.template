@@ -14,7 +14,8 @@ MuT:  let s:ctr_functions = filter(copy(s:flat_args), 'has_key(v:val,"functions"
 VimL: "let g:ctr_functions = deepcopy(s:ctr_functions)
 MuT:  if !empty(s:ctr_functions)
 VimL:   let s:ctr_functions2 = lh#list#accumulate2(s:ctr_functions, {}, 'extend(v:1_, v:2_)')
-VimL:   let s:ctr_functions3 = filter(copy(s:ctr_functions2['functions']), 'get(v:val, "kind", "") == "constructor"')
+VimL:   "let s:ctr_functions3 = filter(copy(s:ctr_functions2['functions']), 'get(v:val, "kind", "") == "constructor"')
+VimL:   let s:ctr_functions3 = s:ctr_functions2.functions.filter({'kind': 'constructor'})
 VimL:   call extend(s:constructors, s:ctr_functions3)
 MuT:  endif
 VimL: "let g:constructors3 = deepcopy(s:constructors)

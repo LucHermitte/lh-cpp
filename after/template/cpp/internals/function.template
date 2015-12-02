@@ -10,6 +10,13 @@ MuT:    " let s:how = get(s:function, "how", "")
 MuT:    " let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""
 MuT:    " let s:clsname = s:Param("clsname", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
 VimL:   "<+s:clsname+>(<+s:Param("parameters", lh#marker#txt("ctr-parameters"))+>)<+s:how+>;
+MuT:  elseif s:kind =~ '\vget'
+MuT:  let s:attrb_name = s:function.attribute.name
+<+lh#dev#cpp#types#ConstCorrectType(s:function.attribute.type)+> <+lh#dev#naming#getter(s:attrb_name)+>() const{return <+lh#dev#naming#member(s:attrb_name)+>;}
+MuT:  elseif s:kind =~ '\vset'
+MuT:  let s:attrb_name = s:function.attribute.name
+MuT:  let s:attrb_param = lh#dev#naming#param(s:attrb_name)
+void <+lh#dev#naming#setter(s:attrb_name)+>(<+lh#dev#cpp#types#ConstCorrectType(s:function.attribute.type)+> <+s:attrb_param+>){<+lh#dev#naming#member(s:attrb_name)+> = <+s:attrb_param+>;}
 MuT:  else
 MuT:    let s:signature = get(s:function, "signature", "")
 MuT:    let s:implementation = get(s:function, "implementation", ";")

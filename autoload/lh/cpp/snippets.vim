@@ -464,9 +464,82 @@ function! lh#cpp#snippets#build_param_list(parameters) abort
   return implParamsStr
 endfunction
 
+" # Functions to tune mu-template class skeleton {{{2
+" Function: lh#cpp#snippets#new_function_list() {{{3
+function! lh#cpp#snippets#new_function_list() abort
+  let fl = { 'list': []}
+  function! fl.public()           abort " {{{4
+    return lh#cpp#snippets#_filter_functions(self.list, "public")
+  endfunction
+  function! fl.protected()        abort " {{{4
+    return lh#cpp#snippets#_filter_functions(self.list, "protected")
+  endfunction
+  function! fl.private()          abort " {{{4
+    return lh#cpp#snippets#_filter_functions(self.list, "private")
+  endfunction
+  function! fl.add(fns)           abort " {{{4
+    let self.list += a:fns
+    for fn in a:fns
+      call extend(fn, {'add_new': function('s:AddNew')})
+    endfor
+    return self
+  endfunction
+  function! fl.insert(fn)         abort " {{{4
+    call extend(a:fn, {'add_new': function('s:AddNew')})
+    call insert(self.list, a:fn)
+    return self
+  endfunction
+  function! fl.get(id) dict       abort " {{{4
+    if type(a:id) == type('name')
+      let res = filter(copy(self.list), 'has_key(v:val, "name") && v:val.name =~ a:id')
+    else
+      let res = filter(copy(self.list), 's:FunctionMatchesDescription(v:val, a:descr)')
+    endif
+    return res
+  endfunction
+  function! fl.get1(id, ...) dict abort " {{{4
+    let matching_functions = self.get(a:id)
+    if len(matching_functions) > 1
+      throw "lh-cpp: Too many functions match ".string(a:id)
+    elseif empty(matching_functions)
+      " New reference created, and returned
+      let new_fn = a:0 > 0 ? a:1 : {}
+      " Force the searched pattern onto the function to return, at least this,
+      " is correct
+      call extend(new_fn, a:id)
+      call self.add([new_fn])
+      return new_fn
+    endif
+  endfunction
+  function! fl.filter(descr) dict abort " {{{4
+    let res = filter(copy(self.list), 's:FunctionMatchesDescription(v:val, a:descr)')
+    return res
+  endfunction
+  function! fl.reverse()          abort "{{{4
+    return reverse(self.list)
+  endfunction
+
+  " Return object {{{4
+  return fl
+" }}}4
+endfunction
+
+function! s:AddNew(dst) dict abort
+  return extend(self, a:dst, 'keep')
+endfunction
+
 "------------------------------------------------------------------------
-"
 " ## Internal functions {{{1
+
+" # Misc {{{2
+function! s:FunctionMatchesDescription(fn, descr)
+  for [k, v] in items(a:descr)
+    if ! has_key(a:fn, k) || a:fn[k] != v
+      return 0
+    endif
+    return 1
+  endfor
+endfunction
 
 " # snippet functions {{{2
 " Function: lh#cpp#snippets#_goto_return_semicolon() {{{3

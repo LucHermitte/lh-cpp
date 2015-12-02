@@ -3,6 +3,6 @@ VimL:" hint: Value Class ((implicitly) copyable, no hierarchy)
 VimL:" NOTE: when we define our own exception types, we do much more than just inherit from a standard exception type
 VimL: " There is an init constructor, no need to delete the default constructor.
 VimL: let s:default_constructor = s:Param("default-constructor", {"visibility": "none"})
-MuT:  let s:functions = s:Param("functions", [])
-VimL: let s:functions += [{"signature": "virtual char const* what() const ".lh#cpp#snippets#noexcept()." ".lh#cpp#snippets#override()}]
+MuT:  let s:functions = s:Param("functions", lh#cpp#snippets#new_function_list())
+VimL: call s:functions.add([{"signature": "virtual char const* what() const ".lh#cpp#snippets#noexcept()." ".lh#cpp#snippets#override()}])
 VimL: call s:Include("empty-exception-class", "cpp")

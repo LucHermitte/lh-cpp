@@ -9,7 +9,20 @@ VimL: let s:value_end    = s:value_start
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
-VimL: let s:clsname = s:Param("clsname", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
+MuT:  let s:clsname    = s:Param("clsname", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
+MuT:  let s:functions  = s:Param("functions", lh#cpp#snippets#new_function_list())
+VimL: " =====[ Attributes
+MuT:  let s:attributes = s:Param("attributes", [])
+MuT:  let s:attrb_functions = []
+VimL: for attr in s:attributes | for fct in get(attr, 'functions', []) | let s:attrb_functions += [{'kind': fct, "attribute": attr}] | endfor | endfor
+MuT:  if !empty(s:attributes)
+VimL:   " Set attributes as parameters to init-ctr, unless already set
+MuT:    let s:init_constructor = s:functions.get1({"kind" : "init-constructor"})
+VimL:   call s:init_constructor.add_new({"parameters": lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#ConstCorrectType(v:val)'), "visibility": "public"})
+VimL:   " Remove default-consructor unless already set visible
+MuT:    let s:default_constructor = s:Param("default-constructor", {})
+VimL:   call lh#dict#add_new(s:default_constructor, {"visibility": "none"})
+MuT:  endif
 VimL: " =====[ Parents
 MuT:  let s:parents = s:Param("parents", [])
 MuT:  let s:noncopyable = s:Param("noncopyable", 0)
@@ -35,11 +48,14 @@ MuT:  let s:parents_data = lh#cpp#snippets#parents(s:parents)
 VimL: call lh#list#for_each_call(s:parents_data[1], "lh#mut#_add_post_expand_callback(\"lh#dev#import#add(v:val)\")")
 VimL: " =====[ Functions
 VimL: " --------[ Any Functions
-MuT:  let s:functions = s:Param("functions", [])
-VimL: call reverse(s:functions)
-MuT:  let s:pub_functions = lh#cpp#snippets#_filter_functions(s:functions, "public")
-MuT:  let s:pro_functions = lh#cpp#snippets#_filter_functions(s:functions, "protected")
-MuT:  let s:pri_functions = lh#cpp#snippets#_filter_functions(s:functions, "private")
+MuT:  "let s:functions = s:Param("functions", [])
+VimL: " --------[ Attribute functions (get/set)
+VimL: call s:functions.add(s:attrb_functions)
+VimL: " --------[ General case
+VimL: call s:functions.reverse()
+MuT:  let s:pub_functions = s:functions.public()
+MuT:  let s:pro_functions = s:functions.protected()
+MuT:  let s:pri_functions = s:functions.private()
 VimL: " --------[ Special Functions
 VimL: call s:Include('shall_explicit_defaults', 'cpp/internals')
 VimL: " In reverse order because of how Include() works
@@ -65,11 +81,14 @@ protected:
 VimL:   "call lh#list#for_each_call(s:pro_special_functions, 'lh#mut#_include(v:val.kind, "cpp")')
 VimL:   for fn in s:pro_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
 MuT:  endif
-MuT:  if !empty(s:pri_functions)
+MuT:  if !empty(s:pri_functions) || !empty(s:attributes)
 
 private:
 
 VimL:   "call lh#list#for_each_call(s:pri_special_functions, 'lh#mut#_include(v:val.kind, "cpp")')
 VimL:   for fn in s:pri_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
+MuT:    let s:longest_type = max(map(copy(s:attributes), 'strlen(v:val.type)+1'))
+VimL:   "TODO: Use cpp/internals/attribute snippets, in order to handle doxygen as well
+<+join(map(copy(s:attributes), 'v:val.type .repeat(" ", s:longest_type-strlen(v:val.type)). lh#dev#naming#member(v:val.name) . ";"'), "\n")+>
 MuT:  endif
 };
