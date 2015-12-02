@@ -17,7 +17,7 @@ RSpec.describe "C++ Value class wizard", :cpp, :class, :value do
     clear_buffer
   end
 
-    specify "value-class copyable", :cpp98, :cpp11, :copyable do
+  specify "value-class copyable", :cpp98, :cpp11, :copyable do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.command('MuTemplate cpp/value-class')).to eq ""
     assert_buffer_contents <<-EOF

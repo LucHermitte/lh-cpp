@@ -1,9 +1,10 @@
 VimL:" class-skeleton File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
 VimL:" hint: Routine Skeleton for C++ classes
 VimL:" TODO: find a way to order members
-VimL:" TODO: attributes (with getter is required)
 VimL:" TODO: fill function comments
 VimL:" TODO: option to disable comments in defaulted functions
+VimL:" TODO: C++11 move copy & move assign
+VimL:" TODO: Enforce rule of "all or nothing"
 VimL: let s:value_start  = "¡"
 VimL: let s:value_end    = s:value_start
 VimL: let s:marker_open  = "<+"
@@ -57,6 +58,19 @@ MuT:  let s:pub_functions = s:functions.public()
 MuT:  let s:pro_functions = s:functions.protected()
 MuT:  let s:pri_functions = s:functions.private()
 VimL: " --------[ Special Functions
+MuT:  if lh#cpp#snippets#requires_destructor(s:attributes)
+MuT:    let s:destructor = s:Param("destructor", {})
+VimL:   " Force visible (even private) if not set already
+Viml:   call lh#dict#add_new(s:destructor, {'visibility': 'public'})
+MuT:  endif
+MuT:  if lh#cpp#snippets#requires_copy_operations(s:attributes)
+MuT:    let s:copy_constructor = s:Param("copy-constructor", {})
+VimL:   " Force visible (even protected) if not set already
+Viml:   call lh#dict#add_new(s:copy_constructor, {'visibility': 'public'})
+MuT:    let s:assignment_operator = s:Param("assignment-operator", {})
+VimL:   " Force visible (even protected) if not set already
+Viml:   call lh#dict#add_new(s:assignment_operator, {'visibility': 'public'})
+MuT:  endif
 VimL: call s:Include('shall_explicit_defaults', 'cpp/internals')
 VimL: " In reverse order because of how Include() works
 MuT:  let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]

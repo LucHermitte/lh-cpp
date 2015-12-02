@@ -1,0 +1,16 @@
+VimL:" setter File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 02nd Dec 2015
+VimL:" hint: void setFoo(T const& foo) { *m_foo = foo; } // for ptr attributes
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: "The interactive mode (w/ dynamic placeholders) won't permit to have "setFoo" and "return m_foo".
+MuT:  let s:attribute    = s:Param("attribute", {'type': lh#marker#txt(lh#dev#naming#type('type')), 'name': lh#marker#txt('name')})
+MuT:  let s:attrb_name   = s:attribute.name
+MuT:  let s:attrb_param  = lh#dev#naming#param(s:attrb_name)
+MuT:  if !lh#dev#cpp#types#IsPointer(s:attribute.type)
+VimL:   throw "ref_setter snippet: ".s:attribute.type." is not recognized as a pointer type"
+MuT:  else
+MuT:    let s:in_type = lh#dev#cpp#types#remove_ptr(s:attribute.type)
+VimL:   let s:in_type = lh#dev#cpp#types#ConstCorrectType(s:in_type)
+void <+lh#dev#naming#setter(s:attrb_name)+>(<+s:in_type+> <+s:attrb_param+>){*<+lh#dev#naming#member(s:attrb_name)+> = <+s:attrb_param+>;}
+MuT:  endif

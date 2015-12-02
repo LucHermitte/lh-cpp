@@ -1,5 +1,5 @@
 VimL:" setter File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 02nd Dec 2015
-VimL:" hint: void setFoo(T const& foo)
+VimL:" hint: void setFoo(T const& foo) { m_foo = foo; }
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1

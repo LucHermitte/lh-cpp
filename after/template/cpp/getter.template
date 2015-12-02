@@ -6,4 +6,12 @@ VimL: let s:reindent     = 1
 VimL: "The interactive mode (w/ dynamic placeholders) won't permit to have "getFoo" and "return m_foo".
 MuT:  let s:attribute    = s:Param("attribute", {'type': lh#marker#txt(lh#dev#naming#type('type')), 'name': lh#marker#txt('name')})
 MuT:  let s:attrb_name   = s:attribute.name
-<+lh#dev#cpp#types#ConstCorrectType(s:attribute.type)+> <+lh#dev#naming#getter(s:attrb_name)+>() const{return <+lh#dev#naming#member(s:attrb_name)+>;}
+MuT:  let s:ret_expr = lh#dev#naming#member(s:attrb_name)
+MuT:  if lh#dev#cpp#types#is_smart_ptr(s:attribute.type)
+MuT:    let s:ret_type = lh#dev#cpp#types#remove_ptr(s:attribute.type)
+VimL:   let s:ret_expr = '*'.s:ret_expr
+MuT:  else
+MuT:    let s:ret_type = s:attribute.type
+MuT:  endif
+VimL: let s:ret_type = lh#dev#cpp#types#ConstCorrectType(s:ret_type)
+<+s:ret_type+> <+lh#dev#naming#getter(s:attrb_name)+>() const{return <+s:ret_expr+>;}

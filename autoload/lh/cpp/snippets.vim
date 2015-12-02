@@ -423,6 +423,24 @@ function! lh#cpp#snippets#make_ptr(type_dynamic, type_static, args) abort
   return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
 endfunction
 
+" Function: lh#cpp#snippets#requires_destructor(attributes) {{{3
+" - T* will require a destructor in current class
+" - auto_ptr<> will require a destructor in current class, even an empty (this
+"   is because otherwise we can't garanty the deletion function called is the
+"   right one)
+" - unique_ptr<>, doesn't require anything
+" - Let's suppose other types to follow RAII => don't need
+" - still an option in case code is not idiomatic and destructors may be needed
+function! lh#cpp#snippets#requires_destructor(attributes) abort
+  return lh#list#find_if(a:attributes, 'lh#cpp#snippets#_this_param_requires_a_destructor(v:val)') >= 0
+endfunction
+
+" Function: lh#cpp#snippets#requires_copy_operations(attributes) {{{3
+" - pointer, references, uncopyable types (stream, mutex, lock, entities, ...) => yes
+function! lh#cpp#snippets#requires_copy_operations(attributes) abort
+  return lh#list#find_if(a:attributes, 'lh#cpp#snippets#_this_param_requires_copy_operations(v:val)') >= 0
+endfunction
+
 " Function: lh#cpp#snippets#shall_explicit_defaults() {{{3
 function! lh#cpp#snippets#shall_explicit_defaults() abort
   return lh#cpp#use_cpp11() && lh#option#get("cpp_explicit_default", 0)
@@ -465,6 +483,7 @@ function! lh#cpp#snippets#build_param_list(parameters) abort
 endfunction
 
 " # Functions to tune mu-template class skeleton {{{2
+
 " Function: lh#cpp#snippets#new_function_list() {{{3
 function! lh#cpp#snippets#new_function_list() abort
   let fl = { 'list': []}
@@ -532,6 +551,7 @@ endfunction
 " ## Internal functions {{{1
 
 " # Misc {{{2
+" Function: s:FunctionMatchesDescription(fn, descr) {{{3
 function! s:FunctionMatchesDescription(fn, descr)
   for [k, v] in items(a:descr)
     if ! has_key(a:fn, k) || a:fn[k] != v
@@ -539,6 +559,38 @@ function! s:FunctionMatchesDescription(fn, descr)
     endif
     return 1
   endfor
+endfunction
+
+" Function: lh#cpp#snippets#_this_param_requires_a_destructor(attribute) {{{3
+" see lh#cpp#snippets#requires_destructor(attributes)
+function! lh#cpp#snippets#_this_param_requires_a_destructor(attribute) abort
+  if !lh#dev#cpp#types#IsPointer(a:attribute.type)
+    " TODO: We may need another option as well. Or a list of types ?
+    return 0
+  elseif a:attribute.type =~ '\vauto_ptr|[*]'
+    return 1
+  elseif a:attribute.type =~ '\v^[a-z0-9]*_ptr|non_null'
+    " let's suppose scoped_ptr, unique_ptr, ...
+    " "*_ptr" follows standard naming style, we can expect this is not an
+    " unsafe pointer type
+    return 0
+  elseif lh#option#get('cpp_always_a_destructor_when_there_is_a_pointer_attribute', 0)
+    return 1
+  else
+    return 0
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#_this_param_requires_copy_operations(attribute) {{{3
+function! lh#cpp#snippets#_this_param_requires_copy_operations(attribute) abort
+  if lh#dev#cpp#types#is_not_owning_ptr(a:attribute.type)
+    return 0
+  elseif lh#dev#cpp#types#IsPointer(a:attribute.type)
+    return 1
+  else
+    " TODO: recognize non publicy copyable types
+    return 0
+  endif
 endfunction
 
 " # snippet functions {{{2
