@@ -78,17 +78,15 @@ MuT:  if !empty(s:pro_functions)
 
 protected:
 
-VimL:   "call lh#list#for_each_call(s:pro_special_functions, 'lh#mut#_include(v:val.kind, "cpp")')
 VimL:   for fn in s:pro_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
 MuT:  endif
 MuT:  if !empty(s:pri_functions) || !empty(s:attributes)
 
 private:
 
-VimL:   "call lh#list#for_each_call(s:pri_special_functions, 'lh#mut#_include(v:val.kind, "cpp")')
 VimL:   for fn in s:pri_functions | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
-MuT:    let s:longest_type = max(map(copy(s:attributes), 'strlen(v:val.type)+1'))
-VimL:   "TODO: Use cpp/internals/attribute snippets, in order to handle doxygen as well
-<+join(map(copy(s:attributes), 'v:val.type .repeat(" ", s:longest_type-strlen(v:val.type)). lh#dev#naming#member(v:val.name) . ";"'), "\n")+>
+MuT:    let s:longest_type = max(map(copy(s:attributes), 'strlen(v:val.type)'))
+VimL:   " calling s:Include() in a loop inserts at the current line => need to reverse
+VimL:   for attrb in reverse(s:attributes) | call s:Include('attribute', 'cpp/internals', {"attribute": extend(attrb, {'align':s:longest_type}, 'force')}) | endfor
 MuT:  endif
 };

@@ -1,0 +1,21 @@
+VimL:" attribute File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 02nd Dec 2015
+VimL:" hint: Type m_attribute;
+VimL: " Parameter: "attribute" (optional)
+VimL: "  - "name": string, mandatory
+VimL: "  - "type": string, mandatory
+VimL: "  - "storage": string, optional: "constepxr ", "static ", "thread_local ", ...
+VimL: "  - "default": string, optional, C++11+ only: " = value"
+VimL: "  - "align": number, optional
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: " TODO: Handle Doxygen/comments as well
+MuT:  let s:attribute    = s:Param("attribute", {'type': lh#marker#txt(lh#dev#naming#type('type')), 'name': lh#marker#txt('name')})
+MuT:  let s:align = repeat(' ', max([0, get(s:attribute, 'align', 0) - lh#encoding#strlen(s:attribute.type)]))
+MuT:  if !lh#cpp#use_cpp11()
+MuT:    let s:default_attrb_value = ""
+MuT:  else
+MuT:    let s:default_attrb_value = get(s:attribute, "default", "")
+VimL:   let s:default_attrb_value = empty(s:default_attrb_value) ? "" : " = ".s:default_attrb_value
+MuT:  endif
+<+get(s:attribute, 'storage', '')+><+s:attribute.type+> <+s:align+><+lh#dev#naming#member(s:attribute.name)+><+s:default_attrb_value+>;
