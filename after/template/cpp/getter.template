@@ -1,0 +1,9 @@
+VimL:" getter File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 02nd Dec 2015
+VimL:" hint: T const& getFoo() const
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: "The interactive mode (w/ dynamic placeholders) won't permit to have "getFoo" and "return m_foo".
+MuT:  let s:attribute    = s:Param("attribute", {'type': lh#marker#txt('type'), 'name': lh#marker#txt('name')})
+MuT:  let s:attrb_name   = s:attribute.name
+<+lh#dev#cpp#types#ConstCorrectType(s:attribute.type)+> <+lh#dev#naming#getter(s:attrb_name)+>() const{return <+lh#dev#naming#member(s:attrb_name)+>;}
