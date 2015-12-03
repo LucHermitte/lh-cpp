@@ -499,12 +499,12 @@ function! lh#cpp#snippets#new_function_list() abort
   function! fl.add(fns)           abort " {{{4
     let self.list += a:fns
     for fn in a:fns
-      call extend(fn, {'add_new': function('s:AddNew')})
+      call extend(fn, {'add_new': function(s:getSNR('AddNew'))})
     endfor
     return self
   endfunction
   function! fl.insert(fn)         abort " {{{4
-    call extend(a:fn, {'add_new': function('s:AddNew')})
+    call extend(a:fn, {'add_new': function(s:getSNR('AddNew'))})
     call insert(self.list, a:fn)
     return self
   endfunction
@@ -551,6 +551,14 @@ endfunction
 " ## Internal functions {{{1
 
 " # Misc {{{2
+" s:getSNR([func_name]) {{{3
+function! s:getSNR(...)
+  if !exists("s:SNR")
+    let s:SNR=matchstr(expand('<sfile>'), '<SNR>\d\+_\zegetSNR$')
+  endif
+  return s:SNR . (a:0>0 ? (a:1) : '')
+endfunction
+
 " Function: s:FunctionMatchesDescription(fn, descr) {{{3
 function! s:FunctionMatchesDescription(fn, descr)
   for [k, v] in items(a:descr)
