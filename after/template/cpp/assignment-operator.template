@@ -1,20 +1,21 @@
 VimL:" assignment-operator File Template, Luc Hermitte, 21st Aug 2011
 VimL:" hint: T& operator=(T const&);
+VimL: "TODO: support noexcept
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
 VimL: " in case the class name is already known, no need to extract it
 VimL: let s:clsname = s:Param("clsname", "")
 MuT:  if empty(s:clsname)
-VimL:   let s:clsname = empty(s:Args()) ? INPUT("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r")))) : (s:Args()[0])
+VimL:   let s:clsname = INPUT("class name ?", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
 MuT:  endif
 VimL: let s:how = get(s:Param("assignment-operator", {}), "how", "")
 MuT:  if s:how =~ "deleted\\|defaulted"
-<+s:clsname+>& operator=(<+s:clsname+> const&) <+lh#cpp#snippets#{s:how}()+>;
+<+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+>) <+lh#cpp#snippets#{s:how}()+>;
 MuT:  else
 VimL:   "FIXME: regression in :Constructor
 VimL:   "let s:use_copyandswap = len(s:Args())>=2 ? (s:Args()[0]) : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
-MuT:    let s:use_copyandswap =  s:Param('use_copy_and_swap', -1)
+MuT:    let s:use_copyandswap =  s:Param('use_copy_and_swap', lh#option#get('cpp_use_copy_and_swap'))
 VimL:   let s:use_copyandswap =  s:use_copyandswap >= 0 ? s:use_copyandswap : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
 MuT:    if 1 == s:use_copyandswap
 VimL:     call s:Include("copy-and-swap","cpp", s:clsname)
@@ -25,6 +26,6 @@ VimL:     let s:fn_comments.brief = "Assignment operator"
 VimL:     let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "source data to be copied." } ]
 VimL:     let s:fn_comments.throw = {"optional": 1}
 VimL:     call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:clsname+>& operator=(<+s:clsname+> const& <+s:rhs+>);
+<+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+> <+s:rhs+>);
 MuT:    endif
 MuT: endif

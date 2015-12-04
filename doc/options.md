@@ -1,5 +1,7 @@
 ## lh-cpp Options
 
+`(bg):cpp_use_copy_and_swap`
+
 ### Contents
 
   * [Options types](#options-types)

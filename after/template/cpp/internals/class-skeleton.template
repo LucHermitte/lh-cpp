@@ -15,8 +15,8 @@ MuT:  let s:functions  = s:Param("functions", lh#cpp#snippets#new_function_list(
 VimL: " =====[ Attributes
 MuT:  let s:attributes = s:Param("attributes", [])
 MuT:  let s:attrb_functions = []
-VimL: for attr in s:attributes | for fct in get(attr, 'functions', []) | let s:attrb_functions += [{'kind': fct, "attribute": attr}] | endfor | endfor
 MuT:  if !empty(s:attributes)
+VimL:   for attr in s:attributes | for fct in get(attr, 'functions', []) | let s:attrb_functions += [{'kind': fct, "attribute": attr}] | endfor | endfor
 VimL:   " Set attributes as parameters to init-ctr, unless already set
 MuT:    let s:init_constructor = s:functions.get1({"kind" : "init-constructor"})
 VimL:   call s:init_constructor.add_new({"parameters": lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#ConstCorrectType(v:val)'), "visibility": "public"})
