@@ -80,10 +80,10 @@ Features~
 Bracketing system~
 Files:      |bracketing.base.vim| & |common_brackets.vim|
 Requires:   |lh-brackets| (needed); |Triggers.vim| (supported)
-Help:       <http://code.google.com/p/lh-vim/wiki/lhBrackets>
-            <http://code.google.com/p/lh-vim/wiki/lhCpp#Brackets>
+Help:       <http://github.com/LucHermitte/lh-brackets>
+            <http://github.com/LucHermitte/lh-cpp#brackets>
 License:    The generated code is under license exception to GPLv3
-            <http://code.google.com/p/lh-vim/wiki/License>
+            <http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 
 Options:
     |[bg]:usemarks|                                 (0/[1])
@@ -140,12 +140,12 @@ NB: The brackets mappings only insert the markers when |[bg]:usemarks|==1,
 C Control statements~
 File:       ftplugin/cpp/|c_snippets.vim|
 Requires:   |lh-brackets| (needed)
-Help:       <http://code.google.com/p/lh-vim/wiki/lhCpp#Code_snippets>
+Help:       <http://github.com/LucHermitte/lh-cpp#code-snippets>
 License:    The generated code is under license exception to GPLv3
-            <http://code.google.com/p/lh-vim/wiki/License>
+            <http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 
 Mappings and abbreviations defined: [always buffer-relative]
- abbr: if    if {\n}        + |markers| (if |[bg]:usemarks|==1)       *C_if*
+ abbr: if    if {\n}        + |markers| (if |[bg]:usemarks|==1)    *C_if*
                             + cursor positioned
  abbr: elif   else if {\n}      + ...                          *C_elif*
  abbr: else   if {\n}           + ...                          *C_else*
@@ -161,15 +161,19 @@ Mappings and abbreviations defined: [always buffer-relative]
 
  n&vmap: <localleader><localleader>if , elif, wh, for
         The current line (/visual selection) is used as the
-        conditional expression of the control statement inserted.  It is
+        conditional expression of the control statement inserted. It is
         also done in respect of |[bg]:usemarks|.
 
 Options:
     * Regarding the control statements (|C_if|, |C_else|, |C_while|,
-      |C_for|, |C_switch|), a newline will be inserted before:
-      - the open parenthesis    if *g:c_nl_before_bracket* == 1
-      - the open curly-bracket  if *g:c_nl_before_curlyB*  == 1
-      [By default, these options are considered equal to 0.]
+      |C_for|, |C_switch|), the style to apply on the inserted snippets is
+      defined thanks to lh-dev |:AddStyle| command.
+      [By default, K&R way of placing brackets is used]
+
+      Note: in the past, this plugin was relying on *g:c_nl_before_bracket*
+      and *g:c_nl_before_curlyB* to control brackets placement. These options
+      have been deprecated. They are still used however in one last place: the
+      |C++_accessors| feature.
 
 NB: * |[bg]:usemarks| is still taken into account.
     * Works even if the bracketing system is not installed or deactivated
@@ -183,8 +187,8 @@ NB: * |[bg]:usemarks| is still taken into account.
     * If the visual selection exactly matches a |marker|, then the
       visual-mode mappings will result in the use of the equivalent
       abbreviations.
-    * The normal- and visual-modes mappings do not respect
-      |g:c_nl_before_bracket| and |g:c_nl_before_curlyB|.
+    * The normal- and visual-modes mappings do respect
+      the current coding style (see |lhdev-style|).
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C_switch_enum*
@@ -230,7 +234,7 @@ The default mapping to |i_CTRL-X_se| can be overridden with for instance: >
 Other snippets and shortcuts from c_snippets.vim~
 File:       ftplugin/c/*c_snippets.vim*
 License:    The generated code is under license exception to GPLv3
-            <http://code.google.com/p/lh-vim/wiki/License>
+            <http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 
 Mappings and abbreviations~
     *#n*      expands into "#include", in respect of the context.
@@ -251,9 +255,9 @@ To prevent these mappings and abbreviations to be defined, set
 C++ Control statements and other shortcuts~
 File:       ftplugin/cpp/*cpp_snippets.vim*
 Requires:   |C_control-statements|
-Help:       <http://code.google.com/p/lh-vim/wiki/lhCpp#Code_snippets>
+Help:       <http://github.com/LucHermitte/lh-cpp#code-snippets>
 License:    The generated code is under license exception to GPLv3
-            <http://code.google.com/p/lh-vim/wiki/License>
+            <http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 
 Mappings and abbreviations defined: [always buffer-relative]
  abbr: namespace namespace {\n} + markers and cursor pos.    *C_namespace*
@@ -304,8 +308,8 @@ Mappings and abbreviations defined: [always buffer-relative]
         parenthesis.
 
 NB: * All the remarks from |C_control-statements| apply.
-    * The options |g:c_nl_before_bracket| and |g:c_nl_before_curlyB| apply
-      to |C_namespace|, |C_try| and |C_catch|.
+    * The current coding style (see |lhdev-style|) apply to |C_namespace|,
+    |C_try| and |C_catch|.
 
 To prevent these mappings and abbreviations to be defined, set
 |g:lh_cpp_snippets| to 0.
@@ -315,9 +319,9 @@ To prevent these mappings and abbreviations to be defined, set
                                         *C++_accessors* *getter* *setter*
 C++ accessors & some templates~
 Files:      *cpp_BuildTemplates.vim* , *cpp_InsertAccessors.vim*
-Help:       <http://code.google.com/p/lh-vim/wiki/lhCpp_Accessors>
+Help:       <http://github.com/LucHermitte/lh-cpp>
 License:    The generated code is under license exception to GPLv3
-            <http://code.google.com/p/lh-vim/wiki/License>
+            <http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 Requires:   |a.vim| (optional)
 Options:    |C++_accessors_options|
 
@@ -356,6 +360,7 @@ Options:
         1 -> In the inline section of a dedicated inline file
 
     |g:c_nl_before_curlyB|                    : newline before '{'
+     This will eventually be deprecated in favour of |lhdev-style|.
 
 Notes:
     * Everything here match my preferences regarding code presentation
@@ -366,9 +371,9 @@ Notes:
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                 *C++_jump_implementation*
 Jumping to functions-implementation~
-Help:       <http://code.google.com/p/lh-vim/wiki/lhCpp_GotoImplementation
+Help:       <http://github.com/LucHermitte/lh-cpp>
 License:    The generated code is under license exception to GPLv3
-            <http://code.google.com/p/lh-vim/wiki/License>
+            <http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 Inspiration:Leif Wickland's VIM TIP #135, and Robert Kelly IV for many
             features.
 
@@ -800,9 +805,17 @@ If you don't like this feature ~
     if |Triggers.vim| is installed), or set |[bg]:usemarks| to 0 into your .vimrc.
     You should also be able to simply erase the file |bracketing.base.vim|
 (*) You want some "\n" before the '(':
-    Easy: explicitly set the option |g:c_nl_before_bracket| to 1.
+    Easy: tell it to |:AddStyle|
+    * in $HOME/.vim/after/plugin/my-style.vim: >
+      :AddStyle -ft=c -prio=10 ( \n(\n
+<    * or in a |local_vimrc|: >
+      :AddStyle -b -ft=c -prio=10 ( \n(\n
 (*) You want some "\n" between ')' and '{':
-    Easy: explicitly set the option |g:c_nl_before_curlyB| to 1.
+    Easy: tell it to |:AddStyle|
+    * in $HOME/.vim/after/plugin/my-style.vim: >
+      :AddStyle -ft=c -prio=10 { \n{\n
+<    * or in a |local_vimrc|: >
+      :AddStyle -b -ft=c -prio=10 { \n{\n
 (*) You don't want the control statements to be expanded:
     Then, don't install |c_set.vim| and |cpp_set.vim|. Instead look and take
     the stuff you could be interested in, like for instance some vim-|options|.
