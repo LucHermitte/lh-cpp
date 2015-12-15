@@ -269,13 +269,17 @@ function! lh#cpp#snippets#parents(parents) abort
   let list = []
   for parent in a:parents
     for [name, data] in items(parent)
+      let type_info = lh#cpp#types#get_info(name)
       let list += [
             \  get(data, 'visibility', 'public') . ' '
             \ .(get(data, 'virtual', 0) ? 'virtual ' : '')
-            \ .name
+            \ .type_info.typename_for_header()
             \ ]
       if has_key(data, 'includes')
         call lh#list#flat_extend(includes, data['includes'])
+      endif
+      if has_key(type_info, 'includes')
+        call extend(includes, type_info.includes)
       endif
     endfor
   endfor

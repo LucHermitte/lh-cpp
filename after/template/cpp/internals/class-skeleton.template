@@ -29,7 +29,7 @@ VimL: " =====[ Parents
 MuT:  let s:parents = s:Param("parents", [])
 MuT:  let s:noncopyable = s:Param("noncopyable", 0)
 MuT:  if s:noncopyable
-MuT:    let s:noncopyable_class = lh#option#get("cpp_noncopyable_class", {"name": "boost::noncopyable", "includes": "<boost/noncopyable.hpp>"})
+MuT:    let s:noncopyable_class = lh#option#get("cpp_noncopyable_class", {"name": "noncopyable"})
 VimL:   " TODO: support auto import of noncopyable file
 MuT:    if empty(s:noncopyable_class)
 VimL:     call lh#dict#add_new(s:Param("copy-constructor", {}), {"how": "deleted"})

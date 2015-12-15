@@ -119,6 +119,10 @@ function! s:Test_parents() abort
   let parents += [ {"Base2" : {"virtual": 1}}]
   AssertEquals(lh#cpp#snippets#parents(parents), ["\n: private boost::noncopyable\n, public SomeBase\n, public virtual Base2", []])
 
+  " Start from new, uses lh#cpp#types
+  let parents = [ {"noncopyable" : {"how": "include", "visibility": "private"}}]
+  AssertEquals(lh#cpp#snippets#parents(parents), [" : private boost::noncopyable", ['<boost/noncopyable.hpp>']])
+
 endfunction
 
 
