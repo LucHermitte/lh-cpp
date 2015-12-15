@@ -19,29 +19,32 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
 
   specify "attribute-class copy-neutral, C++98", :cpp98 do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
-    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::string", "includes":"<string>", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
+    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "str", "type": "string", "functions": ["set", "get"]}, {"name": "bar", "type": "Bar", "includes":"bar.h"}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
     #include <string>
+    #include "bar.h"
     class «Test»
     {
     public:
 
-        «Test»(int foo, std::string const& bar)
+        «Test»(int foo, std::string const& str, Bar const& bar)
             : m_foo(foo)
+            , m_str(str)
             , m_bar(bar)
             {}
-        void setBar(std::string const& bar) {
-            m_bar = bar;
+        void setStr(std::string const& str) {
+            m_str = str;
         }
-        std::string const& getBar() const {
-            return m_bar;
+        std::string const& getStr() const {
+            return m_str;
         }
 
     private:
 
         int         m_foo;
-        std::string m_bar;
+        std::string m_str;
+        Bar         m_bar;
     };
     EOF
   end
@@ -49,7 +52,7 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
   specify "attribute-class copy-neutral, C++11", :cpp11 do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     vim.command('silent! let g:cpp_std_flavour=11')
-    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::string", "includes":"<string>", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
+    expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
     #include <string>

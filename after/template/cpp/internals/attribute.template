@@ -2,11 +2,13 @@ VimL:" attribute File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 02nd
 VimL:" hint: Type m_attribute;
 VimL: " Parameter: "attribute" (optional)
 VimL: "  - "name": string, mandatory
-VimL: "  - "type": string, mandatory
+VimL: "  - "type": string, mandatory,
+VimL: "  - "type_info": dict, mandatory (comes from lh#cpp#types#get_info())
 VimL: "  - "storage": string, optional: "constepxr ", "static ", "thread_local ", ...
 VimL: "  - "default": string, optional, C++11+ only: " = value"
 VimL: "  - "align": number, optional
 VimL: "  - "include": string/list: files to #include
+VimL: " @pre "type" is expected to have been processed w/ lh#cpp#type#*()
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
@@ -20,4 +22,8 @@ MuT:  else
 MuT:    let s:default_attrb_value = get(s:attribute, "default", "")
 VimL:   let s:default_attrb_value = empty(s:default_attrb_value) ? "" : " = ".s:default_attrb_value
 MuT:  endif
+MuT:  if lh#option#is_set(s:attribute.type_info)
+VimL:    call s:AddPostExpandCallback('lh#dev#import#add_any('.string(get(s:attribute.type_info, "includes", [])).')')
+MuT:  endif
 <+get(s:attribute, 'storage', '')+><+s:attribute.type+> <+s:align+><+lh#dev#naming#member(s:attribute.name)+><+s:default_attrb_value+>;
+VimL: " <+get(s:attribute, 'storage', '')+><+s:Include(s:attribute.type, 'cpp')+> <+s:align+><+lh#dev#naming#member(s:attribute.name)+><+s:default_attrb_value+>;
