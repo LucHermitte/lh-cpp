@@ -2,10 +2,10 @@
 " File:         tests/lh/snippets.vim                             {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} gmail {dot} com>
 "		<URL:http://github.com/LucHermitte/lh-cpp>
-" Version:      2.1.7.
-let s:k_version = '217'
+" Version:      2.2.0.
+let s:k_version = '220'
 " Created:      25th Nov 2015
-" Last Update:
+" Last Update:  15th Dec 2015
 "------------------------------------------------------------------------
 " Description:
 "       Test autoload/lh/snippets.vim functions
@@ -108,16 +108,16 @@ endfunction
 " Function: s:Test_parents() {{{3
 function! s:Test_parents() abort
   let parents = []
-  AssertEquals(lh#cpp#snippets#parents(parents), "")
+  AssertEquals(lh#cpp#snippets#parents(parents), ['', []])
 
   let parents += [ {"boost::noncopyable" : {"how": "include", "visibility": "private"}}]
-  AssertEquals(lh#cpp#snippets#parents(parents), " : private boost::noncopyable")
+  AssertEquals(lh#cpp#snippets#parents(parents), [" : private boost::noncopyable", []])
 
   let parents += [ {"SomeBase" : {}}]
-  AssertEquals(lh#cpp#snippets#parents(parents), "\n: private boost::noncopyable\n, public SomeBase")
+  AssertEquals(lh#cpp#snippets#parents(parents), ["\n: private boost::noncopyable\n, public SomeBase", []])
 
   let parents += [ {"Base2" : {"virtual": 1}}]
-  AssertEquals(lh#cpp#snippets#parents(parents), "\n: private boost::noncopyable\n, public SomeBase\n, public virtual Base2")
+  AssertEquals(lh#cpp#snippets#parents(parents), ["\n: private boost::noncopyable\n, public SomeBase\n, public virtual Base2", []])
 
 endfunction
 
