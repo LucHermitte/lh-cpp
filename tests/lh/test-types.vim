@@ -26,7 +26,7 @@ set cpo&vim
 "------------------------------------------------------------------------
 function! s:Test_none() " {{{2
   let info = lh#cpp#types#get_info('invalid_type')
-  Assert lh#option#is_unset(info)
+  Assert get(info, 'unknown', 0)
 
   AssertEquals(lh#cpp#types#get_includes('<invalid_type>'), [])
 endfunction
