@@ -37,7 +37,7 @@
     * Check inline TODOs
     * attributes
         * use snippet if there is one with the same type name, idem for
-          inheritance
+          inheritance -> require patch on <+s:Include()+> in mu-template
     * dox functions for special functions, attributes and other functions
         * test w/ and w/o
     * move contructor
@@ -50,11 +50,11 @@
  * Find a better way to pass options to :MuTemplate command in order to take
    advantage of cpp/class snippets. For instance:
    ```
-   :MuT cpp/class attributes=foo:int,bar:string parents=Bar,Toto:private
+   " +==public, #==protected, -==private
+   :MuT cpp/class attributes=foo:int,#bar:string parents=Bar,-Toto
    ```
 
 ## misc
 
- *  `[[` (for C++ attributes) shall not expand into `[[<cursor>]«»]«»`. See
-    markdown mappings for underscore and star.
- *  Register options for completion & co into menus, `:Set` and `:Toggle`
+ * Register options for completion & co into menus, `:Set` and `:Toggle`
+ * Have lh#dev#import rely on lh#cpp#types, on the other way around

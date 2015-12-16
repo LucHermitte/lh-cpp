@@ -24,6 +24,8 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
 | **keys**                | Expands into ..                                                     | Surrounds the selection with ... <sup>2</sup> | Surrounds the current ... |
 | `(`                     | `(<cursor>)«»`                                                      | `(<selection>)`                               | word                      |
 | `[`                     | `[<cursor>]«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
+| `[` after a `[`         | `[[<cursor>]]«»`            | n/a                                           | n/a                       |
+| `]` before `]]`         | close all `]]`              | n/a                                           | n/a                       |
 | `<localleader>[`        |                                                                     | `[<selection>]`                               | word                      |
 | `{`                     | `{<cursor>}«»`<sup>3</sup>                                          | `{<selection>}`                               | word                      |
 | `<localleader>{`        |                                                                     | `{\n<selection>\n}«»`                         | line                      |
