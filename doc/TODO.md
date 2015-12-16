@@ -2,52 +2,56 @@
 
 ## Folding
 
- * if only `{`, search next line
- * `do` `while`
- * embedded `#if`
+ [ ] if only `{`, search next line
+ [ ] `do` `while`
+ [ ] embedded `#if`
 
 ## syntax highlight
 
- * detect `case` without a `break`, or without `[[fallthrough]]`
- * detect raw pointers
- * detect calls to `malloc`/`free`/...
- * detect calls to `delete` (outside destructors)
- * detect calls to `new` (C++14)
+ [/] detect `case` without a `break`, or a `return`, or `continue`, or a
+ `goto`, or `[[fallthrough]]`
+    * `break;} case` is incorrectly recognized
+    * `default` is not recognized
+ [ ] detect raw pointers
+ [ ] detect calls to `malloc`/`free`/...
+ [ ] detect calls to `delete` (outside destructors)
+ [ ] detect calls to `new` (C++14)
+ [ ] detect C casts
 
 ## snippets / wizard
 
 ### class wizard
 
- * Doc!!
-    *  Options
-    *  Snippets
+ [ ] Doc!!
+    [ ]  Options
+    [ ]  Snippets
 
- * Class kinds
-    * CRTP
-    * artihmetic class
-    * clonable simpl. or interactive
-    * value w/ manual copy (& swap)
-    * NVI ?
-    * template class
-    * enum class (only tests?)
-    * singleton (test)
-    * Simplified way to generate new classes w/ attribs & all
+ [ ] Class kinds
+    [ ] CRTP
+    [ ] artihmetic class
+    [ ] clonable simpl. or interactive
+    [ ] value w/ manual copy (& swap)
+    [ ] NVI ?
+    [ ] template class
+    [ ] enum class (only tests?)
+    [ ] singleton (test)
+    [ ] Simplified way to generate new classes w/ attribs & all
 
- * class features
-    * Check inline TODOs
-    * attributes
-        * use snippet if there is one with the same type name, idem for
+ [ ] class features
+    [ ] Check inline TODOs
+    [ ] attributes
+        [ ] use snippet if there is one with the same type name, idem for
           inheritance -> require patch on <+s:Include()+> in mu-template
-    * dox functions for special functions, attributes and other functions
-        * test w/ and w/o
-    * move contructor
-    * move assignment-operator
-    * Enforce «rule of all or nothing»
+    [ ] dox functions for special functions, attributes and other functions
+        [ ] test w/ and w/o
+    [ ] move contructor
+    [ ] move assignment-operator
+    [ ] Enforce «rule of all or nothing»
 
 ### Other snippets
- * `<algorithm>` snippets should use cpp/begin-end
- * lambda
- * Find a better way to pass options to :MuTemplate command in order to take
+ [ ] `<algorithm>` snippets should use cpp/begin-end
+ [ ] lambda
+ [ ] Find a better way to pass options to :MuTemplate command in order to take
    advantage of cpp/class snippets. For instance:
    ```
    " +==public, #==protected, -==private
@@ -56,5 +60,5 @@
 
 ## misc
 
- * Register options for completion & co into menus, `:Set` and `:Toggle`
- * Have lh#dev#import rely on lh#cpp#types, on the other way around
+ [ ] Register options for completion & co into menus, `:Set` and `:Toggle`
+ [ ] Have lh#dev#import rely on lh#cpp#types, on the other way around
