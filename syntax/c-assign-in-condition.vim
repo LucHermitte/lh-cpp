@@ -1,36 +1,27 @@
 "=============================================================================
 " File:		syntax/c-assign-in-condition.vim                         {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+"		<URL:http://github.com/LucHermitte/lh-cpp>
+" Version:	2.2.0
 " Created:	08th Oct 2007
-" Last Update:	$Date$
+" Last Update:	16th Dec 2015
 "------------------------------------------------------------------------
 " Purpose:	C syntax enhancements
-" 	(*) Hightlights assignements in if(), while(), ..., conditions
+"  (*) Hightlights assignements in if(), while(), ..., conditions
 "
 "------------------------------------------------------------------------
-" Installation:	See |lh-cpp-readme.txt|
-" 	Installation Method:
-" 		Define a {rtp}/syntax/c.vim (where {rtp} < $VIMRUNTIME) that
-" 		contains:
-"		    " This is the only valid way to load the C++ and C default syntax file.
-"		    so $VIMRUNTIME/syntax/c.vim
-"		    " Source C hooks
-"		    runtime! syntax/c-*.vim syntax/c_*.vim
-"
 " Requirements:
 " 	None
 "
 " Option:
-" 	- |c_no_assign_in_condition| to disable the check that assignement are
-" 	done in conditions.
+" - |c_no_assign_in_condition| to disable the check that assignments are
+"   done in conditions.
 " }}}1
 " ========================================================================
 " {{{1 Syntax definitions
 "
 " {{{2 Enforce catch by reference
-if !exists("c_no_assign_in_condition")
+if !get(g:, "c_no_assign_in_condition", 0)
 
   syn match cAssignInConditionBad  '\(\s*if\_s*([^=!<>]*\)\@<==[^=][^,)]*'
   syn match cAssignInConditionRare '\(\s*while\_s*([^=!<>]*\)\@<==[^=][^,)]*'

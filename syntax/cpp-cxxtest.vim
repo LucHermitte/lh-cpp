@@ -1,24 +1,15 @@
 "=============================================================================
 " File:		syntax/cpp-cxxtest.vim                            {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+"		<URL:http://github.com/LucHermitte/lh-cpp>
+" Version:      2.2.0.
 " Created:	23rd Apr 2009
-" Last Update:	$Date$
+" Last Update:	16th Dec 2015
 "------------------------------------------------------------------------
 " Description:	C++ syntax enhancements for CxxTest <http://cxxtest.sf.net/>
-" assertions. 
-" 
-"------------------------------------------------------------------------
-" Installation:	See |lh-cpp-readme.txt|
-" 	Installation Method:
-" 		Define a {rtp}/syntax/c.vim (where {rtp} < $VIMRUNTIME) that
-" 		contains:
-"		    " This is the only valid way to load the C++ and C default syntax file.
-"		    so $VIMRUNTIME/syntax/c.vim
-"		    " Source C hooks
-"		    runtime! syntax/c-*.vim syntax/c_*.vim
+" assertions.
 "
+"------------------------------------------------------------------------
 " Option:
 " History:	«history»
 " TODO:		«missing features»

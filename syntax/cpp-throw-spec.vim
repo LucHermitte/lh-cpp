@@ -1,32 +1,23 @@
 "=============================================================================
 " File:		syntax/cpp-throw-spec.vim                                 {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+"		<URL:http://github.com/LucHermitte/lh-cpp>
+" Version:      2.2.0.
 " Created:	06th Sep 2007
-" Last Update:	$Date$
+" Last Update:	16th Dec 2015
 "------------------------------------------------------------------------
 " Purpose:	C++ syntax enhancements
-" 	(*) Hightlights throw specifications
-" 	(*) Defines the two mappings [t (/resp. ]t) to jump to the previous
-" 	    (/resp. next) throw specification.
-" 
-"------------------------------------------------------------------------
-" Installation:	See |lh-cpp-readme.txt|
-" 	Installation Method:
-" 		Define a {rtp}/syntax/c.vim (where {rtp} < $VIMRUNTIME) that
-" 		contains:
-"		    " This is the only valid way to load the C++ and C default syntax file.
-"		    so $VIMRUNTIME/syntax/c.vim
-"		    " Source C hooks
-"		    runtime! syntax/c-*.vim syntax/c_*.vim
+" (*) Hightlights throw specifications
+" (*) Defines the two mappings [t (/resp. ]t) to jump to the previous
+"     (/resp. next) throw specification.
 "
+"------------------------------------------------------------------------
 " Requirements:
 " 	word_tools.vim::GetCurrentKeyword()	-- unchecked
 "
 " Option:
-" 	- |cpp_no_bad_by_reference| to disable the check that catches are done
-" 	by reference.
+" - |cpp_no_bad_by_reference| to disable the check that catches are done
+"   by reference.
 " TODO:
 " }}}1
 "=============================================================================
@@ -35,16 +26,16 @@
 " {{{1 Syntax definitions
 "
 " {{{2 Enforce no throw specifications
-if !exists("cpp_no_hl_throw_spec")
+if !get(g:, "cpp_no_hl_throw_spec", 0)
 
   " In C++, throw specifications does not do what most C++ developpers think
   " they do. Instead of enforcing a static verification on exceptions flows,
-  " they embed in the result binary some code that checks that the exceptions 
+  " they embed in the result binary some code that checks that the exceptions
   " thrown from a function match the authorized exceptions. If not, the
   " application will crash (if the exception handler has not been overriden).
   " In all cases the application can't do anything but halt very soon. They can
   " be seen as some kind of assertions, except they are always active, even in
-  " "release" binaries. 
+  " "release" binaries.
 
   " Considered this is a tricky feature of C++, and considered they are hardly
   " useful, here is this script that highlight them as "misspellings".

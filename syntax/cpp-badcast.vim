@@ -1,26 +1,17 @@
 "=============================================================================
 " File:		syntax/cpp-badcatch.vim                                    {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
+"		<URL:http://github.com/LucHermitte/lh-cpp>
+" Version:	2.2.0
 " Created:	29th Jun 2006
-" Last Update:	$Date$
+" Last Update:	16th Dec 2015
 "------------------------------------------------------------------------
 " Purpose:	C++ syntax enhancements
-" 	(*) Hightlights catches made by-value instead of by-reference.
-" 	(*) Defines the two mappings [b (/resp. ]b) to jump to the previous
-" 	    (/resp. next) catch made by value.
+" (*) Hightlights catches made by-value instead of by-reference.
+" (*) Defines the two mappings [b (/resp. ]b) to jump to the previous
+"     (/resp. next) catch made by value.
 "
 "------------------------------------------------------------------------
-" Installation:	See |lh-cpp-readme.txt|
-" 	Installation Method:
-" 		Define a {rtp}/syntax/c.vim (where {rtp} < $VIMRUNTIME) that
-" 		contains:
-"		    " This is the only valid way to load the C++ and C default syntax file.
-"		    so $VIMRUNTIME/syntax/c.vim
-"		    " Source C hooks
-"		    runtime! syntax/c-*.vim syntax/c_*.vim
-"
 " Requirements:
 " 	word_tools.vim::GetCurrentKeyword()	-- unchecked
 "
@@ -35,7 +26,7 @@
 " {{{1 Syntax definitions
 "
 " {{{2 Enforce catch by reference
-if !exists("cpp_no_catch_by_reference")
+if !get(g:, "cpp_no_catch_by_reference", 0)
 
   " In C++, we should always catch by reference (and throw by value)
   "
@@ -45,7 +36,7 @@ if !exists("cpp_no_catch_by_reference")
   "   "\(regex\)\@=" is used to exclude a (required) closing context
   " - The complex BadCatch regex tells to match an expression without "&" except "...".
   "
-  " @todo 
+  " @todo
   " - catch ([[:space:]]const foo <+cursor+>) is not recognized as a
   "   cppEditedCatch, but a cppBadCatch
   " syn match cppBadCatch    /\(catch\s*(\s*\(const\)\=\)\@<=\(\s*\.\.\.\s*\)\@![^&)]*\()\)\@=/ contains=cStorageClass
@@ -173,7 +164,7 @@ function! s:GotoWhereAmpersandIsMissing()
     normal! 0
     if search('(\s*\(const\s*\)\=[A-Za-z_:]\+\zs') == last_line " found!
       " do nothing, it ok
-    else 
+    else
     " reset position
       exe pos
     endif
