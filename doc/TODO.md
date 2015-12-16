@@ -28,7 +28,7 @@
 
  [ ] Class kinds
     [ ] CRTP
-    [ ] artihmetic class
+    [ ] arithmetic class
     [ ] clonable simpl. or interactive
     [ ] value w/ manual copy (& swap)
     [ ] NVI ?
@@ -51,8 +51,11 @@
 ### Other snippets
  [ ] `<algorithm>` snippets should use cpp/begin-end
  [ ] lambda
- [ ] Find a better way to pass options to :MuTemplate command in order to take
+ [ ] Check `:InsertEnum` -> tests
+ [ ] Fix `:MuTemplate c/swith un deux`
+ [ ] Find a better way to pass options to `:MuTemplate` command in order to take
    advantage of cpp/class snippets. For instance:
+
    ```
    " +==public, #==protected, -==private
    :MuT cpp/class attributes=foo:int,#bar:string parents=Bar,-Toto
