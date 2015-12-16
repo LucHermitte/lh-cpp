@@ -212,7 +212,45 @@ TDB
 Boolean option that enables the generation of _nested_ namespaces in C++17
 codes with [`namespace` snippet](snippets.md#cppnamespace).
 
-__Default value_:_ is 1 (true).
+__Default value:__ is 1 (true).
+
+### `g:c_no_assign_in_condition`
+Boolean option that disables syntax highlighting that detects assignments in
+conditions.
+
+__Default value:__ is 0 (false).
+
+### `g:c_no_hl_fallthrough_case`
+Boolean option that disables syntax highlighting that detects uses of `case`
+that fall through other `case`s.
+
+This feature isn't detecting correctly situation like: `break; } case`, that
+why it's disabled for the moment.
+
+__Default value:__ is 1 (true).
+
+### `g:cpp_no_catch_by_reference`
+Boolean option that disables syntax highlighting that detects exceptions caught
+by value.
+
+__Default value:__ is 0 (false).
+
+### `g:cpp_no_hl_c_cast`
+Boolean option that disables syntax highlighting that detects C casts in C++.
+
+__Default value:__ is 0 (false).
+
+### `g:cpp_no_hl_funcdef`
+Boolean option that disables syntax highlighting that hightlight function
+definitions.
+
+__Default value:__ is 0 (false).
+
+### `g:cpp_no_hl_throw_spec`
+Boolean option that disables syntax highlighting that detects throw
+specifications in C++.
+
+__Default value:__ is 0 (false).
 
 #### `(bg):({ft}_)dox_CommentLeadingChar`
 Tells which character to use on each line of a Doxygen comment.

@@ -155,6 +155,8 @@ snippets as most of them have options.
   * assign in condition (bad practice)
   * catch by value (bad practice)
   * throw specifications ([do you really know what they are about, and still want them?](http://www.gotw.ca/gotw/082.htm))
+  * C casts in C++ (bad practice)
+  * cases that fall through the next one (code smell -- disabled by default)
   * function definitions
 
 ### Miscellaneous

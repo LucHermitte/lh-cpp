@@ -16,7 +16,7 @@
  [ ] detect calls to `malloc`/`free`/...
  [ ] detect calls to `delete` (outside destructors)
  [ ] detect calls to `new` (C++14)
- [ ] detect C casts
+ [X] detect C casts
 
 ## snippets / wizard
 
