@@ -47,12 +47,13 @@
     [ ] move contructor
     [ ] move assignment-operator
     [ ] Enforce «rule of all or nothing»
+    [ ] Special functions need atomic tests
 
 ### Other snippets
  [ ] `<algorithm>` snippets should use cpp/begin-end
  [ ] lambda
  [ ] Check `:InsertEnum` -> tests
- [ ] Fix `:MuTemplate c/swith un deux`
+ [X] Fix `:MuTemplate c/swith un deux`
  [ ] Find a better way to pass options to `:MuTemplate` command in order to take
    advantage of cpp/class snippets. For instance:
 
@@ -64,4 +65,4 @@
 ## misc
 
  [ ] Register options for completion & co into menus, `:Set` and `:Toggle`
- [ ] Have lh#dev#import rely on lh#cpp#types, on the other way around
+ [ ] Have lh#dev#import rely on lh#cpp#types, or the other way around

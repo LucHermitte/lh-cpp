@@ -3,11 +3,7 @@ VimL:" hint: T();
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
-VimL: " in case the class name is already known, no need to extract it
-VimL: let s:clsname = s:Param("clsname", "")
-MuT:  if empty(s:clsname)
-VimL:   let s:clsname = empty(s:Args()) ? INPUT("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r")))) : (s:Args()[0])
-MuT:  endif
+VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: let s:lead = lh#dox#comment_leading_char().' '
 VimL: let s:default_constructor = s:Param("default-constructor", {})
 VimL: let s:how = get(s:default_constructor, "how", "")
