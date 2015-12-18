@@ -3,24 +3,18 @@ VimL:" hint: ~T();
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
-VimL: " in case the class name is already known, no need to extract it
+VimL: call s:Include('get-class-name', 'cpp/internals')
 MuT:  let s:destructor = s:Param("destructor", lh#option#unset())
 MuT:  if lh#option#is_set(s:destructor)
-MuT:      let s:virtual = get(s:destructor, "virtual", 0)
-MuT:      let s:how     = get(s:destructor, "how", "")
-VimL:     " Let's suppose s:clsname is set
+MuT:      let s:virtual    = get(s:destructor, "virtual", 0)
+MuT:      let s:how        = get(s:destructor, "how", "")
 VimL:     let s:visibility = get(s:destructor, "visibility", "public")
+VimL:     " Let's suppose s:clsname is set
 MuT:  else
-MuT:    if empty(s:Args())
-MuT:      let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
-MuT:      let s:virtual = lh#marker#txt("virtual ")
-MuT:    else
-MuT:      let s:clsname = s:Args()[0].name
-MuT:      let s:virtual = s:Args()[0].virtual
-MuT:    endif
-VimL:   let s:how       = ""
+MuT:    let s:virtual      = lh#marker#txt("virtual ")
+VimL:   let s:how          = ""
 VimL:   " TODO: autodetect last visibility
-VimL:   let s:visibility = "public"
+VimL:   let s:visibility   = "public"
 MuT:  endif
 MuT:  let s:virtual = type(s:virtual) == type("str") ? s:virtual : ((s:virtual) ? "virtual " : "")
 MuT:  let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""

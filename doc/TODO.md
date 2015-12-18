@@ -51,7 +51,7 @@
         - [X] default constructor
         - [ ] copy constructor
         - [ ] init constructor
-        - [ ] destructor
+        - [X] destructor
         - [ ] assignment operator
         - [ ] copy'n'swap
 

@@ -81,7 +81,63 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
   end
 
+  # ====[ destructor {{{2
+  # Tests with parameters are done in *-class_spec.rb tests
+  # Test expanding with <Plug>MuT_ckword don't seem to work correctly
+  context "when expanding destructor", :destructor do
+    it "asks the user, when the only context is the filename" do
+      vim.command('silent! unlet g:mocked_input') # don't need it
+      expect(vim.command('MuTemplate cpp/destructor')).to match(/^$/)
+        assert_buffer_contents <<-EOF
+        /**
+         * «virtual »destructor.
+         * @throw Nothing
+         */
+        «virtual »~«Test»();
+        EOF
+    end
+
+    it "takes the class name as a parameter" do
+      vim.command('silent! unlet g:mocked_input') # don't need it
+      expect(vim.command('MuTemplate cpp/destructor FooBar')).to match(/^$/)
+        assert_buffer_contents <<-EOF
+        /**
+         * «virtual »destructor.
+         * @throw Nothing
+         */
+        «virtual »~FooBar();
+        EOF
+    end
+
+    it "recognizes it's within a class definition" do
+      vim.command('silent! unlet g:mocked_input') # don't need it
+      set_buffer_contents <<-EOF
+      class Foo {
+
+      };
+      EOF
+      assert_buffer_contents <<-EOF
+      class Foo {
+
+      };
+      EOF
+      expect(vim.echo('line("$")')).to eq '3'
+      expect(vim.echo('setpos(".", [1,2,1,0])')).to eq '0'
+      expect(vim.echo('line(".")')).to eq '2'
+      expect(vim.command('MuTemplate cpp/destructor')).to match(/^$/)
+      assert_buffer_contents <<-EOF
+      class Foo {
+          /**
+           * «virtual »destructor.
+           * @throw Nothing
+           */
+          «virtual »~Foo();
+      };
+      EOF
+    end
+  end
+
 end
 
 # }}}1
-# vim:set sw=2:
+# vim:set sw=2:fdm=marker:
