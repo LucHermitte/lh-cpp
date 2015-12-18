@@ -81,6 +81,65 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
   end
 
+  # ====[ copy-constructor {{{2
+  # Tests with parameters are done in *-class_spec.rb tests
+  # Test expanding with <Plug>MuT_ckword don't seem to work correctly
+  context "when expanding copy-constructor", :copy_ctr do
+    it "asks the user, when the only context is the filename" do
+      vim.command('silent! unlet g:mocked_input') # don't need it
+      expect(vim.command('MuTemplate cpp/copy-constructor')).to match(/^$/)
+        assert_buffer_contents <<-EOF
+        /**
+         * Copy constructor.
+         * @param[in] rhs source data to be copied.
+         * «@throw »
+         */
+        «Test»(«Test» const& rhs);
+        EOF
+    end
+
+    it "takes the class name as a parameter" do
+      vim.command('silent! unlet g:mocked_input') # don't need it
+      expect(vim.command('MuTemplate cpp/copy-constructor FooBar')).to match(/^$/)
+        assert_buffer_contents <<-EOF
+        /**
+         * Copy constructor.
+         * @param[in] rhs source data to be copied.
+         * «@throw »
+         */
+        FooBar(FooBar const& rhs);
+        EOF
+    end
+
+    it "recognizes it's within a class definition" do
+      vim.command('silent! unlet g:mocked_input') # don't need it
+      set_buffer_contents <<-EOF
+      class Foo {
+
+      };
+      EOF
+      assert_buffer_contents <<-EOF
+      class Foo {
+
+      };
+      EOF
+      expect(vim.echo('line("$")')).to eq '3'
+      expect(vim.echo('setpos(".", [1,2,1,0])')).to eq '0'
+      expect(vim.echo('line(".")')).to eq '2'
+      expect(vim.command('MuTemplate cpp/copy-constructor')).to match(/^$/)
+      assert_buffer_contents <<-EOF
+      class Foo {
+          /**
+           * Copy constructor.
+           * @param[in] rhs source data to be copied.
+           * «@throw »
+           */
+          Foo(Foo const& rhs);
+      };
+      EOF
+    end
+  end
+
   # ====[ destructor {{{2
   # Tests with parameters are done in *-class_spec.rb tests
   # Test expanding with <Plug>MuT_ckword don't seem to work correctly

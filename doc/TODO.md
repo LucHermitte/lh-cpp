@@ -49,7 +49,7 @@
     - [ ] Enforce «rule of all or nothing»
     - [ ] Special functions need atomic tests
         - [X] default constructor
-        - [ ] copy constructor
+        - [X] copy constructor
         - [ ] init constructor
         - [X] destructor
         - [ ] assignment operator
