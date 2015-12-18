@@ -48,6 +48,13 @@
     - [ ] move assignment-operator
     - [ ] Enforce «rule of all or nothing»
     - [ ] Special functions need atomic tests
+        - [X] default constructor
+        - [ ] copy constructor
+        - [ ] init constructor
+        - [ ] destructor
+        - [ ] assignment operator
+        - [ ] copy'n'swap
+
 
 ### Other snippets
  - [ ] `<algorithm>` snippets should use cpp/begin-end
