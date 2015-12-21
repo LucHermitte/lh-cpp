@@ -42,17 +42,23 @@
     - [ ] attributes
         - [ ] use snippet if there is one with the same type name, idem for
           inheritance -> require patch on <+s:Include()+> in mu-template
-    - [ ] dox functions for special functions, attributes and other functions
+    - [ ] dox functions
         - [ ] test w/ and w/o
+        - [X] default constructor
+        - [X] copy constructor
+        - [X] init constructor
+        - [X] destructor
+        - [X] assignment operator
+        - [ ] copy'n'swap -> `swap`
+        - [ ] `what`
+        - [ ] attributes
     - [ ] move contructor
     - [ ] move assignment-operator
     - [ ] Enforce «rule of all or nothing»
     - [ ] Special functions need atomic tests
         - [X] default constructor
         - [X] copy constructor
-        - [ ] init constructor
-           - [X] No param
-           - [ ] With params
+        - [X] init constructor
         - [X] destructor
         - [X] assignment operator
         - [X] copy'n'swap

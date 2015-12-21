@@ -75,7 +75,7 @@ function! lh#dox#throw(...)
   if !empty(throw)
     let res .= lh#dox#tag(throw)
     if a:0==0 || empty(a:1)
-      let res = Marker_Txt(res)
+      let res = lh#marker#txt(res)
     else
       let res .= a:1
     endif
@@ -89,7 +89,7 @@ endfunction
 
 " Function: lh#dox#ingroup([text]) {{{3
 function! lh#dox#ingroup(...)
-  let text = a:0==0 || empty(a:1) ? Marker_Txt('group') : a:1
+  let text = a:0==0 || empty(a:1) ? lh#marker#txt('group') : a:1
   let ingroup = lh#dev#option#get('dox_ingroup', &ft, 0, 'bg')
   if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let res =  lh#dox#tag('ingroup ').text
@@ -105,7 +105,7 @@ endfunction
 
 " Function: lh#dox#brief([text]) {{{3
 function! lh#dox#brief(...)
-  let text = a:0==0 || empty(a:1) ? Marker_Txt('brief explanation').'.' : a:1
+  let text = a:0==0 || empty(a:1) ? lh#marker#txt('brief explanation').'.' : a:1
   if text[-1:] != '.' |let text .= '.' | endif
   let brief = lh#dev#option#get('dox_brief', &ft, 'short', 'bg')
   if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
@@ -113,7 +113,7 @@ function! lh#dox#brief(...)
   elseif brief =~? '^no$\|^n\%[ever]$\|0\|^s\%[hort]$'
     let res =  text
   else " maybe
-    let res =  Marker_Txt(lh#dox#tag('brief ')).text
+    let res =  lh#marker#txt(lh#dox#tag('brief ')).text
   endif
   return res
 endfunction
@@ -122,7 +122,13 @@ endfunction
 function! lh#dox#param(param)
   let res = lh#dox#tag("param")
   if type(a:param) == type({})
-    if has_key(a:param, "dir") | let res .= "[".(a:param.dir)."]" | endif
+    if has_key(a:param, "dir")
+      let dir = a:param.dir
+      if stridx(dir, '[') == -1
+        let dir = '[' . dir .']'
+      endif
+      let res .= dir
+    endif
     if has_key(a:param, "name") | let res .= " ".(a:param.name) | endif
     let res .= ' '. a:param.text
   else
@@ -140,45 +146,63 @@ function! lh#dox#author(...)
   if author =~ '^g:.*'
     if exists(author)
       return tag . {author}
-      " return tag . {author} . Marker_Txt('')
+      " return tag . {author} . lh#marker#txt('')
     else
-      return tag . Marker_Txt('author-name')
+      return tag . lh#marker#txt('author-name')
     endif
   elseif strlen(author) == 0
-    return tag . Marker_Txt('author-name')
+    return tag . lh#marker#txt('author-name')
   else
     return tag . author
-    " return tag . author . Marker_Txt('')
+    " return tag . author . lh#marker#txt('')
   endif
 endfunction
 
 " Function: lh#dox#since(...) {{{3
 function! lh#dox#since(...)
   let tag  = lh#dox#tag('since')
-  let ver  = lh#option#get('ProjectVersion', a:0==0 ? Marker_Txt('1.0') : a:1)
+  let ver  = lh#option#get('ProjectVersion', a:0==0 ? lh#marker#txt('1.0') : a:1)
   return tag . ' Version '.ver
 endfunction
 
 "------------------------------------------------------------------------
-" # fn_comments object
+" # fn_comments object {{{2
+" Function: lh#dox#_parameter_direction(type) {{{3
+function! lh#dox#_parameter_direction(type) abort
+  " todo: enhance the heuristics.
+  " First strip any namespace/scope stuff
+
+  " Support for boost smart pointers, custom types, ...
+  if     a:type =~ '\%(\<const\(expr\)\=\>\s*[&*]\=\|const_\%(reference\|iterator\)\|&&\|\%(unique\|auto\)_ptr\)\s*$'
+        \ . '\|^\s*\(\<const\(expr\)\=\>\)'
+    return '[in]'
+  elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\|_ptr\)\s*$'
+    return '[' . lh#marker#txt('in,') . 'out]'
+  elseif lh#dev#cpp#types#IsBaseType(a:type, 0)
+    return '[in]'
+  else
+    return lh#marker#txt('[in]')
+  endif
+endfunction
+
 " Function: lh#dox#new_function(brief) {{{3
 function! lh#dox#new_function(brief) abort
-  let res = {'brief': a:brief}
+  let res = {'brief': a:brief, 'param': [], 'pre': []}
   function! res.add_param(param) " {{{4
     " dict with: "dir", "name", "text"
     " if no "dir", but a "type" => compute "dir"
-    let name = lh#dev#naming#param(param.name)
     let param = a:param
-    if !has_key(param, dir)
-      let param.dir = s:ParameterDirection(param.type)
+    let name = lh#dev#naming#param(param.name)
+    if !has_key(param, 'dir')
+      let param.dir = lh#dox#_parameter_direction(param.type)
     endif
-    if !has_key(param, text)
+    if !has_key(param, 'text')
       let param.text = lh#marker#txt(name.'-explanations')
     endif
-    if has_key(param, type) && lh#dev#cpp#types#IsPointer(param.type)
-      let pre += [ '`'.name.' != NULL`' . lh#marker#txt()]
+    if has_key(param, 'type') && lh#dev#cpp#types#IsPointer(param.type)
+      let self.pre += [ '`'.name.' != NULL`' . lh#marker#txt()]
     endif
-    let self.param = += [ param ]
+    let self.param += [ param ]
   endfunction
 
   " }}}4

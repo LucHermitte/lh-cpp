@@ -89,24 +89,6 @@ function! CppDox_snippet(tagname, commentLeadingChar)
   return sValue
 endfunction
 
-" Function: s:ParameterDirection(type)               {{{2
-function! s:ParameterDirection(type)
-  " todo: enhance the heuristics.
-  " First strip any namespace/scope stuff
-
-  " Support for boost smart pointers, custom types, ...
-  if     a:type =~ '\%(\<const\(expr\)\=\>\s*[&*]\=\|const_\%(reference\|iterator\)\|&&\|\%(unique\|auto\)_ptr\)\s*$'
-        \ . '\|^\s*\(\<const\(expr\)\=\>\)'
-    return '[in]'
-  elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\|_ptr\)\s*$'
-    return '[' . lh#marker#txt('in,') . 'out]'
-  elseif lh#dev#cpp#types#IsBaseType(a:type, 0)
-    return '[in]'
-  else
-    return lh#marker#txt('[in]')
-  endif
-endfunction
-
 " Function: s:Doxygenize()                            {{{2
 function! s:Doxygenize() abort
   let cleanup = lh#on#exit()
@@ -132,7 +114,7 @@ function! s:Doxygenize() abort
       " @param
       let sValue =
             \  lh#dox#tag("param")
-            \ . s:ParameterDirection(param.type)
+            \ . lh#dox#_parameter_direction(param.type)
             \ . ' ' . param.name
             \ . '  ' . lh#marker#txt((param.name).'-explanations')
       call add (g:CppDox_Params_snippet, sValue)

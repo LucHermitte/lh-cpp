@@ -28,6 +28,13 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param[in] foo «foo-explanations»
+         * @param[in] str «str-explanations»
+         * @param[in] bar «bar-explanations»
+         * «@throw »
+         */
         «Test»(int foo, std::string const& str, Bar const& bar)
             : m_foo(foo)
             , m_str(str)
@@ -60,6 +67,12 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param[in] foo «foo-explanations»
+         * @param[in] bar «bar-explanations»
+         * «@throw »
+         */
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)

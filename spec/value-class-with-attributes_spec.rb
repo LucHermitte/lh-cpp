@@ -27,6 +27,12 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param[in] foo «foo-explanations»
+         * @param[in] bar «bar-explanations»
+         * «@throw »
+         */
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)
@@ -66,6 +72,12 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @warning this class is not meant to be publicly inherited
          */
         ~«Test»() = default;
+        /**
+         * Init constructor.
+         * @param[in] foo «foo-explanations»
+         * @param[in] bar «bar-explanations»
+         * «@throw »
+         */
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)
@@ -132,6 +144,13 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @warning this class is not meant to be publicly inherited
          */
         ~«Test»();
+        /**
+         * Init constructor.
+         * @param[in] foo «foo-explanations»
+         * @param«[in]» bar «bar-explanations»
+         * «@throw »
+         * @pre `bar != NULL`«»
+         */
         «Test»(int foo, std::auto_ptr<std::string> bar)
             : m_foo(foo)
             , m_bar(bar)
@@ -174,6 +193,12 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @warning this class is not meant to be publicly inherited
          */
         ~«Test»() = default;
+        /**
+         * Init constructor.
+         * @param[in] foo «foo-explanations»
+         * @param[in] bar «bar-explanations»
+         * «@throw »
+         */
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)
