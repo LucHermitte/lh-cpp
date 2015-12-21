@@ -98,12 +98,12 @@ if exists("g:loaded_cpp_BuildTemplates") && !exists('g:force_reload_cpp_BuildTem
   let &cpo = s:cpo_save
   finish
 endif
-let g:loaded_cpp_BuildTemplates_vim = 1
+let g:loaded_cpp_BuildTemplates = 1
 
 " Constants {{{2
 let s:header_includes_text = 'Includes'
-let s:header_inlines_text = 'Inlines'
-let s:header_inlines_type = '='
+let s:header_inlines_text  = 'Inlines'
+let s:header_inlines_type  = '='
 let s:header_inlining_text = 'Inlinings for '
 let s:header_inlining_type = '='
 
@@ -112,7 +112,7 @@ let s:MnLine= '/*---------------------------------------------------------------
 
 " Functions {{{2
   inoremap /*1 0<c-d>/*<esc>75a=<esc>a*/
-function! s:Cpp_group(name) " {{{3
+function! s:Cpp_group(name) abort " {{{3
   " TODO: use indent()
   silent put = '    /**'. lh#dox#tag('name')
   silent put = '     */'
@@ -120,7 +120,7 @@ function! s:Cpp_group(name) " {{{3
   silent put = '    //@}'
 endfunction
 
-function! s:Cpp_bigLine(title) " {{{3
+function! s:Cpp_bigLine(title) abort " {{{3
   silent put = s:EqLine
   let pos = (79-lh#encoding#strlen(a:title)-4)/2
   silent put = substitute(s:EqLine,
@@ -129,25 +129,25 @@ function! s:Cpp_bigLine(title) " {{{3
   silent put = s:EqLine
 endfunction
 
-function! s:Cpp_littleLine(title) " {{{3
+function! s:Cpp_littleLine(title) abort " {{{3
   let pos = (79-lh#encoding#strlen(a:title)-4)/2
   silent put = substitute(s:MnLine,
         \ '\(.\{'.pos.'}\).\{'.(lh#encoding#strlen(a:title)+4).'}\(.*\)$',
         \ '\1[ '.a:title.' ]\2', '')
 endfunction
 
-function! s:Cpp_megagroup(name) " {{{3
+function! s:Cpp_megagroup(name) abort " {{{3
   call s:Cpp_littleLine(a:name)
   call s:Cpp_group(a:name)
 endfunction
 
-function! s:Cpp_emptyLine(nb) " {{{3
+function! s:Cpp_emptyLine(nb) abort " {{{3
   let fo = &fo | set fo-=o
   exe "normal! ".a:nb."o\<esc>\<esc>"
   let &fo = fo
 endfunction
 
-function! s:Cpp_addGroup(emptyLine, name, access) " {{{3
+function! s:Cpp_addGroup(emptyLine, name, access) abort " {{{3
   if a:emptyLine != 0
     call s:Cpp_emptyLine( a:emptyLine )
   endif
@@ -157,7 +157,7 @@ function! s:Cpp_addGroup(emptyLine, name, access) " {{{3
   let &fo = fo
 endfunction
 
-function! s:Cpp_addMethod(name, sig) " {{{3
+function! s:Cpp_addMethod(name, sig) abort " {{{3
   silent put = '    /* '.a:name.' */'
   silent put = '        '.a:sig
 endfunction
@@ -167,7 +167,7 @@ endfunction
 " ==========================================================================
 " Function:     Cpp_search4line
 " Returns:      line of the found pattern
-function! s:Cpp_search4line(title,type)
+function! s:Cpp_search4line(title,type) abort
   " let v:errmsg = ''
   let str = '\/\*' . a:type . '*\[\s*' . a:title . '\s*\]' . a:type . '*\*\/'
   return search(str)
@@ -179,7 +179,7 @@ endfunction
 " ==========================================================================
 " Add classes {{{3
 " ==========================================================================
-function! s:Cpp_newClass(name)
+function! s:Cpp_newClass(name) abort
   " if lh#brackets#usemarks()
     " let bg:usemarks = 0
     " let recall_usemarks = 1
@@ -221,7 +221,7 @@ function! s:Cpp_newClass(name)
   let &foldenable = old_foldenable
 endfunction
 " ==========================================================================
-function! s:Cpp_newHeaderFile(name) " {{{3
+function! s:Cpp_newHeaderFile(name) abort " {{{3
   " reinclusion
   call s:Cpp_bigLine( "Avoid re-inclusion")
   silent put = '#ifndef __'.toupper(a:name).'_H__'
@@ -250,7 +250,7 @@ endfunction
 " Function: Cpp_fileType(name) {{{4
 " Returns:      A number indicating the kind of C++ file involved
 "               0 : header file ; 1 : inlines file ; 2 : other (.cpp & co)
-function! s:Cpp_fileType(name)
+function! s:Cpp_fileType(name) abort
   if a:name =~'\.hh\=$'                               | return 0
   elseif a:name =~ Cpp_FileExtension4Inlines() . '$'  | return 1
   else                                                | return 2
@@ -258,7 +258,7 @@ function! s:Cpp_fileType(name)
 endfunction
 
 " Function: Cpp_fileExtension(type) {{{4
-function! s:Cpp_fileExtension(type)
+function! s:Cpp_fileExtension(type) abort
   if a:type == 0      | return 'h'
   elseif a:type == 1  | let ret = Cpp_FileExtension4Inlines()
   else                | let ret = Cpp_FileExtension4Implementation()
@@ -271,7 +271,7 @@ endfunction
 "               expected.
 " Returns:      A filename built on the basename from <name0> and of type
 "               <type> (cf. Cpp_fileType for the value of <type>)
-function! s:Cpp_fileName(name0,type)
+function! s:Cpp_fileName(name0,type) abort
   return expand(a:name0.":r") . '.' .s:Cpp_fileExtension(a:type)
 endfunction
 
@@ -279,7 +279,7 @@ endfunction
 " Purpose:      Looks for inlining section of the class <class> in the file
 "               of type <type>
 " Returns:      The line of the section / -1 if no found
-function! s:Cpp_TestInlineFile(filename,type,class)
+function! s:Cpp_TestInlineFile(filename,type,class) abort
   if exists('g:mu_template') &&
         \ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
     " NB: g:mt_jump_to_first_markers is true by default
@@ -301,7 +301,7 @@ function! s:Cpp_TestInlineFile(filename,type,class)
   return -1
 endfunction
 
-function! s:Cpp_addInlinesInHeader(name)        " Internal use {{{4
+function! s:Cpp_addInlinesInHeader(name) abort       " Internal use {{{4
   normal! G
   call s:Cpp_emptyLine( 3 )
   call s:Cpp_bigLine( "Inlines")
@@ -319,7 +319,7 @@ function! s:Cpp_addInlinesInHeader(name)        " Internal use {{{4
   exe "normal! 4\<up>"
 endfunction
 
-function! s:Cpp_newInlineFile(name)     " Internal use {{{4
+function! s:Cpp_newInlineFile(name) abort    " Internal use {{{4
   normal! G
   call s:Cpp_bigLine( "Inlines")
   call s:Cpp_littleLine( "Avoid re-inclusion")
@@ -338,7 +338,7 @@ endfunction
 " Function: ReachInlinesZone(type) {{{4
 " Purpose:      Reach the inlines zone of a file, if the file does not
 "               exist, create it ; if the zone does not exist, create it.
-function! s:ReachInlinesZone(type)
+function! s:ReachInlinesZone(type) abort
   if s:Cpp_search4line(s:header_inlines_text, s:header_inlines_type)
     call s:Cpp_search4line(s:header_includes_text, '[-=]')
     exe "normal! 2\<down>"
@@ -360,7 +360,7 @@ function! s:ReachInlinesZone(type)
   endif
 endfunction
 
-function! s:WriteInlinePart(name)       " Internal use {{{4
+function! s:WriteInlinePart(name) abort      " Internal use {{{4
   " Class
   call s:Cpp_emptyLine( 1 )
   if s:header_inlining_type == '='
@@ -391,7 +391,7 @@ endfunction
 " Purpose:      Reach the inlining part for the specifed class.
 "               Use the different options and already pre-existant
 "               structures.
-function! Cpp_ReachInlinePart(class)
+function! Cpp_ReachInlinePart(class) abort
   " 1- look whether the part already exists
   let g:lookedin = 'nnn'
   " a- current file
