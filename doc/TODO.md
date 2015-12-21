@@ -51,9 +51,11 @@
         - [X] default constructor
         - [X] copy constructor
         - [ ] init constructor
+           - [X] No param
+           - [ ] With params
         - [X] destructor
         - [X] assignment operator
-        - [ ] copy'n'swap
+        - [X] copy'n'swap
 
 
 ### Other snippets

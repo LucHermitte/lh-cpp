@@ -15,6 +15,7 @@ VimL: let s:fn_comments.note  = [] " => empty line
 VimL: let s:fn_comments.note += ["based on copy-and-swap idiom, with copy-elision exploited"]
 VimL: let s:fn_comments.note += ["exception-safe"]
 VimL: let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "source data to be copied." } ]
+VimL: let s:fn_comments.throw = {"optional": 1}
 VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
 <+s:clsname+>& operator=(<+s:clsname+> <+s:rhs+>)
 {

@@ -4,9 +4,9 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
+" Version:	2.2.0
 " Created:      22nd Feb 2011
-" Last Update:  26th Oct 2015
+" Last Update:  21st Dec 2015
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -74,13 +74,13 @@ function! lh#dox#throw(...)
   let res = ''
   if !empty(throw)
     let res .= lh#dox#tag(throw)
-    if a:0==0 || empty(a:1) 
+    if a:0==0 || empty(a:1)
       let res = Marker_Txt(res)
     else
       let res .= a:1
     endif
   else
-    if a:0!=0 && ! empty(a:1) 
+    if a:0!=0 && ! empty(a:1)
       let res .= lh#dox#tag('throw ') . a:1
     endif
   endif
@@ -138,7 +138,7 @@ function! lh#dox#author(...)
 
   let author = lh#dev#option#get('dox_author', &ft, a:0 && !empty(a:1) ? (a:1) : '', 'bg')
   if author =~ '^g:.*'
-    if exists(author) 
+    if exists(author)
       return tag . {author}
       " return tag . {author} . Marker_Txt('')
     else
@@ -159,6 +159,31 @@ function! lh#dox#since(...)
   return tag . ' Version '.ver
 endfunction
 
+"------------------------------------------------------------------------
+" # fn_comments object
+" Function: lh#dox#new_function(brief) {{{3
+function! lh#dox#new_function(brief) abort
+  let res = {'brief': a:brief}
+  function! res.add_param(param) " {{{4
+    " dict with: "dir", "name", "text"
+    " if no "dir", but a "type" => compute "dir"
+    let name = lh#dev#naming#param(param.name)
+    let param = a:param
+    if !has_key(param, dir)
+      let param.dir = s:ParameterDirection(param.type)
+    endif
+    if !has_key(param, text)
+      let param.text = lh#marker#txt(name.'-explanations')
+    endif
+    if has_key(param, type) && lh#dev#cpp#types#IsPointer(param.type)
+      let pre += [ '`'.name.' != NULL`' . lh#marker#txt()]
+    endif
+    let self.param = += [ param ]
+  endfunction
+
+  " }}}4
+  return res
+endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
