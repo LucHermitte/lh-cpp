@@ -4,19 +4,13 @@ VimL: "TODO: support noexcept
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
-VimL: " in case the class name is already known, no need to extract it
-VimL: let s:clsname = s:Param("clsname", "")
-MuT:  if empty(s:clsname)
-VimL:   let s:clsname = INPUT("class name ?", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
-MuT:  endif
+VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: let s:how = get(s:Param("assignment-operator", {}), "how", "")
 MuT:  if s:how =~ "deleted\\|defaulted"
 <+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+>) <+lh#cpp#snippets#{s:how}()+>;
 MuT:  else
-VimL:   "FIXME: regression in :Constructor
-VimL:   "let s:use_copyandswap = len(s:Args())>=2 ? (s:Args()[0]) : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
-MuT:    let s:use_copyandswap =  s:Param('use_copy_and_swap', lh#option#get('cpp_use_copy_and_swap'))
-VimL:   let s:use_copyandswap =  s:use_copyandswap >= 0 ? s:use_copyandswap : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
+MuT:    let s:use_copyandswap0 =  s:Param('use_copy_and_swap', lh#option#get('cpp_use_copy_and_swap'))
+VimL:   let s:use_copyandswap =  lh#option#is_set(s:use_copyandswap0) ? s:use_copyandswap0 : CONFIRM("Use copy-and-swap idiom?", "Yes\nNo", 1)
 MuT:    if 1 == s:use_copyandswap
 VimL:     call s:Include("copy-and-swap","cpp", s:clsname)
 MuT:    else

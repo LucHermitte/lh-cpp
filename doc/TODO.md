@@ -8,10 +8,10 @@
 
 ## syntax highlight
 
- - [/] detect `case` without a `break`, or a `return`, or `continue`, or a
- `goto`, or `- [[fallthrough]]`
-    * `break;} case` is incorrectly recognized
-    * `default` is not recognized
+ - [ ] detect `case`
+    - [X] without a `break`, or a `return`, or `continue`, or a `goto`, or `- [[fallthrough]]`
+    - [ ] `break;} case` is incorrectly recognized
+    - [ ] `default` is not recognized
  - [ ] detect raw pointers
  - [ ] detect calls to `malloc`/`free`/...
  - [ ] detect calls to `delete` (outside destructors)
@@ -52,7 +52,7 @@
         - [X] copy constructor
         - [ ] init constructor
         - [X] destructor
-        - [ ] assignment operator
+        - [X] assignment operator
         - [ ] copy'n'swap
 
 
