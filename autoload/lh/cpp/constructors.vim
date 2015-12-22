@@ -50,13 +50,13 @@ function! s:Verbose(expr)
   endif
 endfunction
 
-function! lh#cpp#constructors#debug(expr)
+function! lh#cpp#constructors#debug(expr) abort
   return eval(a:expr)
 endfunction
 
 " # API {{{2
-" Function: s:Attributes(classname) {{{3
-function! s:Attributes(classname)
+"Function: s:Attributes(classname) {{{3
+function! s:Attributes(classname) abort
   " fetch the attributes
   let attributes = lh#dev#class#attributes(a:classname)
   " The attributes need to be sorted by their order of definition in the class
@@ -67,6 +67,8 @@ function! s:Attributes(classname)
   for attr in attributes
     let signature = attr.cmd
     let attr['fullsignature' ] = s:Regex2Sig(signature)
+    " ctags doesn't extract attribute type...
+    let attr.type = matchstr(attr.fullsignature, '^\s*\zs.\{-}\s\+\ze\S\+\s*$')
   endfor
   unlet attr
 
@@ -88,8 +90,8 @@ function! s:Attributes(classname)
   return sorted_attributes
 endfunction
 
-" # Main {{{2
-function! lh#cpp#constructors#Main(...)
+"Function: lh#cpp#constructors#Main {{{3
+function! lh#cpp#constructors#Main(...) abort
   if a:0 == 0 || a:1 == 'init'
     call lh#cpp#constructors#InitConstructor()
   elseif a:1 =~ 'assign'
@@ -99,85 +101,85 @@ function! lh#cpp#constructors#Main(...)
   endif
 endfunction
 
-" Function: lh#cpp#constructors#InitConstructor() {{{2
-function! lh#cpp#constructors#InitConstructor()
+" Function: lh#cpp#constructors#InitConstructor() {{{3
+function! lh#cpp#constructors#InitConstructor() abort
   " 1- Obtain current class name
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
   let attributes = s:Attributes(classname)
-  if exists('g:decls') | unlet g:decls | endif
-  let g:decls = attributes
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
-  " 3- Propose to select the functions to override
-  call s:Display(classname, attributes)
-  " 4- Insert them in the current class
-  " -> asynchrounous
+  if !empty(attributes)
+    " 3- Propose to select the functions to override
+    call s:Display(classname, attributes)
+    " 4- Insert them in the current class
+    " -> asynchrounous
+  else
+    " 3.bis- do it synchronously
+    let where_it_started = getpos('.')
+    let where_it_started[0] = bufnr('%')
+    call lh#cpp#constructors#_expand_selection(classname, [], [], where_it_started)
+  endif
 endfunction
 
-" Function: lh#cpp#constructors#AssignmentOperator() {{{2
-function! lh#cpp#constructors#AssignmentOperator()
+" Function: lh#cpp#constructors#AssignmentOperator() {{{3
+function! lh#cpp#constructors#AssignmentOperator() abort
   " 1- Obtain current class name
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
   let attributes = s:Attributes(classname)
-  if exists('g:decls') | unlet g:decls | endif
-  let g:decls = attributes
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
-  " 3- Insert the copy-constructor declaration
+  " 3- Insert the assignment-operator declaration
+  let params = {}
+  let params.clsname = classname
+  let params.attributes = attributes
+  " remove scope from attribute name
+  call lh#list#map_on(attributes, 'name', 'substitute(v:val, ".*::", "", "")')
   try
-    let mt_jump = g:mt_jump_to_first_markers
+    let cleanup = lh#on#exit()
+          \.restore('g:mt_jump_to_first_markers')
     let g:mt_jump_to_first_markers = 0
-    exe 'MuTemplate cpp/assignment-operator '.classname.' 0'
+    call lh#mut#expand_and_jump(0, 'cpp/assignment-operator', params)
   finally
-    let g:mt_jump_to_first_markers = mt_jump
+    call cleanup.finalize()
   endtry
 
-  " 4- Go-to its implementation and fill-it
-  " Last line inserted should be the constructor signature
-  " 4.1- goto impl, at the right place
-  GOTOIMPL
-  " 4.2- Prepare init-list code
-  let rhs = lh#dev#naming#param('rhs').'.'
-  let code_list=[]
-  for attribute in attributes
-    let attrb_name = matchstr(attribute.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
-    call add(code_list, attrb_name.' = '.rhs.attrb_name.';')
-  endfor
-
-  " 4.3- Insert the code
-  put!=code_list
-  " reindent
-  normal! =a{
-
+  " 4- Move its implementation, if any, to the right place
+  if getline('.') =~ '}$'
+    normal! %
+    MOVETOIMPL
+  endif
 endfunction
 
-" Function: lh#cpp#constructors#GenericConstructor(kind) {{{2
-function! lh#cpp#constructors#GenericConstructor(kind)
+" Function: lh#cpp#constructors#GenericConstructor(kind) {{{3
+function! lh#cpp#constructors#GenericConstructor(kind) abort
   " 1- Obtain current class name
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
   let attributes = s:Attributes(classname)
-  if exists('g:decls') | unlet g:decls | endif
-  let g:decls = attributes
+  let g:attributes = attributes
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
-  " 3- Insert the copy-constructor declaration
+  " 3- Insert the *-constructor declaration
   try
-    let mt_jump = g:mt_jump_to_first_markers
+    let cleanup = lh#on#exit()
+          \.restore('g:mt_jump_to_first_markers')
     let g:mt_jump_to_first_markers = 0
     exe 'MuTemplate cpp/'.a:kind.'-constructor'
   finally
-    let g:mt_jump_to_first_markers = mt_jump
+    call cleanup.finalize()
   endtry
 
   " 4- Go-to its implementation and fill-it
   " Last line inserted should be the constructor signature
-  " 4.1- goto impl, at the right place
+  " 4.1- goto impl is at the right place
+  " MOVETOIMPL doesn't know how to ignore initialization-list
+  " => We don't use the constructor snippets at their full capacity for now,
+  " and thus duplicate their attribute-duplication code.
   GOTOIMPL
   normal! %
   " 4.2- Prepare init-list code
@@ -186,23 +188,27 @@ function! lh#cpp#constructors#GenericConstructor(kind)
   for attribute in attributes
     let attrb_name = matchstr(attribute.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
     if a:kind == 'copy'
-      call add(init_list, attrb_name.'('.rhs.attrb_name.')')
+      call add(init_list, attrb_name.'('.lh#cpp#snippets#duplicate_param(rhs.attrb_name, attribute.type).')')
     elseif a:kind == 'default'
       call add(init_list, attrb_name.'()')
     endif
   endfor
 
   " 4.3- Insert the init-list
-  let impl_lines=[]
-  call add(impl_lines, ': '.init_list[0])
-  call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
-  put!=impl_lines
+  if !empty(init_list)
+    let impl_lines=[]
+    call add(impl_lines, ': '.init_list[0])
+    if len(init_list) > 0
+      call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
+    endif
+    put!=impl_lines
+  endif
 
 endfunction
 
 " # Internals {{{2
 " Function: lh#cpp#constructors#_complete(A,L,P) {{{3
-function! lh#cpp#constructors#_complete(A,L,P)
+function! lh#cpp#constructors#_complete(A,L,P) abort
   return ['init', 'copy', 'default', 'assign']
 endfunction
 
@@ -210,7 +216,7 @@ endfunction
 
 " ==========================[ Menu ]====================================
 " Function: s:Access(attr) {{{3
-function! s:Access(attr)
+function! s:Access(attr) abort
   if has_key(a:attr, 'access')
     if     a:attr.access == 'public'    | return '+'
     elseif a:attr.access == 'protected' | return '#'
@@ -221,13 +227,13 @@ function! s:Access(attr)
   endif
 endfunction
 
-function! s:Regex2Sig(regex)
+function! s:Regex2Sig(regex) abort
   let sig = substitute(a:regex, '/^\s*\(.\{-}\)\s*;\s*\$/', '\1', '')
   return sig
 endfunction
 
 " Function: s:AddToMenu(lines, attrs) {{{3
-function! s:AddToMenu(lines, attrs)
+function! s:AddToMenu(lines, attrs) abort
   " 1- Compute max function length
   let max_length = 0
   let attrs=[]
@@ -250,14 +256,14 @@ function! s:AddToMenu(lines, attrs)
 endfunction
 
 " Function: s:BuildMenu(declarations) {{{3
-function! s:BuildMenu(declarations)
+function! s:BuildMenu(declarations) abort
   let res = ['--abort--']
   call s:AddToMenu(res, a:declarations)
   return res
 endfunction
 
 " Function: s:Display(className, declarations) {{{3
-function! s:Display(className, declarations)
+function! s:Display(className, declarations) abort
   let choices = s:BuildMenu(a:declarations)
   " return
   let b_id = lh#buffer#dialog#new(
@@ -278,7 +284,7 @@ function! s:Display(className, declarations)
 endfunction
 
 " Function: s:PostInitDialog() {{{3
-function! s:PostInitDialog()
+function! s:PostInitDialog() abort
   if has("syntax")
     syn clear
 
@@ -307,8 +313,50 @@ function! s:PostInitDialog()
   endif
 endfunction
 
+" Function: lh#cpp#constructors#_expand_selection(results) {{{3
+function! lh#cpp#constructors#_expand_selection(classname, sig_params, init_list, where_it_started) abort
+  " 0- prepare the init-ctr signature
+  let len = lh#list#accumulate2(a:sig_params, 0, 'v:1_ + strlen(v:2_)')
+   \ + lh#encoding#strlen(a:classname) + 2*len(a:sig_params)
+   \ + 3 " ();
+  if len > &tw-&sw
+    let sig = [a:classname . '(' ]
+    call extend(sig, lh#list#transform(a:sig_params[0:len(a:sig_params)-2], [], 'v:1_ . ","'))
+    call add(sig, a:sig_params[-1].')')
+    let header_lines = sig
+  else
+    let sig = a:classname.'('. join(a:sig_params, ', ') . ')'
+    let header_lines = [substitute(sig, '\s\+', ' ', 'g')]
+  endif
+  let impl_lines       = deepcopy(header_lines)
+  let header_lines[-1] .= ';'
+
+  " 1- insert it in the .h
+  " Go back to the original buffer, and insert the built lines
+  call lh#buffer#find(a:where_it_started[0])
+  if 0==append(a:where_it_started[1]-1, header_lines)
+    exe (a:where_it_started[1]-1).',+'.(len(header_lines)-1).'normal! =='
+    call s:Verbose((a:where_it_started[1]-1).',+'.(len(header_lines)-1).'normal! ==')
+  endif
+  " TODO: auto-dox
+
+  " 2- insert the default impl (see gotoimpl) in the .cpp, don't forget the
+  " init-list
+  let impl_lines[0] = a:classname . '::' . impl_lines[0]
+  if !empty(a:init_list)
+    call add(impl_lines, ': '.a:init_list[0])
+    if len(a:init_list) > 0
+      call extend(impl_lines, lh#list#transform(a:init_list[1:], [], '", ".v:1_'))
+    endif
+  endif
+  call extend(impl_lines, [ '{', '}'])
+  let impl = join(impl_lines, "\n")
+  call lh#cpp#GotoFunctionImpl#open_cpp_file('')
+  call lh#cpp#GotoFunctionImpl#insert_impl(impl)
+endfunction
+
 " Function: lh#cpp#constructors#select(results) {{{3
-function! lh#cpp#constructors#select(results)
+function! lh#cpp#constructors#select(results) abort
   call lh#buffer#dialog#quit()
   if len(a:results.selection)==1 && a:results.selection[0]==0
     return
@@ -336,44 +384,12 @@ function! lh#cpp#constructors#select(results)
     " echomsg string(selected_virt)
 
   endfor
-  let g:results = a:results
 
 
-  " 0- prepare the init-ctr signature
-  let len = eval(lh#list#accumulate(sig_params, 'strlen', 'join(v:1_,  "+")'))
-   \ + lh#encoding#strlen(a:results.dialog.classname) + 2*len(sig_params)
-   \ + 3 " ();
-  if len > &tw-&sw
-    let sig = [a:results.dialog.classname . '(' ]
-    call extend(sig, lh#list#transform(sig_params[0:len(sig_params)-2], [], 'v:1_ . ","'))
-    call add(sig, sig_params[-1].')')
-    let header_lines = sig
-  else
-    let sig = a:results.dialog.classname.'('. join(sig_params, ', ') . ')'
-    let header_lines = [substitute(sig, '\s\+', ' ', 'g')]
-  endif
-  let impl_lines       = deepcopy(header_lines)
-  let header_lines[-1] .= ';'
-
-  " 1- insert it in the .h
-  " Go back to the original buffer, and insert the built lines
-  let where_it_started = a:results.dialog.where_it_started
-  call lh#buffer#find(where_it_started[0])
-  if 0==append(where_it_started[1]-1, header_lines)
-    exe (where_it_started[1]-1).',+'.(len(header_lines)-1).'normal! =='
-    call s:Verbose((where_it_started[1]-1).',+'.(len(header_lines)-1).'normal! ==')
-  endif
-  " todo: auto-dox
-
-  " 2- insert the default impl (see gotoimpl) in the .cpp, don't forget the
-  " init-list
-  let impl_lines[0] = a:results.dialog.classname . '::' . impl_lines[0]
-  call add(impl_lines, ': '.init_list[0])
-  call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
-  call extend(impl_lines, [ '{', '}'])
-  let impl = join(impl_lines, "\n")
-  call lh#cpp#GotoFunctionImpl#open_cpp_file('')
-  call lh#cpp#GotoFunctionImpl#insert_impl(impl)
+  let classname = a:results.dialog.classname
+  call lh#cpp#constructors#_expand_selection(a:results.dialog.classname,
+        \ sig_params, init_list,
+        \ a:results.dialog.where_it_started)
 endfunction
 
 "------------------------------------------------------------------------
