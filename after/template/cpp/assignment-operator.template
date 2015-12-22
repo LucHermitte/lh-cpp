@@ -20,6 +20,12 @@ VimL:     let s:fn_comments.brief = "Assignment operator"
 VimL:     let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "source data to be copied." } ]
 VimL:     let s:fn_comments.throw = {"optional": 1}
 VimL:     call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+> <+s:rhs+>);
+MuT:      let s:attributes = s:Param("attributes", lh#option#unset())
+MuT:      if lh#option#is_set(s:attributes) && !empty(s:attributes)
+MuT:        let s:definition = '{'.join(map(copy(s:attributes), 'lh#dev#naming#member(v:val.name)." = ".lh#cpp#snippets#duplicate_param(s:rhs.".".lh#dev#naming#member(v:val.name), v:val.type).";"'), "\n").'}'
+MuT:      else
+MuT:        let s:definition = ';'
+MuT:      endif
+<+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+> <+s:rhs+>)<+s:definition+>
 MuT:    endif
 MuT: endif

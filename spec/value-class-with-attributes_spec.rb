@@ -139,13 +139,19 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @param[in] rhs source data to be copied.
          * «@throw »
          */
-        «Test»(«Test» const& rhs);
+        «Test»(«Test» const& rhs)
+            : m_foo(rhs.m_foo)
+            , m_bar(«duplicate(rhs.m_bar)»)
+            {}
         /**
          * Assignment operator.
          * @param[in] rhs source data to be copied.
          * «@throw »
          */
-        «Test»& operator=(«Test» const& rhs);
+        «Test»& operator=(«Test» const& rhs) {
+            m_foo = rhs.m_foo;
+            m_bar = «duplicate(rhs.m_bar)»;
+        }
         /**
          * Destructor.
          * @throw Nothing
@@ -212,7 +218,10 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @param[in] rhs source data to be copied.
          * «@throw »
          */
-        «Test»(«Test» const& rhs);
+        «Test»(«Test» const& rhs)
+            : m_foo(rhs.m_foo)
+            , m_bar(«duplicate(rhs.m_bar)»)
+            {}
         /**
          * Assignment operator.
          * @param[in] rhs source data to be copied.

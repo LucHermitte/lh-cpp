@@ -4,10 +4,10 @@
 "		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:      2.1.7.
-let s:k_version = '217'
+" Version:      2.2.0.
+let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  21st Nov 2015
+" Last Update:  22nd Dec 2015
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -486,6 +486,15 @@ function! lh#cpp#snippets#build_param_list(parameters) abort
   return implParamsStr
 endfunction
 
+" Function: lh#cpp#snippets#duplicate_param(param) {{{3
+function! lh#cpp#snippets#duplicate_param(param, type) abort
+  if  lh#cpp#snippets#_this_param_requires_copy_operations(a:type)
+    return lh#fmt#printf(lh#marker#txt('duplicate(%1)'), a:param)
+  else
+    return a:param
+  endif
+endfunction
+
 " # Functions to tune mu-template class skeleton {{{2
 
 " Function: lh#cpp#snippets#new_function_list() {{{3
@@ -595,9 +604,11 @@ endfunction
 
 " Function: lh#cpp#snippets#_this_param_requires_copy_operations(attribute) {{{3
 function! lh#cpp#snippets#_this_param_requires_copy_operations(attribute) abort
-  if lh#dev#cpp#types#is_not_owning_ptr(a:attribute.type)
+  let type = type(a:attribute) == type({}) ? a:attribute.type : a:attribute
+
+  if lh#dev#cpp#types#is_not_owning_ptr(type)
     return 0
-  elseif lh#dev#cpp#types#IsPointer(a:attribute.type)
+  elseif lh#dev#cpp#types#IsPointer(type)
     return 1
   else
     " TODO: recognize non publicy copyable types

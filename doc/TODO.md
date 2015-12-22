@@ -66,6 +66,7 @@
         - [X] copy'n'swap
         - [ ] C++11
         - [ ] w/ TBW `:MuT cpp/class attributes=foo:int,#bar:string parents=Bar,-Toto`
+        - [ ] `:Constructor`
 
 
 ### Other snippets
@@ -85,3 +86,5 @@
 
  - [ ] Register options for completion & co into menus, `:Set` and `:Toggle`
  - [ ] Have lh#dev#import rely on lh#cpp#types, or the other way around
+ - [ ] `:MOVETOIMPL` doesn't work on constructors when there is an
+   initialization-list
