@@ -49,9 +49,11 @@
         - [X] init constructor
         - [X] destructor
         - [X] assignment operator
-        - [ ] copy'n'swap -> `swap`
+        - [X] copy'n'swap -> `swap`
         - [ ] `what`
         - [ ] attributes
+        - [ ] types & classes
+           - [ ] pointer means invariant
     - [ ] move contructor
     - [ ] move assignment-operator
     - [ ] Enforce «rule of all or nothing»
@@ -62,6 +64,8 @@
         - [X] destructor
         - [X] assignment operator
         - [X] copy'n'swap
+        - [ ] C++11
+        - [ ] w/ TBW `:MuT cpp/class attributes=foo:int,#bar:string parents=Bar,-Toto`
 
 
 ### Other snippets

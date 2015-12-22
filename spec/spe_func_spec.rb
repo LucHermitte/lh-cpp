@@ -223,18 +223,16 @@ RSpec.describe "Special functions", :cpp, :spe_func do
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        «Test»& operator=(«Test» rhs)
-        {
+        «Test»& operator=(«Test» rhs) {
             this->swap(rhs);
             return *this;
         }
-
         /**
          * Swap operation.
-         * @param rhs data with which content is swapped
+         * @param[in,out] other data with which content is swapped
          * @throw None
          */
-        void swap(«Test» & other);
+        void swap(«Test» & other) throw();
         EOF
     end
 
@@ -250,18 +248,16 @@ RSpec.describe "Special functions", :cpp, :spe_func do
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        «Test»& operator=(«Test» rhs)
-        {
+        «Test»& operator=(«Test» rhs) {
             this->swap(rhs);
             return *this;
         }
-
         /**
          * Swap operation.
-         * @param rhs data with which content is swapped
+         * @param[in,out] other data with which content is swapped
          * @throw None
          */
-        void swap(«Test» & other);
+        void swap(«Test» & other) throw();
         EOF
     end
 
@@ -277,18 +273,16 @@ RSpec.describe "Special functions", :cpp, :spe_func do
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        FooBar& operator=(FooBar rhs)
-        {
+        FooBar& operator=(FooBar rhs) {
             this->swap(rhs);
             return *this;
         }
-
         /**
          * Swap operation.
-         * @param rhs data with which content is swapped
+         * @param[in,out] other data with which content is swapped
          * @throw None
          */
-        void swap(FooBar & other);
+        void swap(FooBar & other) throw();
         EOF
     end
 
@@ -318,18 +312,16 @@ RSpec.describe "Special functions", :cpp, :spe_func do
            * @note based on copy-and-swap idiom, with copy-elision exploited
            * @note exception-safe
            */
-          Foo& operator=(Foo rhs)
-          {
+          Foo& operator=(Foo rhs) {
               this->swap(rhs);
               return *this;
           }
-
           /**
            * Swap operation.
-           * @param rhs data with which content is swapped
+           * @param[in,out] other data with which content is swapped
            * @throw None
            */
-          void swap(Foo & other);
+          void swap(Foo & other) throw();
       };
       EOF
     end

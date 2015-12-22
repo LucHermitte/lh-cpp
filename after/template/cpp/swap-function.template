@@ -1,0 +1,20 @@
+VimL:" swap-function File Template, Luc Hermitte <hermitte {at} free {dot} fr>, mar. 22 déc. 2015 11:34:40 CET
+VimL:" hint: void swap(T & other)
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:Include('get-class-name', 'cpp/internals')
+MuT:  let s:param_name = lh#dev#naming#param("other")
+VimL: let s:fn_comments = lh#dox#new_function("Swap operation.")
+VimL: let s:fn_comments.throw = ["None"]
+VimL: let s:fn_comments.param = [{'name': s:param_name, 'text': "data with which content is swapped", 'dir': 'in,out'}]
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
+VimL: " If parameters are known => swap them!
+MuT:  let s:attributes = s:Param("attributes", lh#option#unset())
+MuT:  if lh#option#is_set(s:attributes) && !empty(s:attributes)
+MuT:    let s:definition = "{using std::swap;\n"
+VimL:   let s:definition .= join(map(copy(s:attributes), '"swap(".lh#dev#naming#member(v:val.name).", ".s:param_name.".".lh#dev#naming#member(v:val.name).");"'), "\n")
+VimL:   let s:definition .= '}'
+MuT:  else
+MuT:    let s:definition = ';'
+MuT:  endif
+void swap(<+s:clsname+> & <+s:param_name+>) <+lh#cpp#snippets#noexcept()+><+s:definition+>

@@ -4,9 +4,9 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:	2.1.7
+" Version:	2.2.0
 " Created:	06th Nov 2007
-" Last Update:	25th Nov 2015
+" Last Update:	22nd Dec 2015
 "------------------------------------------------------------------------
 let s:version = '2.1.7'
 let s:project = 'lh-cpp'
@@ -42,6 +42,7 @@ after/template/cpp/catch.template
 after/template/cpp/cerr.template
 after/template/cpp/cin.template
 after/template/cpp/class.template
+after/template/cpp/clonable-class.template
 after/template/cpp/copy-and-swap.template
 after/template/cpp/copy-back_inserter.template
 after/template/cpp/copy-constructor.template
@@ -49,20 +50,30 @@ after/template/cpp/copy.template
 after/template/cpp/cout.template
 after/template/cpp/default-constructor.template
 after/template/cpp/destructor.template
+after/template/cpp/empty-exception-class.template
 after/template/cpp/ends_with.template
 after/template/cpp/enum.template
 after/template/cpp/enum2-impl.template
 after/template/cpp/enum2.template
 after/template/cpp/erase-remove.template
+after/template/cpp/exception-class.template
 after/template/cpp/file.template
 after/template/cpp/for-enum.template
 after/template/cpp/for-iterator.template
+after/template/cpp/for-range.template
 after/template/cpp/fori.template
 after/template/cpp/foriN.template
+after/template/cpp/getter.template
+after/template/cpp/init-constructor.template
 after/template/cpp/internals/abs-rel-shared.template
+after/template/cpp/internals/attribute.template
 after/template/cpp/internals/class-skeleton.template
 after/template/cpp/internals/formatted-comment.template
 after/template/cpp/internals/function-comment.template
+after/template/cpp/internals/function.template
+after/template/cpp/internals/get-class-name.template
+after/template/cpp/internals/includes.template
+after/template/cpp/internals/list-constructors.template
 after/template/cpp/internals/shall_explicit_defaults.template
 after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
@@ -74,11 +85,14 @@ after/template/cpp/namespace.template
 after/template/cpp/noncopyable.template
 after/template/cpp/operator-binary.template
 after/template/cpp/oss.template
+after/template/cpp/otb-sug-latex.template
+after/template/cpp/otb-sug-snippet.template
 after/template/cpp/path.template
 after/template/cpp/ptr_vector.template
+after/template/cpp/ref_setter.template
 after/template/cpp/set.template
+after/template/cpp/setter.template
 after/template/cpp/shared_ptr.template
-after/template/cpp/since.template
 after/template/cpp/singleton.template
 after/template/cpp/sort.template
 after/template/cpp/starts_with.template
@@ -86,6 +100,7 @@ after/template/cpp/static_assert.template
 after/template/cpp/stream-extractor.template
 after/template/cpp/stream-inserter.template
 after/template/cpp/string.template
+after/template/cpp/swap-function.template
 after/template/cpp/throw.template
 after/template/cpp/traits.template
 after/template/cpp/try.template
@@ -102,15 +117,14 @@ after/template/dox/file.template
 after/template/dox/function.template
 after/template/dox/group.template
 after/template/dox/html.template
+after/template/dox/ingroup.template
 after/template/dox/since.template
 after/template/dox/tt.template
-autoload/lh/cpp.vim
 autoload/lh/cpp/AnalysisLib_Class.vim
 autoload/lh/cpp/AnalysisLib_Function.vim
 autoload/lh/cpp/GotoFunctionImpl.vim
 autoload/lh/cpp/UnmatchedFunctions.vim
 autoload/lh/cpp/abs_rel.vim
-autoload/lh/cpp/brackets.vim
 autoload/lh/cpp/constructors.vim
 autoload/lh/cpp/enum.vim
 autoload/lh/cpp/ftplugin.vim
@@ -121,9 +135,17 @@ autoload/lh/cpp/scope.vim
 autoload/lh/cpp/snippets.vim
 autoload/lh/cpp/style.vim
 autoload/lh/cpp/tags.vim
+autoload/lh/cpp/types.vim
+autoload/lh/cpp.vim
 autoload/lh/dox.vim
+doc/API.md
+doc/Doxygen.md
+doc/Enums.md
+doc/TODO.md
 doc/c.html
 doc/lh-cpp-readme.txt
+doc/options.md
+doc/snippets.md
 ftplugin/c/LoadHeaderFile.vim
 ftplugin/c/c_AddInclude.vim
 ftplugin/c/c_Doxygen.vim
@@ -135,6 +157,7 @@ ftplugin/c/c_localleader.vim
 ftplugin/c/c_menu.vim
 ftplugin/c/c_mu-template_api.vim
 ftplugin/c/c_navigate_functions.vim
+ftplugin/c/c_pvs-2-qf.vim
 ftplugin/c/c_set.vim
 ftplugin/c/c_snippets.vim
 ftplugin/c/c_stl.vim
@@ -158,17 +181,21 @@ ftplugin/cpp/cpp_refactor.vim
 ftplugin/cpp/cpp_set.vim
 ftplugin/cpp/cpp_snippets.vim
 ftplugin/idl_set.vim
-lh-cpp.README
 mkVba/mk-lh-cpp.vim
 plugin/a-old.vim
 plugin/homeLikeVC++.vim
 plugin/omap-param.vim
 syntax/c-assign-in-condition.vim
+syntax/c-fallthrough-case.vim
 syntax/c.vim
-syntax/cpp-badcast.vim
+syntax/cpp-badcatch.vim
+syntax/cpp-c-cast.vim
 syntax/cpp-cxxtest.vim
 syntax/cpp-funcdef.vim
 syntax/cpp-throw-spec.vim
 syntax/cpp.vim
 tests/lh/analysis.vim
+tests/lh/omap-param.vim
 tests/lh/snippets.vim
+tests/lh/test-flavours.vim
+tests/lh/test-types.vim

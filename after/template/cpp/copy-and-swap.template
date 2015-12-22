@@ -8,8 +8,7 @@ VimL: " in case the class name is already known, no need to extract it
 VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL:"
 VimL: let s:rhs = lh#dev#naming#param("rhs")
-VimL: let s:fn_comments = { }
-VimL: let s:fn_comments.brief = "Assignment operator"
+VimL: let s:fn_comments = lh#dox#new_function("Assignment operator")
 VimL: let s:fn_comments.text  = []
 VimL: let s:fn_comments.note  = [] " => empty line
 VimL: let s:fn_comments.note += ["based on copy-and-swap idiom, with copy-elision exploited"]
@@ -17,15 +16,8 @@ VimL: let s:fn_comments.note += ["exception-safe"]
 VimL: let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "source data to be copied." } ]
 VimL: let s:fn_comments.throw = {"optional": 1}
 VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
-<+s:clsname+>& operator=(<+s:clsname+> <+s:rhs+>)
-{
+<+s:clsname+>& operator=(<+s:clsname+> <+s:rhs+>){
     this->swap(<+s:rhs+>);
     return *this;
 }
-
-VimL: let s:fn_comments = { }
-VimL: let s:fn_comments.brief = "Swap operation"
-VimL: let s:fn_comments.throw = ["None"]
-VimL: let s:fn_comments.param = [s:rhs . " data with which content is swapped"]
-VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
-void swap(<+s:clsname+> & <+lh#dev#naming#param("other")+>);
+VimL: call s:Include('swap-function', 'cpp')
