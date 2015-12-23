@@ -16,7 +16,8 @@
  - [ ] detect calls to `malloc`/`free`/...
  - [ ] detect calls to `delete` (outside destructors)
  - [ ] detect calls to `new` (C++14)
- - [X] detect C casts
+ - [ ] detect C casts
+    - [ ] ignore `void foo() const`
 
 ## snippets / wizard
 
@@ -66,7 +67,7 @@
         - [X] copy'n'swap
         - [ ] C++11
         - [ ] w/ TBW `:MuT cpp/class attributes=foo:int,#bar:string parents=Bar,-Toto`
-        - [ ] `:Constructor`
+        - [X] `:Constructor`
 
 
 ### Other snippets
