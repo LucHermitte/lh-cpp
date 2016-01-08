@@ -51,7 +51,7 @@ endfunction
 " std::shared_ptr
 " # Fetch information
 
-" Function: lh#cpp#types#get_info(type [, tpl options]) {{{3
+" Function: lh#cpp#types#get_info(type [, default-value]) {{{3
 " TODO: support also std::vector
 function! lh#cpp#types#get_info(type, ...) abort
   let res = get(s:types, a:type, a:0 ? a:1 : {"type" : a:type, "name" : a:type, 'unknown':1})
