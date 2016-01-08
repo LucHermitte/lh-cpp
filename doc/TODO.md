@@ -24,7 +24,7 @@
 ### class wizard
 
  - [ ] Doc!!
-    - [ ]  Options
+    - [X]  Options
     - [ ]  Snippets
 
  - [ ] Class kinds
