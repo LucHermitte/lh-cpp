@@ -1,7 +1,5 @@
 ## lh-cpp Options
 
-`(bg):cpp_use_copy_and_swap`
-
 ### Contents
 
   * [Options types](#options-types)
@@ -10,6 +8,7 @@
       * [Project-wise options with default: `(bg):`_{option-name}_](#project-wise-options-with-default-bg_option-name_)
       * [[lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bg):`_[{filetype}__]{option-name}_](#lh-dev-optionshttpsgithubcomluchermittelh-devoptions-1-bg_filetype__option-name_)
   * [Option list](#option-list)
+    * [`(bg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`](#bgcpp_always_a_destructor_when_there_is_a_pointer_attribute)
     * [`(bg):cpp_std_flavour` and `$CXXFLAGS`](#bgcpp_std_flavour-and-cxxflags)
     * [`(bg):({ft}_)FunctionPosArg`, `(bg):({ft}_)FunctionPosition`](#bgft_functionposarg-bgft_functionposition)
     * [`(bg):ProjectVersion`](#bgprojectversion)
@@ -24,8 +23,18 @@
     * [`(bg):cpp_noexcept`](#bgcpp_noexcept)
     * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
     * [`(bg):cpp_explicit_default`](#bgcpp_explicit_default)
+    * [`(bg):cpp_make_ptr`](#bgcpp_make_ptr)
+    * [`(bg):cpp_noexcept`](#bgcpp_noexcept)
+    * [`(bg):cpp_return_ptr_type`](#bgcpp_return_ptr_type)
     * [`(bg):cpp_root_exception`](#bgcpp_root_exception)
+    * [`(bg):cpp_use_copy_and_swap`](#bgcpp_use_copy_and_swap)
     * [`(bg):cpp_use_nested_namespaces`](#bgcpp_use_nested_namespaces)
+  * [`g:c_no_assign_in_condition`](#gc_no_assign_in_condition)
+  * [`g:c_no_hl_fallthrough_case`](#gc_no_hl_fallthrough_case)
+  * [`g:cpp_no_catch_by_reference`](#gcpp_no_catch_by_reference)
+  * [`g:cpp_no_hl_c_cast`](#gcpp_no_hl_c_cast)
+  * [`g:cpp_no_hl_funcdef`](#gcpp_no_hl_funcdef)
+  * [`g:cpp_no_hl_throw_spec`](#gcpp_no_hl_throw_spec)
     * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_commentleadingchar)
     * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_tagleadingchar)
     * [`(bg):({ft}_)dox_author_tag`](#bgft_dox_author_tag)
@@ -66,6 +75,17 @@ Their default value can be set in the `.vimrc`, but its best to set them from a
 ##### [lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bg):`_[{filetype}__]{option-name}_
 
 ### Option list
+
+#### `(bg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`
+Boolean option that enforces the expansion of a destructor in classes that have
+pointer attributes, even when it isn't required.
+
+**Default value:** 0 (false)
+
+**See:**
+  * [`lh#cpp#snippets#_this_param_requires_a_destructor`](APID.md#lhcppsnippets_this_param_requires_a_destructor) which is used in turn by ...
+  * [`lh#cpp#snippets#requires_destructor`](APID.md#lhcppsnippetsrequires_destructor) which is used in turn by ...
+  * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template)
 
 #### `(bg):cpp_std_flavour` and `$CXXFLAGS`
 These options are exploited by [C++ flavour decoding functions](API.md#c++-flavour)
@@ -129,9 +149,45 @@ Default values to all: 1 (true)
 #### `(bg):accessor_comment_get`, `(bg):accessor_comment_set`, `(bg):accessor_comment_ref`
 Strings to customize the comments inserted on `:ADDATTRIBUTE`.
 
-`"%a"` will be substituted by the name of the attribute.
+`"%a"` will be substituted with the name of the attribute.
 
 #### `(bg):({ft}_)alternateSearchPath`
+Tells how to alternate between a source file and a header file.
+
+Default value: `'sfr:../source,sfr:../src,sfr:../include,sfr:../inc'`
+
+According to alternate.vim documentation:
+
+A path with a prefix of `"wdr:"` will be treated as relative to the working
+directory (i.e. the directory where vim was started.) A path prefix of `"abs:"`
+will be treated as absolute. No prefix or `"sfr:"` will result in the path
+being treated as relative to the source file (see sfPath argument).
+
+A prefix of `"reg:"` will treat the pathSpec as a regular expression
+substitution that is applied to the source file path. The format is:
+
+```
+reg:<sep><pattern><sep><subst><sep><flag><sep>
+```
+
+- `<sep>` seperator character, we often use one of `[/|%#]`
+- `<pattern>` is what you are looking for
+- `<subst>` is the output pattern
+- `<flag>` can be `g` for global replace or empty
+
+EXAMPLE: `'reg:/inc/src/g/'` will replace every instance of `'inc'` with
+`'src'` in the source file path. It is possible to use match variables so you
+could do something like:
+```
+'reg:|src/\([^/]*\)|inc/\1||'
+```
+(see `help :substitute`, `help pattern` and `help sub-replace-special` for more
+details)
+
+NOTE: a.vim uses `,` (comma) internally so DON'T use it in your regular
+expressions or other pathSpecs unless you update the rest of the a.vim code to
+use some other seperator.mentation:
+
 #### `(bg):({ft}_)begin_end_style`
 Tells which style to use to generate a couple of calls to `begin()`/`end()`:
 - "`c++98`": -> `container.begin()`
@@ -181,14 +237,24 @@ String format option (for
 
 #### `(bg):cpp_noncopyable_class`
 Policy option that is used to tell how classes are made non-copyable.
-  * by inheriting from a dedicated noncopyable class
+  * by inheriting from a dedicated noncopyable class.
+  ```
+  {"name": "ITK::NonCopyable", "include": "<itkNoncopyable.h>"}
+  ```
+  If the class is known by the [type database](types.md) , there is no need to
+  explicit
+  which file shall be included:
+  ```
+  {"name": "boost:noncopyable"}
+  ```
   * by explictly deleting copy operations (with `= delete` in C++11, or with
     declared but undefined private copy operations). This done by setting the
     option to an empty string.
 
-**Default value:** `{"name": "boost:noncopyable", "include": "<boost/noncopyable.hpp>"}`
+**Default value:** `{"name": "boost:noncopyable"}`
 
 **See:**
+  * [Type database](types.md)
   * [`cpp/base-class.template`](snippets.md#cppbaseclass.template)
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template)
 
@@ -199,14 +265,62 @@ is detected.
 **Warning:** For now, this option has priority over
 [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class). i.e. deleted copy operations will still appear even if the class inherits from a _non-copyable_ class.
 
-**Default value:** 0 (false)
+**Default value:** undefined (=> ask the user)
 
 **See:**
   * [`lh#cpp#snippets#shall_explicit_defaults()`](API.md#lhcppsnippetsshall_explicit_defaults) which encapsulates its use.
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template) which uses its result
 
+#### `(bg):cpp_make_ptr`
+String format option for [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib)).
+
+It tells how pointers are best created. Used only from [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) snippet.
+
+**Default Value**:
+ * C++14: `std::make_unique(%3)`
+ * C++11: `std::unique_ptr<%2>(new %2(%3))`
+ * C++98: `std::auto_ptr<%1>(new %2(%3))`
+
+**See:**
+ * [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) which
+   uses it
+ * [`(bg):cpp_return_ptr_type`](#bgcpp_return_ptr_type)
+
+#### `(bg):cpp_noexcept`
+String format option (for
+[`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
+
+**Default Value:** `override` in C++11, `/* override */` in C++98
+
+**See:**
+  * [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
+
+#### `(bg):cpp_return_ptr_type`
+String format option for `printf()` (TODO: migrate to [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))).
+
+It tells how pointers are best returned from functions. Used only from [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) snippet.
+
+**Default Value**:
+ * C++11: `std::unique_ptr<>`
+ * C++98: `std::auto_ptr<>`
+
+**See:**
+ * [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) which
+   uses it
+ * [`(bg):cpp_make_ptr`](#bgcpp_make_ptr)
+
 #### `(bg):cpp_root_exception`
 TDB
+
+#### `(bg):cpp_use_copy_and_swap`
+Boolean option that suggest to use copy-and-swap idiom when expanding
+assignment-operator snippet directly, or indirectly through value classes snippets.
+
+**Default value:** 0 (false)
+
+**See:**
+  * [`cpp/assignment-operator.template`](snippets.md#cppassignment-operator.template) which uses it directly
+  * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template) which uses it indirectly
 
 #### `(bg):cpp_use_nested_namespaces`
 Boolean option that enables the generation of _nested_ namespaces in C++17

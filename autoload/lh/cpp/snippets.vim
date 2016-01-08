@@ -392,7 +392,7 @@ endfunction
 
 " Function: lh#cpp#snippets#return_ptr_type(type) {{{3
 function! lh#cpp#snippets#return_ptr_type(type) abort
-  let return_type = lh#option#get('cpp_return_type')
+  let return_type = lh#option#get('cpp_return_ptr_type')
   let args = empty(a:000) ? '' : a:1
   if lh#option#is_set(return_type)
     return printf(return_type, a:type)
