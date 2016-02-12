@@ -20,11 +20,11 @@
 " ========================================================================
 " {{{1 Syntax definitions
 "
-" {{{2 Enforce catch by reference
+" {{{2 Don't assign in conditions
 if !get(g:, "c_no_assign_in_condition", 0)
 
-  syn match cAssignInConditionBad  '\(\s*if\_s*([^=!<>]*\)\@<==[^=][^,)]*'
-  syn match cAssignInConditionRare '\(\s*while\_s*([^=!<>]*\)\@<==[^=][^,)]*'
+  syn match cAssignInConditionBad  '\(\<if\_s*([^=!<>]*\)\@<==[^=][^,)]*'
+  syn match cAssignInConditionRare '\(\<while\_s*([^=!<>]*\)\@<==[^=][^,)]*'
 
   hi def link cAssignInConditionBad    SpellBad
   hi def link cAssignInConditionRare   SpellRare
@@ -34,5 +34,6 @@ endif
 " ========================================================================
 " {{{1 Some mappings
 
+" }}}1
 " ========================================================================
 " vim: set foldmethod=marker:
