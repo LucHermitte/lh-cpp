@@ -62,7 +62,7 @@
       * [cpp/abs-rel](#cppabs-rel)
       * [cpp/abstract-class](#cppabstract-class)
       * [cpp/base-class](#cppbase-class)
-      * [cpp/base-class-non-virtuam](#cppbase-class-non-virtuam)
+      * [cpp/base-class-non-virtual](#cppbase-class-non-virtual)
       * [cpp/class](#cppclass)
       * [cpp/empty-exception-class](#cppempty-exception-class)
       * [cpp/enum](#cppenum)
@@ -146,7 +146,7 @@ for («Enum»::type «exception_type»(«exception_args»)=«Enum»::type()
 #### cpp/for-iterator
 **Produces:**
 ```C++
-for («clsname»::«const_»iterator «b»=«code».begin(), «exception_type»(«exception_args»)=«code».end()
+for («clsname»::«const_»iterator «b»=«cont»begin(), «exception_type»(«exception_args»)=«cont».end()
     ; «b»!=«exception_type»(«exception_args»)
     ; ++«b»)
 {
@@ -158,7 +158,7 @@ for («clsname»::«const_»iterator «b»=«code».begin(), «exception_type»(
   1. The selection can be surrounded to become the loop code
 
 **Notes:**
-  *  Container name («code»), and iterators names («b» and «exception_type»(«exception_args»)) are asked to the end user
+  *  Container name («cont»), and iterators names («b» and «exception_type»(«exception_args»)) are asked to the end user
 
 #### cpp/for-range
 **Produces:**
@@ -175,6 +175,9 @@ for («type» «elem» : «range») {
 
 **Surround:**
   1. The selection can be surrounded to become the loop code
+
+**To do:**
+  * Have _type_ default to nothing in C++17
 
 #### cpp/fori
 **Produces:**
@@ -217,12 +220,12 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * If the namespace parameter is `foo::bar`, this snippet produces two nested
     namespace definitions.
   * If C++17 flavour is selected, and `(bg):cpp_use_nested_namespaces` is true,
-    then C++17 a _nested namespace_ will be used.
+    then a C++17 _nested namespace_ will be used.
 
 #### cpp/throw
 **Produces:**
-  * `throw «exception_type»(«exception_args»);` (within code context)
-  * or `@throw` (within Doxygen comments)«»
+  * `throw «exception_type»(«exception_args»);«»` (within code context)
+  * or `@throw «exception_type»«»` (within Doxygen comments)
 
 **Parameters:**
   * `exception_text`, default: «text»
@@ -233,9 +236,6 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
 
 **Also includes:**
   * `<stdexcept>` if `exception_type` starts with `std::`
-
-**Variation Points:**
-  * [`cpp/throw`](#cppthrow)
 
 #### cpp/try
 **Produces:**
@@ -335,7 +335,7 @@ while(std::getline(«stream»,«line»)) {
   1. The selection can be surrounded to become the value type
 
 **Also includes:**
-  * lh#dev#import#add("<boost/ptr_container/ptr_vector.hpp>")
+  * `<boost/ptr_container/ptr_vector.hpp>`
 
 #### cpp/set
 **Produces:** `std::set<«type»> «»`
@@ -344,7 +344,7 @@ while(std::getline(«stream»,«line»)) {
   1. The selection can be surrounded to become the value type
 
 **Also includes:**
-  * <set>
+  * `<set>`
 
 #### cpp/shared_ptr
 **Produces:**
@@ -409,7 +409,7 @@ while(std::getline(«stream»,«line»)) {
   1. The selection can be surrounded to become the «assertion»
 
 **Also includes:**
-  * `<assert.h>`
+  * `<assert.h>` in C, `<cassert>` in C++
 
 #### c/rand_init
 **Produces:** `srand(time(NULL));`
@@ -640,19 +640,25 @@ BOOST_STATIC_ASSERT(cond)
 **Produces:** `«clsname»& operator=(«clsname» const&);`
 
 **Parameters:**
-  1. «clsname», the class name, default: automatically deduced by
-    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
-  2. `«use_copy_and_swap»`: boolean, default: asked to the end-user
-  * "copy-constructor": (dictionary)
+  1. `"clsname"`, the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope), «clsname» otherwise
+  2. `"use_copy_and_swap"`: boolean, default: asked to the end-user
+  * `"copy-constructor"`: (dictionary)
     * "visibility": *"public"*/"protected"/"private"
     * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [`(bg):cpp_use_copy_and_swap`](#bgcpp_use_copy_and_swap)
 
 **Variation Points:**
   * [`cpp/copy-and-swap`](#cppcopy-and-swap) snippet, if the idiom is used
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
+
+**Relies on:**
+  * [`cpp/copy-and-swap`](#cppcopy-and-swap)
+  * [`cpp/internals/get-class-name`](#cppinternalsget-class-name)
+  * [`cpp/internals/function-comment`](#cppinternalsfunction-comment)
 
 **TODO:**
   * Detect C++11 to insert `noexcept` (through a variation point
@@ -686,8 +692,8 @@ void swap(T & other);
 ```
 
 **Parameters:**
-  1. «clsname», the class name, default: automatically deduced by
-    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
+  1. `"clsname"`, the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope), «clsname» otherwise
 
 **Options:**
   * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
@@ -704,9 +710,9 @@ void swap(T & other);
 **Produces:** `T(T const&);`
 
 **Parameters:**
-  1. «clsname», the class name, default: automatically deduced by
-    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
-  * "copy-constructor": (dictionary)
+  1. `"clsname"`, the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope), «clsname» otherwise
+  * `"copy-constructor"`: (dictionary)
     * "visibility": *"public"*/"protected"/"private"
     * "how": *""*/"deleted"/"defaulted"
 
@@ -726,9 +732,9 @@ void swap(T & other);
 **Produces:** `T();`
 
 **Parameters:**
-  1. «clsname», the classname, default: automatically deduced by
-    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
-  * "default-constructor": (dictionary)
+  1. `"clsname"`, the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope), «clsname» otherwise
+  * `"default-constructor"`: (dictionary)
     * "visibility": *"public"*/"protected"/"private"
     * "how": *""*/"deleted"/"defaulted"
 
@@ -747,10 +753,10 @@ void swap(T & other);
 **Produces:** `«virtual »~T();`
 
 **Parameters:**
-  1. «clsname», the class name, default: automatically deduced by
-    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope)
-  2. «`is_virtual`»: boolean, default: «virtual »
-  * "copy-constructor": (dictionary)
+  1. `"clsname"`, the class name, default: automatically deduced by
+    [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope), «clsname» otherwise
+  2. `"is_virtual"`: boolean, default: «virtual »
+  * `"copy-constructor"`: (dictionary)
     * "visibility": *"public"*/"protected"/"private"
     * "how": *""*/"deleted"/"defaulted"/"pure"
 
@@ -768,8 +774,8 @@ void swap(T & other);
 ```
 
 **Parameters:**
-  * «operator»: binary operation name, default: «X»
-  * «clsname», the class name, default: automatically deduced by
+  * `"operator"`: binary operation name, default: «X»
+  * `"clsname"`, the class name, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#search_closest_class`](API.md#lhcppanalysislib_classsearch_closest_class)
 
 **Options:**
@@ -799,6 +805,8 @@ void swap(T & other);
 **Note:** Unlike other snippets, class patterns are often under a BSL license
 
 #### cpp/abs-rel
+TBD
+
 #### cpp/abstract-class
 **Produces:** A base class to inherit from with:
  * A virtual pure public destructor
@@ -815,6 +823,7 @@ void swap(T & other);
     particular:
     * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
     * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+    * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
 
 **Relies on:**
   * [`cpp/base-class`](#cppbase-class)
@@ -840,7 +849,7 @@ void swap(T & other);
 **Relies on:**
   * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
-#### cpp/base-class-non-virtuam
+#### cpp/base-class-non-virtual
 **Produces:** A base class to inherit from with:
  * A protected non-virtual destructor
  * A protected default constructor (unless specified otherwise)
