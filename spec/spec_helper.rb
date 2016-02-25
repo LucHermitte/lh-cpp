@@ -8,15 +8,22 @@ require 'support/vim_matchers'
 
 # SimpleCov.start
 
+def Vimrunner.runtime(script)
+    script_path = Path.new(script)
+    command("runtime #{script_path}")
+end
+
+
 Vimrunner::RSpec.configure do |config|
   config.reuse_server = true
 
   vim_plugin_path = File.expand_path('.')
-  vim_flavor_path   = ENV['HOME']+'/.vim/flavors'
+  vim_flavor_path = ENV['HOME']+'/.vim/flavors'
 
   config.start_vim do
-    # vim = Vimrunner.start_gvim
-    vim = Vimrunner.start
+    vim = Vimrunner.start_gvim
+    # vim = Vimrunner.start
+    
     vim.add_plugin(vim_flavor_path, 'bootstrap.vim')
     vim.prepend_runtimepath(vim_plugin_path+'/after')
     vim.prepend_runtimepath(vim_plugin_path)
