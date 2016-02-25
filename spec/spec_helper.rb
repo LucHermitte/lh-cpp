@@ -8,9 +8,13 @@ require 'support/vim_matchers'
 
 # SimpleCov.start
 
-def Vimrunner.runtime(script)
-    script_path = Path.new(script)
-    command("runtime #{script_path}")
+module Vimrunner
+  class Client
+    def self.runtime(script)
+        script_path = Path.new(script)
+        command("runtime #{script_path}")
+    end
+  end
 end
 
 
