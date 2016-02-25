@@ -8,17 +8,17 @@ VimL:    " echomsg "-->".string(a:doc)
 VimL:    let lead = lh#dox#comment_leading_char(). " "
 VimL:    let lines = []
 VimL:    for item in a:doc
-VimL:        let text = has_key(item, "text")?(item.text):""
+VimL:        let text = get(item, 'text', '')
 VimL:        if has_key(item,"tag")
 VimL:           " try to use the lh#dox#{tag}() function if it exists
 VimL:           if (item.tag) == "param"
 VimL:               let line = lh#dox#{item.tag}(item)
-VimL:           elseif exists("*lh#dox#".(item.tag)) 
+VimL:           elseif exists("*lh#dox#".(item.tag))
 VimL:               let line = lh#dox#{item.tag}(text)
 VimL:           else
 VimL:               let line = lh#dox#tag(item.tag) . " " . text
 VimL:           endif
-VimL:        elseif has_key(item, "license") 
+VimL:        elseif has_key(item, "license")
 VimL:            let license = s:GetTemplateLines(item.license, "license/text")
 VimL:            let pat_not_text = '\c\(^'.s:Command('').'\|'.s:Special('').'\)'
 VimL:            call map(license, "v:val =~ pat_not_text ? (v:val) : lead.v:val")
@@ -36,9 +36,11 @@ VimL:        if has_key(item,"tag") && item.tag == "ingroup"
 VimL:            let s:content.lines[s:content.crt-1] .= line
 VimL:        elseif (line!~'^\s*$') " empty lines produce nothing
 VimL:            " Use "\n" as {text} to force an empty line
-VimL:            let lines += [line=="\n" ? lead : lead.line] 
+VimL:            let lines += [line=="\n" ? lead : lead.line]
 VimL:        endif
 VimL:    endfor
+VimL:    "trim trailing whitespaces
+VimL:    call map(lines, "substitute(v:val, ' *$', '', '')")
 VimL:    call s:Inject(lines)
 VimL: endfunction
 MuT: if lh#dev#option#get("template_expand_doc", &ft, 1)

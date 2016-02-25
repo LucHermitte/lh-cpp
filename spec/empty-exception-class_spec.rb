@@ -27,6 +27,11 @@ RSpec.describe "C++ empty-exception class wizard", :empty_exception, :cpp, :clas
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param «ctr-parameters» «»
+         * «@throw »
+         */
         «Test»(«ctr-parameters»);
     };
     EOF

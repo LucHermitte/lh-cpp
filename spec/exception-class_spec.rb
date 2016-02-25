@@ -28,6 +28,11 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param «ctr-parameters» «»
+         * «@throw »
+         */
         «Test»(«ctr-parameters»);
         virtual char const* what() const throw() /* override */;
     };
@@ -81,6 +86,11 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param «ctr-parameters» «»
+         * «@throw »
+         */
         «Test»(«ctr-parameters»);
         virtual char const* what() const throw() /* override */;
     };
@@ -96,6 +106,11 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     {
     public:
 
+        /**
+         * Init constructor.
+         * @param «ctr-parameters» «»
+         * «@throw »
+         */
         «Test»(«ctr-parameters»);
         virtual char const* what() const throw() /* override */;
     };

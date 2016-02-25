@@ -272,6 +272,11 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~child();
+        /**
+         * Init constructor.
+         * @param «ctr-parameters» «»
+         * «@throw »
+         */
         child(«ctr-parameters»);
         virtual std::auto_ptr<base> clone() const /* override */ {
             return std::auto_ptr<base>(new child(*this));

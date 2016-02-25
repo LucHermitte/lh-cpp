@@ -1,22 +1,22 @@
 VimL:" init-constructor File Template, Luc Hermitte, 30th Nov 2015
 VimL:" hint: Constructor(parameters): m_attributes(params){}
-VimL: let s:value_start  = '¡'
-VimL: let s:value_end    = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
 VimL: " in case the class name is already known, no need to extract it
-VimL: let s:clsname = s:Param("clsname", "")
-MuT:  if empty(s:clsname)
-VimL:   let s:clsname = INPUT("class name ?", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
-MuT:  endif
+VimL: call s:Include('get-class-name', 'cpp/internals')
 MuT:  let s:parameters = s:Param("parameters", lh#option#unset())
+MuT:  let s:fn_comments = lh#dox#new_function("Init constructor.")
+VimL: let s:fn_comments.throw = {"optional": 1}
+VimL: " let s:fn_comments.text  = []
 MuT:  if lh#option#is_set(s:parameters)
-MuT:    "let s:attributes = map(copy(s:parameters), 'lh#dev#naming#member(v:val)')
 MuT:    let s:parameterList = lh#cpp#snippets#build_param_list(s:parameters)
 MuT:    let s:definition = (empty(s:parameters)? "" : (len(s:parameters)>1?"\n": "").": ").join(map(copy(s:parameters), 'lh#dev#naming#member(v:val.name)."(".lh#dev#naming#param(v:val.name).")"'), "\n, ").'{}'
+VimL:   for param in s:parameters | call s:fn_comments.add_param(param) | unlet param | endfor
 MuT:  else
 MuT:    let s:parameterList = lh#marker#txt('ctr-parameters')
 MuT:    let s:definition = ';'
+VimL:   let s:fn_comments.param = [lh#marker#txt('ctr-parameters'). ' ' . lh#marker#txt()]
 MuT:  endif
+VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
 <+s:clsname+>(<+s:parameterList+>)<+s:definition+>
