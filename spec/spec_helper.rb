@@ -10,7 +10,7 @@ require 'support/vim_matchers'
 
 module Vimrunner
   class Client
-    def self.runtime(script)
+    def runtime(script)
         script_path = Path.new(script)
         command("runtime #{script_path}")
     end
