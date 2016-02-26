@@ -57,7 +57,7 @@ Vimrunner::RSpec.configure do |config|
     vim.runtime('plugin/common_brackets.vim') # Brackets
     vim.runtime('plugin/bracketing.base.vim') # !mark!
     vim.command('set enc=utf-8')
-    vim.command('SetMarker <+ +>')
+    #vim.command('SetMarker <+ +>')
 
     # mu-template
     mu_template_path = File.expand_path('../../../mu-template@lh', __FILE__)
