@@ -86,12 +86,15 @@ The exact style (Alman, Stroustroup, ...) regarding whether brackets are on a
 new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://github.com/LucHermitte/lh-dev#formatting-of-brackets-characters).
 
 #### Miscellaneous shortcuts
+Note: in all the following mappings, `,` is actually the localleader that
+lh-cpp sets to the comma characcter if it isn't set already.
+
   * `tpl` expands into `template <<cursor>>«»` ;
   * `<m-t>` inserts `typedef`, or `typename` depending on what is before the cursor ;
   * `<m-r>` inserts `return`, and tries to correctly place the semicolon, and a placeholder, depending on what follows the cursor ;
   * `<c-x>be`, `<c-x>rbe` replace `(foo<cursor>)` with `(foo.begin(),foo.end()<cursor>)` (or `rbegin`/`rend`) ;
   * `<c->se`: attempt to fill-in a `switch-case` from an enumerated type ;
-  * `,sc` | `,dc` | `,rc` | `,cc` surround the selection with ; `static_cast<<cursor>>(<selection>)`, `dynamic_cast`, `reinterpret_cast`, or `const_cast` ;
+  * `,sc` | `,dc` | `,rc` | `,cc` | `,lc` surround the selection with ; `static_cast<<cursor>>(<selection>)`, `dynamic_cast`, `reinterpret_cast`, `const_cast`, or `boost::lexical_cast` ;
   * `,,sc` | `,,dc` | `,,rc` | `,,cc` try to convert the C-cast selected into the C++-cast requested ;
   * `#d` expands into `#define`, `#i` into `#ifdef`, `#e` into `endif`, `#n` into `#include` ;
   * `,0` surrounds the selected lines with `#if 0 ... #endif` ;
