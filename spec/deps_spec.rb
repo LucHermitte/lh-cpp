@@ -7,6 +7,11 @@ RSpec.describe "C++ check dependencies are loaded", :cpp, :deps do
   let (:filename) { "test.cpp" }
 
   before :each do
+    # expect(vim.echo('&enc')).to eq 'utf-8'
+    # vim.command('let b:marker_open = "\u00AB"')
+    # vim.command('let b:marker_close = "\u00BB"')
+    # expect(vim.echo('b:marker_open')).to eq '«'
+    # expect(vim.echo('lh#marker#open()')).to eq '«'
     vim.command('filetype plugin on')
     vim.command("file #{filename}")
     vim.set('ft=cpp')

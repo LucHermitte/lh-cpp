@@ -7,9 +7,11 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
   let (:filename) { "test.cpp" }
 
   before :each do
+    expect(vim.echo('&enc')).to eq 'utf-8'
     vim.command('filetype plugin on')
     vim.command("file #{filename}")
     vim.set('ft=cpp')
+    vim.command('set fenc=utf-8')
     vim.set('expandtab')
     vim.set('sw=4')
     vim.command('silent! unlet g:cpp_explicit_default')

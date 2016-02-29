@@ -1,5 +1,5 @@
-*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.0.0)
-                        For Vim version 7.x.    Last change: 16th Mar 2015
+*lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.2.0)
+                        For Vim version 7.x.    Last change: 28th Feb 2016
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -60,20 +60,20 @@ Features~
     Vim-options~
         'formatoptions' is set `to' `croql'
         'cindent'       is set.
-        'cinoptions'    is set to ``g0,t0''
-                                (``g0,t0,h1s'' for C++ with |cpp_set.vim|).
+        'cinoptions'    is set to `g0,t0`
+                                (`g0,t0,h1s` for C++ with |cpp_set.vim|).
         'define'        is set to recognize defines and constants.
-        'comments'      is set to ``sr:/*,mb:*,exl:*/,://''
-        'isk'           is completed with ``#'', thus ``#if'' is considered to
-                        be a keyword, and looses ``-'' this ``ptr->foo'' is
+        'comments'      is set to `sr:/*,mb:*,exl:*/,://`
+        'isk'           is completed with `#`, thus `#if` is considered to
+                        be a keyword, and looses `-` this `ptr->foo` is
                         correctly separated.
         'ch'            is set to 2.
         'showmode'      is unset.
-        'dictionary'    is completed with ``{rtp}/ftplugin/c/word.list''.
-        'complete'      is completed with ``k'', and looses ``i'' (to prevent
+        'dictionary'    is completed with `{rtp}/ftplugin/c/word.list`.
+        'complete'      is completed with `k`, and looses `i` (to prevent
                         interminable header-file parsing)
-        'localleader'   is set to ``,'', unless it is already defined.
-        'suffixesadd'   is completed with ``.h'' and ``.c''.
+        'localleader'   is set to `,`, unless it is already defined.
+        'suffixesadd'   is completed with `.h` and `.c`.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                         *brackets-for-C*
@@ -95,7 +95,7 @@ Options:
     and many more that are pointless here.
 
 Mappings defined in this particular configuration:
-    |!mark!|    inserts a |marker| -- default: «»
+    |!mark!|    inserts a |marker| -- default: ??
     |!jump!|    jumps to the next marker
     |!jumpB!|   jumps to the previous marker
     |<M-Ins>|   shortcut to !mark!    ; can be redefined
@@ -112,8 +112,8 @@ Mappings defined in this particular configuration:
     <M-F9>  toggles the value of |[bg]:usemarks| ; requires |Triggers.vim|
 
     <       expands into <!cursor!>!mark! if the opening angle-bracket
-        immediatelly follows ``#include'', a C++ cast, ``template'' or
-        ``typename''. Otherwise, it is not expanded.
+        immediatelly follows `#include`, a C++ cast, `template` or
+        `typename`. Otherwise, it is not expanded.
 
  n&vmap:
     {, (, '', "", <localleader>[
@@ -206,13 +206,13 @@ Mapping: ~
         switch (var)
         {
             case YES:
-                «YES-code»;
+                ?YES-code?;
                 break;
             case NO:
-                «NO-code»;
+                ?NO-code?;
                 break;
             default:
-                «default-code»;
+                ?default-code?;
                 break;
         }
 
@@ -261,7 +261,7 @@ License:    The generated code is under license exception to GPLv3
 
 Mappings and abbreviations defined: [always buffer-relative]
  abbr: namespace namespace {\n} + markers and cursor pos.    *C_namespace*
-       expanded only in it does not follow ``using''
+       expanded only in it does not follow `using`
  abbr: try    try{\n}catch(){\n} + markers and cursor pos.   *C_try*
  abbr: catch  catch(){\n}    + markers and cursor positioned *C_catch*
  abbr: pub    public:                                        *C_pub*
@@ -280,8 +280,18 @@ Mappings and abbreviations defined: [always buffer-relative]
  imap: <c-x>be                                               *Ci_CTRL-X_be*
  imap: <c-x>rbe                                              *Ci_CTRL-X_rbe*
         Duplicates the text within parenthesis, add a comma between the two
-        occurrences, and append '.begin()' and '.end()' (or 'rbegin()',
-        'rend()') to each.
+        occurrences, and append `.begin()` and `.end()` (or `rbegin()`,
+        `rend()`) to each.
+        Depending of the option *[bg]:({ft}_)begin_end_style* , the function
+        used could be member functions, or free unqualified (or not)
+        functions. Possible values are:
+        - `c++98` -> ``%1.%2()`,` default in C++98
+        - `std`   -> ``std::%2(%1)`,` default in C++11 (|lh#cpp#use_cpp11()|)
+        - `boost` -> ``boost::%2(%1)`,` default in C++11 (|lh#cpp#use_cpp11()|)
+        - `adl`   -> ``%2(%1)`,` default in C++11 (|lh#cpp#use_cpp11()|)
+        With %1 being replaced with the container, and %2 with `begin` or
+        `end`.
+
 
  imap: /*<space>    /** */!mark!                             *C++_comments*
  imap: /*!          /**\n*/!mark!
@@ -294,18 +304,19 @@ Mappings and abbreviations defined: [always buffer-relative]
         The current line (/visual selection) is used as the formal parameter
         of the catch-block. It is also done in respect of |[bg]:usemarks|.
 
-                                                *n_,dc* *n_,rc* *n_,sc* *n_,cc*
-                                                *v_,dc* *v_,rc* *v_,sc* *v_,cc*
- n&vmap: <localleader>dc, rc, sc, cc
-        Insert ``dynamic_cast'', ``reinterpret_cast'', ``static_cast'' or
-        ``const_cast'', the selected text is used as the expression to
-        coercise. The cursor is placed between the angle brackets.
+                                                *n_,dc* *n_,rc* *n_,sc* *n_,cc* *n_,lc*
+                                                *v_,dc* *v_,rc* *v_,sc* *v_,cc* *v_,lc*
+ n&vmap: <localleader>dc, rc, sc, cc, lc
+        Insert `dynamic_cast`, `reinterpret_cast`, `static_cast`, `const_cast`
+        or `boost::lexical_cast` the selected text is used as the expression
+        to coercise. The cursor is placed between the angle brackets.
 
+                                                *n_,,dc* *n_,,rc* *n_,,sc* *n_,,cc*
+                                                *v_,,dc* *v_,,rc* *v_,,sc* *v_,,cc*
  n&vmap: <localleader><localleader>dc, rc, sc, cc
-        Insert ``dynamic_cast'', ``reinterpret_cast'', ``static_cast'' or
-        ``const_cast'', the selected text is used as the type expression of
-        the result of a coercion. The cursor is placed between the
-        parenthesis.
+        Replace the selected C-cast by `dynamic_cast`, `reinterpret_cast`,
+        `static_cast` or `const_cast`. The expression and the type it's
+        coerciced to are automatically decoded.
 
 NB: * All the remarks from |C_control-statements| apply.
     * The current coding style (see |lhdev-style|) apply to |C_namespace|,
@@ -451,7 +462,7 @@ Options:
                  |g:cpp_FunctionPosArg|.
                  By default, |cpp_options.vim| places us after: >
                     /*============*/
-                    /*===[ «» ]===*/
+                    /*===[ ?? ]===*/
                     /*============*/
 <                       ... That I use to insert with |:BLINES|
             2 -> ... according the hook (user-defined VimL-function)
@@ -785,9 +796,9 @@ You write ~
 
 Then you see ~
 >
-    if ((foo)«») {
-        «»
-    }«»
+    if ((foo)??) {
+        ??
+    }??
 
 This is also a feature. Except you are not supposed to type "if (foo)", but
 only "if foo".
@@ -796,7 +807,7 @@ within normal code context: not within comments or strings contexts. Try for
 instance: '// if foo' or '"if foo"'
 
 If you don't like this feature ~
-(*) What the hell are those '«»' characters that appear ?
+(*) What the hell are those '??' characters that appear ?
     They are |markers|. They are supposed to help us reaching the next
     position in the file where we are supposed to add code.
     By default hit |<M-Del>| (/|<M-S-Del>|) to jump to the next (/previous) marker.
@@ -932,6 +943,6 @@ TODO:~
 
 
 ------------------------------------------------------------------------------
- © Luc Hermitte, 2001-2015 <http://github.com/LucHermitte/lh-cpp> CC by SA 3.0
+ ? Luc Hermitte, 2001-2015 <http://github.com/LucHermitte/lh-cpp> CC by SA 3.0
  VIM: let b:VS_language = 'american'
  vim:ts=8:sw=4:tw=80:fo=tcq2:isk=!-~,^*,^\|,^\":ft=help:

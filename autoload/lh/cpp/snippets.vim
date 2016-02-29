@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  22nd Dec 2015
+" Last Update:  28th Feb 2016
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -159,14 +159,22 @@ endfunction
 " - 'algo(cbegin.(container),cend.(container)§)',
 "
 " Objectives: support redo/repeat
+" Constants {{{4
 let s:k_begin_end_fmt = {
       \ 'c++98': '%1.%2()',
       \ 'std': 'std::%2(%1)',
       \ 'boost': 'boost::%2(%1)',
       \ 'adl': '%2(%1)'
       \ }
+let s:k_end = {
+      \ 'begin'  : 'end',
+      \ 'rbegin' : 'rend',
+      \ 'cbegin' : 'cend',
+      \ 'crbegin': 'crend'
+      \ }
 
-function! s:Style()
+
+function! s:Style() " {{{4
   let style = lh#dev#option#get('begin_end_style', &ft)
   if lh#option#is_unset(style)
     unlet style
@@ -178,19 +186,12 @@ function! s:Style()
   return style
 endfunction
 
-function! lh#cpp#snippets#_select_begin_end(cont, function)
+function! lh#cpp#snippets#_select_begin_end(cont, function) " {{{4
   let style = s:Style()
   return lh#fmt#printf(s:k_begin_end_fmt[style], a:cont, a:function)
 endfunction
 
-let s:k_end = {
-      \ 'begin'  : 'end',
-      \ 'rbegin' : 'rend',
-      \ 'cbegin' : 'cend',
-      \ 'crbegin': 'crend'
-      \ }
-
-function! lh#cpp#snippets#_begin_end(begin) abort
+function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
   let saved_pos = getpos('.')
 
   if searchpair('(',',',')','bcW','lh#syntax#skip()') == 0 &&
@@ -244,6 +245,35 @@ function! lh#cpp#snippets#_begin_end(begin) abort
     let res .= "\<c-o>:set sw=".sw."\<cr>"
   endif
   return res
+endfunction
+
+" Function: lh#cpp#snippets#_convert_cast(cast_type) {{{3
+" TODO: have s:k_cast_fmt be a [bg]:({ft}_) option.
+" Beware the following list is duplicated in ftplugin/cpp/cpp_snippets.vim
+let s:k_cast = {
+      \ 'sc': 'static_cast',
+      \ 'dc': 'dynamic_cast',
+      \ 'cc': 'const_cast',
+      \ 'rc': 'reinterpret_cast',
+      \ 'lc': 'boost::lexical_cast'
+      \ }
+let s:k_cast_fmt = '%1<%2>(%3)'
+
+function! lh#cpp#snippets#_convert_to_cpp_cast(cast_type) abort
+  " Extract text to convert
+  let c_cast = lh#visual#selection()
+
+  " Strip the possible brackets around the expression
+  " matchlist seems to cause an odd error on multiline C cast expressions: it
+  " have the fucntion called again.
+  let [all, type, expr ; tail] = matchlist(c_cast,  '\v^\(\_s*(.{-})\_s*\)\_s*(.{-})\_s*$')
+  let expr = substitute(expr, '\v^\(\s*(.{-})\s*\)$', '\1', '')
+  "
+  " Build the C++-casting from the C casting
+  let new_cast = lh#fmt#printf(s:k_cast_fmt, s:k_cast[a:cast_type], type, expr)
+  " let new_cast = a:cast_type.'<'.type.'>('.expr.')'
+  " Do the replacement
+  silent exe "normal! gvs".new_cast."\<esc>"
 endfunction
 
 "------------------------------------------------------------------------
