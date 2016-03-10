@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  28th Feb 2016
+" Last Update:  10th Mar 2016
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -117,7 +117,7 @@ endfunction
 
 " Function: lh#cpp#snippets#typedef_typename() {{{3
 function! lh#cpp#snippets#typedef_typename() abort
-  return lh#cpp#snippets#insert_if_not_after('typename ', 'typedef ', 'typedef\|<\|,')
+  return lh#cpp#snippets#insert_if_not_after('typename ', 'typedef ', '\S')
 endfunction
 
 " Function: lh#cpp#snippets#current_namespace(default) {{{3

@@ -8,7 +8,7 @@
 " Created:	06th Nov 2007
 " Last Update:	22nd Dec 2015
 "------------------------------------------------------------------------
-let s:version = '2.1.7'
+let s:version = '2.2.0'
 let s:project = 'lh-cpp'
 cd <sfile>:p:h
 try
