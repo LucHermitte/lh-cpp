@@ -1,0 +1,10 @@
+VimL:" forward File Template, Luc Hermitte, mar. 29 mars 2016 17:13:03 CEST
+VimL:" hint: std::forward<T>(v)
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+MuT:  let s:var = s:SurroundableParam('var', 1)
+MuT:  let s:type = s:SurroundableParam('type', 2)
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<utility>")')
+std::forward<<+s:type+>>(<+s:var+>)<+s:TerminalPlaceHolder()+>

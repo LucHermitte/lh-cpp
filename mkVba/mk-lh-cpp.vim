@@ -63,6 +63,7 @@ after/template/cpp/for-iterator.template
 after/template/cpp/for-range.template
 after/template/cpp/fori.template
 after/template/cpp/foriN.template
+after/template/cpp/forward.template
 after/template/cpp/getter.template
 after/template/cpp/init-constructor.template
 after/template/cpp/internals/abs-rel-shared.template
