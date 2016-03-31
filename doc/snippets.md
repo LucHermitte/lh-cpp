@@ -572,6 +572,17 @@ std::size(«array»)
 **TODO:**
   * Use `cpp/b-e` snippet
 
+#### cpp/forward
+**Produces:** `forward<«type»>(«var»)`
+
+**Parameters:**
+  *  _type_, default: «type»
+  *  _var_, default: «var»
+
+**Surround:**
+  1. The selection can be surrounded to become the variable
+  2. The selection can be surrounded to become the type
+
 #### cpp/iss
 **Produces:**
 ```C++
@@ -618,9 +629,9 @@ oss << «»;
 **Produces:**
 ```C++
 // C++11
-static_assert(cond, msg)
+static_assert(«cond», «msg»)
 // C++98/03
-BOOST_STATIC_ASSERT(cond)
+BOOST_STATIC_ASSERT(«cond»)
 ```
 
 **Parameters:**
@@ -632,6 +643,19 @@ BOOST_STATIC_ASSERT(cond)
 
 **Also includes:**
   * `<boost/static_assert.hpp>`, in C++98/03
+
+
+#### cpp/typeid
+**Produces:** `typeid(«type»).name()`
+
+**Parameters:**
+  *  _type_, default: «type»
+
+**Surround:**
+  1. The selection can be surrounded to become the type
+
+**Also includes:**
+  * `<typeinfo>`
 
 ## Classes
 

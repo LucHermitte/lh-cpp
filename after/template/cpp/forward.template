@@ -1,6 +1,6 @@
 VimL:" forward File Template, Luc Hermitte, mar. 29 mars 2016 17:13:03 CEST
 VimL:" hint: std::forward<T>(v)
-VimL: let s:value_start = 'ก'
+VimL: let s:value_start = 'ยก'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'

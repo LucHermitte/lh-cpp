@@ -1,0 +1,8 @@
+VimL:" typeid File Template, Luc Hermitte <hermitte {at} free {dot} fr>, jeu. 31 mars 2016 11:38:16 CEST
+VimL:" hint: typeid(<++>).name()
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<typeinfo>")')
+typeid(<+s:SurroundableParam("type", 1)+>).name()<+s:TerminalPlaceHolder()+>
