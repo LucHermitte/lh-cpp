@@ -1,5 +1,5 @@
 *lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.2.0)
-                        For Vim version 7.x.    Last change: 28th Feb 2016
+                        For Vim version 7.x.    Last change: 06th Apr 2016
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -95,7 +95,7 @@ Options:
     and many more that are pointless here.
 
 Mappings defined in this particular configuration:
-    |!mark!|    inserts a |marker| -- default: ??
+    |!mark!|    inserts a |marker| -- default: «»
     |!jump!|    jumps to the next marker
     |!jumpB!|   jumps to the previous marker
     |<M-Ins>|   shortcut to !mark!    ; can be redefined
@@ -206,13 +206,13 @@ Mapping: ~
         switch (var)
         {
             case YES:
-                ?YES-code?;
+                «YES-code»;
                 break;
             case NO:
-                ?NO-code?;
+                «NO-code»;
                 break;
             default:
-                ?default-code?;
+                «default-code»;
                 break;
         }
 
@@ -462,7 +462,7 @@ Options:
                  |g:cpp_FunctionPosArg|.
                  By default, |cpp_options.vim| places us after: >
                     /*============*/
-                    /*===[ ?? ]===*/
+                    /*===[ «» ]===*/
                     /*============*/
 <                       ... That I use to insert with |:BLINES|
             2 -> ... according the hook (user-defined VimL-function)
@@ -598,9 +598,9 @@ but instead: >
     T* p_temp = realloc(p, new_size);
     if (!p_temp) {
         free(p) ;
-	+ other reset ;
-	+ error notification ;
-	return false;
+        + other reset ;
+        + error notification ;
+        return false;
     }
     p = p_temp;
 Hence this snippet aimed at simpliying our life.
@@ -684,7 +684,7 @@ Project specific settings shall override the previous default settings in
                                                             *C++_doxygen-options*
 C++ options for doxygen~
 
-*(bg):[{ft}_]dox_CommentLeadingChar* Character used at ???; default: "*"
+*(bg):[{ft}_]dox_CommentLeadingChar* Character used at «»?; default: "*"
 *(bg):[{ft}_]dox_TagLeadingChar*     Character used to introduce tags: "!"/"[@]"
 *(bg):[{ft}_]dox_brief*              Shall we have a @brief tag?  -> yes/no/[short]
 *(bg):[{ft}_]dox_ingroup*            Shall we have a @ingroup tag?  -> yes/[no]
@@ -796,9 +796,9 @@ You write ~
 
 Then you see ~
 >
-    if ((foo)??) {
-        ??
-    }??
+    if ((foo)«») {
+        «»
+    }«»
 
 This is also a feature. Except you are not supposed to type "if (foo)", but
 only "if foo".
@@ -807,7 +807,7 @@ within normal code context: not within comments or strings contexts. Try for
 instance: '// if foo' or '"if foo"'
 
 If you don't like this feature ~
-(*) What the hell are those '??' characters that appear ?
+(*) What the hell are those '«»' characters that appear ?
     They are |markers|. They are supposed to help us reaching the next
     position in the file where we are supposed to add code.
     By default hit |<M-Del>| (/|<M-S-Del>|) to jump to the next (/previous) marker.
@@ -943,6 +943,6 @@ TODO:~
 
 
 ------------------------------------------------------------------------------
- ? Luc Hermitte, 2001-2015 <http://github.com/LucHermitte/lh-cpp> CC by SA 3.0
+ © Luc Hermitte, 2001-2016 <http://github.com/LucHermitte/lh-cpp> CC by SA 3.0
  VIM: let b:VS_language = 'american'
  vim:ts=8:sw=4:tw=80:fo=tcq2:isk=!-~,^*,^\|,^\":ft=help:
