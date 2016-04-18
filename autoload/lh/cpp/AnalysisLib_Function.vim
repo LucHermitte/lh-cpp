@@ -4,9 +4,9 @@
 "               <URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0
+" Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  $Date$ (04th Jan 2012)
+" Last Update:  18th Apr 2016
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -95,14 +95,14 @@ endfunction
 
 " Function: lh#cpp#AnalysisLib_Function#get_prototype(pos, onlyDeclaration) {{{3
 " @WARNING: never tested/used function
-function! lh#cpp#AnalysisLib_Function#get_prototype(pos, on) abort
-  if type(pos) == type(0)
-    let lineno = pos
+function! lh#cpp#AnalysisLib_Function#get_prototype(pos, onlyDeclaration) abort
+  if type(a:pos) == type(0)
+    let lineno = a:pos
     return lh#dev#c#function#get_prototype(lineno, a:onlyDeclaration)
-  elseif type(pos) == type({}) " this is a tag definition
+  elseif type(a:pos) == type({}) " this is a tag definition
     " TODO: extract this position rollback code to its own function
     let cleanup = lh#on#exit()
-    let filename = pos.filename
+    let filename = a:pos.filename
     let nb_windows = winnr('$')
     let crt_win = winnr()
     call lh#buffer#jump(filename, 'sp')
@@ -112,13 +112,13 @@ function! lh#cpp#AnalysisLib_Function#get_prototype(pos, on) abort
       call cleanup.register(':'.crt_win.'wincmd w')
     endif
     try
-      if pos.cmd == '^/'
+      if a:pos.cmd == '^/'
         let lineno = search(cmd, 'n')
-      elseif pos.cmd == ':'
-        let lineno = eval(pos.cmd[1:])
+      elseif a:pos.cmd == ':'
+        let lineno = eval(a:pos.cmd[1:])
       endif
       if 0 == lineno
-        throw "lh-cpp: Impossible to find where prototype for ".(pos.name). " is"
+        throw "lh-cpp: Impossible to find where prototype for ".(a:pos.name). " is"
       endif
       return lh#dev#c#function#get_prototype(lineno, a:onlyDeclaration)
     finally
