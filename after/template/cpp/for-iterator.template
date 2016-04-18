@@ -11,7 +11,10 @@ VimL: let s:begin = INPUT('Iterator variable: ', 'b')
 VimL: let s:end   = INPUT('Iterator end variable: ', 'e')
 VimL:"
 VimL:" Note: The "const" can be deleted or kept thanks to <Plug>MarkersMark
-for (<+container-type+>::<+const_+>iterator ¡s:begin¡ = ¡s:cont¡.begin(), ¡s:end¡ = ¡s:cont¡.end()
+MuT:  let s:container_type = lh#dev#types#of_var(s:cont, lh#marker#txt('container_type'))
+MuT:  let s:const = lh#dev#cpp#types#is_const(s:container_type) ? 'const_' : lh#marker#txt('const_')
+VimL: let s:container_type = lh#dev#cpp#types#remove_cv(lh#dev#cpp#types#remove_reference(s:container_type))
+for (<+s:container_type+>::<+s:const+>iterator ¡s:begin¡ = ¡s:cont¡.begin(), ¡s:end¡ = ¡s:cont¡.end()
     ; ¡s:begin¡ != ¡s:end¡
     ; ++¡s:begin¡
     )
