@@ -17,7 +17,9 @@
  - [ ] detect calls to `delete` (outside destructors)
  - [ ] detect calls to `new` (C++14)
  - [ ] detect C casts
-    - [ ] ignore `void foo() const`
+    - [X] ignore `void foo() const`
+    - [ ] ignore `decltype(auto) foo;`
+    - [ ] ignore `f(12)(13)(14)`
 
 ## snippets / wizard
 

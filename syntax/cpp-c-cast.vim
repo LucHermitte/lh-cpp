@@ -5,13 +5,17 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      16th Dec 2015
-" Last Update:  16th Dec 2015
+" Last Update:  20th Apr 2016
 "------------------------------------------------------------------------
 " Description:	C++ syntax enhancements
 " (*) detect C casts in C++
 "
 " Options:
-" - [cpp_no_c_cast| to disable the check
+" - |cpp_no_hl_c_cast| to disable the check
+"
+" Known bugs:
+" - `decltype(auto) foo;`
+" - `f(12)(13)(14)`
 " }}}1
 "=============================================================================
 " {{{1 Syntax definitions
@@ -23,10 +27,13 @@ silent! syn clear       cCast
 
 " (int*)v
 "   but exclude some operators like "and", "or", "xor", "not" with "@!"
-syn match       cCast '\v\(.{-}\)\s*(<and>|<or>|<xor>|<not>)@!\w+'
+"   and function specifiers: "const", "volatile", "final", "override", "throw", "noexcept"
+syn match       cCast '\v\(.{-}\)\s*(<and>|<or>|<xor>|<not>|<const>|<volatile>|<throw>|<noexcept>|<final>|<override>)@!\w+'
 " (int*)(expr)
-"   "\w@!" is used to ignore chained calls to operator()
-syn match       cCast '\v\w@<!\(.{-}\)\s*\(.{-}\)'
+"   "\w@!" is used to ignore double chained calls to operator()
+"   -> f(12)(13) and f (12)(13) are ignored
+"   -> (int*)(expr) is matched
+syn match       cCast '\v(\w\s*)@<!\(.{-}\)\s*\(.{-}\)'
 
 hi def link     cCast       SpellBad
 
