@@ -452,8 +452,10 @@ function! s:BuildFunctionSignature4impl(proto,className)
         \ . '('.implParamsStr . ')'
         \ . (proto.const ? ' const' : '')
         \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
-        \ . "\n{\n}"
-  return res
+        \ . "{\n}"
+  let styles = lh#dev#style#get(&ft)
+  if empty(styles) | return res | endif
+  return lh#dev#style#apply(res)
   "}}}4
 endfunction
 "------------------------------------------------------------------------
