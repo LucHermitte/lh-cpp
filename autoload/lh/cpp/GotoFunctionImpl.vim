@@ -445,17 +445,23 @@ function! s:BuildFunctionSignature4impl(proto,className)
   " 5- Return{{{4
   " TODO: some styles like to put return types and function names on two
   " different lines
-  let res = comments
+  let unstyled = comments
         \ . return . ' '
         \ . className
         \ . join(proto.name, '::')
         \ . '('.implParamsStr . ')'
         \ . (proto.const ? ' const' : '')
         \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
-        \ . "{\n}"
+        \ . "{}"
   let styles = lh#dev#style#get(&ft)
-  if empty(styles) | return res | endif
-  return lh#dev#style#apply(res)
+  let styled = lh#dev#style#apply(unstyled)
+
+  let res = unstyled
+  if !empty(styles)
+    let res = styled
+  endif
+
+  return res
   "}}}4
 endfunction
 "------------------------------------------------------------------------
