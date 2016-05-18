@@ -4,7 +4,7 @@
 "		<URL:http://github.com/LucHermitte/lh-cpp>
 " Version:      2.2.0.
 " Created:	06th Sep 2007
-" Last Update:	16th Dec 2015
+" Last Update:	18th May 2016
 "------------------------------------------------------------------------
 " Purpose:	C++ syntax enhancements
 " (*) Hightlights throw specifications
@@ -50,8 +50,8 @@ if !get(g:, "cpp_no_hl_throw_spec", 0)
   silent! syn clear cppThrowSpecIgnored
 
   " Method 2, that has the same result... (throw is not underlined)
-  syn match cppThrowSpec /\(throw\_s*\)\@<=(\_.\{-})/
-  exe 'syn match cppThrowSpecIgnored /\(throw\_s*\)\@<=(\_[^)]*\('.join(g:cpp_throw_spec_ignore, '\|').'\)\_[^)]*)/'
+  syn match cppThrowSpec /\(\<throw\_s*\)\@<=(\_.\{-})/
+  exe 'syn match cppThrowSpecIgnored /\(\<throw\_s*\)\@<=(\_[^)]*\('.join(g:cpp_throw_spec_ignore, '\|').'\)\_[^)]*)/'
 
   hi def link cppThrowSpec SpellBad
   hi def link cppThrowSpecIgnored SpellRare
