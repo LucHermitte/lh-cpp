@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  10th Mar 2016
+" Last Update:  18th May 2016
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -194,11 +194,14 @@ endfunction
 function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
   let saved_pos = getpos('.')
 
-  if searchpair('(',',',')','bcW','lh#syntax#skip()') == 0 &&
-        \ searchpair('(',',',')','bW','lh#syntax#skip()') == 0
+  let char_c = lh#position#char_at_pos(getpos('.'))
+  let accept_at_current = char_c == '(' ? 'c' : ''
+  if searchpair('(',',',')','bW'.accept_at_current,'lh#syntax#skip()') == 0
+        \ && searchpair('(',',',')','bW','lh#syntax#skip()') == 0
     " Test necessary because 'c' flag and Skip() don't always work well together
     throw "Not on a parameter"
   endif
+  " Goto next character
   call search('.')
 
   let pos = [line('.'), col('.')]
@@ -213,13 +216,6 @@ function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
     return lh#cpp#snippets#_select_begin_end(cont, a:begin). ', ' .lh#cpp#snippets#_select_begin_end(cont, s:k_end[a:begin])
   endif
 
-  if lh#position#char_at(saved_pos[1], saved_pos[2]-1) == ')'
-    let choice = WHICH('CONFIRM', 'Do you really want to call begin() *and* end() on a function result?', "&Yes\n&No", 2)
-    if choice == 'No'
-      return ""
-    endif
-  endif
-
   " Let's suppose same line
   " TODO:
   " - add \s after ",", but not after "(" => use apply style on
@@ -228,22 +224,47 @@ function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
   "
   " Extract container name (and leading whitespace) from the two positions
   let cont = lh#position#extract(pos, saved_pos[1:2])
+
+  " Check we aren't selecting too many things
+  if pos[0] != saved_pos[1] && cont =~ '{[^}]*$'
+    throw "lvalue not in a function call, cannot expand begin/end on it."
+  endif
+
+  " Add .begin/.end on "foo(bar)" ?
+  if lh#position#char_at(saved_pos[1], saved_pos[2]-1) == ')'
+    let choice = WHICH('CONFIRM', 'Do you really want to call begin() *and* end() on a function result?', "&Yes\n&No", 2)
+    if choice == 'No'
+      return ""
+    endif
+  endif
+
   " Number of characters to delete = len - nb of "\n"
   let len = lh#encoding#strlen(cont)
         \ - len(substitute(cont, "[^\n]", '', 'g'))
   " trim trailing spaces, but not those at the start
   let [all, head, cont; rest] = matchlist(cont, '\v^(\_s*)(.{-})\_s*$')
+  if pos[1] == 1 && head =~ '^\s\+$'
+    " text on a new line => head2 shall induce a new line
+    " TODO: support styling option: "\n, " or ",\n" 
+    let head2 = "\n"
+  else
+    let head2 = ""
+  endif
+  if empty(cont)
+    " No container under the cursor => use placeholders
+    let cont = lh#marker#txt('container')
+  endif
   " Build the string to "insert"
   let res = repeat("\<bs>", len)
         \ . head . lh#cpp#snippets#_select_begin_end(cont, a:begin).
-        \ ', '.head .lh#cpp#snippets#_select_begin_end(cont, s:k_end[a:begin])
-  if pos[0] != saved_pos[1]
+        \ ', '.head2 .lh#cpp#snippets#_select_begin_end(cont, s:k_end[a:begin])
+  " if pos[0] != saved_pos[1]
     " When <bs> clear characters at the start of the line, it jumps over indent
     " => we force sw to 1
     let sw=shiftwidth()
     set sw=1
     let res .= "\<c-o>:set sw=".sw."\<cr>"
-  endif
+  " endif
   return res
 endfunction
 
