@@ -66,13 +66,19 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Functions {{{1
 " # Debug {{{2
-function! lh#cpp#AnalysisLib_Function#verbose(level)
-  let s:verbose = a:level
+let s:verbose = get(s:, 'verbose', 0)
+function! lh#cpp#AnalysisLib_Function#verbose(...)
+  if a:0 > 0 | let s:verbose = a:1 | endif
+  return s:verbose
 endfunction
 
-function! s:Verbose(expr)
-  if exists('s:verbose') && s:verbose
-    echomsg a:expr
+function! s:Log(...)
+  call call('lh#log#this', a:000)
+endfunction
+
+function! s:Verbose(...)
+  if s:verbose
+    call call('s:Log', a:000)
   endif
 endfunction
 
@@ -151,7 +157,7 @@ function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
   let prototype = substitute(prototype, ')\zs\_s*throw(.*', '', '')
 
   " 3- convert the string into a list, the separation being done on commas
-  let res_params = lh#dev#option#call('function#_signature_to_parameters', &ft, prototype)
+  let res_params = lh#dev#option#call('function#_signature_to_parameters', &ft, prototype, 1)
 
   return res_params
 endfunction
@@ -258,6 +264,8 @@ endfunction
 " @return whether the two signatures are similar (parameters names, default
 " parameters and other comment are ignored)
 function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2)
+  return a:sig1 == a:sig2
+
   if len(a:sig1) != len(a:sig2) | return 0 | endif
   let i = 0
   while i != len(a:sig1)
@@ -304,63 +312,94 @@ endfunction
 " }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#LoadTags(id) {{{3
-function! s:ConvertTag(t)
+function! s:ConvertTag(t) abort
   let fn_data = {
         \ 'name'          : a:t.name,
+        \ 'signature'     : a:t.signature,
         \ 'parameters'    : lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature),
         \ 'const'         : match(a:t.signature, s:re_const_member_fn) != -1,
         \ 'filename'      : a:t.filename,
-        \ 'implementation': get(a:t, 'implementation', '')
-        \ 'class'         : get(a:t, 'class', '')
+        \ 'implementation': get(a:t, 'implementation', ''),
+        \ 'class'         : get(a:t, 'class', ''),
         \ 'cmd'           : a:t.cmd }
+  if has_key(a:t, 'access')
+    let fn_data['access'] = a:t.access
+  endif
   return fn_data
 endfunction
 
-function! lh#cpp#AnalysisLib_Function#LoadTags(id)
+function! lh#cpp#AnalysisLib_Function#LoadTags(id) abort
   let tags = taglist(a:id)
-  let declarations = []
-  let definitions  = []
-  for t in tags
-    try
-      if     'p' == t.kind
-        let fn_data = s:ConvertTag(t)
-        if has_key(t, 'access')
-          let fn_data['access'] = t.access
-        endif
-        call add(declarations , fn_data )
-      elseif 'f' == t.kind
-        let fn_data = s:ConvertTag(t)
-        call add(definitions , fn_data )
-        " else ignore
-      endif
-    catch /.*/
-      echomsg "lh#cpp#AnalysisLib_Function#LoadTags(): ".v:exception." in ".string(t)
-    endtry
-  endfor
-  let result = { 'definitions':definitions, 'declarations':declarations }
+  call s:Verbose('%1 functions definitions & declarations matching %2 found', len(tags), a:id)
+
+  " # Definitions (f)
+  let f_tags = filter(copy(tags), 'v:val.kind == "f"')
+  let definitions = map(copy(f_tags), 's:ConvertTag(v:val)')
+  call s:Verbose('%1 functions definitions found', len(definitions))
+  " Remove inline definitions
+  " -> a definition with an access specifier is an inline definition
+  call filter(definitions, '! has_key(v:val, "access")')
+  call s:Verbose('%1 functions definitions kept (class-inline definitions removed)', len(definitions))
+
+  " # Declarations (p)
+  let p_tags = filter(copy(tags), 'v:val.kind == "p"')
+  let declarations = map(copy(p_tags), 's:ConvertTag(v:val)')
+  call s:Verbose('%1 functions declarations found', len(declarations))
+
+  " Remove "= 0"
+  call filter(declarations, 'v:val.implementation !~ "pure"')
+  call s:Verbose('%1 functions declarations kepta (pure virtual function removed)', len(declarations))
+  " Remove "= default" & "= delete"
+  " -> not present in the signature.
+  " -> at best, it may be in the command
+  call filter(declarations, 'v:val.cmd !~ "=\\v\\s*(default|delete)"')
+  call s:Verbose('%1 functions declarations found and kept (defaulted/deleted function removed)', len(declarations))
+
+  let result = { 'definitions':definitions, 'declarations': declarations }
   return result
 endfunction
 " }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SearchUnmatched(fn) {{{3
+function! s:CmpSig(lhs, rhs)
+  if     len(a:lhs) < len(a:rhs) | return -1
+  elseif len(a:lhs) > len(a:rhs) | return  1
+  else
+    let i = 0
+    while i != len(a:rhs)
+      if     a:lhs[i] < a:rhs[i] | return -1
+      elseif a:lhs[i] > a:rhs[i] | return  1
+      endif
+      let i += 1
+    endwhile
+    return 0
+  endif
+endfunction
+
+function! lh#cpp#AnalysisLib_Function#_ByNameAndSig(lhs, rhs)
+  let res = a:lhs.name <  a:rhs.name ? -1
+        \ : a:lhs.name == a:rhs.name ? s:CmpSig(lh#list#get(a:lhs.parameters,'type'), lh#list#get(a:rhs.parameters, 'type'))
+        \ :                             1
+  return res
+endfunction
+
 function! s:SearchUnmatched(functions)
+  let decls = sort(a:functions.declarations, function('lh#cpp#AnalysisLib_Function#_ByNameAndSig'))
+  call s:Verbose('%1 function declarations sorted', len(a:functions.declarations))
+  let defs  = sort(a:functions.definitions,  function('lh#cpp#AnalysisLib_Function#_ByNameAndSig'))
+  call s:Verbose('%1 function definitions sorted', len(a:functions.definitions))
+
   let unmatched_decl = []
-  let unmatched_def = deepcopy(a:functions.definitions)
-
-  for f in a:functions.declarations
-    let idx = lh#list#Find_if(unmatched_def, 'lh#cpp#AnalysisLib_Function#IsSame(v:val,v:1_)', [f], 0)
-    if idx != -1
-      call remove(unmatched_def, idx)
-    else
-      call add(unmatched_decl, f)
-    endif
-  endfor
-
+  let unmatched_def  = []
+  call lh#list#concurrent_for(a:functions.declarations, a:functions.definitions,
+        \ unmatched_decl, unmatched_def, [],
+        \ function('lh#cpp#AnalysisLib_Function#_ByNameAndSig'))
   let unmatched = { 'definitions':unmatched_def, 'declarations':unmatched_decl }
+  call s:Verbose('Symetric difference between function definitions and declarions done')
   return unmatched
 endfunction
 
-function! lh#cpp#AnalysisLib_Function#SearchUnmatched(what)
+function! lh#cpp#AnalysisLib_Function#SearchUnmatched(what) abort
   if     type(a:what) == type('string')
     let functions = lh#cpp#AnalysisLib_Function#LoadTags(a:what)
     return s:SearchUnmatched(functions)

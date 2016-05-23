@@ -1,23 +1,23 @@
 "=============================================================================
-" File:		autoload/lh/cpp/UnmatchedFunctions.vim                  {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
-" Created:	14th Feb 2008
-" Last Update:	$Date$
+" File:         autoload/lh/cpp/UnmatchedFunctions.vim                  {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://code.google.com/p/lh-vim/>
+" Version:      1.1.0
+" Created:      14th Feb 2008
+" Last Update:  $Date$
 "------------------------------------------------------------------------
-" Description:	«description»
-" 
+" Description:  «description»
+"
 "------------------------------------------------------------------------
-" Installation:	«install details»
-" History:	«history»
-" TODO:		
+" Installation: «install details»
+" History:      «history»
+" TODO:
 " (*) Do not mess with history and @/
 " (*) Support an update command
 " }}}1
 "=============================================================================
 
-command! -nargs=1 FEcho :echo s:<args> 
+command! -nargs=1 FEcho :echo s:<args>
 
 let s:cpo_save=&cpo
 set cpo&vim
@@ -43,7 +43,7 @@ endfunction
 function! s:AddToMenu(lines, fns, kind)
   for fn in a:fns
     let line = fn.filename.'| No '.a:kind.' found for '
-	  \. lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
+          \. lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
     call add(a:lines, line)
   endfor
 endfunction
@@ -60,15 +60,15 @@ function! lh#cpp#UnmatchedFunctions#Display(className)
   let choices = s:BuildMenu(unmatched)
   " return
   let b_id = lh#buffer#dialog#new(
-	\ 'Unmatched('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
-	\ 'Unmatched functions for '.a:className,
-	\ 'bot below',
-	\ 0,
-	\ 'lh#cpp#UnmatchedFunctions#select',
-	\ choices
-	\)
+        \ 'Unmatched('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
+        \ 'Unmatched functions for '.a:className,
+        \ 'bot below',
+        \ 0,
+        \ 'lh#cpp#UnmatchedFunctions#select',
+        \ choices
+        \)
   " Added the lonely functions to the b_id
-  let lUnmatched = unmatched.declarations 
+  let lUnmatched = unmatched.declarations
   call extend(lUnmatched, unmatched.definitions)
   let b_id['unmatched'] = lUnmatched
   " Syntax and co
@@ -102,7 +102,7 @@ function! s:PostInitDialog()
   endif
 endfunction
 
-function! lh#cpp#UnmatchedFunctions#select(results)
+function! lh#cpp#UnmatchedFunctions#select(results) abort
   if len(a:results.selection) > 1
     " this is an assert
     throw "Functions-Matcher: We are not supposed to select several functions"
@@ -116,9 +116,9 @@ function! lh#cpp#UnmatchedFunctions#select(results)
   echomsg '-> '.choices[selection]
   " echomsg '-> '.info[selection-1].filename . ": ".info[selection-1].cmd
   if exists('s:quit') | :quit | endif
-  " 
+  "
   let selected_unmatched = a:results.dialog.unmatched[selection-1]
-  call lh#buffer#find(selected_unmatched.filename)
+  call lh#buffer#jump(selected_unmatched.filename, 'sp')
   normal! gg
   try
     " todo: save history and @/
