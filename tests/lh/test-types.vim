@@ -23,6 +23,21 @@ runtime autoload/lh/cpp/types.vim
 let s:cpo_save=&cpo
 set cpo&vim
 
+
+" SetUp {{{1
+" Function: s:Setup() {{{3
+function! s:Setup() abort
+  " SetMarker <+ +>
+  " it seems that playing with encodings messes vim execution through rspec
+  let b:marker_open = '<+'
+  let b:marker_close = '+>'
+  let b:last_encoding_used = &enc
+  AssertEquals( b:marker_open, '<+')
+  AssertRelation( lh#marker#version(), '>=' , 310)
+  AssertEquals(lh#marker#open(), '<+')
+endfunction
+
+" Tests {{{1
 "------------------------------------------------------------------------
 function! s:Test_none() " {{{2
   let info = lh#cpp#types#get_info('invalid_type')
@@ -39,7 +54,7 @@ function! s:Test_vector() " {{{2
   AssertEquals(vector.type                    , 'vector<%1>')
   AssertEquals(vector.namespace               , 'std')
   AssertEquals(vector.typename_for_header('T'), 'std::vector<T>')
-  AssertEquals(vector.typename_for_header()   , 'std::vector<«T1»>')
+  AssertEquals(vector.typename_for_header()   , 'std::vector<<+T1+>>')
 endfunction
 
 "------------------------------------------------------------------------
@@ -50,8 +65,8 @@ function! s:Test_map() " {{{2
   AssertEquals(map.type                         , 'map<%1,%2>')
   AssertEquals(map.namespace                    , 'std')
   AssertEquals(map.typename_for_header('T', 'V'), 'std::map<T,V>')
-  AssertEquals(map.typename_for_header('T')     , 'std::map<T,«T2»>')
-  AssertEquals(map.typename_for_header()        , 'std::map<«T1»,«T2»>')
+  AssertEquals(map.typename_for_header('T')     , 'std::map<T,<+T2+>>')
+  AssertEquals(map.typename_for_header()        , 'std::map<<+T1+>,<+T2+>>')
 endfunction
 
 "------------------------------------------------------------------------
