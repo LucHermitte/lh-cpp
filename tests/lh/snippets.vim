@@ -14,13 +14,15 @@ let s:k_version = '220'
 
 UTSuite [lh-cpp] Testing lh/cpp/snippets.vim
 
+runtime autoload/lh/cpp/on.vim
 runtime autoload/lh/cpp/snippets.vim
 
 let s:cpo_save=&cpo
 set cpo&vim
 
+" ## Tests {{{1
 "------------------------------------------------------------------------
-function! s:Test_noexcept()
+function! s:Test_noexcept() " {{{2
   let cleanup = lh#on#exit()
         \.restore_option('cpp_noexcept')
         \.restore_option('cpp_std_flavour')
@@ -51,7 +53,7 @@ function! s:Test_noexcept()
 endfunction
 
 "------------------------------------------------------------------------
-function! s:Test_deleted()
+function! s:Test_deleted() " {{{2
   let cleanup = lh#on#exit()
         \.restore_option('cpp_deleted')
         \.restore_option('cpp_std_flavour')
@@ -78,7 +80,7 @@ function! s:Test_deleted()
 endfunction
 
 "------------------------------------------------------------------------
-function! s:Test_defaulted()
+function! s:Test_defaulted() " {{{2
   let cleanup = lh#on#exit()
         \.restore_option('cpp_defaulted')
         \.restore_option('cpp_std_flavour')
@@ -105,7 +107,7 @@ function! s:Test_defaulted()
 endfunction
 
 "------------------------------------------------------------------------
-" Function: s:Test_parents() {{{3
+" Function: s:Test_parents() {{{2
 function! s:Test_parents() abort
   let parents = []
   AssertEquals(lh#cpp#snippets#parents(parents), ['', []])
@@ -126,6 +128,7 @@ function! s:Test_parents() abort
 endfunction
 
 
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
