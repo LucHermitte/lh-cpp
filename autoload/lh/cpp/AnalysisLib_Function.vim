@@ -144,11 +144,11 @@ function! s:SplitTypeParam(typed_param)
 endfunction
 " }}}3
 "------------------------------------------------------------------------
-" Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype) {{{3
+" Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype, mustCleanSpace) {{{3
 " todo: beware of exception specifications
 " todo: check about of functions types ; to be done with templates... ?
 " todo: Arrays of pointers       : "T (*p)[n]"
-function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
+function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype, mustCleanSpace)
   " 1- Strip comments and parenthesis
   let prototype = a:prototype
   let prototype = substitute(prototype, '//.\{-}\n', '', 'g')
@@ -157,7 +157,7 @@ function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype)
   let prototype = substitute(prototype, ')\zs\_s*throw(.*', '', '')
 
   " 3- convert the string into a list, the separation being done on commas
-  let res_params = lh#dev#option#call('function#_signature_to_parameters', &ft, prototype, 1)
+  let res_params = lh#dev#option#call('function#_signature_to_parameters', &ft, prototype, a:mustCleanSpace)
 
   return res_params
 endfunction
@@ -228,7 +228,7 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
 
   " 4- Parameters                                {{{5
   let sParams = strpart(prototype, iName+len(sName))
-  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(sParams)
+  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(sParams, 0)
 
   " 5- Const member function ?                   {{{5
   let isConst = match(prototype, s:re_const_member_fn) != -1
@@ -316,7 +316,7 @@ function! s:ConvertTag(t) abort
   let fn_data = {
         \ 'name'          : a:t.name,
         \ 'signature'     : a:t.signature,
-        \ 'parameters'    : lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature),
+        \ 'parameters'    : lh#cpp#AnalysisLib_Function#GetListOfParams(a:t.signature, 1),
         \ 'const'         : match(a:t.signature, s:re_const_member_fn) != -1,
         \ 'filename'      : a:t.filename,
         \ 'implementation': get(a:t, 'implementation', ''),
