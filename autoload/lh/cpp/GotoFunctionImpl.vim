@@ -1,12 +1,13 @@
 "=============================================================================
 " File:         autoload/lh/cpp/GotoFunctionImpl.vim                      {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"               <URL:http://code.google.com/p/lh-vim/>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.0.0
+let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  $Date$ (04th Jan 2012)
+" Last Update:  24th May 2016
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -50,35 +51,44 @@
 "           fully-qualified names if required in the function definition.
 " }}}1
 "=============================================================================
-
-
-"=============================================================================
 let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
-" ## Functions {{{1
-" # Debug {{{2
-function! lh#cpp#GotoFunctionImpl#verbose(level)
-  let s:verbose = a:level
+" ## Misc Functions     {{{1
+" # Version {{{2
+function! lh#cpp#GotoFunctionImpl#version()
+  return s:k_version
 endfunction
 
-function! s:Verbose(expr)
-  if exists('s:verbose') && s:verbose
-    echomsg a:expr
+" # Debug   {{{2
+let s:verbose = get(s:, 'verbose', 0)
+function! lh#cpp#GotoFunctionImpl#verbose(...)
+  if a:0 > 0 | let s:verbose = a:1 | endif
+  return s:verbose
+endfunction
+
+function! s:Log(expr, ...)
+  call call('lh#log#this',[a:expr]+a:000)
+endfunction
+
+function! s:Verbose(expr, ...)
+  if s:verbose
+    call call('s:Log',[a:expr]+a:000)
   endif
 endfunction
 
-function! lh#cpp#GotoFunctionImpl#debug(expr)
+function! lh#cpp#GotoFunctionImpl#debug(expr) abort
   return eval(a:expr)
 endfunction
 
+" ## Functions {{{1
 " # Public {{{2
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#MoveImpl() "{{{3
 " The default values for 'HowToShowVirtual', 'HowToShowStatic' and
 " 'HowToShowDefaultParams' can be overridden momentarily.
 " Parameters: None
-function! lh#cpp#GotoFunctionImpl#MoveImpl(...)
+function! lh#cpp#GotoFunctionImpl#MoveImpl(...) abort
   try
     let a_save = @a
     let s      = @/
@@ -128,14 +138,14 @@ endfunction
 "             'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
 " TODO: add C++11 override and final
 let s:option_value = '\%(on\|off\|\d\+\)$'
-function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...)
+function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
   let expected_extension = call('s:CheckOptions', a:000)
 
   " 1- Retrieve the context {{{4
   " 1.1- Get the class name,if any -- thanks to cpp_FindContextClass.vim
   let className = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
   " 1.2- Get the whole prototype of the function (even if on several lines)
-  let proto = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 1)
+  let proto = lh#dev#c#function#get_prototype(line('.'), 1)
   if "" == proto
     call lh#common#error_msg('cpp#GotoFunctionImpl.vim: We are not uppon the declaration of a function prototype!')
     return
@@ -172,7 +182,7 @@ endfunction
 
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#insert_impl(impl) {{{3
-function! lh#cpp#GotoFunctionImpl#insert_impl(impl)
+function! lh#cpp#GotoFunctionImpl#insert_impl(impl) abort
   let p = s:SearchLineToAddImpl()
   if -1 != p
     call s:InsertCodeAtLine(a:impl, p)
@@ -190,7 +200,7 @@ endfunction
 
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) {{{3
-function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
+function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) abort
   if expand('%:e') =~? 'cpp\|c\|C\|cxx'
     " already within the .cpp file
     return
@@ -232,7 +242,8 @@ endfunction
 
 " # Private {{{2
 
-function! s:CheckOptions(...)
+" Function: s:CheckOptions(...) {{{3
+function! s:CheckOptions(...) abort
   " 0- Check options {{{4
   let s:ShowVirtual             = lh#dev#option#get('ShowVirtual',       &ft, 1)
   let s:ShowStatic              = lh#dev#option#get('ShowStatic',        &ft, 1)
@@ -271,7 +282,7 @@ function! s:CheckOptions(...)
 endfunction
 "------------------------------------------------------------------------
 " Function: s:BestExtensionFor(root_name) {{{3
-function! s:BestExtensionFor(root_name, expected_extension)
+function! s:BestExtensionFor(root_name, expected_extension) abort
   if !empty(a:expected_extension) | return a:expected_extension | endif
   let Best_ext = lh#dev#option#get('ext_4_impl_file', &ft, 'cpp')
   let best_ext = type(Best_ext) == type(function('has'))
@@ -284,7 +295,7 @@ endfunction
 " Function: s:BuildRegexFromImpl(impl,className) {{{3
 " Build the regex that will be used to search the signature in the
 " implementations file
-function! s:BuildRegexFromImpl(impl,className)
+function! s:BuildRegexFromImpl(impl,className) abort
   let impl2search=lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(a:impl,a:className)
   let g:impl2search2 = impl2search
   return impl2search
@@ -292,7 +303,7 @@ function! s:BuildRegexFromImpl(impl,className)
 endfunction
 "------------------------------------------------------------------------
 " Function: s:Search4Impl(re_impl, scope):bool {{{3
-function! s:Search4Impl(re_impl, scope)
+function! s:Search4Impl(re_impl, scope) abort
   " 0- Pretransformations {{{4
   let required_ns = matchstr(a:scope, '^.*\ze#::#')
   " 1- Memorize position {{{4
@@ -361,7 +372,7 @@ endfunction
 "------------------------------------------------------------------------
 " Function: s:BuildFunctionSignature4impl " {{{3
 let s:k_operators = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\)'
-function! s:BuildFunctionSignature4impl(proto,className)
+function! s:BuildFunctionSignature4impl(proto,className) abort
   let proto = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:proto)
   let g:implproto = proto
 
@@ -458,8 +469,7 @@ function! s:BuildFunctionSignature4impl(proto,className)
 endfunction
 "------------------------------------------------------------------------
 " Function: s:SearchLineToAddImpl() {{{3
-
-function! s:SearchLineToAddImpl()
+function! s:SearchLineToAddImpl() abort
   let cpp_FunctionPosition = lh#dev#option#get('FunctionPosition', &ft, 'g', 0)
   let cpp_FunctionPosArg   = lh#dev#option#get('FunctionPosArg',   &ft, 'g', 0)
   if     cpp_FunctionPosition == 0 " {{{4
@@ -495,7 +505,7 @@ function! s:SearchLineToAddImpl()
 endfunction
 "------------------------------------------------------------------------
 " Function: s:InsertCodeAtLine([code [,line]]) {{{3
-function! s:InsertCodeAtLine(...)
+function! s:InsertCodeAtLine(...) abort
   if     a:0 >= 2 | let p = a:2+1     | let impl = a:1
   elseif a:0 >= 1 | let p = line('.') | let impl = a:1
   else            | let p = line('.') | let impl = s:FunctionImpl
@@ -545,7 +555,7 @@ function! s:InsertCodeAtLine(...)
 endfunction
 "------------------------------------------------------------------------
 " Function: NewAlternateFilename(file, expected_extension) {{{3
-function! NewAlternateFilename(file, expected_extension)
+function! NewAlternateFilename(file, expected_extension) abort
   " Assert(exists('g:alternateSearchPath') && strlen(g:alternateSearchPath)>0)
   "
   try
@@ -579,7 +589,7 @@ endfunction
 " This function is a partial workaround for a bug in a.vim:  ":AS cpp" does not
 " use g:alternateSearchPath while ":AS" does.
 "
-function! s:IsThereAMatchingSourceFile(file)
+function! s:IsThereAMatchingSourceFile(file) abort
   " DetermineExtension, EnumerateFilesByExtension and
   " EnumerateFilesByExtensionInPath come from a.vim
   let extension   = DetermineExtension(fnamemodify(a:file, ":p"))
@@ -605,7 +615,7 @@ endfunction
 " Function: s:SplitOption() {{{4
 " @return the type of split desired: "n)o split", "v)ertical" (default one) or
 "         "h)orizontal"/
-function! s:SplitOption()
+function! s:SplitOption() abort
   if exists('g:cpp_Split')
     if     g:cpp_Split =~ 'v\%[ertical]'   | return 'v'
     elseif g:cpp_Split =~ 'h\%[orizontal]' | return 'h'
@@ -631,7 +641,7 @@ let s:split_n_h = 'sp'
 let s:split_n_v = 'vsp'
 
 " Function: s:DoSplit(arg) {{{4
-function! s:DoSplit(arg, use_alternate)
+function! s:DoSplit(arg, use_alternate) abort
   if a:use_alternate
     exe 'silent '.s:split_{'a'}_{s:SplitOption()}.' '.a:arg
   else
@@ -641,8 +651,6 @@ function! s:DoSplit(arg, use_alternate)
   " exe 'silent '.s:split_{a}_{s:SplitOption()}.' '.a:arg
 endfunction
 " }}}2
-
-
 " Functions }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
