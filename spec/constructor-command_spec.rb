@@ -40,6 +40,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       };
     EOF
     vim.write()
+    vim.feedkeys('a\<esc>') # pause
     expect(system("ctags --c++-kinds=+p --fields=+imaS --extra=+q --language-force=C++ -f tags #{filename}")).to be true
     vim.command("let b:tags_dirname = expand('%:p:h')")
     assert_buffer_contents <<-EOF
