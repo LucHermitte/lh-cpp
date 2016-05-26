@@ -894,7 +894,7 @@ TBD
   * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 **Screencast:**
-![base-class-non-virtual snippet demo](doc/screencast-snippet-baseNV-class.gif "Snippet demo for a base class with a non virtual destructor")
+![base-class-non-virtual snippet demo](screencast-snippet-baseNV-class.gif "Snippet demo for a base class with a non virtual destructor")
 
 #### cpp/class
 **Produces:** Wizard that produces a class definition, and asks for class
