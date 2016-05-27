@@ -1,12 +1,12 @@
 "=============================================================================
 " File:         autoload/lh/cpp/AnalysisLib_Function.vim                  {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"               <URL:http://code.google.com/p/lh-vim/>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  18th Apr 2016
+" Last Update:  27th May 2016
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -339,6 +339,8 @@ function! lh#cpp#AnalysisLib_Function#LoadTags(id) abort
   " Remove inline definitions
   " -> a definition with an access specifier is an inline definition
   call filter(definitions, '! has_key(v:val, "access")')
+  " -> We can also use universal ctags {c++.properties} field option
+  call filter(definitions, 'get(v:val, "properties","") =~ "inline"')
   call s:Verbose('%1 functions definitions kept (class-inline definitions removed)', len(definitions))
 
   " # Declarations (p)
@@ -353,6 +355,8 @@ function! lh#cpp#AnalysisLib_Function#LoadTags(id) abort
   " -> not present in the signature.
   " -> at best, it may be in the command
   call filter(declarations, 'v:val.cmd !~ "=\\v\\s*(default|delete)"')
+  " -> We can also use universal ctags {c++.properties} field option
+  call filter(declarations, 'get(v:val, "properties","") =~ "default\\|delete"')
   call s:Verbose('%1 functions declarations found and kept (defaulted/deleted function removed)', len(declarations))
 
   let result = { 'definitions':definitions, 'declarations': declarations }
