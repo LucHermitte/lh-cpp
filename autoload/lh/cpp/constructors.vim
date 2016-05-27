@@ -1,12 +1,12 @@
 "=============================================================================
 " File:         autoload/lh/cpp/constructors.vim                          {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"               <URL:http://code.google.com/p/lh-vim/>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0b4
+"               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
+" Version:      2.2.0
 " Created:      09th Feb 2009
-" Last Update:  $Date$
+" Last Update:  27th May 2016
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -31,6 +31,7 @@
 " - have init-constructors rely on a mu-template snippet
 " - rely of libclang (databases?)
 " - Extend to C++11 move constructors & co
+" - Use universal ctags typeref attribute when available to obtain types
 " }}}1
 "=============================================================================
 
@@ -82,7 +83,7 @@ function! s:Attributes(classname) abort
     let p = lh#list#Find_if(attributes, 'v:val.fullsignature == '.string(attr))
     " assert p!=-1
     if p == -1
-      throw "lh#cpp#constructors.s:Attributes: unexpected attribute"
+      throw "lh#cpp#constructors.s:Attributes: unexpected attribute: ".string(attr)
     endif
     call add(sorted_attributes, attributes[p])
   endfor
@@ -203,7 +204,6 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
     endif
     put!=impl_lines
   endif
-
 endfunction
 
 " # Internals {{{2
@@ -228,7 +228,7 @@ function! s:Access(attr) abort
 endfunction
 
 function! s:Regex2Sig(regex) abort
-  let sig = substitute(a:regex, '/^\s*\(.\{-}\)\s*;\s*\$/', '\1', '')
+  let sig = substitute(a:regex, '\v/\^\s*(.{-})\s*;\s*\$/', '\1', '')
   return sig
 endfunction
 
