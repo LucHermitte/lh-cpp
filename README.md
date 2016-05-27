@@ -24,8 +24,8 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
 | **keys**                | Expands into ..                                                     | Surrounds the selection with ... <sup>2</sup> | Surrounds the current ... |
 | `(`                     | `(<cursor>)«»`                                                      | `(<selection>)`                               | word                      |
 | `[`                     | `[<cursor>]«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
-| `[` after a `[`         | `[[<cursor>]]«»`            | n/a                                           | n/a                       |
-| `]` before `]]`         | close all `]]`              | n/a                                           | n/a                       |
+| `[` after a `[`         | `[[<cursor>]]«»`                                                    | n/a                                           | n/a                       |
+| `]` before `]]`         | close all `]]`                                                      | n/a                                           | n/a                       |
 | `<localleader>[`        |                                                                     | `[<selection>]`                               | word                      |
 | `{`                     | `{<cursor>}«»`<sup>3</sup>                                          | `{<selection>}`                               | word                      |
 | `<localleader>{`        |                                                                     | `{\n<selection>\n}«»`                         | line                      |
@@ -42,7 +42,6 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
   * <sup>3</sup> The exact behavior of this mapping has changed with release r719 (on Google Code). Now, no newline is inserted by default. However, hitting `<cr>` in the middle of a pair of curly-bracket will expand into `{\n<cursor>\n}`.
   * `«»` represents a marker/placeholder, it may be expanded with other characters like `<++>` depending on your preferences.
   * There is no way (yet) to deactivate this feature from the `.vimrc`
-
 
 
 #### Code snippets
@@ -106,6 +105,9 @@ lh-cpp sets to the comma characcter if it isn't set already.
   * `?:` expands into `<cursor>? «» : «»;` ;
   * `<C-X>i` will look for the symbol under the cursor (or selected) in the current ctag database and it will try to automatically include the header file where the symbol is defined.
   * `<M-i>` will look for the symbol under the cursor (or selected) in the current ctag database and it will try to automatically prepend it with its missing complete scope.
+  *  `[[` and `][` and been overridden to jump to the start/end of the current
+     function -- the default mappings were defined in C in mind, and they are
+     unable of this. See the related `v_if` and `o_if` mappings from [lh-dev](http://github.com/LucHermitte/lh-dev/#function) -- [see the demo](blob/master/doc/screencast-select-function.gif).
 
 #### Templates
   * All templates, snippets and wizards respect the naming convention set for

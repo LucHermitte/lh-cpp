@@ -135,6 +135,17 @@ NB: The brackets mappings only insert the markers when |[bg]:usemarks|==1,
     and outside comments and string contexts.
     They are buffer relative.
 
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                                                    *C++_current_function*
+                                                    *C++_[[*    *C++_][*
+|[[| and |][| have been overriden for C++ functions. Instead of jumping to the
+previous/next `{`/`}` in the first column, they jump to the start/end of the
+current function.
+
+On this topic, |lh-dev| also provides |v_if| and |o_if| mappings that select
+the current function (this feature is not restricted to C++).
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C_control-statements*
 C Control statements~

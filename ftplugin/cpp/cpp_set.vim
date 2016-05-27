@@ -1,26 +1,13 @@
 " ========================================================================
-" File:		ftplugin/cpp/cpp_set.vim                              {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
-" Last Update:	$Date$
+" File:         ftplugin/cpp/cpp_set.vim                              {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
+" Version:      2.2.0
+" Last Update:  27th May 2016
 "
 "------------------------------------------------------------------------
-" Description:	
-" 	Defines vim options for C++ programming.
-"
-"------------------------------------------------------------------------
-" Installation:	See |lh-cpp-readme.txt|
-" Dependencies:	c_set.vim, misc_map.vim, 
-" 		cpp_InsertAccessors.vim,
-" 		cpp_BuildTemplates.vim
-" 		VIM >= 6.00 only
-"
-" TODO:		
-"  * Menus & Help pour se souvenir des commandes possibles
-"  * Support pour l'héritage vis-à-vis des constructeurs
-"  * Reconnaître si la classe courante est template vis-à-vis des
-"    implementations & inlinings
+" Description:
+"       Defines vim options for C++ programming.
 " }}}1
 " ========================================================================
 
@@ -29,8 +16,8 @@
 " ========================================================================
 " Buffer local definitions {{{1
 " ========================================================================
-if exists("b:loaded_local_cpp_settings") && !exists('g:force_reload_cpp_ftp')
-  finish 
+if exists("b:loaded_local_cpp_settings") && !exists('g:force_reload_cpp_set')
+  finish
 endif
 let b:loaded_local_cpp_settings = 1
 
@@ -51,13 +38,8 @@ if exists("b:did_ftplugin")
 endif
 source $VIMRUNTIME/ftplugin/cpp.vim
 let b:did_ftplugin = 1
-" runtime! ftplugin/c/*.vim 
-" --> need to be sure that some definitions are loaded first!
-"     like maplocaleader.
 
-""so $VIMRUNTIME/macros/misc_map.vim
-
-"   
+"
 " ------------------------------------------------------------------------
 " Options to set {{{2
 " ------------------------------------------------------------------------
@@ -67,14 +49,20 @@ let b:did_ftplugin = 1
 setlocal cinoptions=g0,t0,h1s,i0
 setlocal suffixesadd+=.hpp,.cpp,.C,.h++,.c++,.hh
 
+" Emulate [[ and ]] in C++
+nnoremap <silent> <buffer> [[ :call lh#dev#_goto_function_begin()<cr>
+onoremap <silent> <buffer> [[ :<c-u>call lh#dev#_goto_function_begin()<cr>
+nnoremap <silent> <buffer> ][ :call lh#dev#_goto_function_end()<cr>
+onoremap <silent> <buffer> ][ :<c-u>call lh#dev#_goto_function_end()<cr>
+
 " browse filter
-if has("gui_win32") 
-  let b:browsefilter = 
-	\ "C++ Header Files (*.hpp *.h++ *hh)\t*.hpp;*.h++;*.hh\n" .
-	\ "C++ Source Files (*.cpp *.c++)\t*.cpp;*.c++\n" .
-	\ "C Header Files (*.h)\t*.h\n" .
-	\ "C Source Files (*.c)\t*.c\n" .
-	\ "All Files (*.*)\t*.*\n"
+if has("gui_win32")
+  let b:browsefilter =
+        \ "C++ Header Files (*.hpp *.h++ *hh)\t*.hpp;*.h++;*.hh\n" .
+        \ "C++ Source Files (*.cpp *.c++)\t*.cpp;*.c++\n" .
+        \ "C Header Files (*.h)\t*.h\n" .
+        \ "C Source Files (*.c)\t*.c\n" .
+        \ "All Files (*.*)\t*.*\n"
 endif
 " }}}2
 
@@ -83,7 +71,7 @@ endif
 " ========================================================================
 if exists("g:loaded_cpp_set") && !exists('g:force_reload_cpp_ftp')
   let &cpo = s:cpo_save
-  finish 
+  finish
 endif
 let g:loaded_cpp_set = 1
 
