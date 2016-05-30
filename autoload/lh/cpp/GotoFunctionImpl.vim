@@ -7,7 +7,7 @@
 " Version:      2.0.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  24th May 2016
+" Last Update:  30th May 2016
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -43,6 +43,7 @@ let s:k_version = '220'
 "       (*) facultative option: extension of the file where to put the
 "           definition of the function.
 "       (*) Fix :GOTOIMPL to work even if &isk contains ":"
+"       (*) Fix :GOTOIMPL to support operators like +=
 " TODO:
 "       (*) add knowledge about C99/C++11 new numeric types
 "       (*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -337,7 +338,7 @@ function! s:Search4Impl(re_impl, scope) abort
     endif
     silent exe 'normal! v'.mv.'y'
     let &foldenable=fe
-    let current_proto = matchstr(@", '\%(::\|\<\I\i*\>\|\~\)\+\ze($')
+    let current_proto = matchstr(@", '\%(::\|\<\I\i*\>\|\<operator\>\s*\(||\|&&\|[-+*/^%=]=\=\)\=\|\~\)\+\ze($')
     let proto0= @"
     let @" = z
     " Todo: purge comments within current_proto
