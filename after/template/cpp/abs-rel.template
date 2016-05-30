@@ -1,5 +1,5 @@
 VimL:" Absolute and relative Classes Template, Luc Hermitte
-VimL:" Used to define Date and Duration, Point and Distance, ... 
+VimL:" Used to define Date and Duration, Point and Distance, ...
 VimL:" hint: Absolute/Relative classes (e.g. point/distance, date/duration, ...)
 VimL: let s:value_start = '¡'
 VimL: let s:value_end   = '¡'
@@ -44,7 +44,7 @@ VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | e
  */
 VimL: let s:super = "DETAILS::".s:sharedclsname.s:tmpl
 VimL: let s:inh = IF(s:issharingimpl, "\n: ".s:super."(".Marker_Txt("params").")", "\n".Marker_Txt(" "))
-<+s:tmpl_decl+>class ¡s:absclsname.IF(s:issharingimpl, " : ".s:super, "")¡
+<+s:tmpl_decl+>class ¡s:absclsname.IF(s:issharingimpl, " : protected ".s:super, "")¡
 {
 public:
     friend class <+s:relclsname+><+s:tmpl+>;
@@ -67,9 +67,9 @@ public:
 
     static <+s:super+> const diff(<+s:absclsname+> const& <+s:lhs+>, <+s:absclsname+> const& <+s:rhs+>)
     {
-	<+s:super+> tmp(<+s:lhs+>);
-	tmp.dec(<+s:rhs+>);
-	return tmp;
+        <+s:super+> tmp(<+s:lhs+>);
+        tmp.dec(<+s:rhs+>);
+        return tmp;
     }
     friend bool operator==(<+s:absclsname+> const& <+s:rhs+>, <+s:absclsname+> const& <+s:lhs+>)¡IF(s:issharingimpl, "\n{ return ".s:absclsname."::isEqual(".(s:rhs).", ".(s:lhs)."); }", ';')¡
     //@}
@@ -90,7 +90,7 @@ public:
  * @version ¡'$'¡revision$
  * <+lh#dox#author()+>
  */
-<+s:tmpl_decl+>class ¡s:relclsname.IF(s:issharingimpl, " : ".s:super, "")¡
+<+s:tmpl_decl+>class ¡s:relclsname.IF(s:issharingimpl, " : protected ".s:super, "")¡
 {
 public:
     friend class <+s:absclsname+><+s:tmpl+>;
@@ -124,69 +124,69 @@ public:
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator-(
-	¡s:absclsname.s:tmpl¡ const& <+s:lhs+>,
-	¡s:absclsname.s:tmpl¡ const& <+s:rhs+>)
+        ¡s:absclsname.s:tmpl¡ const& <+s:lhs+>,
+        ¡s:absclsname.s:tmpl¡ const& <+s:rhs+>)
 { return ¡s:relclsname.s:tmpl¡(¡s:absclsname.s:tmpl¡::diff(<+s:lhs+>, <+s:rhs+>)); }
 
 <+s:tmpl_decl+>inline
 ¡s:absclsname.s:tmpl¡ operator+(
-	¡s:absclsname.s:tmpl¡        <+s:lhs+>,
-	¡s:relclsname.s:tmpl¡ const& <+s:rhs+>) 
+        ¡s:absclsname.s:tmpl¡        <+s:lhs+>,
+        ¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)
 { return <+s:lhs+> += <+s:rhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:absclsname.s:tmpl¡ operator+(
-	¡s:relclsname.s:tmpl¡ const& <+s:lhs+>,
-	¡s:absclsname.s:tmpl¡        <+s:rhs+>)
+        ¡s:relclsname.s:tmpl¡ const& <+s:lhs+>,
+        ¡s:absclsname.s:tmpl¡        <+s:rhs+>)
 { return <+s:rhs+> += <+s:lhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:absclsname.s:tmpl¡ operator-(
-	¡s:absclsname.s:tmpl¡        <+s:lhs+>,
-	¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)
+        ¡s:absclsname.s:tmpl¡        <+s:lhs+>,
+        ¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)
 { return <+s:lhs+> -= <+s:rhs+>; }
 
 #if 0
 // Makes no sense
 <+s:tmpl_decl+>inline
 ¡s:absclsname.s:tmpl¡ const operator-(
-	¡s:relclsname.s:tmpl¡ const& <+s:lhs+>,
-	¡s:absclsname.s:tmpl¡ const& <+s:rhs+>);
+        ¡s:relclsname.s:tmpl¡ const& <+s:lhs+>,
+        ¡s:absclsname.s:tmpl¡ const& <+s:rhs+>);
 #endif
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator+(
-	¡s:relclsname.s:tmpl¡        <+s:lhs+>,
-	¡s:relclsname.s:tmpl¡ const& <+s:rhs+>) 
+        ¡s:relclsname.s:tmpl¡        <+s:lhs+>,
+        ¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)
 { return <+s:lhs+> += <+s:rhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator-(
-	¡s:relclsname.s:tmpl¡        <+s:lhs+>,
-	¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)
+        ¡s:relclsname.s:tmpl¡        <+s:lhs+>,
+        ¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)
 { return <+s:lhs+> -= <+s:rhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator*(
-	¡s:relclsname.s:tmpl¡              <+s:lhs+>,
-	¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:rhs+>) 
+        ¡s:relclsname.s:tmpl¡              <+s:lhs+>,
+        ¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:rhs+>)
 { return <+s:lhs+> *= <+s:rhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator*(
-	¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:lhs+>,
-	¡s:relclsname.s:tmpl¡              <+s:rhs+>)
+        ¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:lhs+>,
+        ¡s:relclsname.s:tmpl¡              <+s:rhs+>)
 { return <+s:rhs+> *= <+s:lhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator/(
-	¡s:relclsname.s:tmpl¡              <+s:lhs+>,
-	¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:rhs+>) 
+        ¡s:relclsname.s:tmpl¡              <+s:lhs+>,
+        ¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:rhs+>)
 { return <+s:lhs+> /= <+s:rhs+>; }
 
 <+s:tmpl_decl+>inline
 ¡s:relclsname.s:tmpl¡ operator/(
-	¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:lhs+>,
-	¡s:relclsname.s:tmpl¡              <+s:rhs+>)
+        ¡s:typename.s:relclsname.s:tmpl¡::scalar_type <+s:lhs+>,
+        ¡s:relclsname.s:tmpl¡              <+s:rhs+>)
 { return <+s:rhs+> /= <+s:lhs+>; }
 
