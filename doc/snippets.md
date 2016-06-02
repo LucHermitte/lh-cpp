@@ -228,7 +228,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * or `@throw «exception_type»«»` (within Doxygen comments)
 
 **Parameters:**
-  * `exception_text`, default: «text»
+  * `exception_text`, default: `_vimrc_local.vim`
 
 **Options:**
   * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
@@ -455,24 +455,37 @@ std::extent<decltype(«array»)>::value`
 std::size(«array»)
 ```
 
+Or whatever is specified into
+[`(bg):({ft}_)array_size`](options.md#bgcpp_array_size). Up to C++14, it's
+recommended to follow the instructions generated as comments, and to put an
+equivalent of C++17 `std::size()` in a header file and use it. Let's say the
+function is named `myarray_size()` and put into `myrange.h`, then define into
+your project configuration file (e.g. a
+[`_vimrc_local.vim`](https://github.com/LucHermitte/local_vimrc)):
+
+```vim
+let b:cpp_array_size = {'file': 'myrange.h', 'funcname': 'myarray_size(%1)'}
+```
+
 **Parameters:**
   * _array_, default «array»
 
 **Options:**
   * [`lh#cpp#use_cpp11()` and `lh#cpp#use_cpp17()`](options.md#bgcpp_std_flavour)
+  * [`(bg):({ft}_)array_size`](options.md#bgcpp_array_size)
 
 **Surround:**
   1. The selection can be surrounded to become the array name
 
 **Also includes:**
-  * `<type_traits>` in C++11
+  * `<type_traits>` in C++11 and C++14
+  * `<iterator>` from C++17 onward
 
 **Notes:**
   * In C++98/03, the definition of `array_size()` macro is provided along the
     way
 
 **TODO:**
-  * Make the snippet easier to use multiple times in C++98/03
   * Define the unsafe C equivalent `c/array_size`:
     `sizeof «array»/sizeof «array»[0]`
 
@@ -1018,10 +1031,10 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
 #### dox/em
-**Produces:** `<em>«text»</em>`
+**Produces:** `<em>`_vimrc_local.vim`</em>`
 
 **Parameters:**
-  * «text», default: empty placeholder «»
+  * `_vimrc_local.vim`, default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1071,10 +1084,10 @@ template <typename «T»> struct «name»_traits
   1. The selection can be surrounded by the group tags
 
 #### dox/html
-**Produces:** `<html-tag>«text»</html-tag>`
+**Produces:** `<html-tag>`_vimrc_local.vim`</html-tag>`
 
 **Parameters:**
-  * «text», default: empty placeholder «»
+  * `_vimrc_local.vim`, default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1108,10 +1121,10 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#since()`](API.md#lhdoxsince)
 
 #### dox/tt
-**Produces:** `<tt>«text»</tt>`
+**Produces:** `<tt>`_vimrc_local.vim`</tt>`
 
 **Parameters:**
-  * «text», default: empty placeholder «»
+  * `_vimrc_local.vim`, default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)

@@ -1,32 +1,43 @@
 VimL:" array_size definition File Template, Luc Hermitte, 25th Apr 2014
 VimL:" hint: std::extent<decltype(tab)>::value
-VimL: let s:value_start = '¡'
+VimL: let s:value_start = 'Â¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  if lh#cpp#use_cpp17()
-VimL:     function! s:_array_size(tab)
-VimL:         return 'std::size('.a:tab.')'
-VimL:     endfunction
-MuT:  elseif lh#cpp#use_cpp11()
-VimL:     function! s:_array_size(tab)
-VimL:         return 'std::extent<decltype('.a:tab.')>::value'
-VimL:     endfunction
-VimL: call s:AddPostExpandCallback('lh#dev#import#add("<type_traits>")')
-MuT:  else
-// Parfois on a besoin d'une constante de compilation ;
-// dans ce cas la solution suivante est applicable :
-// Falk Tannh�user, fclc++,
-//   Message-ID: <3FCB378C.1A1C6066@crf.canon.fr>
-namespace{
-    template <std::size_t N> struct array{char value[N];};
-
-    template<typename T, std::size_t N>
-    array<N> array_size_helper(T (&)[N]);
-}// namespace
-#define array_size(array) (sizeof ::array_size_helper(array).value)
-VimL:     function! s:_array_size(tab)
-VimL:         return 'array_size('.a:tab.')'
-VimL:     endfunction
+MuT:  let s:array_size = lh#dev#option#get('array_size', &ft)
+MuT:  if lh#option#is_unset(s:array_size) && lh#cpp#use_cpp17()
+MuT:      let s:array_size = {'file': '<iterator>', 'funcname': 'std::size(%1)'}
 MuT:  endif
-<+s:_array_size(s:Surround(1, s:Param("array", lh#marker#txt('array'))))+>
+MuT:  if lh#option#is_set(s:array_size)
+VimL:     call s:AddPostExpandCallback('lh#dev#import#add(s:array_size.file)')
+MuT:      let s:_array_size = s:array_size.funcname
+MuT:  elseif lh#cpp#use_cpp11()
+VimL:     call s:AddPostExpandCallback('lh#dev#import#add("<type_traits>")')
+MuT:      let s:_array_size = 'std::extent<decltype(%1)>::value'
+MuT:      let s:restore_style = lh#on#exit().restore('s:content.can_apply_style')
+VimL:     let s:content.can_apply_style = 0
+// You may want instead to define the missing std::size() in a header file
+//   template <typename T, std::size_t N>
+//   constexpr std::size_t size(T (&)[N]) noexcept { return N ;}
+// And include this file instead.
+// In you have such a file ready to be used, please set
+//    let b:cpp_array_size = {'file': 'theheader to include', 'funcname': 'std::size(%1)' }
+// in your vim project configuration file (_vimrc_local.vim...)
+VimL:      call s:restore_style.finalize()
+MuT:  else
+MuT:      let s:restore_style = lh#on#exit().restore('s:content.can_apply_style')
+VimL:     let s:content.can_apply_style = 0
+// You may want instead to define the following in a header file
+// and include this file instead.
+// Then set
+//    let b:cpp_array_size = {'file': 'theheader to include', 'funcname': 'array_size(%1)' }
+// in your vim project configuration file (_vimrc_local.vim...)
+VimL:      call s:restore_style.finalize()
+namespace{
+    template<typename T, std::size_t N>
+        char (&array_size_helper(T (&)[N]))[N];
+}// namespace
+#define array_size(array) (sizeof ::array_size_helper(array))
+MuT:      let s:_array_size = 'array_size(%1)'
+MuT:  endif
+<+lh#fmt#printf(s:_array_size, s:Surround(1, s:Param("array", lh#marker#txt('array'))))+>

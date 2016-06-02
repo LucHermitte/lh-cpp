@@ -35,6 +35,7 @@
     * [`g:cpp_no_hl_c_cast`](#gcpp_no_hl_c_cast)
     * [`g:cpp_no_hl_funcdef`](#gcpp_no_hl_funcdef)
     * [`g:cpp_no_hl_throw_spec`](#gcpp_no_hl_throw_spec)
+    * [`(bg):({ft}_)array_size`](#bgft_array_size)
     * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_commentleadingchar)
     * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_tagleadingchar)
     * [`(bg):({ft}_)dox_author_tag`](#bgft_dox_author_tag)
@@ -365,6 +366,19 @@ Boolean option that disables syntax highlighting that detects throw
 specifications in C++.
 
 __Default value:__ is 0 (false).
+
+#### `(bg):({ft}_)array_size`
+Tells how ` [cpp/array_size`](snippets.md#cpparray_size) snippet shall behave.
+
+This variable is meant to be a dictionary than contains the following entries:
+ - `"file"`: Filename to be included.
+ - `"funcname"`: Text to be included when the snippet is expanded. The special
+   `"%1"` placeholder will be replaced with the array name.
+
+__Default value:__ not defined
+
+**See:**
+- [`cpp/array_size` snippet](snippets.md#cpparray_size)
 
 #### `(bg):({ft}_)dox_CommentLeadingChar`
 Tells which character to use on each line of a Doxygen comment.
