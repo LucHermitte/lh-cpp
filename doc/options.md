@@ -15,7 +15,8 @@
     * [`(bg):({ft}_)ShowDefaultParams`, `(bg):({ft}_)ShowExplicit`, `(bg):({ft}_)ShowStatic`, `(bg):({ft}_)ShowVirtual`](#bgft_showdefaultparams-bgft_showexplicit-bgft_showstatic-bgft_showvirtual)
     * [`(bg):accessor_comment_get`, `(bg):accessor_comment_set`, `(bg):accessor_comment_ref`](#bgaccessor_comment_get-bgaccessor_comment_set-bgaccessor_comment_ref)
     * [`(bg):({ft}_)alternateSearchPath`](#bgft_alternatesearchpath)
-    * [`(bg):({ft}_)begin_end_style`](#bgft_begin_end_style)
+    * [`(bg):cpp_begin_end_includes`](#bgcpp_begin_end_includes)
+    * [`(bg):cpp_begin_end_style`](#bgcpp_begin_end_style)
     * [`(bg):c_menu_name`, `(bg):c_menu_priority`, `(bg):cpp_menu_name`, `(bg):cpp_menu_priority`](#bgc_menu_name-bgc_menu_priority-bgcpp_menu_name-bgcpp_menu_priority)
     * [`(bg):cpp_defaulted`](#bgcpp_defaulted)
     * [`(bg):cpp_defines_to_ignore`](#bgcpp_defines_to_ignore)
@@ -189,7 +190,15 @@ NOTE: a.vim uses `,` (comma) internally so DON'T use it in your regular
 expressions or other pathSpecs unless you update the rest of the a.vim code to
 use some other seperator.mentation:
 
-#### `(bg):({ft}_)begin_end_style`
+#### `(bg):cpp_begin_end_includes`
+Tells which header files shall be includes when expanding `begin()`/`end()`.
+
+This option is meant to override the include files returned by
+[`lh#cpp#snippets#_include_begin_end()`](API.md#lhcppsnippets_include_begin_end).
+
+**See:** `CTRL-X_be`, `CTRL-X_cbe`, `CTRL-X_rbe`, `CTRL-X_crbe`, [`cpp/b-e` snippet](snippets.md#cppb-e)
+
+#### `(bg):cpp_begin_end_style`
 Tells which style to use to generate a couple of calls to `begin()`/`end()`:
 - "`c++98`": -> `container.begin()`
 - "`std`": -> `std::begin(container)`

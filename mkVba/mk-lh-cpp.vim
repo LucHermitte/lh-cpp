@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.0
 " Created:	06th Nov 2007
-" Last Update:	22nd Dec 2015
+" Last Update:	02nd Jun 2016
 "------------------------------------------------------------------------
 let s:version = '2.2.0'
 let s:project = 'lh-cpp'
@@ -72,6 +72,7 @@ after/template/cpp/internals/class-skeleton.template
 after/template/cpp/internals/formatted-comment.template
 after/template/cpp/internals/function-comment.template
 after/template/cpp/internals/function.template
+after/template/cpp/internals/get-b-e.template
 after/template/cpp/internals/get-class-name.template
 after/template/cpp/internals/includes.template
 after/template/cpp/internals/list-constructors.template

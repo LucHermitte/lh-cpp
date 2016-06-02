@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  18th May 2016
+" Last Update:  02nd Jun 2016
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -172,10 +172,15 @@ let s:k_end = {
       \ 'cbegin' : 'cend',
       \ 'crbegin': 'crend'
       \ }
-
+let s:k_begin_end_inc = {
+      \ 'c++98': [],
+      \ 'std': ['<iterator>'],
+      \ 'boost': ['<boost/range/begin.hpp>', '<boost/range/end.hpp>'],
+      \ 'adl': []
+      \ }
 
 function! s:Style() " {{{4
-  let style = lh#dev#option#get('begin_end_style', &ft)
+  let style = lh#option#get('cpp_begin_end_style')
   if lh#option#is_unset(style)
     unlet style
     let style
@@ -189,6 +194,13 @@ endfunction
 function! lh#cpp#snippets#_select_begin_end(cont, function) " {{{4
   let style = s:Style()
   return lh#fmt#printf(s:k_begin_end_fmt[style], a:cont, a:function)
+endfunction
+
+" Function: lh#cpp#snippets#_include_begin_end() {{{3
+function! lh#cpp#snippets#_include_begin_end() abort
+  let style = s:Style()
+  " TODO: find a better way to organize options
+  return lh#option#get('cpp_begin_end_includes', get(s:k_begin_end_inc, style, []))
 endfunction
 
 function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
@@ -245,7 +257,7 @@ function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
   let [all, head, cont; rest] = matchlist(cont, '\v^(\_s*)(.{-})\_s*$')
   if pos[1] == 1 && head =~ '^\s\+$'
     " text on a new line => head2 shall induce a new line
-    " TODO: support styling option: "\n, " or ",\n" 
+    " TODO: support styling option: "\n, " or ",\n"
     let head2 = "\n"
   else
     let head2 = ""

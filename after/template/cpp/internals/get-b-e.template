@@ -1,0 +1,20 @@
+VimL:" get-b-e File Template, Luc Hermitte <hermitte {at} free {dot} fr>, jeu. 02 juin 2016 17:02:36 CEST
+VimL: " Parameters:
+VimL: " - "container"
+VimL: " Options:
+VimL: " - (bg):cpp_begin_end_style
+VimL: " Defines:
+VimL: " - s:begin
+VimL: " - s:end
+VimL: " - s:container
+VimL: " And:
+VimL: " - include the relevant files according to g:cpp_begin_end_style
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+MuT:  let s:container = s:SurroundableParam('container', 1)
+MuT:  let s:begin = lh#cpp#snippets#_select_begin_end(s:container, 'begin')
+MuT:  let s:end   = lh#cpp#snippets#_select_begin_end(s:container, 'end')
+MuT:  let s:includes = lh#cpp#snippets#_include_begin_end()
+VimL: call lh#list#for_each_call(s:includes, s:getSNR('AddPostExpandCallback("lh#dev#import#add(v:val)")'))

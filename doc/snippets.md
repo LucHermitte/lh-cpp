@@ -34,6 +34,7 @@
       * [c/rand_init](#crand_init)
       * [c/realloc](#crealloc)
       * [cpp/array_size](#cpparray_size)
+      * [cpp/internals/get-b-e](#cppinternalsget-b-e)
       * [cpp/b-e](#cppb-e)
       * [cpp/cerr](#cppcerr)
       * [cpp/cin](#cppcin)
@@ -42,11 +43,13 @@
       * [cpp/cout](#cppcout)
       * [cpp/ends_with](#cppends_with)
       * [cpp/erase-remove](#cpperase-remove)
+      * [cpp/forward](#cppforward)
       * [cpp/iss](#cppiss)
       * [cpp/oss](#cpposs)
       * [cpp/sort](#cppsort)
       * [cpp/starts_with](#cppstarts_with)
       * [cpp/static_assert](#cppstatic_assert)
+      * [cpp/typeid](#cpptypeid)
   * [Classes](#classes)
     * [Class Elements](#class-elements)
       * [cpp/assignment-operator](#cppassignment-operator)
@@ -489,29 +492,73 @@ let b:cpp_array_size = {'file': 'myrange.h', 'funcname': 'myarray_size(%1)'}
   * Define the unsafe C equivalent `c/array_size`:
     `sizeof «array»/sizeof «array»[0]`
 
-#### cpp/b-e
-**Produces:**
-  * or `std::begin(«container»), std::end(«container»)`
+#### cpp/internals/get-b-e
+**Assign values to mu-template snippet variables:**
+  * `s:begin`
+  * `s:end`
+  * `s:container`
+
+Their values will be:
+  * either `std::begin(«container»)` and `std::end(«container»)`
     if [C++11 flavour](options.md#bgcpp_std_flavour) is used, or
-    if [`(bg):({ft}_)begin_end_style`](options.md#bgft_begin_end_style) equals
-    "std"
-  * or `boost::begin(«container»), boost::end(«container»)`
-    if [`(bg):({ft}_)begin_end_style`](options.md#bgft_begin_end_style) equals
-    "boost"
-  * or `begin(«container»), end(«container»)`
-  * or `«container».begin(), «container».end()`
-    if [`(bg):({ft}_)begin_end_style`](options.md#bgft_begin_end_style) equals
-    "adl"
+    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    "std ;"
+  * or `boost::begin(«container»)` and `boost::end(«container»)`
+    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    "boost ;"
+  * or `begin(«container»)` and `end(«container»)`
+    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    "adl ;"
+  * or `«container».begin()` and `«container».end()` otherwise.
+
+**Also includes:**
+  * `<iterator>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"std"`
+  * `<boost/range/begin.hpp>` and `<boost/range/end.hpp>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"boost"`
+  * or whatever [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes) specifies
 
 **Parameters:**
   * _container_, default: «container»
 
+**Surround:**
+  1. The selection can be surrounded to become the container name
+
 **Options:**
   * [C++11 flavour](options.md#bgcpp_std_flavour)
-  * [`(bg):({ft}_)begin_end_style`](options.md#bgft_begin_end_style)
+  * [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style)
+  * [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes)
 
-**TODO:**
-  * Surround container
+#### cpp/b-e
+**Produces:**
+  * either `std::begin(«container»), std::end(«container»)`
+    if [C++11 flavour](options.md#bgcpp_std_flavour) is used, or
+    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    "std" ;
+  * or `boost::begin(«container»), boost::end(«container»)`
+    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    "boost" ;
+  * or `«container».begin(), «container».end()`
+    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    "adl" ;
+  * or `begin(«container»), end(«container»)` otherwise.
+
+**Also includes:**
+  * `<iterator>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"std"`
+  * `<boost/range/begin.hpp>` and `<boost/range/end.hpp>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"boost"`
+  * or whatever [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes) specifies
+
+**Parameters:**
+  * _container_, default: «container»
+
+**Surround:**
+  1. The selection can be surrounded to become the container name
+
+**Options:**
+  * [C++11 flavour](options.md#bgcpp_std_flavour)
+  * [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style)
+  * [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes)
+
+**Variation Points:**
+  * [`cpp/internals/get-b-e`](#cppinternalsget-b-e) snippet
 
 #### cpp/cerr
 **Produces:** `std::cerr <<`

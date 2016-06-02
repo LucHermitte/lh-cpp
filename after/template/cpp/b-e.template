@@ -2,10 +2,5 @@ VimL:" b-e File Template, Luc Hermitte, 30th Jun 2011
 VimL:" hint: <+container+>.begin(), <+container+>.end()
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:container = s:Param("container", lh#marker#txt('container'))
-VimL: let s:begin = lh#cpp#snippets#_select_begin_end(s:container, 'begin')
-VimL: let s:end   = lh#cpp#snippets#_select_begin_end(s:container, 'end')
+VimL: call s:Include('get-b-e', 'cpp/internals')
 <+s:begin+>, <+s:end+><++>
-VimL: unlet s:container
-VimL: unlet s:begin
-VimL: unlet s:end
