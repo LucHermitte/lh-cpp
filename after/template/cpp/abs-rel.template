@@ -119,7 +119,7 @@ public:
     //@}
 
     protected:
-    explicit Dist(<+s:super+> const& <+s:rhs+>) : <+s:super+>(<+s:rhs+>) {}
+    explicit <+s:relclsname+>(<+s:super+> const& <+s:rhs+>) : <+s:super+>(<+s:rhs+>) {}
 };
 
 <+s:tmpl_decl+>inline
