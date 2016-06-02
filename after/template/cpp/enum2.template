@@ -32,7 +32,7 @@ MuT:  endif
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<cassert>")')
 VimL: silent! unlet s:doc
 MuT:  let s:doc = []
-VimL: let s:doc += [{ "tag": "ingroup", "text": "g".lh#dev#option#get('dox_group', lh#marker#txt('Group')) }]
+VimL: let s:doc += [{ "tag": "ingroup", "text": "g".lh#dev#option#get('dox_group', &ft, lh#marker#txt('Group')) }]
 VimL: let s:doc += [{ "tag": "brief", "text": (s:enum_name)." Safe Enum" }]
 VimL: let s:doc += [{ "text": "\n" }]
 VimL: let s:doc += [{ "text": "This snippet has been automatically generated with vim plugin mu-template." }]
