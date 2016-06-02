@@ -23,15 +23,14 @@ MuT:  let s:type        = lh#dev#naming#type("type")
 MuT:  let s:str_param   = lh#dev#naming#param("s")
 MuT:  let s:k_strings   = lh#dev#naming#constant(s:enum_name.'_strings')
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<algorithm>")')
+MuT:  let s:restore_options = lh#on#exit().restore_option('cpp_begin_end_style')
 MuT:  if lh#cpp#use_cpp11()
-VimL:   call s:AddPostExpandCallback('lh#dev#import#add("<iterator>")')
 VimL:   call s:AddPostExpandCallback('lh#dev#import#add("<type_traits>")')
-MuT:    let s:range_ns = 'std'
+VimL:   let b:cpp_begin_end_style = lh#option#get('cpp_begin_end_style', 'std')
 MuT:  else
-VimL:   call s:AddPostExpandCallback('lh#dev#import#add("<boost/range/begin.hpp>")')
-VimL:   call s:AddPostExpandCallback('lh#dev#import#add("<boost/range/end.hpp>")')
-MuT:    let s:range_ns = 'boost'
+VimL:   let b:cpp_begin_end_style = lh#option#get('cpp_begin_end_style', 'boost')
 MuT:  endif
+VimL: call s:Include('get-b-e', 'cpp/internals', {'container': '::'.s:k_strings})
 
 namespace  { // Anonymous namespace
     typedef char const* const* strings_iterator;
@@ -42,11 +41,11 @@ namespace  { // Anonymous namespace
 
 <+s:scope+><+s:enum_name+>::<+s:enum_name+>(std::string const& <+s:str_param+>)
 {
-    strings_iterator const <+s:enum_name+>_it = std::find(<+s:range_ns+>::begin(::<+s:k_strings+>),<+s:range_ns+>::end(::<+s:k_strings+>), <+s:str_param+>);
-    if (<+s:enum_name+>_it == <+s:range_ns+>::end(::<+s:k_strings+>)) {
+    strings_iterator const <+s:enum_name+>_it = std::find(<+s:begin+>,<+s:end+>, <+s:str_param+>);
+    if (<+s:enum_name+>_it == <+s:end+>) {
 VimL: call s:Include('throw', 'cpp', '"Cannot decode '.s:enum_name.' name `"+'.s:str_param.'+"`"')
     }
-    <+s:m_value+> = <+s:type+>(std::distance(<+s:range_ns+>::begin(::<+s:k_strings+>), <+s:enum_name+>_it));
+    <+s:m_value+> = <+s:type+>(std::distance(<+s:begin+>, <+s:enum_name+>_it));
     assert(<+s:m_value+> < MAX__);
 }
 
@@ -54,7 +53,7 @@ VimL: call s:Include('array_size', 'cpp')
 
 char const* <+s:scope+><+s:enum_name+>::<+s:to_string+>() const
 {
-VimL: call s:Include('static_assert', 'cpp', {'condition': 'MAX__ == '.s:_array_size('::'.s:k_strings), 'message': '"Array size mismatches number of elements in enum"'})
+VimL: call s:Include('static_assert', 'cpp', {'condition': 'MAX__ == '.lh#fmt#printf(s:_array_size,'::'.s:k_strings), 'message': '"Array size mismatches number of elements in enum"'})
     assert(<+s:m_value+> != UNDEFINED__); // Yes, I know UNDEFINED__ > MAX__
     assert(<+s:m_value+> < MAX__);
     return <+s:k_strings+>[<+s:m_value+>];
@@ -65,3 +64,4 @@ MuT:  if s:iterable && lh#cpp#use_cpp11()
 MuT:  endif
 
 VimL: silent! unlet s:values
+VimL: call s:restore_options.finalize()

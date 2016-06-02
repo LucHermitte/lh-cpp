@@ -999,13 +999,43 @@ TBD:
 **See:** [lh-cpp enums generation](Enums.md)
 
 #### cpp/enum2
-TBD:
+TBD
 
-**See:** [lh-cpp enums generation](Enums.md)
+Meant to be used through [`:InsertEnum`](Enum.md#enum-snippet) command.
+
+**Options:**
+  * [`(bg):({ft}_)dox_group`](#options.md#bgft_dox_group)
+  * [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style)
+  * [`lh#cpp#use_cpp11()` and `lh#cpp#use_cpp17()`](options.md#bgcpp_std_flavour)
+  * [`(bg):({ft}_)array_size`](options.md#bgcpp_array_size)
+  * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
+  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
+
+**Variation Points/Relies on:**
+  * [`cpp/array_size`](#cpparray_size) snippet
+  * [`cpp/static_assert`](#cppstatic_assert) snippet
+  * [`cpp/throw`](#cppthrow) snippet
+  * [`cpp/internals/formatted-comment`](#cppinternalsformatted-comment) snippet
+
+**See:** [lh-cpp enums generation](Enums.md#enum-snippet)
+
 #### cpp/enum2-impl
 TBD:
 
-**See:** [lh-cpp enums generation](Enums.md)
+Meant to be used through [`:InsertEnum`](Enum.md#enum-snippet) command.
+
+**Options:**
+  * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
+  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
+  * [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style)
+  * [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes)
+
+**Variation Points/Relies on:**
+  * [`cpp/throw`](#cppthrow) snippet
+  * [`cpp/internals/get-b-e`](#cppinternalsget-b-e) snippet
+  * [`cpp/internals/formatted-comment`](#cppinternalsformatted-comment) snippet
+
+**See:** [lh-cpp enums generation](Enums.md#enum-snippet)
 
 #### cpp/exception-class
 TBD:
