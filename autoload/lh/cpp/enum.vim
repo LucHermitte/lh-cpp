@@ -179,15 +179,10 @@ endfunction
 function! lh#cpp#enum#_new(...)
   try
     " Inhibits the jump part in lh#mut#expand_and_jump()
-    if exists('b:mt_jump_to_first_markers')
-      let jump = ['b', b:mt_jump_to_first_markers]
-      let b:mt_jump_to_first_markers = 0
-    elseif exists('b:mt_jump_to_first_markers')
-      let jump = ['g', g:mt_jump_to_first_markers]
-      let g:mt_jump_to_first_markers = 0
-    else
-      let g:mt_jump_to_first_markers = 0
-    endif
+    let cleanup = lh#on#exit()
+          \.restore_option('mt_jump_to_first_markers')
+          \.restore('b:cpp_last_enum')
+    let b:mt_jump_to_first_markers = 0
 
     " What is the current scope ?
     let scope = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), 'any')
@@ -200,14 +195,10 @@ function! lh#cpp#enum#_new(...)
     " Goto to its associated definition file
     call lh#cpp#GotoFunctionImpl#open_cpp_file('')
     " And insert the non-inlined function definitions
-    call call('lh#mut#expand_and_jump', [0, 'cpp/enum2-impl', last_enum.name, last_enum])
+    call call('lh#mut#expand_and_jump', [0, 'cpp/enum2-impl', last_enum])
   finally
     " Restores mt_jump_to_first_markers
-    if exists('jump')
-      exe 'let '.jump[0].':mt_jump_to_first_markers = '.jump[1]
-    else
-      unlet g:mt_jump_to_first_markers
-    endif
+    call cleanup.finalize()
   endtry
 
 endfunction
