@@ -235,7 +235,20 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
 
 **Options:**
   * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
-  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
+  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter. A typical value would be:
+
+  ```vim
+:let b:exception_args = 'v:1_.lh#marker#txt(", ".b:cpp_project_namespace."::ExitCode::")'
+  ```
+  Note that this expression dynamically adapts to the current
+  `b:cpp_project_namespace`, and to the current marker characters.
+  *  Doxygen related options:
+    * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+    * [`(bg):({ft_}dox_throw)`](options.mg#bgft_dox_throw)
+
+**Relies on:**
+  * [`lh#dox#tag()`](API.md#lhdoxtag)
+  * [`lh#dox#throw()`](API.md#lhdoxthrow)
 
 **Also includes:**
   * `<stdexcept>` if `exception_type` starts with `std::`

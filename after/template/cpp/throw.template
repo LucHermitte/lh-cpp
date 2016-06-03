@@ -4,18 +4,22 @@ VimL:"
 VimL:" This snippet supports options:
 VimL:" - b:exception_type in the form of a string
 VimL:" - b:exception_args in the form of lh#function:
-VimL:"   e.g.: let b:exception_args = 'v:1_.'.string(lh#marker#txt(', '.b:cpp_project_namespace.'::ExitCode::'))
+VimL:"   e.g.: let b:exception_args = 'v:1_.lh#marker#txt(", ".b:cpp_project_namespace."::ExitCode::")'
 VimL:"   This functor takes a parameter that will get injected in place of v:1_
 VimL:"   e.g. VimL: call s:Include('throw', 'cpp', '"Cannot decode'.s:enum_name.'"')
+VimL:"   Note: If you want to dynamically adapt to the current marcher
+VimL:"   characters, or the current b:cpp_project_namespace option, don't use `string()`
+VimL:"   in expressions like:
+VimL:"   :let b:exception_args = 'v:1_.'.string(lh#marker#txt(', '.b:cpp_project_namespace.'::ExitCode::'))
 VimL:"
-VimL: let s:reindent     = 1 
+VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 MuT:  let s:_exception_type = lh#dev#option#get('exception_type', &ft, 'std::runtime_error')
 MuT:  let s:_exception_txt  = empty(s:CmdLineParams()) ? lh#marker#txt('text') : (s:CmdLineParams()[0])
-MuT:  let s:_exception_args = lh#function#bind(string(lh#dev#option#get('exception_args', &ft, 'v:1_')))
+MuT:  let s:_exception_args = lh#function#bind(lh#dev#option#get('exception_args', &ft, 'v:1_'))
 MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
-@throw <+s:_exception_type+><++>
+<+lh#dox#throw(lh#marker#txt(s:_exception_type))+><++>
 MuT:  else
 MuT:    if s:_exception_type =~ 'std::.*'
 VimL:     call s:AddPostExpandCallback('lh#dev#import#add("<stdexcept>")')
