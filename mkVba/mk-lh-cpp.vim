@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.0
 " Created:	06th Nov 2007
-" Last Update:	02nd Jun 2016
+" Last Update:	30th Jun 2016
 "------------------------------------------------------------------------
 let s:version = '2.2.0'
 let s:project = 'lh-cpp'
@@ -92,6 +92,7 @@ after/template/cpp/otb-sug-snippet.template
 after/template/cpp/path.template
 after/template/cpp/ptr_vector.template
 after/template/cpp/ref_setter.template
+after/template/cpp/scoped_ptr.template
 after/template/cpp/set.template
 after/template/cpp/setter.template
 after/template/cpp/shared_ptr.template
@@ -123,6 +124,7 @@ after/template/dox/html.template
 after/template/dox/ingroup.template
 after/template/dox/since.template
 after/template/dox/tt.template
+autoload/lh/cpp.vim
 autoload/lh/cpp/AnalysisLib_Class.vim
 autoload/lh/cpp/AnalysisLib_Function.vim
 autoload/lh/cpp/GotoFunctionImpl.vim
@@ -139,7 +141,6 @@ autoload/lh/cpp/snippets.vim
 autoload/lh/cpp/style.vim
 autoload/lh/cpp/tags.vim
 autoload/lh/cpp/types.vim
-autoload/lh/cpp.vim
 autoload/lh/dox.vim
 doc/API.md
 doc/Doxygen.md

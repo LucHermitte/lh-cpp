@@ -1,0 +1,8 @@
+VimL:" scoped_ptr File Template, Luc Hermitte <hermitte {at} free {dot} fr>, jeu. 23 juin 2016 17:28:07 CEST
+VimL:" hint: boost::scoped_ptr<>
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<boost/scoped_ptr.hpp>")')
+boost::scoped_ptr<¡s:Surround(1, '<+type+>')¡><+s:TerminalPlaceHolder()+>
