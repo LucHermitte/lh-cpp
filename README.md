@@ -98,6 +98,8 @@ lh-cpp sets to the comma characcter if it isn't set already.
   * `#d` expands into `#define`, `#i` into `#ifdef`, `#e` into `endif`, `#n` into `#include` ;
   * `,0` surrounds the selected lines with `#if 0 ... #endif` ;
   * `,1` surrounds the selected lines with `#if 0 ... #else ... #endif` ;
+  * `:KeepPoundIfPath 0` (or `1`) will clean a `#if 0/1...#else...#endif`
+    construct to match either the true or the false path.
   * `pub` expands into `public:\n`, `pro` expands into `protected:\n`, `pri` expands into `private:\n` ;
   * `vir` expands into `virtual` ;
   * `firend` is replaced by `friend` ;

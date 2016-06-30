@@ -134,6 +134,7 @@ autoload/lh/cpp/constructors.vim
 autoload/lh/cpp/enum.vim
 autoload/lh/cpp/ftplugin.vim
 autoload/lh/cpp/include.vim
+autoload/lh/cpp/macros.vim
 autoload/lh/cpp/option.vim
 autoload/lh/cpp/override.vim
 autoload/lh/cpp/scope.vim
@@ -167,6 +168,7 @@ ftplugin/c/c_snippets.vim
 ftplugin/c/c_stl.vim
 ftplugin/c/c_switch-enum.vim
 ftplugin/c/flistmaps.vim
+ftplugin/c/keep_pound_if_path.vim
 ftplugin/c/previewWord.vim
 ftplugin/c/word.list
 ftplugin/cpp/cpp_AddMissingScope.vim

@@ -1,5 +1,5 @@
 *lh-cpp-readme.txt*     C & C++ ftplugins short presentation (v2.2.0)
-                        For Vim version 7.x.    Last change: 06th Apr 2016
+                        For Vim version 7.x.    Last change: 30th Jun 2016
 
                         By Luc Hermitte
                         <hermitte {at} free {dot} fr>
@@ -254,12 +254,16 @@ Mappings and abbreviations~
     *#e*      expands into "#endif", in respect of the context.
     *<M-r>*   expands into "return ;"
     *?:*      expands into "?...:...;"
-    *<M-v>*   surrounds the selection with /*...*/
-    <localleader>0 surrounds the line selected with #if 0...#endif
-    <localleader>1 surrounds the line selected with #if 0...#else\n#endif
+    *<M-v>*   surrounds the selection with `/*...*/`
+    *<localleader>0* surrounds the line selected with `#if 0...#endif`
+    *<localleader>1* surrounds the line selected with `#if 0...#else\n#endif`
 
 To prevent these mappings and abbreviations to be defined, set
 |g:lh_cpp_snippets| to 0.
+
+On the subject of `#if 0/1...#else...#endif`, the command *:KeepPoundIfPath*
+can remove the true or the false path. It takes one parameter: 1 or 0 to
+indicate which path must be kept.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                                                     *C++_control-statements*
