@@ -86,6 +86,7 @@
       * [dox/since](#doxsince)
       * [dox/tt](#doxtt)
   * [Miscellaneous](#miscellaneous)
+      * [c/comment](#ccomment)
       * [cpp/benchmark](#cppbenchmark)
       * [cpp/otb-sug-latex](#cppotb-sug-latex)
       * [cpp/otb-sug-snippet](#cppotb-sug-snippet)
@@ -1226,6 +1227,29 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
 ## Miscellaneous
+#### c/comment
+**Produces:**
+  * in insert-mode, or with no count when surrounding:
+```C++
+#if 0
+«code;»
+#endif
+```
+  * with a count when surrounding:
+```C++
+#if 1
+v:count first lines
+#else
+remaining lines
+#endif
+```
+
+**Options:**
+  * `v:count`, when surrounding
+
+**Surround:**
+  1. The selection can be surrounded by this snippet.
+
 #### cpp/benchmark
 #### cpp/otb-sug-latex
 #### cpp/otb-sug-snippet

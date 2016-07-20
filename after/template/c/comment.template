@@ -1,0 +1,19 @@
+VimL:" comment File Template, Luc Hermitte <hermitte {at} free {dot} fr>, mer. 20 juil. 2016 11:30:01 CEST
+VimL:" hint: #if 0 #else #endif
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+MuT:  if s:content.count0 == 0
+#if 0
+<+s:Surround(1, lh#marker#txt("code;"))+>
+#endif
+MuT:  else
+MuT:  let s:commented_lines = split(s:Surround(s:content.count0, lh#marker#txt("code;")), "\n")
+#if 1
+<+join(s:commented_lines[: (s:content.count0-1)], "\n")+>
+#else
+<+join(s:commented_lines[(s:content.count0) :], "\n")+>
+#endif
+MuT:  endif

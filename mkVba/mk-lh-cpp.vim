@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.0
 " Created:	06th Nov 2007
-" Last Update:	30th Jun 2016
+" Last Update:	20th Jul 2016
 "------------------------------------------------------------------------
 let s:version = '2.2.0'
 let s:project = 'lh-cpp'
@@ -25,6 +25,7 @@ VimFlavor
 addon-info.json
 after/plugin/a.vim
 after/template/c/assert.template
+after/template/c/comment.template
 after/template/c/rand_init.template
 after/template/c/realloc.template
 after/template/cpp/abs-rel.template
