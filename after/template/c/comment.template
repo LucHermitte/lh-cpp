@@ -1,5 +1,5 @@
 VimL:" comment File Template, Luc Hermitte <hermitte {at} free {dot} fr>, mer. 20 juil. 2016 11:30:01 CEST
-VimL:" hint: #if 0 #else #endif
+VimL:" hint: #if 0 (#else) #endif
 VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
@@ -11,9 +11,13 @@ MuT:  if s:content.count0 == 0
 #endif
 MuT:  else
 MuT:  let s:commented_lines = split(s:Surround(s:content.count0, lh#marker#txt("code;")), "\n")
+VimL: " We store the lines into surround1&2 in order to avoid style application as s:Surround disables it
+VimL: let s:content.surround1 = join(s:commented_lines[: (s:content.count0-1)], "\n")
+VimL: let s:content.surround2 = join(s:commented_lines[(s:content.count0) :], "\n")
 #if 1
-<+join(s:commented_lines[: (s:content.count0-1)], "\n")+>
+<+s:Surround(1, lh#marker#txt("code;"))+>
 #else
-<+join(s:commented_lines[(s:content.count0) :], "\n")+>
+<+s:Surround(2, lh#marker#txt("code;"))+>
 #endif
 MuT:  endif
+
