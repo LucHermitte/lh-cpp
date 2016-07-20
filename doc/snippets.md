@@ -232,7 +232,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * or `@throw «exception_type»«»` (within Doxygen comments)
 
 **Parameters:**
-  * `exception_text`, default: `_vimrc_local.vim`
+  * `exception_text`, default: «text»
 
 **Options:**
   * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
@@ -1122,10 +1122,10 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
 #### dox/em
-**Produces:** `<em>`_vimrc_local.vim`</em>`
+**Produces:** `<em>«text»</em>`
 
 **Parameters:**
-  * `_vimrc_local.vim`, default: empty placeholder «»
+  * «text», default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1175,10 +1175,10 @@ template <typename «T»> struct «name»_traits
   1. The selection can be surrounded by the group tags
 
 #### dox/html
-**Produces:** `<html-tag>`_vimrc_local.vim`</html-tag>`
+**Produces:** `<html-tag>«text»</html-tag>`
 
 **Parameters:**
-  * `_vimrc_local.vim`, default: empty placeholder «»
+  * «text», default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1212,10 +1212,10 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#since()`](API.md#lhdoxsince)
 
 #### dox/tt
-**Produces:** `<tt>`_vimrc_local.vim`</tt>`
+**Produces:** `<tt>«text»</tt>`
 
 **Parameters:**
-  * `_vimrc_local.vim`, default: empty placeholder «»
+  * «text», default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
