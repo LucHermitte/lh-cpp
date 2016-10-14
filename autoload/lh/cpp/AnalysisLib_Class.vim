@@ -1,10 +1,10 @@
 " ========================================================================
 " File:         autoload/lh/cpp/AnalysisLib_Class.vim                 {{{1
-" Author:       Luc Hermitte <MAIL:hermitte at free.fr>
-"               <URL:http://code.google.com/p/lh-vim/>
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:      2.0.0b15
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
+" Version:      2.2.0
 " Last Update:  $Date$ (13th Feb 2008)
 "------------------------------------------------------------------------
 " Description:

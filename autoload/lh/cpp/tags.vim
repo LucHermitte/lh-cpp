@@ -58,11 +58,17 @@ endfunction
 " Function: lh#cpp#tags#get_included_paths() {{{3
 function! lh#cpp#tags#get_included_paths()
   let includes = []
-  if exists('b:sources_root') " from mu-template & lh-suite(s)
-    let includes += [lh#path#to_dirname(b:sources_root)]
+  let sources_root = lh#option#get('sources_root') " from mu-template & lh-suite(s)
+  if lh#option#is_unset(sources_root) " from mu-template & lh-suite(s)
+    unlet sources_root
+    let sources_root = lh#option#get('paths.sources')
   endif
-  if exists('b:includes')
-    let includes += b:includes
+  if lh#option#is_set(sources_root)
+    let includes += [lh#path#to_dirname(sources_root)]
+  endif
+  let def_includes = lh#option#get('includes')
+  if lh#option#is_set(def_includes)
+    let includes += def_includes
   endif
   return includes
 endfunction
