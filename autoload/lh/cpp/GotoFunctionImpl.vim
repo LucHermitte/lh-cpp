@@ -7,7 +7,7 @@
 " Version:      2.0.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  30th May 2016
+" Last Update:  14th Nov 2016
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -239,6 +239,11 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) abort
       let g:mt_jump_to_first_markers = mt_jump
     endif " }}} 4
   endtry
+endfunction
+
+" Function: lh#cpp#GotoFunctionImpl#InsertCodeAtLine() {{{3
+function! lh#cpp#GotoFunctionImpl#InsertCodeAtLine() abort
+  return s:InsertCodeAtLine()
 endfunction
 
 " # Private {{{2
