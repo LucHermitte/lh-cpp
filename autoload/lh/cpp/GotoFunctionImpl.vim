@@ -45,6 +45,7 @@ let s:k_version = '220'
 "       (*) Fix :GOTOIMPL to work even if &isk contains ":"
 "       (*) Fix :GOTOIMPL to support operators like +=
 "       v2.2.0
+"       (*) Use new alternate-lite API to determine the destination file
 "       (*) Update options to support specialization
 " TODO:
 "       (*) add knowledge about C99/C++11 new numeric types
@@ -143,6 +144,7 @@ endfunction
 let s:option_value = '\%(on\|off\|\d\+\)$'
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
   let expected_extension = call('s:CheckOptions', a:000)
+  let ft = &ft
 
   " 1- Retrieve the context {{{4
   " 1.1- Get the class name,if any -- thanks to cpp_FindContextClass.vim
@@ -167,6 +169,10 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
 
     " 3- Add the string into the implementation file {{{4
     call lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension)
+    if &ft != ft
+      exe 'setf '.ft
+    endif
+
     " Search or insert the C++ implementation
     if !s:Search4Impl((impl2search.regex).'\_s*[{:]', className)
       let impl        = s:BuildFunctionSignature4impl(proto,className)
@@ -204,42 +210,23 @@ endfunction
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) {{{3
 function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) abort
-  if expand('%:e') =~? 'cpp\|c\|C\|cxx'
+  call s:Verbose('Opening file with extension `%1`', a:expected_extension)
+  if expand('%:e') =~? 'cpp\|c\|C\|cxx\|txx'
     " already within the .cpp file
     return
   endif
   try
-    " neutralize mu-template jump to marker feature {{{5
-    if exists('g:mu_template') &&
-          \ (!exists('g:mt_jump_to_first_markers') || g:mt_jump_to_first_markers)
-      " NB: g:mt_jump_to_first_markers is true by default
-      let mt_jump = 1
-      let g:mt_jump_to_first_markers = 0
-    endif " }}}4
-    let split_opt = ''
-    let use_alternate = 1
-    if !empty(a:expected_extension)
-      let split_opt = NewAlternateFilename(expand('%:p'), a:expected_extension)
-      let split_opt = lh#path#to_relative(split_opt)
-      let use_alternate = 0
-    elseif exists(':AS') " from a.vim
-      if !s:IsThereAMatchingSourceFile(expand('%:p'))
-        let split_opt = NewAlternateFilename(expand('%:p'), a:expected_extension)
-        let split_opt = lh#path#to_relative(split_opt)
-        let use_alternate = 0
-      endif
-    else
-      let root_name = fnamemodify(expand('%'), ':r')
-      let best_ext = s:BestExtensionFor(root_name, a:expected_extension)
-      let split_opt = root_name . '.' . best_ext
-      let use_alternate = 0
-    endif
-    call s:DoSplit(split_opt, use_alternate)
+    " neutralize mu-template jump to marker feature
+    let cleanup = lh#on#exit()
+          \.restore('g:mt_jump_to_first_markers')
+    let g:mt_jump_to_first_markers = 0
+
+    let split_opt = lh#cpp#GotoFunctionImpl#_find_alternates(a:expected_extension)
+    let split_opt = lh#path#to_relative(split_opt)
+    call s:DoSplit(split_opt, 0)
   finally
-    " restore mu-template " {{{5
-    if exists('mt_jump')
-      let g:mt_jump_to_first_markers = mt_jump
-    endif " }}} 4
+    " restore mu-template
+    call cleanup.finalize()
   endtry
 endfunction
 
@@ -574,62 +561,20 @@ function! s:InsertCodeAtLine(...) abort
   let &foldenable=folder
 endfunction
 "------------------------------------------------------------------------
-" Function: NewAlternateFilename(file, expected_extension) {{{3
-function! NewAlternateFilename(file, expected_extension) abort
-  " Assert(exists('g:alternateSearchPath') && strlen(g:alternateSearchPath)>0)
-  "
-  try
-    " echomsg a:file
-    let extension   = DetermineExtension(fnamemodify(a:file, ":p"))
-    let baseName    = substitute(fnamemodify(a:file, ":t"), "\." . extension . '$', "", "")
-    let currentPath = fnamemodify(a:file, ":p:h")
-    " This is a C++ ft-plugin, not a C ft-plugin!
-    if exists('g:alternateExtensions_'.extension)
-      let l:save_extensions_h = g:alternateExtensions_{extension}
-    endif
-    let g:alternateExtensions_{extension} = s:BestExtensionFor(baseName, a:expected_extension)
-    let sFiles = EnumerateFilesByExtensionInPath(baseName, extension, g:alternateSearchPath, currentPath)
-    let lFiles = split(sFiles, ',')
-    " call filter(lFiles, 'v:val != a:file')
-    let result = lh#path#select_one(lFiles, "What should be the name of the new file?")
-  finally
-    " restore
-    if exists('l:save_extensions_h')
-      let g:alternateExtensions_{extension} = l:save_extensions_h
-    else
-      unlet g:alternateExtensions_{extension}
-    endif
-  endtry
+" Function: lh#cpp#GotoFunctionImpl#_find_alternates(expected_extension) {{{3
+function! lh#cpp#GotoFunctionImpl#_find_alternates(expected_extension) abort
+  let files = lh#alternate#_find_alternates() " on current file
+  if len(files.existing) == 1
+    return files.existing[0]
+  elseif !empty(files.existing)
+    let lFiles = files.existing
+  else
+    let lFiles = files.theorical
+  endif
+  let result = lh#path#select_one(lFiles, "What should be the name of the new file?")
   return result
 endfunction
 
-" Function: s:IsThereAMatchingSourceFile(file) {{{3
-" Check if the file already exists and can be found into the list of
-" directories from g:alternateSearchPath.
-" This function is a partial workaround for a bug in a.vim:  ":AS cpp" does not
-" use g:alternateSearchPath while ":AS" does.
-"
-function! s:IsThereAMatchingSourceFile(file) abort
-  " DetermineExtension, EnumerateFilesByExtension and
-  " EnumerateFilesByExtensionInPath come from a.vim
-  let extension   = DetermineExtension(fnamemodify(a:file, ":p"))
-  let baseName    = substitute(fnamemodify(a:file, ":t"), "\." . extension . '$', "", "")
-  let currentPath = fnamemodify(a:file, ":p:h")
-  let allfiles1 = EnumerateFilesByExtension(currentPath, baseName, extension)
-  let allfiles2 = EnumerateFilesByExtensionInPath(baseName, extension, g:alternateSearchPath, currentPath)
-
-  " echomsg allfiles1
-  " echomsg '---'
-  " echomsg allfiles2
-
-  let comma = strlen(allfiles1) && strlen(allfiles2)
-  let allfiles = allfiles1 . (comma ? ',' : '') . allfiles2
-
-  let l_allfiles = split(allfiles, ',')
-  let l_matches  = filter(l_allfiles, 'filereadable(v:val) || bufexists(v:val)')
-  let matches    = join(l_matches, ',')
-  return strlen(matches) > 0
-endfunction
 "------------------------------------------------------------------------
 " Split Options: {{{3
 " Function: s:SplitOption() {{{4
