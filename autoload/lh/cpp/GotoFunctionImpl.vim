@@ -4,10 +4,10 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
-" Version:      2.0.0
+" Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  14th Nov 2016
+" Last Update:  15th Nov 2016
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -44,6 +44,8 @@ let s:k_version = '220'
 "           definition of the function.
 "       (*) Fix :GOTOIMPL to work even if &isk contains ":"
 "       (*) Fix :GOTOIMPL to support operators like +=
+"       v2.2.0
+"       (*) Update options to support specialization
 " TODO:
 "       (*) add knowledge about C99/C++11 new numeric types
 "       (*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -251,10 +253,10 @@ endfunction
 " Function: s:CheckOptions(...) {{{3
 function! s:CheckOptions(...) abort
   " 0- Check options {{{4
-  let s:ShowVirtual             = lh#dev#option#get('ShowVirtual',       &ft, 1)
-  let s:ShowStatic              = lh#dev#option#get('ShowStatic',        &ft, 1)
-  let s:ShowExplicit            = lh#dev#option#get('ShowExplicit',      &ft, 1)
-  let s:ShowDefaultParams       = lh#dev#option#get('ShowDefaultParams', &ft, 1)
+  let s:ShowVirtual             = lh#ft#option#get('ShowVirtual',       &ft, 1)
+  let s:ShowStatic              = lh#ft#option#get('ShowStatic',        &ft, 1)
+  let s:ShowExplicit            = lh#ft#option#get('ShowExplicit',      &ft, 1)
+  let s:ShowDefaultParams       = lh#ft#option#get('ShowDefaultParams', &ft, 1)
   let expected_extension        = ''
   if 0 != a:0
     let i = 0
@@ -290,7 +292,7 @@ endfunction
 " Function: s:BestExtensionFor(root_name) {{{3
 function! s:BestExtensionFor(root_name, expected_extension) abort
   if !empty(a:expected_extension) | return a:expected_extension | endif
-  let Best_ext = lh#dev#option#get('ext_4_impl_file', &ft, 'cpp')
+  let Best_ext = lh#ft#option#get('ext_4_impl_file', &ft, 'cpp')
   let best_ext = type(Best_ext) == type(function('has'))
         \ ?  Best_ext(a:root_name)
         \ : Best_ext
@@ -417,8 +419,9 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
 
   let implParams = []
   for param in proto.parameters
+    call s:Verbose("Parameter: %1", param)
     " TODO: param type may need to be fully-qualified, see 4.2
-    let sParam = ((param.nl) ? "\n" : '')
+    let sParam = (get(param, 'nl', 0) ? "\n" : '')
           \ . (param.type) . ' ' . (param.name)
           \ . substitute((param.default), '\(.\+\)', pattern, '')
     " echo "param=".param
@@ -484,38 +487,41 @@ endfunction
 "------------------------------------------------------------------------
 " Function: s:SearchLineToAddImpl() {{{3
 function! s:SearchLineToAddImpl() abort
-  let cpp_FunctionPosition = lh#dev#option#get('FunctionPosition', &ft, 'g', 0)
-  let cpp_FunctionPosArg   = lh#dev#option#get('FunctionPosArg',   &ft, 'g', 0)
-  if     cpp_FunctionPosition == 0 " {{{4
-    return line('$') + cpp_FunctionPosArg
-  elseif cpp_FunctionPosition == 1 " {{{4
-    if !exists('g:cpp_FunctionPosArg')
-      call lh#common#error_msg('cpp#GotoFunctionImpl.vim: The search pattern '.
-            \'<g:cpp_FunctionPosArg> is not defined')
-      return -1
-    endif
-    let s=search(g:cpp_FunctionPosArg)
+  let Position = lh#ft#option#get('FunctionPosition', &ft, 0)
+  " Default value for FunctionPosArg may change depending on FunctionPosition
+  if type(Position) == type(function('has'))         " -- function (direct) {{{4
+    return Position()
+  elseif Position == 1 || type(Position) == type('') " -- search pattern {{{4
+    " Default: EOF
+    let FunctionPosArg   = lh#ft#option#get('FunctionPosArg',   &ft, '\%$')
+    let s=search(FunctionPosArg)
     if 0 == s
       call lh#common#error_msg("cpp#GotoFunctionImpl.vim: Can't find the pattern\n".
-            \'   <g:cpp_FunctionPosArg>: '.g:cpp_FunctionPosArg)
+            \'   <(bpg):cpp'.&ft.'_FunctionPosArg>: '.FunctionPosArg)
       return -1
     else
       return s
     endif
-  elseif cpp_FunctionPosition == 2 " {{{4
-    if     !exists('g:cpp_FunctionPosArg')
+  elseif Position == 0                               " -- offset from end {{{4
+    let FunctionPosArg   = lh#ft#option#get('FunctionPosArg',   &ft, 0)
+    return line('$') - FunctionPosArg
+  elseif Position == 2                               " -- function (indirect) {{{4
+    let FunctionPosArg   = lh#ft#option#get('FunctionPosArg',   &ft)
+    if lh#option#is_unset(FunctionPosArg)
       call lh#common#error_msg('cpp#GotoFunctionImpl.vim: No positionning '.
-            \ 'function defined thanks to <g:cpp_FunctionPosArg>')
+            \ 'function defined thanks to <(bpg):cpp'.&ft.'_FunctionPosArg>')
       return -1
-    elseif !exists('*'.g:cpp_FunctionPosArg)
+    elseif type(FunctionPosArg) == type(function('has'))
+      return FunctionPosArg()
+    elseif (type(FunctionPosArg) == type('')) && !exists('*'.FunctionPosArg)
       call lh#common#error_msg('cpp#GotoFunctionImpl.vim: The function '.
-            \ '<g:cpp_FunctionPosArg> is not defined')
+            \ '<(bpg):cpp'.&ft.'_FunctionPosArg> is not defined')
       return -1
     endif
-    exe "return ".g:cpp_FunctionPosArg."()"
-    " }}}4
-  elseif cpp_FunctionPosition == 3 | return -1
-  endif
+    exe "return ".FunctionPosArg."()"
+  elseif Position == 3                               " -- non-automatic insertion {{{4
+    return -1
+  endif " }}}4
 endfunction
 "------------------------------------------------------------------------
 " Function: s:InsertCodeAtLine([code [,line]]) {{{3

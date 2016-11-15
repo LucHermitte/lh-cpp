@@ -2,9 +2,9 @@
 " File:		ftplugin/cpp/cpp_GotoFunctionImpl.vim                 {{{1
 " Authors:	{{{2
 " 		From an original mapping by Leif Wickland (VIM-TIP#335)
-" 		See: http://vim.sourceforge.net/tip_view.php?tip_id=335 
+" 		See: http://vim.sourceforge.net/tip_view.php?tip_id=335
 " 		Firstly changed into a plugin (Mangled by) Robert KellyIV
-" 		<Feral at FireTop.Com> 
+" 		<Feral at FireTop.Com>
 " 		Rewritten by Luc Hermitte <hermitte at free.fr>, but features
 " 		and fixes still mainly coming from Robert's ideas.
 " 		<URL:http://code.google.com/p/lh-vim/>
@@ -14,7 +14,7 @@
 " Last Change:	$Date$ (05th May 2006)
 " Version:	2.0.0
 "------------------------------------------------------------------------
-" Description:	
+" Description:
 " 	Defines mappings and commands to jumps to the implementation of a
 " 	function prototype. If the implementation cannot be found, then
 " 	it provides a default one.
@@ -44,7 +44,7 @@
 "       (*) facultative option: extension of the file where to put the
 "           definition of the function.
 "    [Luc: 06th Oct 2006] v0.8.6: {{{3
-"    	(*) Code refactorized and moved to 
+"    	(*) Code refactorized and moved to
 " 		{rtp}/autoload/lh/cpp/CodeAnalysisLib.vim
 "    	    todo: search definition of operators
 "    	    todo: support the ellipsis -> "..."
@@ -67,7 +67,7 @@
 "	(*) New command (and related mappings) :MOVETOIMPL
 "    [Luc: 22nd Nov 2005] v0.8.0: {{{3
 "    	(*) Cpp_GetFunctionPrototype() can declarations from pure signatures
-"	    only, or from definitions as well.  
+"	    only, or from definitions as well.
 "	(*) Cpp_GetListOfParams()
 "
 "    [Luc: 29th Apr 2005] v0.7.0: {{{3
@@ -77,13 +77,13 @@
 "    	    should be opened. Possible values are "h\%[orizontal]",
 "    	    "v\%[ertical]" or anything which will be interpreted as "no-split".
 "    	    By default if g:cpp_Split is not set, "vertical" is assumed.
-"    	Todo: 
+"    	Todo:
 "    	(*) <bang> for PASTEIMPL and GOTOIMPL, same behavior than the one
 "    	    of :put-!
 "
 "    [Luc: 17th oct 2002] v0.6.0: {{{3
 "	(*) Supports destructors
-"	(*) Supports namespaces: 
+"	(*) Supports namespaces:
 "	    + If the zone where the function implementation is going to be
 "	      inserted is within a namespace, then the scope of the function
 "	      will be corrected.
@@ -109,24 +109,24 @@
 "	(*) Skip comments with searchpair()
 "
 "    [Luc: 15th oct 2002] v0.5.0: {{{3
-"	(*) The management of cpp_options.vim has been moved to another file. 
+"	(*) The management of cpp_options.vim has been moved to another file.
 "	(*) Comments are completely ignored when searching for the
 "    	    implementation of a function. Actually, the match is done
 "    	    according to the list of types only -- even parameter names will
 "    	    be ignored.
 "    	    Hence: the programmer can change the name of the parameters and/or
 "    	    add comments wherever she want within the function's header.
-"    	    Parameters-types Supported: 
+"    	    Parameters-types Supported:
 "    	    - simple types (int, unsigned short int, signed double, etc)
 "    	    - pointers, references and const modifiers usable
 "    	    - arrays "T p[][xx]"
-"    	    - arrays of pointers and pointers of arrays: 
+"    	    - arrays of pointers and pointers of arrays:
 "    	    	"T (*p)[][N]", "T* p[][N]"
 "    	    - complex types with scopes : "T1::T2::T3"
 "	(*) Inlines functions (within the class def) (ie not prototypes) will
 "    	    be ignored
 "	(*) Enhancements and little bugs corrections regarding default
-"	    parameters 
+"	    parameters
 "	(*) We can specify where we want the default implementation code to be
 "	    written ; cf cpp_options.vim and g:cpp_FunctionPosition.
 "    	Todo:
@@ -135,7 +135,7 @@
 "    	    long, UINT, etc) on user request/conf.
 "    	(*) Support very complex types : function types, template types.
 "    	    Must we consider that p for "T p[10]", "T p[]" and "T p[N]" have
-"    	    the same type ? 
+"    	    the same type ?
 "    	    Don't differentiate:
 "    	      "T * p$" and "T (*p)$" ; "const T" and "T const"
 "
@@ -152,7 +152,7 @@
 "    	(*) No more parameters don't require anymore to be on the same line
 "    	    But, the return type and the possible const modifier on the
 "    	    function must.
-"    	(*) No more registers, 
+"    	(*) No more registers,
 "    	(*) Works with member and non-member functions.
 "    	(*) Requires some other files of mine.
 "    	    => Can handle nested class.
@@ -172,42 +172,42 @@
 "    	    Status: done in 0.6
 "
 "    [Feral:274/02@20:42] v0.2.0: {{{3
-"	Improvements: from Leif's Tip (#335): 
-"	(*) can handle any number of default params (as long as they are all 
-"	    on the same line!) 
+"	Improvements: from Leif's Tip (#335):
+"	(*) can handle any number of default params (as long as they are all
+"	    on the same line!)
 "	    Status: 2/3 fixed with ver 0.4
-"	(*) Options on how to format default params, virtual and static. 
-"	         (see below) TextLink:||@|Prototype:| 
+"	(*) Options on how to format default params, virtual and static.
+"	         (see below) TextLink:||@|Prototype:|
 "	(*) placed commands into a function (at least I think it's an
-"	    improvement ;) ) 
-"	(*) Improved clarity of the code, at least I hope. 
+"	    improvement ;) )
+"	(*) Improved clarity of the code, at least I hope.
 "	(*) Preserves registers/marks. (rather does not use marks), Should not
-"	    dirty anything. 
-"	(*) All normal operations do not use mappings i.e. :normal! 
-"	   (I have Y mapped to y$ so Leif's mappings could fail.) 
-" 
-"	Limitations: 
-"	(*) fails on multi line declarations. All params must be on the same 
-"	    line. 
+"	    dirty anything.
+"	(*) All normal operations do not use mappings i.e. :normal!
+"	   (I have Y mapped to y$ so Leif's mappings could fail.)
+"
+"	Limitations:
+"	(*) fails on multi line declarations. All params must be on the same
+"	    line.
 "	    Status: 2/3 fixed with ver 0.4
 "	(*) fails for non member functions. (though not horribly, just have to
-"	    remove the IncorectClass:: text... 
+"	    remove the IncorectClass:: text...
 "	    Status: fixed with 0.3.
 "
 "    [Leif:] v0.1 {{{3
-"	 Leif's original VIM-Tip #335 
+"	 Leif's original VIM-Tip #335
 "
 " Requirements: {{{2
-" 		VIM 6.0, 
-" 		cpp_FindContextClass.vim, cpp_options-commands.vim, 
+" 		VIM 6.0,
+" 		cpp_FindContextClass.vim, cpp_options-commands.vim,
 " 		a.vim
 " }}}1
 "#############################################################################
 " Buffer Relative stuff {{{1
-if exists("b:loaded_ftplug_cpp_GotoFunctionImpl") 
+if exists("b:loaded_ftplug_cpp_GotoFunctionImpl")
       \ && !exists('g:force_load_cpp_GotoFunctionImpl')
-    finish 
-endif 
+    finish
+endif
 let b:loaded_ftplug_cpp_GotoFunctionImpl = 200
 let s:cpo_save=&cpo
 set cpo&vim
@@ -215,7 +215,7 @@ set cpo&vim
 " ==========================================================================
 
 " Commands: {{{2
-" Possible Arguments: 
+" Possible Arguments:
 "  'ShowVirtualon', 'ShowVirtualoff', 'ShowVirtual0', 'ShowVirtual1',
 "  'ShowStaticon', '..off', '..0' or '..1'
 "  'ShowExplicitcon', '..off', '..0' or '..1'
@@ -272,30 +272,32 @@ endif
 " }}}1
 "=============================================================================
 " Global definitions {{{1
-if exists("g:loaded_cpp_GotoFunctionImpl") 
+if exists("g:loaded_cpp_GotoFunctionImpl")
       \ && !exists('g:force_load_cpp_GotoFunctionImpl')
   let &cpo=s:cpo_save
-  finish 
+  finish
 endif
 let g:loaded_cpp_GotoFunctionImpl = 1
 "------------------------------------------------------------------------
 " Menus {{{2
 "
-let s:menu_prio = lh#option#get('cpp_menu_priority', '50', 'g')
-let s:menu_name = lh#option#get('cpp_menu_name',     '&C++', 'g')
+if 0
+  let s:menu_prio = lh#option#get('cpp_menu_priority', '50', 'g')
+  let s:menu_name = lh#option#get('cpp_menu_name',     '&C++', 'g')
 
 
-let s:FunctionPositionMenu = {
-      \ "variable": "cpp_FunctionPosition",
-      \ "idx_crt_value": 0,
-      \ "texts": [ 'end-of-file', 'pattern', 'function', 'other' ],
-      \ "values": [ 1, 2, 3, 4 ],
-      \ "menu": {
-      \     "priority": s:menu_prio.'.90.10',
-      \     "name": s:menu_name.'.&Options.&New-function-position'}
-      \}
+  let s:FunctionPositionMenu = {
+        \ "variable": "cpp_FunctionPosition",
+        \ "idx_crt_value": 0,
+        \ "texts": [ 'end-of-file', 'pattern', 'function', 'other' ],
+        \ "values": [ 0, 1, 2, 3 ],
+        \ "menu": {
+        \     "priority": s:menu_prio.'.90.10',
+        \     "name": s:menu_name.'.&Options.&New-function-position'}
+        \}
 
-call lh#menu#def_toggle_item(s:FunctionPositionMenu)
+  call lh#menu#def_toggle_item(s:FunctionPositionMenu)
+endif
 "------------------------------------------------------------------------
 " }}}2
 "------------------------------------------------------------------------
@@ -303,48 +305,48 @@ let &cpo=s:cpo_save
 " }}}
 "=============================================================================
 " Documentation {{{1
-"***************************************************************** 
-" given: 
-"    virtual void Test_Member_Function_B3(int _iSomeNum2 = 5, char * _cpStr = "Yea buddy!"); 
+"*****************************************************************
+" given:
+"    virtual void Test_Member_Function_B3(int _iSomeNum2 = 5, char * _cpStr = "Yea buddy!");
 
-" Prototype: 
-"GrabFromHeaderPasteInSource(VirtualFlag, StaticFlag, DefaultParamsFlag) 
+" Prototype:
+"GrabFromHeaderPasteInSource(VirtualFlag, StaticFlag, DefaultParamsFlag)
 
-" VirtualFlag: 
-" 1:    if you want virtual commented in the implementation: 
-"    /*virtual*/ void Test_Member_Function_B3(int _iSomeNum2 = 5, char * _cpStr = "Yea buddy!"); 
-" else:    remove virtual and any spaces/tabs after it. 
-"    void Test_Member_Function_B3(int _iSomeNum2 = 5, char * _cpStr = "Yea buddy!"); 
+" VirtualFlag:
+" 1:    if you want virtual commented in the implementation:
+"    /*virtual*/ void Test_Member_Function_B3(int _iSomeNum2 = 5, char * _cpStr = "Yea buddy!");
+" else:    remove virtual and any spaces/tabs after it.
+"    void Test_Member_Function_B3(int _iSomeNum2 = 5, char * _cpStr = "Yea buddy!");
 
-" StaticFlag: 
-" 1:    if you want static commented in the implementation: 
-"    Same as virtual, save deal with static 
-" else:    remove static and any spaces/tabs after it. 
-"    Same as virtual, save deal with static 
+" StaticFlag:
+" 1:    if you want static commented in the implementation:
+"    Same as virtual, save deal with static
+" else:    remove static and any spaces/tabs after it.
+"    Same as virtual, save deal with static
 
-" ExplicitFlag: 
-" 1:    if you want explicit commented in the implementation: 
-"    Same as virtual, save deal with explicit 
-" else:    remove explicit and any spaces/tabs after it. 
-"    Same as virtual, save deal with explicit 
+" ExplicitFlag:
+" 1:    if you want explicit commented in the implementation:
+"    Same as virtual, save deal with explicit
+" else:    remove explicit and any spaces/tabs after it.
+"    Same as virtual, save deal with explicit
 
-" DefaultParamsFlag: 
-" 1:    If you want to remove default param reminders, i.e. 
-"    Test_Member_Function_B3(int _iSomeNum2, char * _cpStr); 
-" 2:    If you want to comment default param assignments, i.e. 
-"    Test_Member_Function_B3(int _iSomeNum2/*= 5*/, char * _cpStr/*= "Yea buddy!"*/); 
-" 3:    Like 2 but, If you do not want the = in the comment, i.e. 
-"    Test_Member_Function_B3(int _iSomeNum2/*5*/, char * _cpStr/*"Yea buddy!"*/); 
-" 
-" Examples: 
-" smallest implementation: 
-"    void Test_Member_Function_B3(int _iSomeNum2, char * _cpStr); 
-":command! -nargs=0 GHPH call <SID>GrabFromHeaderPasteInSource(0,0,1) 
-"    Verbose...: 
-"    /*virtual*/ void Test_Member_Function_B3(int _iSomeNum2/*5*/, char * _cpStr/*"Yea buddy!"*/); 
-":command! -nargs=0 GHPH call <SID>GrabFromHeaderPasteInSource(1,1,3) 
-"    What I like: 
-"    void Test_Member_Function_B3(int _iSomeNum2/*5*/, char * _cpStr/*"Yea buddy!"*/); 
+" DefaultParamsFlag:
+" 1:    If you want to remove default param reminders, i.e.
+"    Test_Member_Function_B3(int _iSomeNum2, char * _cpStr);
+" 2:    If you want to comment default param assignments, i.e.
+"    Test_Member_Function_B3(int _iSomeNum2/*= 5*/, char * _cpStr/*= "Yea buddy!"*/);
+" 3:    Like 2 but, If you do not want the = in the comment, i.e.
+"    Test_Member_Function_B3(int _iSomeNum2/*5*/, char * _cpStr/*"Yea buddy!"*/);
+"
+" Examples:
+" smallest implementation:
+"    void Test_Member_Function_B3(int _iSomeNum2, char * _cpStr);
+":command! -nargs=0 GHPH call <SID>GrabFromHeaderPasteInSource(0,0,1)
+"    Verbose...:
+"    /*virtual*/ void Test_Member_Function_B3(int _iSomeNum2/*5*/, char * _cpStr/*"Yea buddy!"*/);
+":command! -nargs=0 GHPH call <SID>GrabFromHeaderPasteInSource(1,1,3)
+"    What I like:
+"    void Test_Member_Function_B3(int _iSomeNum2/*5*/, char * _cpStr/*"Yea buddy!"*/);
 " }}}1
 "=============================================================================
-" vim60:fdm=marker 
+" vim60:fdm=marker
