@@ -948,6 +948,31 @@ Functions dedicated to the analysis of C/C++ classes~
 *lh#cpp#AnalysisLib_Class#used_namespaces()*
 *lh#cpp#AnalysisLib_Class#attributes()*
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+                                            *lh#cpp#tags#*
+Functions analysis current situation~
+*lh#cpp#tags#find_compiler()*
+    Returns the current known C++ compiler.
+    Works best on CMake projects when |lh-cmake| is installed. Looks into
+    `$CXX` or returns which of `c++`, `g++` or `clang++` is found first.
+*lh#cpp#tags#compiler_includes()*
+    Returns the standard (hard-coded) include directories associated to the
+    current C++ compiler (|lh#cpp#tags#find_compiler()|).
+*lh#cpp#tags#get_included_paths()*
+    Returns declared included paths:
+    - the first between |(bpg):sources_root| (deprecated) and |(bpg):paths.sources|
+    - the first between |(bpg):paths.includes| and |(bpg):includes|
+      (deprecated), or optional |list| passed.
+*lh#cpp#tags#strip_included_paths()*
+    Returns the first parameter (a filename) stripped of its leading dirname
+    that belongs to the |list| of include directories (likelly obtained with
+    |lh#cpp#tags#get_included_paths()|).
+*lh#cpp#tags#fetch()*
+    Look up the symbol under the cursor in the |tag| database in header files
+    And returns its relevant information.
+    Tuned by the options *(bpg):[{ft}_]tag_kinds_for_inclusion* and
+    *(bpg):[{ft}_]file_regex_for_inclusion*
+
 ------------------------------------------------------------------------------
 Credits~
 

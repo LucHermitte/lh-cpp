@@ -22,25 +22,69 @@ function! lh#cpp#tags#version()
 endfunction
 
 " # Debug   {{{2
-let s:verbose = 0
+let s:verbose = get(s:, 'verbose', 0)
 function! lh#cpp#tags#verbose(...)
   if a:0 > 0 | let s:verbose = a:1 | endif
   return s:verbose
 endfunction
 
-function! s:Verbose(expr)
+function! s:Log(expr, ...)
+  call call('lh#log#this',[a:expr]+a:000)
+endfunction
+
+function! s:Verbose(expr, ...)
   if s:verbose
-    echomsg a:expr
+    call call('s:Log',[a:expr]+a:000)
   endif
 endfunction
 
-function! lh#cpp#tags#debug(expr)
+function! lh#cpp#tags#debug(expr) abort
   return eval(a:expr)
 endfunction
 
-
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
+
+" Function: lh#cpp#tags#find_compiler() {{{3
+" Let's assume C++ and not C
+" TODO: support C
+function! lh#cpp#tags#find_compiler() abort
+  runtime autoload/lh/cmake.vim
+  if exists('*lh#cmake#get_variables')
+    try
+      let compiler = lh#cmake#get_variables('CMAKE_CXX_COMPILER').CMAKE_CXX_COMPILER.value
+      return compiler
+    catch /.*/
+      " The project isn't under CMake
+    endtry
+  endif
+  if exists('$CXX')
+    return $CXX
+  elseif executable('c++')
+    return 'c++'
+  elseif executable('g++')
+    return 'g++'
+  elseif executable('clang++')
+    return 'clang++'
+  endif
+endfunction
+
+" Function: lh#cpp#tags#compiler_includes() {{{3
+" Fetch standard includes (hard coded in the compiler)
+let s:compiler_includes = {}
+function! lh#cpp#tags#compiler_includes() abort
+  let compiler = lh#cpp#tags#find_compiler()
+  if ! has_key(s:compiler_includes, compiler)
+    " Let's assume a *nix compiler (g++, clang++)
+    let includes = split(lh#os#system(compiler . ' -E -xc++ - -Wp,-v < /dev/null'), "\n")
+    call filter(includes, 'v:val =~ "^ "')
+    call map(includes, 'lh#path#simplify(v:val[1 :])')
+    " Note that it should contain /usr/include & all
+    let s:compiler_includes[compiler] = includes
+  endif
+  return s:compiler_includes[compiler]
+endfunction
+
 " Function: lh#cpp#tags#strip_included_paths(filename, includes) {{{3
 function! lh#cpp#tags#strip_included_paths(filename, includes)
   let filename = a:filename
@@ -118,7 +162,7 @@ function! s:TagsSelectPolicy()
   return select_policy
 endfunction
 
-
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
