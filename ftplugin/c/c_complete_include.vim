@@ -2,15 +2,16 @@
 " File:         ftplugin/c/c_complete_include.vim                 {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      001
+" Version:      2.2.0
+let s:k_version = 220
 " Created:      08th Nov 2011
-" Last Update:  $Date$
+" Last Update:  16th Nov 2016
 "------------------------------------------------------------------------
 " Description:
 "       Mapping to complete #include filename not based on &path (as
 "       |i_CTRL-X_CTRL-F| is).
 "       The completion is based instead on {bg}:{ft_}_includes_path + &include
-" 
+"
 "------------------------------------------------------------------------
 " Installation:
 "       Drop this file into {rtp}/ftplugin/c
@@ -21,7 +22,6 @@
 " }}}1
 "=============================================================================
 
-let s:k_version = 2
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
 if &cp || (exists("b:loaded_ftplug_c_complete_include")
@@ -37,12 +37,12 @@ set cpo&vim
 "------------------------------------------------------------------------
 " Local mappings {{{2
 
-inoremap <buffer> <Plug>CompleteIncludes <c-r>=<sid>Complete()<cr>
+inoremap <silent> <buffer> <Plug>CompleteIncludes <c-r>=<sid>Complete()<cr>
 if !hasmapto('<Plug>CompleteIncludes', 'i')
   imap <buffer> <unique> <c-x>i <Plug>CompleteIncludes
 endif
 
-nnoremap <buffer> <Plug>OpenIncludes :call <sid>Open()<cr>
+nnoremap <silent> <buffer> <Plug>OpenIncludes :call <sid>Open()<cr>
 if !hasmapto('<Plug>OpenIncludes', 'n')
   nmap <buffer> <unique> <c-l>i <Plug>OpenIncludes
 endif
@@ -68,11 +68,21 @@ let g:loaded_ftplug_c_complete_include = s:k_version
 
 " Function: s:Complete() {{{3
 function! s:Complete()
-  let prev = GetLikeCTRL_W()
-  let paths = lh#dev#option#get("includes", &ft, &path)
-  let files = lh#path#glob_as_list(paths, [prev.'*.h', prev.'*.hpp'])
-  let files = map(files, 'lh#path#strip_start(v:val, paths)')
-  call complete(col('.')-len(prev), files)
+  let cleanup = lh#on#exit()
+        \.restore('&isk')
+  try
+    set isk+=/
+    let prev = GetLikeCTRL_W()
+  finally
+    call cleanup.finalize()
+  endtry
+  let paths = lh#cpp#tags#get_included_paths(&path)
+  let files = lh#path#glob_as_list(paths, [prev.'*'])
+  " Keep headers files and directories
+  call filter(files, 'v:val =~? "\\v\.(h|hpp|hxx|txx|h\\+\\+)$" || isdirectory(v:val)')
+  let files = lh#list#unique_sort(files)
+  let entries = map(copy(files), '{"word": lh#path#strip_start(v:val, paths), "menu": v:val}')
+  call lh#icomplete#new(col('.')-lh#encoding#strlen(prev)-1, entries, []).start_completion()
   return ''
 endfunction
 
@@ -81,7 +91,7 @@ endfunction
 function! s:Open()
   try
     let path = &path
-    let paths = lh#dev#option#get("includes", &ft, &path)
+    let paths = lh#cpp#tags#get_included_paths()
     exe 'set path+='.join(paths, ',')
     exe "normal \<c-w>f"
   finally
