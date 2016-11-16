@@ -2,9 +2,10 @@
 " File:         autoload/lh/cpp/tags.vim                          {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      2.0.0b14
+" Version:      2.2.0
+let s:k_version = 220
 " Created:      25th Jun 2014
-" Last Update:  $Date$
+" Last Update:  16th Nov 2016
 "------------------------------------------------------------------------
 " Description:
 "       API functions to obtain symbol declarations
@@ -16,7 +17,6 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 200
 function! lh#cpp#tags#version()
   return s:k_version
 endfunction
@@ -55,22 +55,24 @@ function! lh#cpp#tags#strip_included_paths(filename, includes)
   return filename
 endfunction
 
-" Function: lh#cpp#tags#get_included_paths() {{{3
-function! lh#cpp#tags#get_included_paths()
+" Function: lh#cpp#tags#get_included_paths([default]) {{{3
+function! lh#cpp#tags#get_included_paths(...)
   let includes = []
-  let sources_root = lh#option#get('sources_root') " from mu-template & lh-suite(s)
-  if lh#option#is_unset(sources_root) " from mu-template & lh-suite(s)
-    unlet sources_root
-    let sources_root = lh#option#get('paths.sources')
-  endif
+  " sources_root: from mu-template & lh-suite(s)
+  " paths.sources: from lh#project
+  let sources_root = lh#option#get(['sources_root', 'paths.sources'])
   if lh#option#is_set(sources_root)
     let includes += [lh#path#to_dirname(sources_root)]
   endif
-  let def_includes = lh#option#get('includes')
+  " paths.includes: new paths from lh#project
+  " includes: old path
+  let def_includes = lh#option#get(['paths.includes', 'includes'])
   if lh#option#is_set(def_includes)
     let includes += def_includes
+  elseif a:0 > 0
+    let includes += type(a:1) == type([]) ? a:1 : split(a:1, ',')
   endif
-  return includes
+  return lh#list#unique_sort(includes)
 endfunction
 
 " Function: lh#cpp#tags#fetch(feature) {{{3
