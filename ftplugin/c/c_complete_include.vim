@@ -80,6 +80,7 @@ function! s:Complete()
   let files = lh#path#glob_as_list(paths, [prev.'*'])
   " Keep headers files and directories
   call filter(files, 'v:val =~? "\\v\.(h|hpp|hxx|txx|h\\+\\+)$" || isdirectory(v:val)')
+  call map(files, 'v:val . (isdirectory(v:val)?"/":"")')
   let files = lh#list#unique_sort(files)
   let entries = map(copy(files), '{"word": lh#path#strip_start(v:val, paths), "menu": v:val}')
   call lh#icomplete#new(col('.')-lh#encoding#strlen(prev)-1, entries, []).start_completion()
@@ -99,7 +100,7 @@ function! s:Open()
   endtry
 endfunction
 
-" Functions }}}2
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
