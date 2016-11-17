@@ -11,21 +11,25 @@ VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL:"
-VimL: let s:ns_join = lh#cpp#option#multiple_namespaces_on_same_line()
-VimL: let s:namespace = s:Param('namespace', '###')
-MuT:  if s:namespace == '###'
-VimL:    let s:namespace = lh#dev#option#get('project_namespace', &ft, lh#marker#txt('ns'))
-VimL:    let s:namespace = INPUT('Namespace name: ', lh#dev#option#get('project_namespace', &ft, lh#marker#txt('ns')))
+MuT:  let s:ns_join = lh#cpp#option#multiple_namespaces_on_same_line()
+MuT:  let s:namespace = s:Param('namespace', '###')
+MuT:  if (type(s:namespace) == type('')) && (s:namespace == '###')
+MuT:     let s:namespace0 = lh#ft#option#get('project_namespace', &ft, lh#marker#txt('ns'))
+MuT:     let s:namespace = type(s:namespace0) == type([]) ? join(s:namespace0, "::") : s:namespace0
+VimL:    let s:namespace = INPUT('Namespace name: ', s:namespace)
 MuT:  endif
 MuT:  if lh#cpp#use_cpp17() && lh#option#get('cpp_use_nested_namespaces', 1)
-VimL:   let s:namespaces = [s:namespace]
+MuT:    let s:namespaces = type(s:namespace) == type([]) ? s:namespace : [s:namespace]
 MuT:  else
-VimL:   let s:namespaces = split(s:namespace, "::")
+MuT:    let s:namespaces = type(s:namespace) == type([]) ? s:namespace : split(s:namespace, "::")
 MuT:  endif
-VimL: let s:ns_open   = s:namespace =~ '^\s*$' ? ["namespace{// Anonymous namespace"] : map(copy(s:namespaces), '"namespace ".v:val."{"')
-VimL: let s:ns_close  = s:namespace =~ '^\s*$' ? ["}// Anonymous namespace"] : map(copy(s:namespaces), '"}".(s:ns_join ? "" : " // ".v:val." namespace")')
+VimL: " let s:ns_open   = s:namespace =~ '^\s*$' ? ["namespace{// Anonymous namespace"] : map(copy(s:namespaces), '"namespace ".v:val."{"')
+VimL: " let s:ns_close  = s:namespace =~ '^\s*$' ? ["}// Anonymous namespace"] : map(copy(s:namespaces), '"}".(s:ns_join ? "" : " // ".v:val." namespace")')
+VimL: let s:ns_open   = empty(s:namespaces) ? ["namespace{// Anonymous namespace"] : map(copy(s:namespaces), '"namespace ".v:val."{"')
+VimL: let s:ns_close  = empty(s:namespaces) ? ["}// Anonymous namespace"] : map(copy(s:namespaces), '"}".(s:ns_join ? "" : " // ".v:val." namespace")')
 VimL: let s:ns_join_s = s:ns_join ? " " : "\n"
 <+join(s:ns_open, s:ns_join_s)+>
 ¡s:Surround(1, '<++>')¡
-<+join(s:ns_close, s:ns_join_s)+><+s:ns_join && s:namespace !~ '^\s*$'? (" // ".s:namespace . " namespace".(len(s:namespaces)>1 ? "s": "")) : ""+>
+<+join(s:ns_close, s:ns_join_s)+><+s:ns_join && !empty(s:namespaces) ? (" // ".join(s:namespaces, "::") . " namespace".(len(s:namespaces)>1 ? "s": "")) : ""+>
+VimL: "<+join(s:ns_close, s:ns_join_s)+><+s:ns_join && s:namespace !~ '^\s*$'? (" // ".s:namespace . " namespace".(len(s:namespaces)>1 ? "s": "")) : ""+>
 <+s:TerminalPlaceHolder()+>
