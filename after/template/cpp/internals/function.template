@@ -2,11 +2,11 @@ VimL:" «function» File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 2
 VimL:" hint: «function-hint»
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  let s:function = s:Param("function", {})
-MuT:  let s:kind = get(s:function, "kind", "")
+MuT:  let s:function = s:Param('function', {})
+MuT:  let s:kind = get(s:function, 'kind', '')
 MuT:  if s:kind =~ '\vconstructor|destructor|assignment-operator'
 VimL:   call s:Include(s:kind, 'cpp', s:function)
-MuT:    " let s:how = get(s:function, "how", "")
+MuT:    " let s:how = get(s:function, 'how', '')
 MuT:    " let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""
 MuT:    " let s:clsname = s:Param("clsname", lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class"))
 VimL:   "<+s:clsname+>(<+s:Param("parameters", lh#marker#txt("ctr-parameters"))+>)<+s:how+>;
@@ -14,11 +14,17 @@ MuT:  elseif s:kind =~ '\vget|set'
 VimL:   call s:Include(s:kind.'ter', 'cpp', {'attribute': s:function.attribute})
 MuT:  let s:attrb_name = s:function.attribute.name
 MuT:  else
-MuT:    let s:signature = get(s:function, "signature", "")
-MuT:    let s:implementation = get(s:function, "implementation", ";")
+MuT:    let s:signature = get(s:function, 'signature', '')
+MuT:    let s:implementation = get(s:function, 'implementation', ';')
+VimL:   let s:signature = substitute(s:signature, '<+__clsname__+>', s:clsname, 'g')
 MuT:    if s:implementation != ';'
+VimL:     let s:implementation = substitute(s:implementation, '<+__clsname__+>', s:clsname, 'g')
 VimL:     let s:implementation = '{'.s:implementation.'}'
+MuT:    endif
+MuT:    let s:fn_comments = get(s:function, 'comments', {})
+MuT:    if !empty(s:fn_comments)
+VimL:     call s:Include('function-comment', 'cpp/internals', s:fn_comments)
 MuT:    endif
 <+s:signature+><+s:implementation+>
 MuT:  endif
-VimL: " TODO: definition in separate file, comments
+VimL: " TODO: definition in separate file

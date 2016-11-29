@@ -10,38 +10,38 @@ VimL: let s:value_end    = s:value_start
 VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
-MuT:  let s:clsname    = s:Param("clsname", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
-MuT:  let s:functions  = s:Param("functions", lh#cpp#snippets#new_function_list())
+MuT:  let s:clsname    = s:Param('clsname', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
+MuT:  let s:functions  = s:Param('functions', lh#cpp#snippets#new_function_list())
 VimL: " =====[ Attributes
-MuT:  let s:attributes = s:Param("attributes", [])
+MuT:  let s:attributes = s:Param('attributes', [])
 MuT:  let s:attrb_functions = []
 MuT:  if !empty(s:attributes)
 VimL:   for attr in s:attributes | for fct in get(attr, 'functions', []) | let s:attrb_functions += [{'kind': fct, "attribute": attr}] | endfor | endfor
 VimL:   for attr in s:attributes | let attr.type_info = lh#cpp#types#get_info(attr.type, {'type': attr.type}) | let attr.type = attr.type_info.typename_for_header() |endfor
 VimL:   " Set attributes as parameters to init-ctr, unless already set
-MuT:    let s:init_constructor = s:functions.get1({"kind" : "init-constructor"})
-VimL:   call s:init_constructor.add_new({"parameters": lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#ConstCorrectType(v:val)'), "visibility": "public"})
+MuT:    let s:init_constructor = s:functions.get1({'kind' : 'init-constructor'})
+VimL:   call s:init_constructor.add_new({'parameters': lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#ConstCorrectType(v:val)'), 'visibility': 'public'})
 VimL:   " Remove default-consructor unless already set visible
-MuT:    let s:default_constructor = s:Param("default-constructor", {})
-VimL:   call lh#dict#add_new(s:default_constructor, {"visibility": "none"})
+MuT:    let s:default_constructor = s:Param('default-constructor', {})
+VimL:   call lh#dict#add_new(s:default_constructor, {'visibility': 'none'})
 MuT:  endif
 VimL: " =====[ Parents
-MuT:  let s:parents = s:Param("parents", [])
-MuT:  let s:noncopyable = s:Param("noncopyable", 0)
+MuT:  let s:parents = s:Param('parents', [])
+MuT:  let s:noncopyable = s:Param('noncopyable', 0)
 MuT:  if s:noncopyable
-MuT:    let s:noncopyable_class = lh#option#get("cpp_noncopyable_class", {"name": "noncopyable"})
+MuT:    let s:noncopyable_class = lh#option#get('cpp_noncopyable_class', {'name': 'noncopyable'})
 VimL:   " TODO: support auto import of noncopyable file
 MuT:    if empty(s:noncopyable_class)
-VimL:     call lh#dict#add_new(s:Param("copy-constructor", {}), {"how": "deleted"})
-VimL:     call lh#dict#add_new(s:Param("assignment-operator", {}), {"how": "deleted"})
+VimL:     call lh#dict#add_new(s:Param('copy-constructor', {}), {'how': 'deleted'})
+VimL:     call lh#dict#add_new(s:Param('assignment-operator', {}), {'how': 'deleted'})
 MuT:    else
 VimL:     " Don't add the noncopyable if there is already a public parent
 MuT:      if ! lh#cpp#snippets#_has_a_non_copyable_parent(s:parents)
-VimL:       let s:parents += [ lh#cpp#snippets#_merge_include_data(s:noncopyable_class, {"visibility": "private"})]
+VimL:       let s:parents += [ lh#cpp#snippets#_merge_include_data(s:noncopyable_class, {'visibility': 'private'})]
 MuT:      endif
 MuT:      if lh#cpp#snippets#shall_explicit_defaults()
-VimL:       call lh#dict#add_new(s:Param("copy-constructor", {}), {"how": "deleted"})
-VimL:       call lh#dict#add_new(s:Param("assignment-operator", {}), {"how": "deleted"})
+VimL:       call lh#dict#add_new(s:Param('copy-constructor', {}), {'how': 'deleted'})
+VimL:       call lh#dict#add_new(s:Param('assignment-operator', {}), {'how': 'deleted'})
 MuT:      endif
 MuT:    endif
 MuT:  endif
@@ -50,7 +50,7 @@ MuT:  let s:parents_data = lh#cpp#snippets#parents(s:parents)
 VimL: call lh#list#for_each_call(s:parents_data[1], "lh#mut#_add_post_expand_callback(\"lh#dev#import#add(v:val)\")")
 VimL: " =====[ Functions
 VimL: " --------[ Any Functions
-MuT:  "let s:functions = s:Param("functions", [])
+MuT:  "let s:functions = s:Param('functions', [])
 VimL: " --------[ Attribute functions (get/set)
 VimL: call s:functions.add(s:attrb_functions)
 VimL: " --------[ General case
@@ -60,30 +60,31 @@ MuT:  let s:pro_functions = s:functions.protected()
 MuT:  let s:pri_functions = s:functions.private()
 VimL: " --------[ Special Functions
 MuT:  if lh#cpp#snippets#requires_destructor(s:attributes)
-MuT:    let s:destructor = s:Param("destructor", {})
+MuT:    let s:destructor = s:Param('destructor', {})
 VimL:   " Force visible (even private) if not set already
 Viml:   call lh#dict#add_new(s:destructor, {'visibility': 'public'})
 MuT:  endif
 MuT:  if lh#cpp#snippets#requires_copy_operations(s:attributes)
-MuT:    let s:copy_constructor = s:Param("copy-constructor", {})
+MuT:    let s:copy_constructor = s:Param('copy-constructor', {})
 VimL:   " Force visible (even protected) if not set already
 Viml:   call lh#dict#add_new(s:copy_constructor, {'visibility': 'public'})
-MuT:    let s:assignment_operator = s:Param("assignment-operator", {})
+MuT:    let s:assignment_operator = s:Param('assignment-operator', {})
 VimL:   " Force visible (even protected) if not set already
 Viml:   call lh#dict#add_new(s:assignment_operator, {'visibility': 'public'})
 MuT:  endif
 VimL: call s:Include('shall_explicit_defaults', 'cpp/internals')
 VimL: " In reverse order because of how Include() works
-MuT:  let s:special_functions = ["destructor", "assignment-operator", "copy-constructor", "default-constructor"]
+MuT:  let s:special_functions = ['destructor', 'assignment-operator', 'copy-constructor', 'default-constructor']
 MuT:  let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'kind': v:val})")
 VimL: for spe in s:spe_func_data | call lh#dict#add_new(spe, s:default_explicit) | endfor
-MuT:  let s:pub_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "public")
-MuT:  let s:pro_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "protected")
-MuT:  let s:pri_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, "private")
+MuT:  let s:pub_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, 'public')
+MuT:  let s:pro_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, 'protected')
+MuT:  let s:pri_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func_data, 'private')
 VimL: call extend(s:pub_functions, map(copy(s:pub_special_functions), 'v:val'))
 VimL: call extend(s:pro_functions, map(copy(s:pro_special_functions), 'v:val'))
 VimL: call extend(s:pri_functions, map(copy(s:pri_special_functions), 'v:val'))
 VimL: " =====[ The Skeleton
+VimL: call s:Include('function-comment', 'cpp/internals', s:Param('comments', {}))
 class <+s:clsname+><+s:parents_data[0]+>
 {
 public:

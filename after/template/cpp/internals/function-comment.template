@@ -5,9 +5,9 @@ VimL: "
 VimL: function! s:_AddItemToDoc(tagname, data)
 VimL:   let text = empty(a:data) ? "\n" : a:data
 VimL:   if empty(a:tagname)
-VimL:      return [{"text": text}]
+VimL:      return [{'text': text}]
 VimL:   else
-VimL:      return [{"tag":(a:tagname), "text": text}]
+VimL:      return [{'tag':(a:tagname), 'text': text}]
 VimL:   endif
 VimL: endfunction
 VimL: "
@@ -33,29 +33,36 @@ VimL: "
 VimL: function! s:_GenerateDoc(data)
 VimL:   " echomsg "\n-->".string(a:data)
 VimL:   " tags ordered => determine the order in which they are displayed
-VimL:   let pre_tags_default = [ "ingroup", "brief", "tparam", "param", "return", "throw", "invariant", "pre", "post"]
-VimL:   let post_tags_default = ["note", "warning"]
+VimL:   let pre_tags_default = [ 'brief', 'ingroup', 'tparam', 'param', 'return', 'throw', 'invariant', 'pre', 'post']
+VimL:   let post_tags_default = ['note', 'warning', 'see']
 VimL:   let doc = []
-VimL:   let tags = lh#dev#option#get("pre_desc_ordered_tags", &ft, pre_tags_default)
+VimL:   let tags = lh#ft#option#get('pre_desc_ordered_tags', &ft, pre_tags_default)
 VimL:   for tag in tags
 VimL:     let doc +=  s:_AddToDoc(tag, a:data)
 VimL:   endfor
-VimL:   if has_key(s:fn_comments, "text")
+VimL:   if has_key(s:fn_comments, 'semantics')
+VimL:     let doc += s:_AddItemToDoc('semantics', '')
+VimL:     for t in s:fn_comments.semantics
+VimL:         let doc += s:_AddItemToDoc('', '- '.t)
+VimL:     endfor
+VimL:   endif
+VimL:   if has_key(s:fn_comments, 'text')
 VimL:     if empty(s:fn_comments.text)
-VimL:       let doc += s:_AddItemToDoc("", "")
+VimL:       let doc += s:_AddItemToDoc('', '')
 VimL:     else
 VimL:       for t in s:fn_comments.text
-VimL:         let doc += s:_AddItemToDoc("", t)
+VimL:         let doc += s:_AddItemToDoc('', t)
 VimL:       endfor
 VimL:     endif
 VimL:   endif
-VimL:   let tags = lh#dev#option#get("post_desc_ordered_tags", &ft, post_tags_default)
+VimL:   let tags = lh#ft#option#get('post_desc_ordered_tags', &ft, post_tags_default)
 VimL:   for tag in tags
 VimL:     let doc +=  s:_AddToDoc(tag, a:data)
 VimL:   endfor
+VimL:   " echomsg string(doc)
 VimL:   " and finally, generate!
-VimL:   call s:Include("formatted-comment", "cpp/internals", doc)
+VimL:   call s:Include('formatted-comment', 'cpp/internals', doc)
 VimL: endfunction
-MuT: if lh#dev#option#get("template_expand_doc", &ft, 1)
-VimL: call s:_GenerateDoc(s:fn_comments)
-MuT: endif
+MuT:  if lh#ft#option#get('template_expand_doc', &ft, 1)
+VimL:   call s:_GenerateDoc(s:fn_comments)
+MuT:  endif

@@ -3,30 +3,57 @@ VimL:" «Meyers singleton», cf. More Effective C++ Item 26
 VimL:" For a more precise definition, cf. A. Alexandrescu's Modern C++ Design
 VimL:" hint: singleton class Wizard
 VimL: let s:value_start  = '¡'
-VimL: let s:value_end    = '¡'
+VimL: let s:value_end   = s:value_start
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:clsname = empty(s:Args()) ? INPUT("singleton name ?", Marker_Txt(expand('%:t:r'))) : (s:Args()[0])
+MuT:  let s:parameters = {'noncopyable': 1}
+MuT:  let s:functions = s:Param('functions', lh#cpp#snippets#new_function_list())
+MuT:  let s:type = confirm('Of what type of the singleton should be?', "&Meyers' (local-static, MT-safe (in C++11), default ctr)\n" .'&Explicit Initialisation (MT-safe)', 2 - lh#cpp#use_cpp11())
+MuT:  if s:type == 1
+VimL: " Meyers' singleton
+MuT:     let s:instance = {'signature': 'static <+__clsname__+> & instance() '.lh#cpp#snippets#noexcept()}
+VimL:    let s:instance.implementation = "static <+__clsname__+> s_instance;\nreturn s_instance;"
+VimL:    let s:instance.comments = {'brief': 'Singleton Accessor.', 'throw': 'None'}
+VimL:    call s:functions.insert(s:instance)
+VimL:    " Force default-constructor and destructor to private
+VimL:    " And set how to defaulted, in not already set
+MuT:     let s:default_constructor = s:Param('default-constructor', {})
+VimL:    let s:default_constructor.visibility = 'private'
+VimL:    let s:default_constructor.comments = {'text': ['Hidden constructor.'], 'see': '`instance()`'}
+VimL:    call lh#dict#add_new(s:default_constructor, {'how': 'defaulted'})
+MuT:     let s:destructor = s:Param('destructor', {})
+VimL:    let s:destructor['visibility'] = 'private'
+VimL:    call lh#dict#add_new(s:destructor, {'how': 'defaulted'})
+VimL:    " Defines Doxygen comments
+MuT:     let s:cls_comments = {}
+VimL:    let s:cls_comments.brief = lh#dox#brief('<+__clsname__+> singleton.')
+VimL:    let s:cls_comments.ingroup = {}
+VimL:    let s:cls_comments.semantics = ['Implicitly initialized with a default constructor', 'MT-safe', 'Non-copyable']
+VimL:    call s:Include('class-skeleton', 'cpp/internals', {'comments': s:cls_comments})
+MuT:  elseif s:type == 2
+VimL: " Explicit' singleton
+MuT:  else
+VimL: let s:clsname = empty(s:Args()) ? INPUT("singleton name ?", lh#marker#txt(expand('%:t:r'))) : (s:Args()[0])
 VimL: call CppDox_SingletonWizard(s:clsname)
 MuT:  if g:CppDox_inherits =~ 'boost::noncopyable'
 VimL:    call s:AddPostExpandCallback('lh#dev#import#add("<boost/noncopyable.hpp>")')
 MuT:  endif
 VimL:"
 VimL: call s:Include("section-sep", "c", s:clsname." singleton")
-/**<+lh#dox#tag('ingroup')+> g¡lh#option#get('dox_group', '<+Group+>')¡
+/**<+lh#dox#ingroup('ingroup ')+>
  * <+lh#dox#brief()+>
  *
  * <+doc+>
  *
  * <+lh#dox#tag("invariant")+>
  *
- * <p><b>Semantics</b><br>
+ * <+lh#dox#semantics()+>
  <+g:CppDox_semantics+>
  * <+ <li> sem+>
  *
- * <+lh#dox#tag('version')+> <+'$'+>revision$
- * <+lh#dox#author()+>
+ * <+lh#dox#author()+>, creation
+ * <+lh#dox#since('ProjectVersion')+>
  */
 class <+s:clsname+>
 ¡g:CppDox_inherits¡
@@ -52,9 +79,10 @@ public:
 private:
     ¡g:CppDox_forbidden_members¡
 
-	<+Private functions+>;
+        <+Private functions+>;
 
     ¡g:CppDox_private_members¡
 };<++>
 
 ¡g:CppDox_stuff_for_cpp_file¡
+MuT:  endif

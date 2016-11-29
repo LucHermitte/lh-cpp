@@ -4,28 +4,28 @@ VimL: let s:marker_open  = "<+"
 VimL: let s:marker_close = "+>"
 VimL: let s:reindent     = 1
 VimL: call s:Include('get-class-name', 'cpp/internals')
-MuT:  let s:destructor = s:Param("destructor", lh#option#unset())
+MuT:  let s:destructor = s:Param('destructor', lh#option#unset())
 MuT:  if lh#option#is_set(s:destructor)
-MuT:      let s:virtual    = get(s:destructor, "virtual", 0)
-MuT:      let s:how        = get(s:destructor, "how", "")
-VimL:     let s:visibility = get(s:destructor, "visibility", "public")
+MuT:      let s:virtual    = get(s:destructor, 'virtual', 0)
+MuT:      let s:how        = get(s:destructor, 'how', '')
+VimL:     let s:visibility = get(s:destructor, 'visibility', 'public')
 VimL:     " Let's suppose s:clsname is set
 MuT:  else
-MuT:    let s:virtual      = lh#marker#txt("virtual ")
-VimL:   let s:how          = ""
+MuT:    let s:virtual      = lh#marker#txt('virtual ')
+VimL:   let s:how          = ''
 VimL:   " TODO: autodetect last visibility
-VimL:   let s:visibility   = "public"
+VimL:   let s:visibility   = 'public'
 MuT:  endif
-MuT:  let s:virtual = type(s:virtual) == type("str") ? s:virtual : ((s:virtual) ? "virtual " : "")
-MuT:  let s:how = s:how =~ "\\vpure|deleted|defaulted" ? " ".lh#cpp#snippets#{s:how}() : ""
-MuT:  let s:fn_comments = { }
-VimL: let s:fn_comments.brief = substitute(s:virtual."Destructor.", '\v(.)(.*)', '\u\1\L\2', '')
-MuT:  if s:visibility == "protected"
-VimL:     let s:fn_comments.note = ["This class is not meant to be destroyed polymorphically"]
+MuT:  let s:virtual = type(s:virtual) == type('str') ? s:virtual : ((s:virtual) ? 'virtual ' : '')
+MuT:  let s:how = s:how =~ '\vpure|deleted|defaulted' ? ' '.lh#cpp#snippets#{s:how}() : ''
+MuT:  let s:fn_comments = get(s:destructor, 'comments', {})
+VimL: call lh#dict#add_new(s:fn_comments, {'brief': substitute(s:virtual.'Destructor.', '\v(.)(.*)', '\u\1\L\2', '')})
+MuT:  if s:visibility == 'protected'
+VimL:     let s:fn_comments.note = ['This class is not meant to be destroyed polymorphically']
 MuT:  elseif empty(s:virtual)
-VimL:     let s:fn_comments.warning = ["this class is not meant to be publicly inherited"]
+VimL:     let s:fn_comments.warning = ['this class is not meant to be publicly inherited']
 MuT:  endif
-VimL: let s:fn_comments.throw = "Nothing"
+VimL: call lh#dict#add_new(s:fn_comments, {'throw': 'Nothing'})
 VimL: " let s:fn_comments.text  = []
-VimL: call s:Include("function-comment", "cpp/internals",s:fn_comments)
+VimL: call s:Include('function-comment', 'cpp/internals',s:fn_comments)
 <+s:virtual+>~<+s:clsname+>()<+s:how+>;

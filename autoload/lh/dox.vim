@@ -89,7 +89,7 @@ endfunction
 
 " Function: lh#dox#ingroup([text]) {{{3
 function! lh#dox#ingroup(...)
-  let text = a:0==0 || empty(a:1) ? lh#marker#txt('group') : a:1
+  let text = a:0==0 || empty(a:1) ? lh#option#get('dox.group.name', lh#marker#txt('group')) : a:1
   let ingroup = lh#ft#option#get('dox_ingroup', &ft, 0)
   if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let res =  lh#dox#tag('ingroup ').text
