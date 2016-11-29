@@ -4,82 +4,87 @@
 
   * [Options types](#options-types)
       * [Global options: `g:`_{option-name}_](#global-options-g_option-name_)
-      * [Local/project-wise options: `b:`_{option-name}_](#localproject-wise-options-b_option-name_)
-      * [Project-wise options with default: `(bg):`_{option-name}_](#project-wise-options-with-default-bg_option-name_)
-      * [[lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bg):`_[{filetype}__]{option-name}_](#lh-dev-optionshttpsgithubcomluchermittelh-devoptions-1-bg_filetype__option-name_)
+      * [Local/project-wise options: `p:`_{option-name}_ or `b:`_{option-name}_](#localproject-wise-options-p_option-name_-or-b_option-name_)
+      * [Project-wise options with default: `(bpg):`_{option-name}_](#project-wise-options-with-default-bpg_option-name_)
+      * [[lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bpg):`_[{filetype}__]{option-name}_](#lh-dev-optionshttpsgithubcomluchermittelh-devoptions-1-bpg_filetype__option-name_)
   * [Option list](#option-list)
-    * [`(bg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`](#bgcpp_always_a_destructor_when_there_is_a_pointer_attribute)
-    * [`(bg):cpp_std_flavour` and `$CXXFLAGS`](#bgcpp_std_flavour-and-cxxflags)
-    * [`(bg):({ft}_)FunctionPosArg`, `(bg):({ft}_)FunctionPosition`](#bgft_functionposarg-bgft_functionposition)
-    * [`(bg):ProjectVersion`](#bgprojectversion)
-    * [`(bg):({ft}_)ShowDefaultParams`, `(bg):({ft}_)ShowExplicit`, `(bg):({ft}_)ShowStatic`, `(bg):({ft}_)ShowVirtual`](#bgft_showdefaultparams-bgft_showexplicit-bgft_showstatic-bgft_showvirtual)
-    * [`(bg):accessor_comment_get`, `(bg):accessor_comment_set`, `(bg):accessor_comment_ref`](#bgaccessor_comment_get-bgaccessor_comment_set-bgaccessor_comment_ref)
-    * [`(bg):({ft}_)alternateSearchPath`](#bgft_alternatesearchpath)
-    * [`(bg):cpp_begin_end_includes`](#bgcpp_begin_end_includes)
-    * [`(bg):cpp_begin_end_style`](#bgcpp_begin_end_style)
-    * [`(bg):c_menu_name`, `(bg):c_menu_priority`, `(bg):cpp_menu_name`, `(bg):cpp_menu_priority`](#bgc_menu_name-bgc_menu_priority-bgcpp_menu_name-bgcpp_menu_priority)
-    * [`(bg):cpp_defaulted`](#bgcpp_defaulted)
-    * [`(bg):cpp_defines_to_ignore`](#bgcpp_defines_to_ignore)
-    * [`(bg):cpp_deleted`](#bgcpp_deleted)
-    * [`(bg):cpp_noexcept`](#bgcpp_noexcept)
-    * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
-    * [`(bg):cpp_explicit_default`](#bgcpp_explicit_default)
-    * [`(bg):cpp_make_ptr`](#bgcpp_make_ptr)
-    * [`(bg):cpp_noexcept`](#bgcpp_noexcept)
-    * [`(bg):cpp_return_ptr_type`](#bgcpp_return_ptr_type)
-    * [`(bg):cpp_root_exception`](#bgcpp_root_exception)
-    * [`(bg):cpp_use_copy_and_swap`](#bgcpp_use_copy_and_swap)
-    * [`(bg):cpp_use_nested_namespaces`](#bgcpp_use_nested_namespaces)
+    * [`(bpg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`](#bpgcpp_always_a_destructor_when_there_is_a_pointer_attribute)
+    * [`(bpg):cpp_std_flavour` and `$CXXFLAGS`](#bpgcpp_std_flavour-and-cxxflags)
+    * [`(bpg):({ft}_)FunctionPosArg`, `(bpg):({ft}_)FunctionPosition`](#bpgft_functionposarg-bpgft_functionposition)
+    * [`(bpg):ProjectVersion`](#bpgprojectversion)
+    * [`(bpg):({ft}_)ShowDefaultParams`, `(bpg):({ft}_)ShowExplicit`, `(bpg):({ft}_)ShowStatic`, `(bpg):({ft}_)ShowVirtual`](#bpgft_showdefaultparams-bpgft_showexplicit-bpgft_showstatic-bpgft_showvirtual)
+    * [`(bpg):accessor_comment_get`, `(bpg):accessor_comment_set`, `(bpg):accessor_comment_ref`](#bpgaccessor_comment_get-bpgaccessor_comment_set-bpgaccessor_comment_ref)
+    * [`(bpg):({ft}_)alternateSearchPath`](#bpgft_alternatesearchpath)
+    * [`(bpg):cpp_begin_end_includes`](#bpgcpp_begin_end_includes)
+    * [`(bpg):cpp_begin_end_style`](#bpgcpp_begin_end_style)
+    * [`(bpg):c_menu_name`, `(bpg):c_menu_priority`, `(bpg):cpp_menu_name`, `(bpg):cpp_menu_priority`](#bpgc_menu_name-bpgc_menu_priority-bpgcpp_menu_name-bpgcpp_menu_priority)
+    * [`(bpg):cpp_defaulted`](#bpgcpp_defaulted)
+    * [`(bpg):cpp_defines_to_ignore`](#bpgcpp_defines_to_ignore)
+    * [`(bpg):cpp_deleted`](#bpgcpp_deleted)
+    * [`(bpg):cpp_noexcept`](#bpgcpp_noexcept)
+    * [`(bpg):cpp_noncopyable_class`](#bpgcpp_noncopyable_class)
+    * [`(bpg):cpp_explicit_default`](#bpgcpp_explicit_default)
+    * [`(bpg):cpp_make_ptr`](#bpgcpp_make_ptr)
+    * [`(bpg):cpp_noexcept`](#bpgcpp_noexcept)
+    * [`(bpg):cpp_return_ptr_type`](#bpgcpp_return_ptr_type)
+    * [`(bpg):cpp_root_exception`](#bpgcpp_root_exception)
+    * [`(bpg):cpp_use_copy_and_swap`](#bpgcpp_use_copy_and_swap)
+    * [`(bpg):cpp_use_nested_namespaces`](#bpgcpp_use_nested_namespaces)
     * [`g:c_no_assign_in_condition`](#gc_no_assign_in_condition)
     * [`g:c_no_hl_fallthrough_case`](#gc_no_hl_fallthrough_case)
     * [`g:cpp_no_catch_by_reference`](#gcpp_no_catch_by_reference)
     * [`g:cpp_no_hl_c_cast`](#gcpp_no_hl_c_cast)
     * [`g:cpp_no_hl_funcdef`](#gcpp_no_hl_funcdef)
     * [`g:cpp_no_hl_throw_spec`](#gcpp_no_hl_throw_spec)
-    * [`(bg):({ft}_)array_size`](#bgft_array_size)
-    * [`(bg):({ft}_)dox_CommentLeadingChar`](#bgft_dox_commentleadingchar)
-    * [`(bg):({ft}_)dox_TagLeadingChar`](#bgft_dox_tagleadingchar)
-    * [`(bg):({ft}_)dox_author_tag`](#bgft_dox_author_tag)
-    * [`(bg):({ft}_)dox_author`](#bgft_dox_author)
-    * [`(bg):({ft}_)dox_brief`](#bgft_dox_brief)
-    * [`(bg):({ft}_)dox_group`](#bgft_dox_group)
-    * [`(bg):({ft}_)dox_ingroup`](#bgft_dox_ingroup)
-    * [`(bg):({ft}_)dox_sep`](#bgft_dox_sep)
-    * [`(bg):({ft}_)dox_throw`](#bgft_dox_throw)
-    * [`(bg):({ft}_)exception_args`](#bgft_exception_args)
-    * [`(bg):({ft}_)exception_type`](#bgft_exception_type)
-    * [`(bg):({ft}_)ext_4_impl_file`](#bgft_ext_4_impl_file)
-    * [`(bg):({ft}_)file_regex_for_inclusion`](#bgft_file_regex_for_inclusion)
-    * [`(bg):({ft}_)filename_simplify_for_inclusion`](#bgft_filename_simplify_for_inclusion)
-    * [`(bg):({ft}_)gcov_files_path`](#bgft_gcov_files_path)
-    * [`(bg):({ft}_)implPlace`](#bgft_implplace)
+    * [`(bpg):({ft}_)array_size`](#bpgft_array_size)
+    * [`(bpg):({ft}_)dox_CommentLeadingChar`](#bpgft_dox_commentleadingchar)
+    * [`(bpg):({ft}_)dox_TagLeadingChar`](#bpgft_dox_tagleadingchar)
+    * [`(bpg):({ft}_)dox_author_tag`](#bpgft_dox_author_tag)
+    * [`(bpg):({ft}_)dox_author`](#bpgft_dox_author)
+    * [`(bpg):({ft}_)dox_brief`](#bpgft_dox_brief)
+    * [`(bpg):({ft}_)dox_group`](#bpgft_dox_group)
+    * [`(bpg):({ft}_)dox_ingroup`](#bpgft_dox_ingroup)
+    * [`(bpg):({ft}_)dox_sep`](#bpgft_dox_sep)
+    * [`(bpg):({ft}_)dox_throw`](#bpgft_dox_throw)
+    * [`(bpg):({ft}_)exception_args`](#bpgft_exception_args)
+    * [`(bpg):({ft}_)exception_type`](#bpgft_exception_type)
+    * [`(bpg):({ft}_)ext_4_impl_file`](#bpgft_ext_4_impl_file)
+    * [`(bpg):({ft}_)file_regex_for_inclusion`](#bpgft_file_regex_for_inclusion)
+    * [`(bpg):({ft}_)filename_simplify_for_inclusion`](#bpgft_filename_simplify_for_inclusion)
+    * [`(bpg):({ft}_)gcov_files_path`](#bpgft_gcov_files_path)
+    * [`(bpg):({ft}_)implPlace`](#bpgft_implplace)
     * [`g:inlinesPlace`](#ginlinesplace)
-    * [`(bg):({ft}_)includes`](#bgft_includes)
-    * [`(bg):({ft}_)multiple_namespaces_on_same_line`](#bgft_multiple_namespaces_on_same_line)
-    * [`(bg):({ft}_)nl_before_bracket` (deprecated)](#bgft_nl_before_bracket-deprecated)
-    * [`(bg):({ft}_)nl_before_curlyB` (deprecated)](#bgft_nl_before_curlyb-deprecated)
-    * [`(bg):({ft}_)pre_desc_ordered_tags`, `(bg):({ft}_post_desc_ordered_tags)`](#bgft_pre_desc_ordered_tags-bgft_post_desc_ordered_tags)
-    * [`(bg):({ft}_)project_namespace`](#bgft_project_namespace)
-    * [`(bg):({ft}_)tag_kinds_for_inclusion`](#bgft_tag_kinds_for_inclusion)
-    * [`(bg):tags_select`](#bgtags_select)
-    * [`(bg):({ft}_)template_expand_doc`](#bgft_template_expand_doc)
-    * [`(bg):xsltproc`](#bgxsltproc)
+    * [`(bpg):({ft}_)includes`](#bpgft_includes)
+    * [`(bpg):({ft}_)multiple_namespaces_on_same_line`](#bpgft_multiple_namespaces_on_same_line)
+    * [`(bpg):({ft}_)nl_before_bracket` (deprecated)](#bpgft_nl_before_bracket-deprecated)
+    * [`(bpg):({ft}_)nl_before_curlyB` (deprecated)](#bpgft_nl_before_curlyb-deprecated)
+    * [`(bpg):({ft}_)pre_desc_ordered_tags`, `(bpg):({ft}_post_desc_ordered_tags)`](#bpgft_pre_desc_ordered_tags-bpgft_post_desc_ordered_tags)
+    * [`(bpg):({ft}_)project_namespace`](#bpgft_project_namespace)
+    * [`(bpg):({ft}_)tag_kinds_for_inclusion`](#bpgft_tag_kinds_for_inclusion)
+    * [`(bpg):tags_select`](#bpgtags_select)
+    * [`(bpg):({ft}_)template_expand_doc`](#bpgft_template_expand_doc)
+    * [`(bpg):xsltproc`](#bpgxsltproc)
 
 ### Options types
 
 ##### Global options: `g:`_{option-name}_
 
 They are best set from the `.vimrc`;
-##### Local/project-wise options: `b:`_{option-name}_
+##### Local/project-wise options: `p:`_{option-name}_ or `b:`_{option-name}_
 They are best set from a [`local_vimrc` file](https://github.com/LucHermitte/local_vimrc);
-##### Project-wise options with default: `(bg):`_{option-name}_
+
+See
+[lh-vim-lib](https://github.com/LucHermitte/lh-vim-lib/blob/master/doc/Project.md)
+regarding `p:options`.
+
+##### Project-wise options with default: `(bpg):`_{option-name}_
 Their default value can be set in the `.vimrc`, but its best to set them from a
 [`local_vimrc` file](https://github.com/LucHermitte/local_vimrc);
-##### [lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bg):`_[{filetype}__]{option-name}_
+##### [lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bpg):`_[{filetype}__]{option-name}_
 
 ### Option list
 
-#### `(bg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`
+#### `(bpg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`
 Boolean option that enforces the expansion of a destructor in classes that have
 pointer attributes, even when it isn't required.
 
@@ -90,15 +95,15 @@ pointer attributes, even when it isn't required.
   * [`lh#cpp#snippets#requires_destructor`](APID.md#lhcppsnippetsrequires_destructor) which is used in turn by ...
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template)
 
-#### `(bg):cpp_std_flavour` and `$CXXFLAGS`
+#### `(bpg):cpp_std_flavour` and `$CXXFLAGS`
 These options are exploited by [C++ flavour decoding functions](API.md#c++-flavour)
 
-The expected values for `(bg):cpp_std_flavour` are "03", "05" (TR1), "11", "14", or "17".
+The expected values for `(bpg):cpp_std_flavour` are "03", "05" (TR1), "11", "14", or "17".
 Other values will lead into Unspecified Behaviour.
 
 **warning:** "98" is not a valid value.
 
-If `(bg):cpp_std_flavour` is not set, the flavour will be extracted from the
+If `(bpg):cpp_std_flavour` is not set, the flavour will be extracted from the
 `-std=` option in `$CXXFLAGS` or else from the CMake `$CMAKE_CXXFLAGS` option.
 Valid values are `-std=c++98`, `-std=c++03`, `-std=c++0x`, `-std=c++11`,
 `-std=c++1y`,  `-std=c++14`, `-std=c++1z`, `-std=c++17` (the `-std=gnu++xx`
@@ -111,7 +116,7 @@ plugin manager like VAM or vim-flavor ; with dependencies unaware plugin
 managers, you'll will also have to install it as well)
 
 
-#### `(bg):({ft}_)FunctionPosArg`, `(bg):({ft}_)FunctionPosition`
+#### `(bpg):({ft}_)FunctionPosArg`, `(bpg):({ft}_)FunctionPosition`
 Determines where the default implementation, for a function not yet defined,
 should be placed by [`:GOTOIMPL`](features.md#gotoimpl). We are placed ...
 - 0 -> ... at `cpp_FunctionPosArg` lines from the end of the file.
@@ -137,11 +142,11 @@ should be placed by [`:GOTOIMPL`](features.md#gotoimpl). We are placed ...
 - 3 -> ... nowhere, and nothing is inserted. The insertion must be done
   _manually_ thanks to [`:PASTEIMPL`](features.md#pasteimpl) .
 
-#### `(bg):ProjectVersion`
+#### `(bpg):ProjectVersion`
 Version of the project. Can be used in Doxygen comment through API function
 [`lh#dox#since()`](API.md#lh-dox-since).
 
-#### `(bg):({ft}_)ShowDefaultParams`, `(bg):({ft}_)ShowExplicit`, `(bg):({ft}_)ShowStatic`, `(bg):({ft}_)ShowVirtual`
+#### `(bpg):({ft}_)ShowDefaultParams`, `(bpg):({ft}_)ShowExplicit`, `(bpg):({ft}_)ShowStatic`, `(bpg):({ft}_)ShowVirtual`
 Boolean options used by [`:GOTOIMPL`](features.md#gotoimpl). They tells whether
 the C++ keywords `explicit`, `static` or `virtual` shall be kept in the empty
 implementation skeleton generated for a function declaration. Same thing for
@@ -149,12 +154,12 @@ default parameter values.
 
 Default values to all: 1 (true)
 
-#### `(bg):accessor_comment_get`, `(bg):accessor_comment_set`, `(bg):accessor_comment_ref`
+#### `(bpg):accessor_comment_get`, `(bpg):accessor_comment_set`, `(bpg):accessor_comment_ref`
 Strings to customize the comments inserted on `:ADDATTRIBUTE`.
 
 `"%a"` will be substituted with the name of the attribute.
 
-#### `(bg):({ft}_)alternateSearchPath`
+#### `(bpg):({ft}_)alternateSearchPath`
 Tells how to alternate between a source file and a header file.
 
 Default value: `'sfr:../source,sfr:../src,sfr:../include,sfr:../inc'`
@@ -191,7 +196,7 @@ NOTE: a.vim uses `,` (comma) internally so DON'T use it in your regular
 expressions or other pathSpecs unless you update the rest of the a.vim code to
 use some other seperator.mentation:
 
-#### `(bg):cpp_begin_end_includes`
+#### `(bpg):cpp_begin_end_includes`
 Tells which header files shall be includes when expanding `begin()`/`end()`.
 
 This option is meant to override the include files returned by
@@ -199,7 +204,7 @@ This option is meant to override the include files returned by
 
 **See:** `CTRL-X_be`, `CTRL-X_cbe`, `CTRL-X_rbe`, `CTRL-X_crbe`, [`cpp/b-e` snippet](snippets.md#cppb-e)
 
-#### `(bg):cpp_begin_end_style`
+#### `(bpg):cpp_begin_end_style`
 Tells which style to use to generate a couple of calls to `begin()`/`end()`:
 - "`c++98`": -> `container.begin()`
 - "`std`": -> `std::begin(container)`
@@ -208,11 +213,11 @@ Tells which style to use to generate a couple of calls to `begin()`/`end()`:
 
 **See:** `CTRL-X_be`, `CTRL-X_cbe`, `CTRL-X_rbe`, `CTRL-X_crbe`, [`cpp/b-e` snippet](snippets.md#cppb-e)
 
-#### `(bg):c_menu_name`, `(bg):c_menu_priority`, `(bg):cpp_menu_name`, `(bg):cpp_menu_priority`
+#### `(bpg):c_menu_name`, `(bpg):c_menu_priority`, `(bpg):cpp_menu_name`, `(bpg):cpp_menu_priority`
 These options tells where the |menu| for all C and C++ item goes.
 See `:h :menu`
 
-#### `(bg):cpp_defaulted`
+#### `(bpg):cpp_defaulted`
 String option.
 
 **Default Value:** `= default`
@@ -220,7 +225,7 @@ String option.
 **See:** API function
 [`lh#cpp#snippets#defaulted()`](API.md#lhcppsnippetsdefaulted)
 
-#### `(bg):cpp_defines_to_ignore`
+#### `(bpg):cpp_defines_to_ignore`
 Regex (default: none) that specifies which patterns (`#define`) shall be
 ignored when parsing the source code to detect the current scope
 (`ns1::..::nsn::cl1::.....cln`).
@@ -229,7 +234,7 @@ ignored when parsing the source code to detect the current scope
 - [`lh#cpp#AnalysisLib_Class#SearchClassDefinition()`](API.md#lh-cpp-analysislib_class-searchclassdefinition)
 - [`lh#cpp#AnalysisLib_Class#CurrentScope()`](API.md#lh-cpp-analysislib_class-currentscope)
 
-#### `(bg):cpp_deleted`
+#### `(bpg):cpp_deleted`
 String option.
 
 **Default Value:** `= delete`
@@ -237,7 +242,7 @@ String option.
 **See:** API function
 [`lh#cpp#snippets#deleted()`](API.md#lhcppsnippetsdeleted)
 
-#### `(bg):cpp_noexcept`
+#### `(bpg):cpp_noexcept`
 String format option (for
 [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
 
@@ -246,7 +251,7 @@ String format option (for
 **See:**
   * [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
 
-#### `(bg):cpp_noncopyable_class`
+#### `(bpg):cpp_noncopyable_class`
 Policy option that is used to tell how classes are made non-copyable.
   * by inheriting from a dedicated noncopyable class.
   ```
@@ -269,12 +274,12 @@ Policy option that is used to tell how classes are made non-copyable.
   * [`cpp/base-class.template`](snippets.md#cppbaseclass.template)
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template)
 
-#### `(bg):cpp_explicit_default`
+#### `(bpg):cpp_explicit_default`
 Boolean option that forces to explicitly add `= default` in snippets when C++11
 is detected.
 
 **Warning:** For now, this option has priority over
-[`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class). i.e. deleted copy operations will still appear even if the class inherits from a _non-copyable_ class.
+[`(bpg):cpp_noncopyable_class`](#bpgcpp_noncopyable_class). i.e. deleted copy operations will still appear even if the class inherits from a _non-copyable_ class.
 
 **Default value:** undefined (=> ask the user)
 
@@ -282,7 +287,7 @@ is detected.
   * [`lh#cpp#snippets#shall_explicit_defaults()`](API.md#lhcppsnippetsshall_explicit_defaults) which encapsulates its use.
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template) which uses its result
 
-#### `(bg):cpp_make_ptr`
+#### `(bpg):cpp_make_ptr`
 String format option for [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib)).
 
 It tells how pointers are best created. Used only from [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) snippet.
@@ -295,9 +300,9 @@ It tells how pointers are best created. Used only from [cpp/clonable-clas.templa
 **See:**
  * [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) which
    uses it
- * [`(bg):cpp_return_ptr_type`](#bgcpp_return_ptr_type)
+ * [`(bpg):cpp_return_ptr_type`](#bpgcpp_return_ptr_type)
 
-#### `(bg):cpp_noexcept`
+#### `(bpg):cpp_noexcept`
 String format option (for
 [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
 
@@ -306,7 +311,7 @@ String format option (for
 **See:**
   * [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
 
-#### `(bg):cpp_return_ptr_type`
+#### `(bpg):cpp_return_ptr_type`
 String format option for `printf()` (TODO: migrate to [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))).
 
 It tells how pointers are best returned from functions. Used only from [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) snippet.
@@ -318,12 +323,12 @@ It tells how pointers are best returned from functions. Used only from [cpp/clon
 **See:**
  * [cpp/clonable-clas.template](snippets.md#cppclonable-clas.template) which
    uses it
- * [`(bg):cpp_make_ptr`](#bgcpp_make_ptr)
+ * [`(bpg):cpp_make_ptr`](#bpgcpp_make_ptr)
 
-#### `(bg):cpp_root_exception`
+#### `(bpg):cpp_root_exception`
 TDB
 
-#### `(bg):cpp_use_copy_and_swap`
+#### `(bpg):cpp_use_copy_and_swap`
 Boolean option that suggest to use copy-and-swap idiom when expanding
 assignment-operator snippet directly, or indirectly through value classes snippets.
 
@@ -333,7 +338,7 @@ assignment-operator snippet directly, or indirectly through value classes snippe
   * [`cpp/assignment-operator.template`](snippets.md#cppassignment-operator.template) which uses it directly
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template) which uses it indirectly
 
-#### `(bg):cpp_use_nested_namespaces`
+#### `(bpg):cpp_use_nested_namespaces`
 Boolean option that enables the generation of _nested_ namespaces in C++17
 codes with [`namespace` snippet](snippets.md#cppnamespace).
 
@@ -377,7 +382,7 @@ specifications in C++.
 
 __Default value:__ is 0 (false).
 
-#### `(bg):({ft}_)array_size`
+#### `(bpg):({ft}_)array_size`
 Tells how ` [cpp/array_size`](snippets.md#cpparray_size) snippet shall behave.
 
 This variable is meant to be a dictionary than contains the following entries:
@@ -390,7 +395,7 @@ __Default value:__ not defined
 **See:**
 - [`cpp/array_size` snippet](snippets.md#cpparray_size)
 
-#### `(bg):({ft}_)dox_CommentLeadingChar`
+#### `(bpg):({ft}_)dox_CommentLeadingChar`
 Tells which character to use on each line of a Doxygen comment.
 
 __Default value:__ `"*"`
@@ -398,7 +403,7 @@ __Default value:__ `"*"`
 Wrapped in API function
 [`lh#dox#comment_leading_char()`](API.md#lh-dox-comment_leading_char)
 
-#### `(bg):({ft}_)dox_TagLeadingChar`
+#### `(bpg):({ft}_)dox_TagLeadingChar`
 Tells which character to use on each line of a Doxygen comment.
 
 __Default value:__ `"*"`. Other typical value: `"!"`
@@ -406,21 +411,21 @@ __Default value:__ `"*"`. Other typical value: `"!"`
 Wrapped in API function
 [`lh#dox#tag_leading_char()`](API.md#lh-dox-tag_leading_char)
 
-#### `(bg):({ft}_)dox_author_tag`
+#### `(bpg):({ft}_)dox_author_tag`
 Tells which tag to use to introduce authors.
 
 __Default value:__ `"author"`.
 
 Wrapped in API function [`lh#dox#author()`](API.md#lh-dox-author)
 
-#### `(bg):({ft}_)dox_author`
+#### `(bpg):({ft}_)dox_author`
 Returns the default value to use as the author tagged in Doxygen comments.
 
 __Default value:__ None
 
 Wrapped in API function [`lh#dox#author()`](API.md#lh-dox-author)
 
-#### `(bg):({ft}_)dox_brief`
+#### `(bpg):({ft}_)dox_brief`
 Tells if `brief` tag shall be used.
 
 __Default value:__ `"short"`.
@@ -429,7 +434,7 @@ __Other possible values:__ `"yes"/"always"/"1"`, `"no"/"never"/"0"/"short"`
 
 Wrapped in API function [`lh#dox#brief()`](API.md#lh-dox-brief)
 
-#### `(bg):({ft}_)dox_group`
+#### `(bpg):({ft}_)dox_group`
 Default Doxygen group name used in snippets and templates.
 
 __Default value:__ the placeholder `«Project»`
@@ -441,7 +446,7 @@ __Default value:__ the placeholder `«Project»`
 - [`cpp/singleton` snippet](snippets.md#cppsingleton)
 - [`cpp/enum2` snippet](snippets.md#cppenum2)
 
-#### `(bg):({ft}_)dox_ingroup`
+#### `(bpg):({ft}_)dox_ingroup`
 Tells if `ingroup` tag shall be used.
 
 __Default value:__ `"0"`.
@@ -451,57 +456,57 @@ name to use.
 
 Wrapped in API function [`lh#dox#ingroup()`](API.md#lh-dox-ingroup)
 
-#### `(bg):({ft}_)dox_sep`
+#### `(bpg):({ft}_)dox_sep`
 Tells which character use between a tag and its value.
 
 __Default value:__ `" "`. Other typical value: `"\t"`
 
 Wrapped in API function [`lh#dox#tag()`](API.md#lh-dox-tag)
 
-#### `(bg):({ft}_)dox_throw`
+#### `(bpg):({ft}_)dox_throw`
 Tells which tag name to use to document exceptions.
 
 __Default value:__ `"throw"`. Other typical value: `"exception"`
 
 Wrapped in API function [`lh#dox#throw()`](API.md#lh-dox-throw)
 
-#### `(bg):({ft}_)exception_args`
+#### `(bpg):({ft}_)exception_args`
 Arguments to inject in the exception called in
 [`throw` snippet](snippets.md#cppthrow).
 
-#### `(bg):({ft}_)exception_type`
+#### `(bpg):({ft}_)exception_type`
 Exception type to use in snippets like the
 [`throw` snippet](snippets.md#cppthrow).
 
 __Default__ is `std::runtime_error`
 
-#### `(bg):({ft}_)ext_4_impl_file`
+#### `(bpg):({ft}_)ext_4_impl_file`
 Tells the extension to use when [`:GOTOIMPL`](features.md#gotoimpl) generates a
 new implementation skeleton for a function.
 
 __Default__ is ".cpp".
 
-#### `(bg):({ft}_)file_regex_for_inclusion`
+#### `(bpg):({ft}_)file_regex_for_inclusion`
 Regex used by API function [`lh#cpp#tags#fetch()`](API.md#lh-cpp-tags-fetch) to
 filter filenames to keep.
 
 __Default value:__ "`\.h`"
 
-#### `(bg):({ft}_)filename_simplify_for_inclusion`
+#### `(bpg):({ft}_)filename_simplify_for_inclusion`
 Tells API function
 [`lh#cpp#tags#strip_included_paths()`](API.md#lh-cpp-tags-strip_included_paths)
 how to simplify filenames with |`fnamemodify()`|.
 
 __Default value:__ "`:t`"
 
-#### `(bg):({ft}_)gcov_files_path`
+#### `(bpg):({ft}_)gcov_files_path`
 This option tells where gcov files are expected. The default value is the
 same path as the one where the current file is.
 
 **See:** `<localleader>g` which permits to swap between a `.gcov` file and its
 source.
 
-#### `(bg):({ft}_)implPlace`
+#### `(bpg):({ft}_)implPlace`
 Tells where a generated accessor shall go (with `:ADDATTRIBUTE`):
 
 - 0 -> Near the prototype/definition (Java's way)
@@ -515,7 +520,7 @@ Where inlines are written on `:ADDATTRIBUTE`
 - 0 -> In the inline section of the header/current file
 - 1 -> In the inline section of a dedicated inline file
 
-#### `(bg):({ft}_)includes`
+#### `(bpg):({ft}_)includes`
 Option used by the C-ftplugin that completes the names of files to include.
 The options tells which directories shall be searched.
 
@@ -524,7 +529,7 @@ __Default value:__ is vim option `&path`
 **See:** `<PlugCompleteIncludes>` (`i_CTRL-X_I`) and `<Plug>OpenIncludes`
 (`n_CTRL_L`)
 
-#### `(bg):({ft}_)multiple_namespaces_on_same_line`
+#### `(bpg):({ft}_)multiple_namespaces_on_same_line`
 Boolean option wrapped into API function
 [`lh#cpp#option#multiple_namespaces_on_same_line()`](API.md#lh-cpp-option-multiple-namespaces-on-same-line).
 
@@ -545,9 +550,9 @@ namespace ns2 {
 } // namespace ns1
 ```
 
-#### `(bg):({ft}_)nl_before_bracket` (deprecated)
-#### `(bg):({ft}_)nl_before_curlyB` (deprecated)
-#### `(bg):({ft}_)pre_desc_ordered_tags`, `(bg):({ft}_post_desc_ordered_tags)`
+#### `(bpg):({ft}_)nl_before_bracket` (deprecated)
+#### `(bpg):({ft}_)nl_before_curlyB` (deprecated)
+#### `(bpg):({ft}_)pre_desc_ordered_tags`, `(bpg):({ft}_post_desc_ordered_tags)`
 In [`function-comment` snippet](snippets.md#cppinternalsinternalsfunction-comment), these |List|
 options tell in which order the various documentation information are inserted
 around the description the user will have to type:
@@ -558,7 +563,7 @@ The default before the user typed information is:
 The default after the user typed information is:
 - "_note_", "_warning_"
 
-#### `(bg):({ft}_)project_namespace`
+#### `(bpg):({ft}_)project_namespace`
 Name of the project namespace used by the snippet
 [`namespace`](snippets.md#cppnamespace).
 
@@ -568,18 +573,18 @@ This is also what is returned by API function
 [`lh#cpp#snippets#current_namespace()`](API.md#lh-cpp-snippets#current_namespace)
 -- in that case, the default value used is an empty string.
 
-#### `(bg):({ft}_)tag_kinds_for_inclusion`
+#### `(bpg):({ft}_)tag_kinds_for_inclusion`
 Regex used by API function [`lh#cpp#tags#fetch()`](API.md#lh-cpp-tags-fetch) to
 filter tags kind to keep.
 
 __Default value:__ "`[dfptcs]`"
 
-#### `(bg):tags_select`
+#### `(bpg):tags_select`
 Tags selection policy used by API function [`lh#cpp#tags#fetch()`](API.md#lh-cpp-tags-fetch).
 
 __Default value:__ "`expand('<cword>')`".
 
-#### `(bg):({ft}_)template_expand_doc`
+#### `(bpg):({ft}_)template_expand_doc`
 Boolean option used in snippets to tell whether documentation generation is
 required.
 
@@ -587,7 +592,7 @@ required.
 - [`formatted-comment` snippet](snippets.md#cppinternalsformatted-comment)
 - [`function-comment` snippet](snippets.md#cppinternalsfunction-comment)
 
-#### `(bg):xsltproc`
+#### `(bpg):xsltproc`
 Path to where the executable `xsltproc` is.
 
 __Default Value:__ `xsltproc`.
