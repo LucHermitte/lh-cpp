@@ -44,6 +44,7 @@
     * [`(bg):({ft}_)dox_brief`](#bgft_dox_brief)
     * [`(bg):({ft}_)dox_group`](#bgft_dox_group)
     * [`(bg):({ft}_)dox_ingroup`](#bgft_dox_ingroup)
+    * [`(bg):({ft}_)dox_sep`](#bgft_dox_sep)
     * [`(bg):({ft}_)dox_throw`](#bgft_dox_throw)
     * [`(bg):({ft}_)exception_args`](#bgft_exception_args)
     * [`(bg):({ft}_)exception_type`](#bgft_exception_type)
@@ -449,6 +450,13 @@ __Other possible values:__ `"yes"/"always"/"1"`, `"no"/"never"/"0"`, or a group
 name to use.
 
 Wrapped in API function [`lh#dox#ingroup()`](API.md#lh-dox-ingroup)
+
+#### `(bg):({ft}_)dox_sep`
+Tells which character use between a tag and its value.
+
+__Default value:__ `" "`. Other typical value: `"\t"`
+
+Wrapped in API function [`lh#dox#tag()`](API.md#lh-dox-tag)
 
 #### `(bg):({ft}_)dox_throw`
 Tells which tag name to use to document exceptions.

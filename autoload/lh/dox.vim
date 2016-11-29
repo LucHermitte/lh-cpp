@@ -4,9 +4,10 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
+let s:k_version = 220
 " Version:	2.2.0
 " Created:      22nd Feb 2011
-" Last Update:  21st Dec 2015
+" Last Update:  29th Nov 2016
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -19,13 +20,12 @@ set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
-let s:k_version = 200
 function! lh#dox#_version()
   return s:k_version
 endfunction
 
 " # Debug   {{{2
-let s:verbose = 0
+let s:verbose = get(s:, 'verbose', 0)
 function! lh#dox#verbose(...)
   if a:0 > 0 | let s:verbose = a:1 | endif
   return s:verbose
@@ -48,18 +48,18 @@ endfunction
 " # doxygen comment generation {{{2
 " Function: lh#dox#comment_leading_char() {{{3
 function! lh#dox#comment_leading_char()
-  return lh#dev#option#get('dox_CommentLeadingChar', &ft, '*', 'bg')
+  return lh#ft#option#get('dox_CommentLeadingChar', &ft, '*')
 endfunction
 
 " Function: lh#dox#tag_leading_char() {{{3
 function! lh#dox#tag_leading_char()
-  return lh#dev#option#get('dox_TagLeadingChar', &ft,'@', 'bg')
+  return lh#ft#option#get('dox_TagLeadingChar', &ft, '@')
   " alternative: \
 endfunction
 
 " Function: lh#dox#tag(tag) {{{3
 function! lh#dox#tag(tag)
-  return lh#dox#tag_leading_char().a:tag
+  return lh#dox#tag_leading_char().substitute(a:tag, '\s\+$', lh#ft#option#get('dox_sep', &ft, ' '), '')
 endfunction
 
 " Function: lh#dox#semantics(text) {{{3
@@ -70,7 +70,7 @@ endfunction
 
 " Function: lh#dox#throw([text]) {{{3
 function! lh#dox#throw(...)
-  let throw = lh#dev#option#get('dox_throw', &ft, 'throw ', 'bg')
+  let throw = lh#ft#option#get('dox_throw', &ft, 'throw ')
   let res = ''
   if !empty(throw)
     let res .= lh#dox#tag(throw)
@@ -90,7 +90,7 @@ endfunction
 " Function: lh#dox#ingroup([text]) {{{3
 function! lh#dox#ingroup(...)
   let text = a:0==0 || empty(a:1) ? lh#marker#txt('group') : a:1
-  let ingroup = lh#dev#option#get('dox_ingroup', &ft, 0, 'bg')
+  let ingroup = lh#ft#option#get('dox_ingroup', &ft, 0)
   if     ingroup =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let res =  lh#dox#tag('ingroup ').text
   elseif ingroup =~? '^no$\|^n\%[ever]$\|0'
@@ -107,7 +107,7 @@ endfunction
 function! lh#dox#brief(...)
   let text = a:0==0 || empty(a:1) ? lh#marker#txt('brief explanation').'.' : a:1
   if text[-1:] != '.' |let text .= '.' | endif
-  let brief = lh#dev#option#get('dox_brief', &ft, 'short', 'bg')
+  let brief = lh#ft#option#get('dox_brief', &ft, 'short')
   if     brief =~? '^y\%[es]$\|^a\%[lways]$\|1'
     let res =  lh#dox#tag('brief ').text
   elseif brief =~? '^no$\|^n\%[ever]$\|0\|^s\%[hort]$'
@@ -139,10 +139,10 @@ endfunction
 
 " Function: lh#dox#author() {{{3
 function! lh#dox#author(...)
-  let author_tag = lh#dev#option#get('dox_author_tag', &ft, 'author', 'g')
-  let tag        = lh#dox#tag(author_tag) .  ' '
+  let author_tag = lh#ft#option#get('dox_author_tag', &ft, 'author')
+  let tag        = lh#dox#tag(author_tag. ' ')
 
-  let author = lh#dev#option#get('dox_author', &ft, a:0 && !empty(a:1) ? (a:1) : '', 'bg')
+  let author = lh#ft#option#get('dox_author', &ft, a:0 && !empty(a:1) ? (a:1) : '')
   if author =~ '^g:.*'
     if exists(author)
       return tag . {author}
@@ -160,9 +160,9 @@ endfunction
 
 " Function: lh#dox#since(...) {{{3
 function! lh#dox#since(...)
-  let tag  = lh#dox#tag('since')
+  let tag  = lh#dox#tag('since ')
   let ver  = lh#option#get('ProjectVersion', a:0==0 ? lh#marker#txt('1.0') : a:1)
-  return tag . ' Version '.ver
+  return tag . 'Version '.ver
 endfunction
 
 "------------------------------------------------------------------------
