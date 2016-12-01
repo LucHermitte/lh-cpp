@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  02nd Jun 2016
+" Last Update:  01st Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -389,6 +389,11 @@ function! lh#cpp#snippets#_filter_functions(list, ...) abort
     call filter(res, 'get(v:val, field, default) == value')
   endif
   return res
+endfunction
+
+" Function: lh#cpp#snippets#nullptr() {{{3
+function! lh#cpp#snippets#nullptr(...) abort
+  return lh#option#get('cpp_nullptr', lh#cpp#use_cpp11() ? 'nullptr' : '0')
 endfunction
 
 " Function: lh#cpp#snippets#noexcept([condition]) {{{3

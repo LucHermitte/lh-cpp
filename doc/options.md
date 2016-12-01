@@ -23,6 +23,7 @@
     * [`(bpg):cpp_deleted`](#bpgcpp_deleted)
     * [`(bpg):cpp_noexcept`](#bpgcpp_noexcept)
     * [`(bpg):cpp_noncopyable_class`](#bpgcpp_noncopyable_class)
+    * [`(bpg):cpp_nullptr`](#bpgcpp_nullptr)
     * [`(bpg):cpp_explicit_default`](#bpgcpp_explicit_default)
     * [`(bpg):cpp_make_ptr`](#bpgcpp_make_ptr)
     * [`(bpg):cpp_noexcept`](#bpgcpp_noexcept)
@@ -239,8 +240,7 @@ String option.
 
 **Default Value:** `= delete`
 
-**See:** API function
-[`lh#cpp#snippets#deleted()`](API.md#lhcppsnippetsdeleted)
+**See:** API function [`lh#cpp#snippets#deleted()`](API.md#lhcppsnippetsdeleted)
 
 #### `(bpg):cpp_noexcept`
 String format option (for
@@ -250,6 +250,7 @@ String format option (for
 
 **See:**
   * [`lh#fmt#printf()`](https://github.com/LucHermitte/lh-vim-lib))
+  * API function [`lh#cpp#snippets#nullptr()`](API.md#lhcppsnippetsnoexcept)
 
 #### `(bpg):cpp_noncopyable_class`
 Policy option that is used to tell how classes are made non-copyable.
@@ -273,6 +274,15 @@ Policy option that is used to tell how classes are made non-copyable.
   * [Type database](types.md)
   * [`cpp/base-class.template`](snippets.md#cppbaseclass.template)
   * [`cpp/internals/class-skeleton.template`](snippets.md#cppinternalsclass-skeleton.template)
+
+#### `(bpg):cpp_nullptr`
+Returned by `lh#cpp#snippets#nullptr()`.
+
+**Default Value:** `nullptr` in C++11, `0` in C++98/03.
+
+**Other Typical values:** `NULL`, `ITK_NULLPTR_, etc.
+
+**See:** API function [`lh#cpp#snippets#nullptr()`](API.md#lhcppsnippetsnullptr)
 
 #### `(bpg):cpp_explicit_default`
 Boolean option that forces to explicitly add `= default` in snippets when C++11
