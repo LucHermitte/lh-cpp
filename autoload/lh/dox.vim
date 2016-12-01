@@ -7,7 +7,7 @@
 let s:k_version = 220
 " Version:	2.2.0
 " Created:      22nd Feb 2011
-" Last Update:  29th Nov 2016
+" Last Update:  01st Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -138,31 +138,42 @@ function! lh#dox#param(param)
 endfunction
 
 " Function: lh#dox#author() {{{3
-function! lh#dox#author(...)
-  let author_tag = lh#ft#option#get('dox_author_tag', &ft, 'author')
-  let tag        = lh#dox#tag(author_tag. ' ')
+function! lh#dox#author_value(...) abort
+  if a:0 && !empty(a:1) > 0
+    return a:1
+  endif
 
-  let author = lh#ft#option#get('dox_author', &ft, a:0 && !empty(a:1) ? (a:1) : '')
+  let author = lh#ft#option#get('dox_author', &ft, '')
   if author =~ '^g:.*'
     if exists(author)
-      return tag . {author}
+      return {author}
       " return tag . {author} . lh#marker#txt('')
     else
-      return tag . lh#marker#txt('author-name')
+      return lh#marker#txt('author-name')
     endif
   elseif strlen(author) == 0
-    return tag . lh#marker#txt('author-name')
+    return lh#marker#txt('author-name')
   else
-    return tag . author
-    " return tag . author . lh#marker#txt('')
+    return author
   endif
 endfunction
 
+function! lh#dox#author(...) abort
+  let author_tag = lh#ft#option#get('dox_author_tag', &ft, 'author')
+  let tag        = lh#dox#tag(author_tag. ' ')
+  return tag . call('lh#dox#author_value', a:000)
+endfunction
+
 " Function: lh#dox#since(...) {{{3
-function! lh#dox#since(...)
+function! lh#dox#since_value(...) abort
+  let ver  = lh#option#get('ProjectVersion', a:0==0 ? lh#marker#txt('1.0') : a:1)
+  return 'Version '.ver
+endfunction
+
+function! lh#dox#since(...) abort
   let tag  = lh#dox#tag('since ')
   let ver  = lh#option#get('ProjectVersion', a:0==0 ? lh#marker#txt('1.0') : a:1)
-  return tag . 'Version '.ver
+  return tag . call('lh#dox#since_value', a:000)
 endfunction
 
 "------------------------------------------------------------------------
