@@ -566,58 +566,67 @@ endfunction
 " # Functions to tune mu-template class skeleton {{{2
 
 " Function: lh#cpp#snippets#new_function_list() {{{3
-function! lh#cpp#snippets#new_function_list() abort
-  let fl = { 'list': []}
-  function! fl.public()           abort " {{{4
-    return lh#cpp#snippets#_filter_functions(self.list, "public")
-  endfunction
-  function! fl.protected()        abort " {{{4
-    return lh#cpp#snippets#_filter_functions(self.list, "protected")
-  endfunction
-  function! fl.private()          abort " {{{4
-    return lh#cpp#snippets#_filter_functions(self.list, "private")
-  endfunction
-  function! fl.add(fns)           abort " {{{4
-    let self.list += a:fns
-    for fn in a:fns
-      call extend(fn, {'add_new': function(s:getSNR('AddNew'))})
-    endfor
-    return self
-  endfunction
-  function! fl.insert(fn)         abort " {{{4
-    call extend(a:fn, {'add_new': function(s:getSNR('AddNew'))})
-    call insert(self.list, a:fn)
-    return self
-  endfunction
-  function! fl.get(id) dict       abort " {{{4
-    if type(a:id) == type('name')
-      let res = filter(copy(self.list), 'has_key(v:val, "name") && v:val.name =~ a:id')
-    else
-      let res = filter(copy(self.list), 's:FunctionMatchesDescription(v:val, a:descr)')
-    endif
-    return res
-  endfunction
-  function! fl.get1(id, ...) dict abort " {{{4
-    let matching_functions = self.get(a:id)
-    if len(matching_functions) > 1
-      throw "lh-cpp: Too many functions match ".string(a:id)
-    elseif empty(matching_functions)
-      " New reference created, and returned
-      let new_fn = a:0 > 0 ? a:1 : {}
-      " Force the searched pattern onto the function to return, at least this,
-      " is correct
-      call extend(new_fn, a:id)
-      call self.add([new_fn])
-      return new_fn
-    endif
-  endfunction
-  function! fl.filter(descr) dict abort " {{{4
-    let res = filter(copy(self.list), 's:FunctionMatchesDescription(v:val, a:descr)')
-    return res
-  endfunction
-  function! fl.reverse()          abort "{{{4
-    return reverse(self.list)
-  endfunction
+function! s:public()      dict abort " {{{4
+  return lh#cpp#snippets#_filter_functions(self.list, "public")
+endfunction
+function! s:protected()   dict abort " {{{4
+  return lh#cpp#snippets#_filter_functions(self.list, "protected")
+endfunction
+function! s:private()     dict abort " {{{4
+  return lh#cpp#snippets#_filter_functions(self.list, "private")
+endfunction
+function! s:add(fns)      dict abort " {{{4
+  let self.list += a:fns
+  for fn in a:fns
+    call extend(fn, {'add_new': function(s:getSNR('AddNew'))})
+  endfor
+  return self
+endfunction
+function! s:insert(fn)    dict abort " {{{4
+  call extend(a:fn, {'add_new': function(s:getSNR('AddNew'))})
+  call insert(self.list, a:fn)
+  return self
+endfunction
+function! s:get(id)       dict abort " {{{4
+  if type(a:id) == type('name')
+    let res = filter(copy(self.list), 'has_key(v:val, "name") && v:val.name =~ a:id')
+  else
+    let res = filter(copy(self.list), 's:FunctionMatchesDescription(v:val, a:id)')
+  endif
+  return res
+endfunction
+function! s:get1(id, ...) dict abort " {{{4
+  let matching_functions = self.get(a:id)
+  if len(matching_functions) > 1
+    throw "lh-cpp: Too many functions match ".string(a:id)
+  elseif empty(matching_functions)
+    " New reference created, and returned
+    let new_fn = a:0 > 0 ? a:1 : {}
+    " Force the searched pattern onto the function to return, at least this,
+    " is correct
+    call extend(new_fn, a:id)
+    call self.add([new_fn])
+    return new_fn
+  endif
+endfunction
+function! s:filter(descr) dict abort " {{{4
+  let res = filter(copy(self.list), 's:FunctionMatchesDescription(v:val, a:descr)')
+  return res
+endfunction
+function! s:reverse()     dict abort "{{{4
+  return reverse(self.list)
+endfunction
+function! lh#cpp#snippets#new_function_list() abort " {{{4
+  let fl = lh#object#make_top_type({ 'list': []})
+  let fl.public    = function(s:getSNR('public'))
+  let fl.protected = function(s:getSNR('protected'))
+  let fl.private   = function(s:getSNR('private'))
+  let fl.add       = function(s:getSNR('add'))
+  let fl.insert    = function(s:getSNR('insert'))
+  let fl.get       = function(s:getSNR('get'))
+  let fl.get1      = function(s:getSNR('get1'))
+  let fl.filter    = function(s:getSNR('filter'))
+  let fl.reverse   = function(s:getSNR('reverse'))
 
   " Return object {{{4
   return fl
