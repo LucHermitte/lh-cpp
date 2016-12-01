@@ -9,9 +9,14 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 MuT:  let s:parameters = {'noncopyable': 1}
 MuT:  let s:functions = s:Param('functions', lh#cpp#snippets#new_function_list())
+VimL: " Defines Doxygen comments
+MuT:  let s:cls_comments = {}
+VimL: let s:cls_comments.brief = lh#dox#brief('<+__clsname__+> singleton.')
+VimL: let s:cls_comments.ingroup = {}
+VimL: " Ask which kind
 MuT:  let s:type = confirm('Of what type of the singleton should be?', "&Meyers' (local-static, MT-safe (in C++11), default ctr)\n" .'&Explicit Initialisation (MT-safe)', 2 - lh#cpp#use_cpp11())
 MuT:  if s:type == 1
-VimL: " Meyers' singleton
+VimL: " ----> Meyers' singleton
 MuT:     let s:instance = {'signature': 'static <+__clsname__+> & instance() '.lh#cpp#snippets#noexcept()}
 VimL:    let s:instance.implementation = "static <+__clsname__+> s_instance;\nreturn s_instance;"
 VimL:    let s:instance.comments = {'brief': 'Singleton Accessor.', 'throw': 'None'}
@@ -25,14 +30,45 @@ VimL:    call lh#dict#add_new(s:default_constructor, {'how': 'defaulted'})
 MuT:     let s:destructor = s:Param('destructor', {})
 VimL:    let s:destructor['visibility'] = 'private'
 VimL:    call lh#dict#add_new(s:destructor, {'how': 'defaulted'})
-VimL:    " Defines Doxygen comments
-MuT:     let s:cls_comments = {}
-VimL:    let s:cls_comments.brief = lh#dox#brief('<+__clsname__+> singleton.')
-VimL:    let s:cls_comments.ingroup = {}
+VimL:    " Complete Doxygen comments
 VimL:    let s:cls_comments.semantics = ['Implicitly initialized with a default constructor', 'MT-safe', 'Non-copyable']
 VimL:    call s:Include('class-skeleton', 'cpp/internals', {'comments': s:cls_comments})
 MuT:  elseif s:type == 2
-VimL: " Explicit' singleton
+VimL: " ----> Explicit' singleton
+VimL:    " --- instance()
+MuT:     let s:instance = {}
+VimL:    let s:instance.comments = {'brief': 'Singleton Accessor.', 'throw': 'None', 'pre': '`ms_instance != nullptr`'}
+VimL:    let s:instance.signature = 'static <+__clsname__+> & instance() '.lh#cpp#snippets#noexcept()
+VimL:    let s:instance.implementation = 'assert(ms_instance && "Singleton not initialized.");'
+VimL:    let s:instance.implementation .= "\nreturn *ms_instance;"
+VimL:    call s:functions.insert(s:instance)
+VimL:    " --- create()
+MuT:     let s:create = {}
+VimL:    let s:create.comments = {'brief': 'Singleton Construction.', 'throw': lh#marker#txt('std::exception'), 'pre': '`ms_instance == nullptr`', 'post': '`ms_instance != nullptr`'}
+VimL:    let s:create.signature = 'static void create('.lh#marker#txt('Parameters').')'
+VimL:    let s:create.implementation = 'assert(ms_instance && "Singleton not initialized.");'
+VimL:    let s:create.implementation .= "\nreturn *ms_instance;"
+VimL:    call s:functions.insert(s:create)
+VimL:    " --- release()
+MuT:     let s:release = {}
+VimL:    let s:release.comments = {'brief': 'Singleton Destruction.', 'throw': 'None', 'pre': '`ms_instance != nullptr`', 'post': '`ms_instance == nullptr`'}
+VimL:    let s:release.signature = 'static void release() '.lh#cpp#snippets#noexcept()
+VimL:    let s:release.implementation = 'assert(ms_instance && "Singleton not initialized.");'
+VimL:    let s:release.implementation .= "\ndelete ms_instance;"
+VimL:    let s:release.implementation .= "\nms_instance = lh#cpp#snippets#nullptr();"
+VimL:    call s:functions.insert(s:release)
+VimL:    " --- Delete default-constructor, unless already defined
+MuT:     let s:default_constructor = s:Param('default-constructor', {})
+VimL:    call lh#dict#add_new(s:destructor, {'how': 'deleted'})
+VimL:    " --- Set destructor to private, set how to defaulted, in not already set
+MuT:     let s:destructor = s:Param('destructor', {})
+VimL:    let s:destructor['visibility'] = 'private'
+VimL:    call lh#dict#add_new(s:destructor, {'how': 'defaulted'})
+VimL:    " Complete Doxygen comments
+VimL:    let s:cls_comments.semantics = ['Explicitly initialized', 'MT-safe', 'Non-copyable']
+VimL:    call s:Include('class-skeleton', 'cpp/internals', {'comments': s:cls_comments})
+// don't forget to move the following definition to <+expand('%:t:r')+>.cpp
+<+s:clsname+> *<+s:clsname+>::ms_instance = lh#cpp#snippets#nullptr();
 MuT:  else
 VimL: let s:clsname = empty(s:Args()) ? INPUT("singleton name ?", lh#marker#txt(expand('%:t:r'))) : (s:Args()[0])
 VimL: call CppDox_SingletonWizard(s:clsname)
