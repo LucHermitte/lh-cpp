@@ -1,7 +1,7 @@
 VimL:" class-skeleton File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
 VimL:" hint: Routine Skeleton for C++ classes
 VimL:" TODO: find a way to order members
-VimL:" TODO: fill function comments
+VimL:" TODO: find a way to group members
 VimL:" TODO: option to disable comments in defaulted functions
 VimL:" TODO: C++11 move copy & move assign
 VimL:" TODO: Enforce rule of "all or nothing"
@@ -21,7 +21,7 @@ VimL:   for attr in s:attributes | let attr.type_info = lh#cpp#types#get_info(at
 VimL:   " Set attributes as parameters to init-ctr, unless already set
 MuT:    let s:init_constructor = s:functions.get1({'kind' : 'init-constructor'})
 VimL:   call s:init_constructor.add_new({'parameters': lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#ConstCorrectType(v:val)'), 'visibility': 'public'})
-VimL:   " Remove default-consructor unless already set visible
+VimL:   " Remove default-constructor unless already set visible
 MuT:    let s:default_constructor = s:Param('default-constructor', {})
 VimL:   call lh#dict#add_new(s:default_constructor, {'visibility': 'none'})
 MuT:  endif

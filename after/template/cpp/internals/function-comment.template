@@ -12,7 +12,7 @@ VimL:   endif
 VimL: endfunction
 VimL: "
 VimL: function! s:_AddToDoc(tagname, data)
-VimL:   if !has_key(a:data, a:tagname) | return [] | endif
+VimL:   " if !has_key(a:data, a:tagname) | return [] | endif
 VimL:   let res = []
 VimL:   if type(a:data[a:tagname]) == type([])
 VimL:     for e in a:data[a:tagname]
@@ -34,10 +34,10 @@ VimL: function! s:_GenerateDoc(data)
 VimL:   " echomsg "\n-->".string(a:data)
 VimL:   " tags ordered => determine the order in which they are displayed
 VimL:   let pre_tags_default = [ 'brief', 'ingroup', 'tparam', 'param', 'return', 'throw', 'invariant', 'pre', 'post']
-VimL:   let post_tags_default = ['note', 'warning', 'see']
+VimL:   let post_tags_default = ['note', 'warning', 'author', 'since', 'version', 'see']
 VimL:   let doc = []
 VimL:   let tags = lh#ft#option#get('pre_desc_ordered_tags', &ft, pre_tags_default)
-VimL:   for tag in tags
+VimL:   for tag in filter(copy(tags), 'has_key(a:data, v:val)')
 VimL:     let doc +=  s:_AddToDoc(tag, a:data)
 VimL:   endfor
 VimL:   if has_key(s:fn_comments, 'semantics')
@@ -56,7 +56,7 @@ VimL:       endfor
 VimL:     endif
 VimL:   endif
 VimL:   let tags = lh#ft#option#get('post_desc_ordered_tags', &ft, post_tags_default)
-VimL:   for tag in tags
+VimL:   for tag in filter(copy(tags), 'has_key(a:data, v:val)')
 VimL:     let doc +=  s:_AddToDoc(tag, a:data)
 VimL:   endfor
 VimL:   " echomsg string(doc)
