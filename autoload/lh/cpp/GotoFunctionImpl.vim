@@ -472,7 +472,7 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
         \ . (proto.const ? ' const' : '')
         \ . (proto.volatile ? ' volatile' : '')
         \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
-        \ . proto.noexcept
+        \ . (!empty(proto.noexcept) ? ' ' . proto.noexcept : '')
         \ . (proto.final ? ' final' : '')
         \ . (proto.overriden ? ' override' : '')
         \ . "{}"
