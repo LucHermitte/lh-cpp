@@ -45,6 +45,7 @@
 "       v2.2.0
 "       (*) Add detection of final, override, constexpr, noexept, volatile,
 "          =default, =delete
+"       (*) Fix regex building for operator()
 "       v2.0.0
 "       (*) GPLv3 w/ exception
 "       (*) AnalysePrototype() accepts spaces between functionname and (
@@ -642,9 +643,10 @@ function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str)
     "                              "T (CL::* pmf)(params)"
   " }}}4
   " Cut the signature in order to concentrate on the most outer parenthesis
-  let head = matchstr(a:str, '^[^(]*(')
-  let tail = matchstr(a:str, ')[^)]*$')
-  let params = matchstr(a:str, '^[^(]*(\zs.*\ze)[^)]*$')
+  let head_end = matchend(a:str, '^\([^(]\{-}\<operator\>\s*(\s*)\s*\|[^(]*\)(') " take operator() into account
+  let head = a:str[ : head_end]
+  let tail = matchstr(a:str, ')[^)]*$', head_end-1)
+  let params = matchstr(a:str, '^[^(]*(\zs.*\ze)[^)]*$', head_end-1)
   let params_types = ''
   " Loop on the parameters
   while '' != params
