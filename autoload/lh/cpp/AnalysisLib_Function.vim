@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  30th May 2016
+" Last Update:  02nd Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -42,21 +42,22 @@
 "       Drop it into: {rtp}/autoload
 "       Requirements: Vim7
 " History:
+"       v2.2.0
+"       (*) Add detection of final, override, constexpr, noexept, volatile,
+"          =default, =delete
 "       v2.0.0
 "       (*) GPLv3 w/ exception
 "       (*) AnalysePrototype() accepts spaces between functionname and (
 "       (*) Fix :GOTOIMPL to support operators like +=
 "       v1.1.1
 "       (*) lh#cpp#AnalysisLib_Function#GetListOfParams() is not messed up by
-"       throw-spec ; TODO support new C++11 noexcept spec
+"       throw-spec
 "       v1.0.1:
 "       (*) Remembers the parameter is on a new line
 "       v1.0.0: First version
 "               Code extracted from cpp_GotoFunctionImpl
 " TODO:
 "       (*) Support template, function types, friends
-"       (*) add knowledge about C++11 new qualifiers & co (=delete,
-"       noexcept, override, etc)
 " }}}1
 "=============================================================================
 
@@ -170,20 +171,28 @@ endfunction
 " @todo support function types
 " @todo support templates
 " Constants {{{4
-let s:re_qualifiers      = '\<\%(static\|explicit\|virtual\)\>'
+let s:re_qualifiers                 = '\<\%(static\|explicit\|virtual\)\>'
 
-let s:re_qualified_name1 = '\%(::\s*\)\=\<\I\i*\>'
-let s:re_qualified_name2 = '\s*::\s*\<\I\i*\>'
-let s:re_qualified_name  = s:re_qualified_name1.'\%('.s:re_qualified_name2.'\)*'
+let s:re_qualified_name1            = '\%(::\s*\)\=\<\I\i*\>'
+let s:re_qualified_name2            = '\s*::\s*\<\I\i*\>'
+let s:re_qualified_name             = s:re_qualified_name1.'\%('.s:re_qualified_name2.'\)*'
 
-let s:re_operators       = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\|==\| \)'
+let s:re_operators                  = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\|==\| \)'
 "   What looks like to a "space" operator is actually used in next regex to
 "   match convertion operators
-let s:re_qualified_oper  = '\%('.s:re_qualified_name . '\s*::\s*\)\=' . s:re_operators . '.\{-}\ze('
+let s:re_qualified_oper             = '\%('.s:re_qualified_name . '\s*::\s*\)\=' . s:re_operators . '.\{-}\ze('
 
-let s:re_const_member_fn = ')\s*\zs\<const\>'
-let s:re_throw_spec      = ')\s*\%(\<const\>\s\+\)\=\<throw\>(\(\zs.*\ze\))'
-let s:re_pure_virtual    = ')\s*=\s*0\s*[;{]'
+let s:re_const_member_fn            = ')\s*\zs\<const\>'
+let s:re_volatile_member_fn         = ')\s*\zs\<volatile\>'
+let s:re_throw_spec                 = ')\s*\%(\%(\<const\>\|\<volatile\>\)\s\+\)\=\<throw\>(\(\zs.*\ze\))'
+let s:re_noexcept_spec              = '\<noexcept\>\((\zs.*\ze)\)\='
+let s:re_defined_by_compiler_prefix = ')\s*\%(\%(\<const\>\|\<volatile\>\)\s*\)\=\%(\<noexcept\>\%((.*)\)\=\s*\)\==\s*'
+let s:re_pure_virtual               = s:re_defined_by_compiler_prefix . '0\s*[;{]'
+let s:re_special_definition         = s:re_defined_by_compiler_prefix . '\zs\<\(default\|delete\)\>\ze\s*[;{]'
+
+let s:re_constexpr                  = '\<constexpr\>'
+let s:re_final                      = '\<final\>'
+let s:re_override                   = '\<override\>'
 
 " Implementation {{{4
 function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
@@ -226,13 +235,15 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
     let lName   = split(sName, '::')
     let retType = ''
   endif
+  let retType = substitute(retType, s:re_constexpr.'\s*', '', '')
 
   " 4- Parameters                                {{{5
   let sParams = strpart(prototype, iName+len(sName))
   let params = lh#cpp#AnalysisLib_Function#GetListOfParams(sParams, 0)
 
   " 5- Const member function ?                   {{{5
-  let isConst = match(prototype, s:re_const_member_fn) != -1
+  let isConst    = match(prototype, s:re_const_member_fn) != -1
+  let isVolatile = match(prototype, s:re_volatile_member_fn) != -1
 
   " 6- Throw specification                       {{{5
   let sThrowSpec = matchstr(prototype, s:re_throw_spec)
@@ -240,21 +251,38 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
   if len(lThrowSpec) == 0 && match(prototype, s:re_throw_spec) > 0
     let lThrowSpec = [ '' ]
   endif
+  let sNoexceptSpec = matchstr(prototype, s:re_noexcept_spec)
 
   " 7- Pure member function ?                    {{{5
   let isPure =  prototype =~ s:re_pure_virtual
 
-  " 8- Result                                    {{{5
+  " 8- =default/=delete ?                        {{{5
+  let special_definition =  matchstr(prototype, s:re_special_definition)
+
+  " 9- final/override ?                          {{{5
+  let isFinal     = prototype =~ s:re_final
+  let isOverriden = prototype =~ s:re_override
+
+  " 10- constexpr ?                              {{{5
+  let isConstexpr = prototype =~ s:re_constexpr
+
+  " *- Result                                    {{{5
   " let result = [ qualifier, retType, lName, params]
-  let result = {
-        \ "qualifier" : qualifier,
-        \ "return"    : retType,
-        \ "name"      : lName,
-        \ "parameters": params,
-        \ "const"     : isConst,
-        \ "pure"      : isPure,
-        \ "throw"     : lThrowSpec
-        \}
+  let result =
+        \ { "qualifier"          : qualifier
+        \ , "return"             : retType
+        \ , "name"               : lName
+        \ , "parameters"         : params
+        \ , "constexpr"          : isConstexpr
+        \ , "const"              : isConst
+        \ , "volatile"           : isVolatile
+        \ , "pure"               : isPure
+        \ , "special_definition" : special_definition
+        \ , "throw"              : lThrowSpec
+        \ , "noexcept"           : sNoexceptSpec
+        \ , "final"              : isFinal
+        \ , "overriden"          : isOverriden
+        \ }
   return result
 endfunction
 " }}}3
@@ -351,7 +379,7 @@ function! lh#cpp#AnalysisLib_Function#LoadTags(id) abort
 
   " Remove "= 0"
   call filter(declarations, 'v:val.implementation !~ "pure"')
-  call s:Verbose('%1 functions declarations kepta (pure virtual function removed)', len(declarations))
+  call s:Verbose('%1 functions declarations kept (pure virtual function removed)', len(declarations))
   " Remove "= default" & "= delete"
   " -> not present in the signature.
   " -> at best, it may be in the command
@@ -507,7 +535,10 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   " Check pure virtual functions: {{{4
   let isPure =  function_data.pure
 
-  let res = {'regex':impl2search, 'ispure':isPure}
+  " Check =delete/=default functions: {{{4
+  let isWithoutDefinition = !empty(function_data.special_definition)
+
+  let res = {'regex':impl2search, 'ispure':isPure, 'isWithoutDefinition': isWithoutDefinition}
   return res
 endfunction
 
@@ -538,6 +569,8 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   let impl2search = substitute(impl2search, '\s*\([-+*/%^=<>!]=\|&&\|||\|[<>=(),&]\)\s*', ' \1 ', 'g')
   " Check pure virtual functions: {{{4
   let isPure =  impl2search =~ '=\s*0\s*;\s*$'
+  " Check =delete/=default functions: {{{4
+  let isWithoutDefinition = impl2search =~ '=\s*\<\(default\|delete\)\>\s*;\s*$'
   " Start and end {{{4
   let impl2search = substitute(impl2search, '^\s*\|\s*;\s*$', '', 'g')
   " Default parameters -> comment => ignored along with spaces {{{4
@@ -579,11 +612,11 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   " Note: \%(\) is like \(\) but the subexpressions are not counted.
   " Note: ' \zs' inserted at the start of the regex helps ignore any comments
   " before the signature of the function.
-  " Return the regex built {{{3
+  " Return the regex built {{{4
   "
-  let res = {'regex':impl2search, 'ispure':isPure}
+  let res = {'regex':impl2search, 'ispure':isPure, 'isWithoutDefinition': isWithoutDefinition}
   return res
-endfunction
+endfunction "}}}4
 "------------------------------------------------------------------------
 " Function: s:TrimParametersNames(str) {{{3
 " Some constant regexes {{{4

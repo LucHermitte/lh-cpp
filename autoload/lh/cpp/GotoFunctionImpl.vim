@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  15th Nov 2016
+" Last Update:  02nd Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -161,9 +161,15 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
     let isk_save = &isk
     set isk-=:
     let impl2search = s:BuildRegexFromImpl(proto,className)
+    if impl2search.isWithoutDefinition
+      call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
+            \ "=delete and =default functions don't have an implementation!")
+      return
+    endif
     if impl2search.ispure
       call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
             \ "Pure virtual functions don't have an implementation!")
+      " TODO: actually, they can have one. Add a confirm dialog
       return
     endif
 
@@ -445,6 +451,12 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
     let scope += [proto.return]
     let return = join(scope, '::')
     " 4.2- ... parameters types
+    " 4.3- ... constexpr
+    " TODO: Check: not sure this really makes sense: constexpr function shall
+    " be inlined
+    if proto.constexpr
+      let return = 'constexpr ' . return
+    endif
   finally
     call lh#dev#end_tag_session()
   endtry
@@ -458,7 +470,11 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
         \ . join(proto.name, '::')
         \ . '('.implParamsStr . ')'
         \ . (proto.const ? ' const' : '')
+        \ . (proto.volatile ? ' volatile' : '')
         \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
+        \ . proto.noexcept
+        \ . (proto.final ? ' final' : '')
+        \ . (proto.overriden ? ' override' : '')
         \ . "{}"
   let styles = lh#dev#style#get(&ft)
   let styled = lh#dev#style#apply(unstyled)
