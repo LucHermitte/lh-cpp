@@ -4,8 +4,9 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
+let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  $Date$ (13th Feb 2008)
+" Last Update:  06th Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -31,6 +32,8 @@
 " Dependencies: VIM 7.0+
 
 " History:      {{{2
+"       06th Dec 2016
+"       (*) Fix scope searching to ignore non-namespace/enum/class scopes
 "       17th Feb 2015
 "       (*) + list available namespaces
 "       (*) + simplfy_id()
@@ -98,7 +101,7 @@ let s:class_part      = s:class_token  . '\_s\+' . s:id
 let s:namespace_token = '\<\(namespace\)\>\_s\+'
 let s:namespace_part  = s:namespace_token . s:id
 
-let s:both_token     = '\<\(class\|struct\|enum\|union\|namespace\)\>'
+let s:both_token     = '\<\(struct\|enum\(\s\+class\)\=\|\(enum\s\+\)\@<!class\|union\|namespace\)\>'
 let s:both_part      = s:both_token  . '\_s\+' . s:id
 " let s:namespace_part = '\<\(namespace\)\>\_s\+' . s:id . '\='
 " Use '\=' for anonymous namespaces
@@ -120,17 +123,29 @@ if exists('g:force_load_cpp_FindContextClass')
   command! -nargs=1 CppCACEcho :echo s:<arg>
 endi
 
-function! lh#cpp#AnalysisLib_Class#verbose(level)
-  let s:verbose = a:level
+" # Version {{{2
+function! lh#cpp#AnalysisLib_Class#version()
+  return s:k_version
 endfunction
 
-function! s:Verbose(expr)
-  if exists('s:verbose') && s:verbose
-    echomsg a:expr
+" # Debug   {{{2
+let s:verbose = get(s:, 'verbose', 0)
+function! lh#cpp#AnalysisLib_Class#verbose(...)
+  if a:0 > 0 | let s:verbose = a:1 | endif
+  return s:verbose
+endfunction
+
+function! s:Log(expr, ...)
+  call call('lh#log#this',[a:expr]+a:000)
+endfunction
+
+function! s:Verbose(expr, ...)
+  if s:verbose
+    call call('s:Log',[a:expr]+a:000)
   endif
 endfunction
 
-function! lh#cpp#AnalysisLib_Class#debug(expr)
+function! lh#cpp#AnalysisLib_Class#debug(expr) abort
   return eval(a:expr)
 endfunction
 
@@ -143,40 +158,60 @@ let s:skip_comments = 'synIDattr(synID(line("."), col("."), 0), "name") =~?'
 
 function! s:SearchBracket()
   let flag = 'bW'
-  return searchpair('{', '', '}', flag, s:skip_comments)
+  let res = searchpair('{', '', '}', flag, s:skip_comments)
+  call s:Verbose('|   +-> s:SearchBracket("{", "", "}", "bW" -- from=%1) --> %2', getpos('.'), res)
+  return res
 endfunction
 
+let s:k_skip_comments = '(synIDattr(synID(line("."), col("."), 0), "name") '
+      \ . '!~? "c\\%(pp\\)\\=Structure")'
+let s:k_skip_using_ns = '(getline(".") =~ "using\s*namespace")'
 function! s:CurrentScope(bMove, scope_type)
+  call s:Verbose('+-> s:CurrentScope(%1) at %2', a:, getpos('.'))
   let flag = a:bMove ? 'bW' : 'bnW'
   let pos = 'call cursor(' . line('.') . ',' . col('.') . ')'
   let result = line('.')
-  while 1
-    let result = s:SearchBracket()
+  try
+    while 1
+      " First, search for current block start
+      let result = s:SearchBracket()
+      if result <= 0 | return result | endif
+
+      " Then, check whether this is the kind of scoping block we are looking for
+      let start = substitute(s:both_part, '(', '%(', 'g'). s:{a:scope_type}_open
+      let last_pos = getcurpos()
+      let result = searchpair(
+            \ start, '', '{', 'bW',
+            \ s:k_skip_comments.'&&'.s:k_skip_using_ns)
+      call s:Verbose('|   +-> searchpair(%1, "", "{", %2, skip comments & using) -> %3', start, flag, result)
+      if result > 0
+        " Check that if we search this last thing in the other direction then
+        " we go to the last_pos
+        let r2 = searchpairpos(start, '', '{', 'Wn',
+              \ s:k_skip_comments.'&&'.s:k_skip_using_ns)
+        call lh#assert#value(r2[0]).is_gt(0)
+        if r2 == last_pos[1:2]
+          " This was a searched scope
+          call s:Verbose('|  +-> This was searched scope => return %1', result)
+          return result
+        endif
+        call s:Verbose('|   +-> The previous scope start (%1) is not compatible with the current scope found (%2)', getcurpos(), last_pos)
+        call setpos('.', last_pos) " go back and search again
+        " call s:Verbose("|   +-> %3: '%1' =~ '%2'", getline(result), '.*'.s:{a:scope_type}_token.'.*', getline(result) =~ '.*'.s:{a:scope_type}_token.'.*' ? 'True': 'False')
+        " TODO: need to make sure there is nothing in between, i.e. that the
+        " scope_type is directly followed by the block found
+        " if getline(result) !~ '.*'.s:{a:scope_type}_token.'.*'
+          " let result = 0
+        " endif
+        " break
+      endif
+    endwhile
+    return result
+  finally
     if result <= 0
       exe pos
-      break
     endif
-
-    let skip_comments = '(synIDattr(synID(line("."), col("."), 0), "name") '
-          \ . '!~? "c\\%(pp\\)\\=Structure")'
-    let skip_using_ns = '(getline(".") =~ "using\s*namespace")'
-    " let result = searchpair(
-        " \ substitute(s:{a:scope_type}_part, '(', '%(', 'g')
-        " \ . s:{a:scope_type}_open, '', '{', flag,
-        " \ skip_comments)
-    let result = searchpair(
-        \ substitute(s:both_part, '(', '%(', 'g')
-        \ . s:{a:scope_type}_open, '', '{', flag,
-        \ skip_comments.'&&'.skip_using_ns)
-    if result > 0
-      if getline(result) !~ '.*'.s:{a:scope_type}_token.'.*'
-        exe pos
-        let result = 0
-      endif
-      break
-    endif
-  endwhile
-  return result
+  endtry
 endfunction
 
 
@@ -196,6 +231,7 @@ endfunction
 " Checks whether lineNo is in between the '{' at line classStart and its
 " '}' counterpart ; in that case, returns "::".className
 function! s:SearchClassOrNamespaceDefinition(class_or_ns)
+  call s:Verbose('s:SearchClassOrNamespaceDefinition(%1)', a:)
   let pos = 1
   let scope = ''
   let defines = lh#option#get('cpp_defines_to_ignore', '')
