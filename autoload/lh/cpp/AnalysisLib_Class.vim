@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  06th Dec 2016
+" Last Update:  08th Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -185,6 +185,13 @@ function! s:CurrentScope(bMove, scope_type)
             \ s:k_skip_comments.'&&'.s:k_skip_using_ns)
       call s:Verbose('|   +-> searchpair(%1, "", "{", %2, skip comments & using) -> %3', start, flag, result)
       if result > 0
+        " Be sure this is the exact token searched (s:both_path searches
+        " everything)
+        call s:Verbose("|   +-> %3: '%1' =~ '%2'", getline(result), '.*'.s:{a:scope_type}_token.'.*', getline(result) =~ '.*'.s:{a:scope_type}_token.'.*' ? 'True': 'False')
+        if getline(result) !~ '.*'.s:{a:scope_type}_token.'.*'
+          let result = 0 " needed by finally
+          return result
+        endif
         " Check that if we search this last thing in the other direction then
         " we go to the last_pos
         let r2 = searchpairpos(start, '', '{', 'Wn',
@@ -197,13 +204,6 @@ function! s:CurrentScope(bMove, scope_type)
         endif
         call s:Verbose('|   +-> The previous scope start (%1) is not compatible with the current scope found (%2)', getcurpos(), last_pos)
         call setpos('.', last_pos) " go back and search again
-        " call s:Verbose("|   +-> %3: '%1' =~ '%2'", getline(result), '.*'.s:{a:scope_type}_token.'.*', getline(result) =~ '.*'.s:{a:scope_type}_token.'.*' ? 'True': 'False')
-        " TODO: need to make sure there is nothing in between, i.e. that the
-        " scope_type is directly followed by the block found
-        " if getline(result) !~ '.*'.s:{a:scope_type}_token.'.*'
-          " let result = 0
-        " endif
-        " break
       endif
     endwhile
     return result
