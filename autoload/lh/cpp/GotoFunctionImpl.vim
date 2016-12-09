@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  02nd Dec 2016
+" Last Update:  08th Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -433,7 +433,8 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
     let ltags = lh#dev#start_tag_session()
     " 4.1- ... return type
     let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
-    let all_rets = lh#list#transform(all_ret_dicts, [], 'v:1_.class')
+    let all_rets = lh#list#get(all_ret_dicts, 'class', '')
+    " let all_rets = lh#list#transform(all_ret_dicts, [], 'v:1_.class')
     let all_rets = lh#list#unique_sort(all_rets)
     if len(all_rets) > 1
       let all_rets = ['::'] + all_rets
