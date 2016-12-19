@@ -25,6 +25,9 @@ VimL:   " Remove default-constructor unless already set visible
 MuT:    let s:default_constructor = s:Param('default-constructor', {})
 VimL:   call lh#dict#add_new(s:default_constructor, {'visibility': 'none'})
 MuT:  endif
+VimL: " =====[ Class characteristics
+MuT:  let s:is_final = s:Param('final', 0)
+MuT:  let s:final_str = s:is_final ? (lh#cpp#use_cpp11() ? ' final' : lh#marker#txt(' final')) : ''
 VimL: " =====[ Parents
 MuT:  let s:parents = s:Param('parents', [])
 MuT:  let s:noncopyable = s:Param('noncopyable', 0)
@@ -85,7 +88,7 @@ VimL: call extend(s:pro_functions, map(copy(s:pro_special_functions), 'v:val'))
 VimL: call extend(s:pri_functions, map(copy(s:pri_special_functions), 'v:val'))
 VimL: " =====[ The Skeleton
 VimL: call s:Include('function-comment', 'cpp/internals', s:Param('comments', {}))
-class <+s:clsname+><+s:parents_data[0]+>
+class <+s:clsname+><+s:final_str+><+s:parents_data[0]+>
 {
 public:
 
