@@ -13,10 +13,14 @@ VimL: let s:reindent     = 1
 MuT:  let s:clsname    = s:Param('clsname', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
 MuT:  let s:functions  = s:Param('functions', lh#cpp#snippets#new_function_list())
 VimL: " =====[ Attributes
+VimL: " Fetch attributes from the parameters passed to the class skeleton
 MuT:  let s:attributes = s:Param('attributes', [])
+VimL: " And also use the surrounded attributes
+VimL: let s:attributes += lh#cpp#snippets#_decode_selected_attributes(s:Surround(1, ''))
+VimL: " Finally fill the related function with these information
 MuT:  let s:attrb_functions = []
 MuT:  if !empty(s:attributes)
-VimL:   for attr in s:attributes | for fct in get(attr, 'functions', []) | let s:attrb_functions += [{'kind': fct, "attribute": attr}] | endfor | endfor
+VimL:   for attr in s:attributes | for fct in get(attr, 'functions', []) | let s:attrb_functions += [{'kind': fct, 'attribute': attr}] | endfor | endfor
 VimL:   for attr in s:attributes | let attr.type_info = lh#cpp#types#get_info(attr.type, {'type': attr.type}) | let attr.type = attr.type_info.typename_for_header() |endfor
 VimL:   " Set attributes as parameters to init-ctr, unless already set
 MuT:    let s:init_constructor = s:functions.get1({'kind' : 'init-constructor'})

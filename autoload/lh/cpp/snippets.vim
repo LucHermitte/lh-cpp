@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  01st Dec 2016
+" Last Update:  19th Dec 2016
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -28,24 +28,25 @@ function! lh#cpp#snippets#version()
 endfunction
 
 " # Debug   {{{2
-if !exists('s:verbose')
-  let s:verbose = 0
-endif
+let s:verbose = get(s:, 'verbose', 0)
 function! lh#cpp#snippets#verbose(...)
   if a:0 > 0 | let s:verbose = a:1 | endif
   return s:verbose
 endfunction
 
-function! s:Verbose(expr)
+function! s:Log(expr, ...)
+  call call('lh#log#this',[a:expr]+a:000)
+endfunction
+
+function! s:Verbose(expr, ...)
   if s:verbose
-    echomsg a:expr
+    call call('s:Log',[a:expr]+a:000)
   endif
 endfunction
 
-function! lh#cpp#snippets#debug(expr)
+function! lh#cpp#snippets#debug(expr) abort
   return eval(a:expr)
 endfunction
-
 
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
@@ -691,6 +692,21 @@ function! lh#cpp#snippets#_this_param_requires_copy_operations(attribute) abort
     " TODO: recognize non publicy copyable types
     return 0
   endif
+endfunction
+
+" Function: lh#cpp#snippets#_decode_selected_attributes(text) {{{3
+" TODO: ask which ones shall be used:
+" - in init-ctr param list
+" - to generate setters and/or getter
+function! lh#cpp#snippets#_decode_selected_attributes(text) abort
+  let res = []
+  for attr in split(a:text, "\n")
+    let attr = matchstr(attr, '^\s*\zs.\{-}\ze;*\s*$')
+    let attr_data = lh#dev#option#call('function#_analyse_parameter', &ft, attr, 1)
+    let attr_data.name = lh#dev#naming#param(attr_data.name)
+    let res += [ attr_data ]
+  endfor
+  return res
 endfunction
 
 " # snippet functions {{{2
