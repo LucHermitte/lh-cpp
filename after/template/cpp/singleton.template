@@ -7,12 +7,12 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  let s:parameters = {'noncopyable': 1}
+MuT:  let s:parameters = {'noncopyable': 1, 'final': 1, 'comments': {}}
 MuT:  let s:functions = s:Param('functions', lh#cpp#snippets#new_function_list())
 VimL: " in case the class name is already known, no need to extract it
 VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: " Defines Doxygen comments
-MuT:  let s:cls_comments = {}
+MuT:  let s:cls_comments = s:parameters.comments
 VimL: let s:cls_comments.brief = lh#dox#brief(s:clsname.' singleton.')
 VimL: let s:cls_comments.ingroup = {}
 VimL: let s:cls_comments.invariant = lh#marker#txt()
@@ -39,7 +39,7 @@ VimL:    call lh#dict#add_new(s:destructor, {'how': 'defaulted'})
 VimL:    " --- Complete Doxygen comments
 VimL:    let s:cls_comments.semantics = ['Implicitly initialized with a default constructor', 'MT-safe', 'Non-copyable']
 VimL:    " --- Insert the skeleton built
-VimL:    call s:Include('class-skeleton', 'cpp/internals', {'comments': s:cls_comments})
+VimL:    call s:Include('class-skeleton', 'cpp/internals', s:parameters)
 MuT:  elseif s:type == 2
 VimL: " ----> Explicit' singleton
 VimL:    call s:AddPostExpandCallback('lh#dev#import#add("<cassert>")')
@@ -75,7 +75,7 @@ VimL:    call lh#dict#add_new(s:destructor, {'how': 'defaulted'})
 VimL:    " --- Complete Doxygen comments
 VimL:    let s:cls_comments.semantics = ['Explicitly initialized', 'MT-safe', 'Non-copyable']
 VimL:    " --- Insert the skeleton built
-VimL:    call s:Include('class-skeleton', 'cpp/internals', {'comments': s:cls_comments})
+VimL:    call s:Include('class-skeleton', 'cpp/internals', s:parameters)
 // don't forget to move the following definition to <+expand('%:t:r')+>.cpp
 <+s:clsname+> *<+s:clsname+>::ms_instance = <+lh#cpp#snippets#nullptr()+>;
 MuT:  endif
