@@ -925,6 +925,7 @@ TBD
 
 **Relies on:**
   * [`cpp/base-class`](#cppbase-class)
+  * [`cpp/entity-class`](#cppentity-class)
   * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 #### cpp/base-class
@@ -945,6 +946,7 @@ TBD
     * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
 
 **Relies on:**
+  * [`cpp/entity-class`](#cppentity-class)
   * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 #### cpp/base-class-non-virtual
@@ -965,36 +967,27 @@ TBD
     * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
 
 **Relies on:**
+  * [`cpp/entity-class`](#cppentity-class)
   * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 **Screencast:**
 ![base-class-non-virtual snippet demo](screencast-snippet-baseNV-class.gif "Snippet demo for a base class with a non virtual destructor")
 
 #### cpp/class
-**Produces:** Wizard that produces a class definition, and asks for class
-semantics to the user:
- * Value semantics (stack-based, copyable, comparable)
- * Stack based semantics (non-copyable)
- * Entity semantics (reference semantics, non-copyable)
- * Entity semantics (reference semantics, clone-able)
+**Produces:** a simplistic class definition, unaware of semantics.
 
 **Parameters:**
-  * _singleton name_, default: asked to the user
+  * Any parameter passed to
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 **Options:**
   * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * Any options used by
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton).
 
-**Variation Points/Relies on:**
-  * mu-template "c/section-sep" snippet
-  * [cpp/internals/formatted-comment](#cppinternalsformatted-comment)
-  * [cpp/internals/function-comment](#cppinternalsfunction-comment)
-  * [cpp/copy-constructor](#cppcopy-constructor)
-  * [cpp/copy-and-swap](#cppcopy-and-swap)
-  * [cpp/destructor](#cppdestructor)
-
-**Also includes:**
-  * `<boost/noncopyable.hpp>`
+**Relies on:**
+  * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 **Todo:**
   * Have all class variations in their own template-file, and have the
@@ -1007,6 +1000,23 @@ semantics to the user:
 
 #### cpp/empty-exception-class
 TBD:
+#### cpp/entity-class
+**Produces:** A non-copiable class.
+
+**Parameters:**
+  * Any parameter passed to
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+**Options:**
+  * Any options used by
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
+    particular:
+    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+
+**Relies on:**
+  * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
 #### cpp/enum
 TBD:
 
@@ -1053,6 +1063,36 @@ Meant to be used through [`:InsertEnum`](Enum.md#enum-snippet) command.
 
 #### cpp/exception-class
 TBD:
+#### cpp/interface
+**Produces:** An interface class to inherit from with:
+ * A virtual pure public destructor
+ * A protected default constructor (unless specified otherwise)
+ * Non-copy-ability enforced
+
+**Parameters:**
+  * Any parameter passed to
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+**Options:**
+  * Any options used by
+    [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
+    particular:
+    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+    * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
+
+**Relies on:**
+  * [`cpp/base-class`](#cppbase-class)
+  * [`cpp/entity-class`](#cppentity-class)
+  * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
+
+**Note:**
+  * At this moment, there is no difference between the `cpp/interface` and the
+    [`cpp/abstract-class`](#cppabstract-class) snippets. I may eventually add
+    simplified support for
+    [NVI](https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Non-Virtual_Interface)
+    idiom in `cpp/interface` snippet.
+
 #### cpp/singleton
 **Produces:** Wizard that produces a singleton class definition
 

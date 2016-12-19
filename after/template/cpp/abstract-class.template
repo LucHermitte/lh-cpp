@@ -1,7 +1,16 @@
 VimL:" abstract-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
-VimL:" hint: abstract (base) class to inherit from
-MuT:  let s:destructor = s:Param("destructor", {})
-VimL: " Override any previous setting on visibility and 'how'
-VimL: let s:destructor["visibility"] = "public"
-VimL: let s:destructor["how"] = "pure"
-VimL: call s:Include("base-class", "cpp")
+VimL:" hint: Abstract (base) class to inherit from
+MuT:  let s:destructor = s:Param('destructor', {})
+VimL: " -- Override any previous setting on visibility and 'how'
+VimL: let s:destructor['visibility'] = 'public'
+VimL: let s:destructor['how'] = 'pure'
+VimL: " --- Defines Doxygen comments
+MuT:  let s:parameters = s:Param('cls_parameters', {})
+VimL: call lh#dict#add_new(s:parameters, {'comments': {}})
+MuT:  let s:cls_comments = s:parameters.comments
+VimL: " Don't add "Abstract" if this is an interface
+MuT:  if index(get(s:cls_comments, 'semantics', []), 'Interface') < 0
+VimL:   let s:cls_comments.semantics = get(s:cls_comments, 'semantics', [])+['Abstract']
+MuT:  endif
+VimL: " --- Insert the skeleton built
+VimL: call s:Include('base-class', 'cpp', {'cls_parameters': s:parameters})

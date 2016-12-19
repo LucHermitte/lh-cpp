@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.0
 " Created:	06th Nov 2007
-" Last Update:	20th Jul 2016
+" Last Update:	19th Dec 2016
 "------------------------------------------------------------------------
 let s:version = '2.2.0'
 let s:project = 'lh-cpp'
@@ -53,6 +53,7 @@ after/template/cpp/default-constructor.template
 after/template/cpp/destructor.template
 after/template/cpp/empty-exception-class.template
 after/template/cpp/ends_with.template
+after/template/cpp/entity-class.template
 after/template/cpp/enum.template
 after/template/cpp/enum2-impl.template
 after/template/cpp/enum2.template
@@ -67,6 +68,7 @@ after/template/cpp/foriN.template
 after/template/cpp/forward.template
 after/template/cpp/getter.template
 after/template/cpp/init-constructor.template
+after/template/cpp/interface.template
 after/template/cpp/internals/abs-rel-shared.template
 after/template/cpp/internals/attribute.template
 after/template/cpp/internals/class-skeleton.template

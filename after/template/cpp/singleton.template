@@ -1,13 +1,14 @@
 VimL:" C++ Singleton-Class Template, Luc Hermitte
 VimL:" «Meyers singleton», cf. More Effective C++ Item 26
 VimL:" For a more precise definition, cf. A. Alexandrescu's Modern C++ Design
-VimL:" hint: singleton class Wizard
+VimL:" hint: Singleton class Wizard
 VimL: let s:value_start  = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  let s:parameters = {'noncopyable': 1, 'final': 1, 'comments': {}}
+MuT:  let s:parameters = s:Param('cls_parameters', {})
+VimL: call lh#dict#add_new(s:parameters, {'noncopyable': 1, 'final': 1, 'comments': {}})
 MuT:  let s:functions = s:Param('functions', lh#cpp#snippets#new_function_list())
 VimL: " in case the class name is already known, no need to extract it
 VimL: call s:Include('get-class-name', 'cpp/internals')

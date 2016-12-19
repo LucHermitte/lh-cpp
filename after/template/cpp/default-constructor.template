@@ -8,15 +8,11 @@ VimL: let s:lead = lh#dox#comment_leading_char().' '
 VimL: let s:default_constructor = s:Param('default-constructor', {})
 VimL: let s:how = get(s:default_constructor, 'how', '')
 MuT:  if s:how !~ 'defaulted\|deleted'
-VimL:   let s:fn_comments = { }
-VimL:   let s:fn_comments.brief = 'Default constructor.'
-VimL:   let s:fn_comments.throw = {'optional': 1}
-VimL:   " let s:fn_comments.text  = []
+MuT:    let s:fn_comments = get(s:default_constructor, 'comments', {})
+VimL:   call lh#dict#add_new(s:fn_comments, {'brief': 'Default constructor.'})
+VimL:   call lh#dict#add_new(s:fn_comments, {'throw': {'optional': 1}})
 VimL:   call s:Include('function-comment', 'cpp/internals',s:fn_comments)
 MuT:  else
 VimL:   let s:how = ' '.lh#cpp#snippets#{s:how}()
 MuT:  endif
-MuT:  let s:fn_comments = get(s:default_constructor, 'comments', {})
-VimL: call lh#dict#add_new(s:fn_comments, {'brief': 'Default constructor.'})
-VimL: call s:Include('function-comment', 'cpp/internals',s:fn_comments)
 <+s:clsname+>()<+s:how+>;

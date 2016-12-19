@@ -1,13 +1,13 @@
 VimL:" base-class-non-virtual File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 25th Nov 2015
-VimL:" hint: base class to inherit from, but not delete
+VimL:" hint: Base class to inherit from, but not delete -- Non-copiable entity
 VimL: let s:value_start = '¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: " Set default-constructor to protected if not already set
-MuT:  let s:default_constructor = s:Param("default-constructor", {})
-VimL: call lh#dict#add_new(s:default_constructor, {"visibility": "protected"})
+MuT:  let s:default_constructor = s:Param('default-constructor', {})
+VimL: call lh#dict#add_new(s:default_constructor, {'visibility': 'protected'})
 VimL: " Force destructor to protected, (and not how)
-VimL: let s:destructor = s:Param("destructor", {})
-VimL: let s:destructor["visibility"] = "protected"
-VimL: call s:Include("class-skeleton", "cpp/internals", {"noncopyable": 1})
+VimL: let s:destructor = s:Param('destructor', {})
+VimL: let s:destructor['visibility'] = 'protected'
+VimL: call s:Include('entity-class', 'cpp')

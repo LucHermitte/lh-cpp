@@ -1,0 +1,13 @@
+VimL:" interface File Template, Luc Hermitte <hermitte {at} free {dot} fr>, lun. 19 déc. 2016 18:32:45 CET
+VimL:" hint: Interface class -- An abstract class actually
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: " --- Defines Doxygen comments
+MuT:  let s:parameters = s:Param('cls_parameters', {})
+VimL: call lh#dict#add_new(s:parameters, {'comments': {}})
+MuT:  let s:cls_comments = s:parameters.comments
+VimL: let s:cls_comments.semantics = get(s:cls_comments, 'semantics', [])+['Interface']
+VimL: " --- Insert the skeleton built
+VimL: call s:Include('abstract-class', 'cpp', {'cls_parameters': s:parameters})

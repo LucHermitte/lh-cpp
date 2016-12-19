@@ -1,20 +1,23 @@
-VimL:" C++ Class Template, Luc Hermitte
-VimL:" hint: Simplistic class snippet -- unaware of semantics
+VimL:" entity-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, lun. 19 déc. 2016 17:14:18 CET
+VimL:" hint: Entity class -- non copyable
 VimL: let s:value_start = '¡'
-VimL: let s:value_end   = '¡'
-VimL: let s:reindent = 1
+VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 MuT:  let s:parameters = s:Param('cls_parameters', {})
+VimL: call lh#dict#add_new(s:parameters, {'noncopyable': 1, 'comments': {}})
 VimL: " --- in case the class name is already known, no need to extract it
 VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: " --- Defines Doxygen comments
-MuT:  let s:cls_comments = lh#dict#add_new(s:parameters, {'comments': {}}).comments
 MuT:  let s:cls_comments = s:parameters.comments
 VimL: let s:cls_comments.brief = lh#dox#brief(s:clsname)
 VimL: let s:cls_comments.ingroup = {}
 VimL: let s:cls_comments.invariant = lh#marker#txt()
 VimL: let s:cls_comments.author = lh#dox#author_value(). ', creation'
 VimL: let s:cls_comments.since = lh#dox#since_value()
+VimL: let s:cls_comments.semantics = get(s:cls_comments, 'semantics', [])
+MuT:  if match(s:cls_comments.semantics, 'Clonable') < 0
+VimL:    let s:cls_comments.semantics += ['Entity','Non-copyable']
+MuT:  endif
 VimL: " --- Insert the skeleton built
-VimL: call s:Include('class-skeleton', 'cpp/internals', s:parameters)
+VimL: call s:Include("class-skeleton", "cpp/internals", s:parameters)
