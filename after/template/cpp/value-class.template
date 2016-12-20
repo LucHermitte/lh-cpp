@@ -6,7 +6,7 @@ VimL: " --- in case the class name is already known, no need to extract it
 VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: " --- Defines Doxygen comments
 MuT:  let s:parameters = s:Param('cls_parameters', {})
-VimL: call lh#dict#add_new(s:parameters, {'comments': {}})
+VimL: call lh#dict#add_new(s:parameters, {'comments': {}, 'copyable': 1})
 MuT:  let s:cls_comments = s:parameters.comments
 VimL: let s:cls_comments.brief = lh#dox#brief(s:clsname)
 VimL: let s:cls_comments.ingroup = {}

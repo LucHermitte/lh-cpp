@@ -5,6 +5,7 @@ VimL:" TODO: find a way to group members
 VimL:" TODO: option to disable comments in defaulted functions
 VimL:" TODO: C++11 move copy & move assign
 VimL:" TODO: Enforce rule of "all or nothing"
+VimL:" TODO: Find a way to specify attributes to use in init-ctr and w/ getters/setters when surrounding.
 VimL: let s:value_start  = "¡"
 VimL: let s:value_end    = s:value_start
 VimL: let s:marker_open  = "<+"

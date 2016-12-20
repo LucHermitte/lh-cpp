@@ -232,7 +232,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * or `@throw «exception_type»«»` (within Doxygen comments)
 
 **Parameters:**
-  * `exception_text`, default: «text»
+  * `exception_text`, default: cpp/internals/formatted-comm
 
 **Options:**
   * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
@@ -900,10 +900,59 @@ void swap(T & other);
   * [`cpp/internals/stream-common`](#cppinternalsstream-common)
 
 ### Class Patterns
-**Note:** Unlike other snippets, class patterns are often under a BSL license
+
+The following snippets will generate new classes that follow the chosen
+semantics as closely as possible.
+
+The currently supported semantics and idioms are:
+ * _class_, the simpliest snippet, unaware of anything
+ * _value class_, copyable, comparable
+ * _entity class_, non-copyable
+   * _base class non virtual_, **NOT** deletable through a pointer to the parent
+   * _base class_, deletable through a pointer to the parent
+     * _abstract class_
+     * _interface_ (synonym to _abstract class, for the moment)
+     * _clonable class_, bastard class, neither a real entity nor a value
+       class.
+   * _singleton_
+ * _exception_
+   * _empty exception_
+ * _traits_
+
+**Surrounding:** When used to surround a list of attributes (type + name),
+these will produce classes with:
+ * all these attributes,
+ * plus an initializing constructor that'll forward parameters to construct the
+   attributes,
+ * plus all the related copy operations when the class has value semantics, and
+   when there are non trivially-correctly copiable attributes (like a non
+   view-pointer).
+
+If you don't want to see an attribute used when generating these operations,
+add the attribute later, manually. Currently, neither _getters_ no _setters_
+are generated automatically. As a few others I
+[consider](http://martinfowler.com/bliki/GetterEradicator.html)
+[them](http://www.adam-bien.com/roller/abien/entry/encapsulation_violation_with_getters_and)
+[to](http://stackoverflow.com/questions/565095/are-getters-and-setters-poor-design-contradictory-advice-seen)
+[be](http://www.javaworld.com/article/2073723/core-java/why-getter-and-setter-methods-are-evil.html)
+[bad](http://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html)
+[practice](https://pragprog.com/articles/tell-dont-ask) .
+For now, use
+[vim-refactor](http://github.com/LucHermitte/vim-refactor) to generate
+[const correct](https://isocpp.org/wiki/faq/const-correctness) getters
+and setters that follow the
+[naming policy](https://github.com/LucHermitte/lh-dev#styling-options)
+configured for my plugins.
+
+**API:** All these snippets can be used programmatically to generate even more
+complex classes. See the [related `*-class_spec.rb` tests](../spec).
+
+**Licencing:** Unlike other snippets, a few class patterns are under a BSL license.
 
 #### cpp/abs-rel
 TBD
+
+**Licence:** BSL
 
 #### cpp/abstract-class
 **Produces:** A base class to inherit from with:
@@ -1162,10 +1211,10 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#tag()`](API.md#lhdoxtag)
 
 #### dox/em
-**Produces:** `<em>«text»</em>`
+**Produces:** `<em>cpp/internals/formatted-comm</em>`
 
 **Parameters:**
-  * «text», default: empty placeholder «»
+  * cpp/internals/formatted-comm, default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1215,10 +1264,10 @@ template <typename «T»> struct «name»_traits
   1. The selection can be surrounded by the group tags
 
 #### dox/html
-**Produces:** `<html-tag>«text»</html-tag>`
+**Produces:** `<html-tag>cpp/internals/formatted-comm</html-tag>`
 
 **Parameters:**
-  * «text», default: empty placeholder «»
+  * cpp/internals/formatted-comm, default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1252,10 +1301,10 @@ template <typename «T»> struct «name»_traits
   * [`lh#dox#since()`](API.md#lhdoxsince)
 
 #### dox/tt
-**Produces:** `<tt>«text»</tt>`
+**Produces:** `<tt>cpp/internals/formatted-comm</tt>`
 
 **Parameters:**
-  * «text», default: empty placeholder «»
+  * cpp/internals/formatted-comm, default: empty placeholder «»
 
 **Options:**
   * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
@@ -1298,7 +1347,56 @@ remaining lines
 ## Internal templates
 #### cpp/internals/abs-rel-shared
 #### cpp/internals/class-skeleton
-TBD
+
+This template file can be assimilated to the core routine used to generate all
+C++ classes (values, entities, base classes, interfaces, exceptions, etc).
+
+**Parameters**
+  * `comments`: List of Doxygen entries for the class that are passed to
+    [cpp/internals/formatted-comment](#cppinternalsformatted-comment).
+  * `clsname`: The name of the class to generate.
+  * `final`: Boolean that tells whether the class is `final` (C++11)
+  * `noncopyable`/`copyable`: Tells whether the copyability of the class is
+    known (0 or 1), or unknown (-1)
+  * `functions`: List of functions to declare in the class -- object built
+    through `lh#cpp#snippets#new_function_list()`
+    * `public|protected|private`:
+      * `signature`
+      * `implementation`
+      * `visibility`: `'public'`, `'protected'`, `'private'`, `'none'`
+      * `how`: `'deleted'`, `'defaulted'`, `'pure'`, `''`
+      * `virtual`
+      * `comments`
+  * `attributes`: List of attributes to declare in the class -- elements are
+    tag entries, or built with `lh#cpp#snippets#_decode_selected_attributes()`.
+    Typical keys are:
+    * `name`
+    * `type`
+    * `functions`
+  * `parents`: List that describes the parent classes
+  * Special functions: Parameters that tune the various special functions:
+    * `init-constructor`
+    * `default-constructor`
+    * `copy-constructor`
+    * `destructor`
+    * `assignment-operator`
+   Typical keys are:
+    * `visibility`: `'public'`, `'protected'`, `'private'`, `'none'`
+    * `how`: `'deleted'`, `'defaulted'`, `'pure'`, `''`
+    * `virtual`
+    * `comments`
+
+**TODO:**
+  * find a way to order members
+  * find a way to group members
+  * option to disable comments in defaulted functions
+  * C++11 move copy & move assign
+  * Enforce rule of "all or nothing"
+  * Find a way to specify attributes to use in init-ctr and w/ getters/setters when surrounding.
+  * Add option to force copiable classes to always be `final`
+  * Add option to force the generation of getters and setters when surrounding
+    attributes.
+
 #### cpp/internals/formatted-comment
 #### cpp/internals/function-comment
 #### cpp/internals/stream-common
