@@ -34,8 +34,13 @@ MuT:  let s:is_final = s:Param('final', 0)
 MuT:  let s:final_str = s:is_final ? (lh#cpp#use_cpp11() ? ' final' : lh#marker#txt(' final')) : ''
 VimL: " =====[ Parents
 MuT:  let s:parents = s:Param('parents', [])
-MuT:  let s:noncopyable = s:Param('noncopyable', 0)
-MuT:  if s:noncopyable
+MuT:  let s:noncopyable = s:Param('noncopyable', -1) " -1 == maybe
+MuT:  let s:copyable    = s:Param('copyable', -1)    " -1 == maybe
+MuT:  if s:copyable == 1
+VimL:   let s:noncopyable = 0 " clean 'may be'
+MuT:  endif
+MuT:  if s:noncopyable == 1
+VimL:   let s:copyable = 0 " clean 'may be'
 MuT:    let s:noncopyable_class = lh#option#get('cpp_noncopyable_class', {'name': 'noncopyable'})
 VimL:   " TODO: support auto import of noncopyable file
 MuT:    if empty(s:noncopyable_class)
@@ -71,7 +76,7 @@ MuT:    let s:destructor = s:Param('destructor', {})
 VimL:   " Force visible (even private) if not set already
 Viml:   call lh#dict#add_new(s:destructor, {'visibility': 'public'})
 MuT:  endif
-MuT:  if lh#cpp#snippets#requires_copy_operations(s:attributes)
+MuT:  if (s:copyable != 0) && lh#cpp#snippets#requires_copy_operations(s:attributes)
 MuT:    let s:copy_constructor = s:Param('copy-constructor', {})
 VimL:   " Force visible (even protected) if not set already
 Viml:   call lh#dict#add_new(s:copy_constructor, {'visibility': 'public'})
