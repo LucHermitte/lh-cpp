@@ -911,7 +911,7 @@ The currently supported semantics and idioms are:
    * _base class non virtual_, **NOT** deletable through a pointer to the parent
    * _base class_, deletable through a pointer to the parent
      * _abstract class_
-     * _interface_ (synonym to _abstract class, for the moment)
+     * _interface_ (synonym to _abstract class_, for the moment)
      * _clonable class_, bastard class, neither a real entity nor a value
        class.
    * _singleton_
