@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      15th Apr 2008
-" Last Update:  28th Feb 2016
+" Last Update:  11th Jan 2017
 "------------------------------------------------------------------------
 " Description:  Snippets of C++ Control Statements
 "
@@ -158,23 +158,7 @@ imap <buffer> <c-x>cbe <c-r>=lh#cpp#snippets#_begin_end('cbegin')<cr>
 xmap <buffer> <c-x>cbe <c-\><c-n>ci,<c-r>".cbegin(),<c-r>".cend()
 nmap <buffer> <c-x>cbe viw<c-x>cbe
 
-
-" '?' represents the current position of the cursor.
-
-" Local commands {{{2
-
-"=============================================================================
-" Global Definitions {{{1
-" Avoid global reinclusion {{{2
-if exists("g:loaded_ftplug_cpp_snippets") && !exists('g:force_reload_ftplug_cpp_snippets')
-  let &cpo=s:cpo_save
-  finish
-endif
-" Avoid global reinclusion }}}2
-"------------------------------------------------------------------------
-" Functions {{{2
-" See autoload/lh/cpp/snippets.vim
-" Functions }}}2
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

@@ -4,10 +4,10 @@
 "		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:      2.1.8
-let s:k_version = '218'
+" Version:      2.2.0
+let s:k_version = '220'
 " Created:      14th Apr 2008
-" Last Update:  20th Nov 2015
+" Last Update:  11th Jan 2017
 "------------------------------------------------------------------------
 " Description:  Snippets of C Control Statements
 "
@@ -117,7 +117,10 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
 "--for   insert "for" statement
 " TODO: pb when c_nl_before_bracket = 1, cursor is not placed correctly
   Inoreabbr <buffer> <silent> for <C-R>=lh#cpp#snippets#def_abbr('for ',
-      \ '\<c-f\>for(!cursorhere!;!mark!;!mark!){!mark!}!mark!')<cr>
+      \ {
+      \ '! lh#cpp#use_cpp11()': '\<c-f\>for(!cursorhere!;!mark!;!mark!){!mark!}!mark!',
+      \ '  lh#cpp#use_cpp11()': '\<c-f\>for(!cursorhere!){!mark!}!mark!'
+      \ })<cr>
 "--,for   insert "for" statement
   xnoremap <buffer> <silent> <localleader>for
         \ <c-\><c-n>@=lh#dev#style#surround('for(!cursorhere!;!mark!;!mark!){', '}!mark!',
@@ -206,25 +209,9 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
 
 "--/*= insert /*=====[  ]=======*/
   inoreab <buffer> /= 0<c-d>/*<esc>75a=<esc>a*/<esc>45<left>R[
-"}}}
-
-"------------------------------------------------------------------------
-" Local commands {{{2
 
 
-"=============================================================================
-" Global Definitions {{{1
-" Avoid global reinclusion {{{2
-if exists("g:loaded_ftplug_c_snippets") && !exists('g:force_reload_ftplug_c_snippets')
-  let &cpo=s:cpo_save
-  finish
-endif
-" Avoid global reinclusion }}}2
-"------------------------------------------------------------------------
-" Functions {{{2
-" See autoload/lh/cpp/snippets.vim
-
-" Functions }}}2
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

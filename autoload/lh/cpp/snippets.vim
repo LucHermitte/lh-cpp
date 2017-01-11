@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  19th Dec 2016
+" Last Update:  11th Jan 2017
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -58,7 +58,18 @@ function! lh#cpp#snippets#def_abbr(key, expr) abort
     return a:key
   endif
   " Default behaviour
-  let rhs = lh#dev#style#apply(a:expr)
+  if type(a:expr) == type({})
+    for [cond, expr] in items(a:expr)
+      if eval(cond)
+        let rhs = lh#dev#style#apply(expr)
+      endif
+    endfor
+    if !exists('rhs')
+      call lh#assert#unexpected("No case found for the mapping")
+    endif
+  else
+    let rhs = lh#dev#style#apply(a:expr)
+  endif
   return lh#map#insert_seq(a:key, rhs)
 endfunction
 
