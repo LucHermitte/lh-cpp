@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      14th Apr 2008
-" Last Update:  11th Jan 2017
+" Last Update:  13th Jan 2017
 "------------------------------------------------------------------------
 " Description:  Snippets of C Control Statements
 "
@@ -52,14 +52,14 @@ inoreab <buffer> earse      erase
 "
 "-- insert "#define" at start of line
 " iab  <buffer> <m-d>  <C-R>=lh#map#no_context("\<M-d> ",'\<esc\>0i#define')<CR>
-iab  <buffer> #d     <C-R>=lh#map#no_context("#d ",'\<esc\>0i#define')<CR>
+iab <silent> <buffer> #d     <C-R>=lh#map#no_context("#d ",'\<esc\>0i#define')<CR>
 "-- insert "#include" at start of line
 " iab  <buffer> <m-i>  <C-R>=lh#map#no_context("\<M-i> ",'\<esc\>0i#include')<CR>
-iab  <buffer> #n    <C-R>=lh#map#no_context("#n ",'\<esc\>0i#include')<CR>
+iab <silent> <buffer> #n    <C-R>=lh#map#no_context("#n ",'\<esc\>0i#include')<CR>
 
 "-- insert "#ifdef/endif" at start of line
-iab  <buffer> #i    <C-R>=lh#map#no_context('#i ','\<esc\>0i#ifdef')<CR>
-iab  <buffer> #e    <C-R>=lh#map#no_context("#e ",'\<esc\>0i#endif')<CR>
+iab <silent> <buffer> #i    <C-R>=lh#map#no_context('#i ','\<esc\>0i#ifdef')<CR>
+iab <silent> <buffer> #e    <C-R>=lh#map#no_context("#e ",'\<esc\>0i#endif')<CR>
 
 "-- surrounds with "#if 0 ... endif"
 :Brackets #if\ 0 #endif -insert=0 -nl -trigger=<localleader>0
