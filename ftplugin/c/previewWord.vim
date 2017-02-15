@@ -4,9 +4,10 @@
 "               From <URL:http://vim.sf.net>
 "               Adapted by Luc Hermitte <EMAIL:hermitte at free.fr>
 "               <URL:http://github.com/LucHermitte/lh-cpp>
-" Version:      2.1.8
+" Version:      2.2.0
+let s:k_version = '2.2.0'
 " Created:      ?
-" Last Update:  06th Oct 2016
+" Last Update:  15th Feb 2017
 "------------------------------------------------------------------------
 " Description:  «description» {{{
 " Have you ever tried to call a function which parameters you have forgotten?
@@ -23,74 +24,75 @@
 "------------------------------------------------------------------------
 " Installation: See |lh-cpp-readme.txt|
 "=============================================================================
-" Buffer definitions {{{
-" Avoid reinclusion
-if exists('b:loaded_ftplug_previewWord') | finish | endif
-let b:loaded_ftplug_previewWord = 1
-
-  "" line continuation used here ??
-  let s:cpo_save = &cpo
-  set cpo&vim
-
-"------------------------------------------------------------------------
-" Mappings {{{
-inoremap <buffer> <Plug>PreviewWord <C-o>:call <sid>PreviewWord()<CR>
-if !hasmapto('<Plug>PreviewWord', 'i')
-  imap <buffer> <unique> <c-space> <Plug>PreviewWord
-endif
-nnoremap <buffer> <Plug>PreviewWord :call <sid>PreviewWord()<CR>
-if !hasmapto('<Plug>PreviewWord', 'n')
-  nmap <buffer> <unique> <c-space> <Plug>PreviewWord
-endif
-
-inoremap <buffer> <Plug>ClosePreviewWindow <C-o>:call <sid>ClosePreviewWindow()<CR>
-if !hasmapto('<Plug>ClosePreviewWindow', 'i')
-  imap <buffer> <unique> <c-F10> <Plug>ClosePreviewWindow
-endif
-nnoremap <buffer> <Plug>ClosePreviewWindow :call <sid>ClosePreviewWindow()<CR>
-if !hasmapto('<Plug>ClosePreviewWindow', 'n')
-  nmap <buffer> <unique> <c-F10> <Plug>ClosePreviewWindow
-endif
-
-" I've (LH) desactivated the '(' key because I use a bracketing system.
-" inoremap <buffer> <c-space> <C-R>=<sid>PreviewFunctionSignature()<CR>
-" }}}
-
-" g:preview_if_hold {{{
-LetIfUndef g:preview_if_hold 0
-if !exists('*Trigger_Function')
-  runtime plugin/Triggers.vim
-endif
-if exists("*Trigger_Function")
-  let x = g:preview_if_hold
-  silent call Trigger_DoSwitch('<M-SPACE>',
-        \ ':let g:preview_if_hold='.x,':let g:preview_if_hold='.(1-x),1,1)
-  imap <buffer> <M-SPACE> <SPACE><ESC><M-SPACE>a<BS>
-endif
-au! CursorHold *.[ch] nested :call <sid>DoPreviewWord()
-" }}}
-" }}}
-"=============================================================================
-" Global definitions {{{
-if exists("g:loaded_previewWord")
-  let &cpo = s:cpo_save
+" Buffer-local Definitions {{{1
+" Avoid local reinclusion {{{2
+if &cp || (exists("b:loaded_ftplug_previewWord")
+      \ && (b:loaded_ftplug_previewWord >= s:k_version)
+      \ && !exists('g:force_reload_ftplug_previewWord'))
   finish
 endif
-let g:loaded_previewWord = 1
+let b:loaded_ftplug_previewWord = s:k_version
+let s:cpo_save=&cpo
+set cpo&vim
+" Avoid local reinclusion }}}2
 
+" Settings {{{2
 setlocal previewheight=4
 
 "------------------------------------------------------------------------
-" s:ClosePreviewWindow() {{{
-function! s:ClosePreviewWindow()
+" Mappings {{{2
+inoremap <buffer> <Plug>PreviewWord <C-o>:call <sid>PreviewWord()<CR>
+nnoremap <buffer> <Plug>PreviewWord :call <sid>PreviewWord()<CR>
+call lh#mapping#plug({'lhs': '<localleader>pw', 'rhs': '<Plug>PreviewWord', 'buffer':1}, 'in')
+
+inoremap <buffer> <Plug>ClosePreviewWindow <C-o>:call <sid>ClosePreviewWindow()<CR>
+nnoremap <buffer> <Plug>ClosePreviewWindow :call <sid>ClosePreviewWindow()<CR>
+call lh#mapping#plug({'lhs': '<localleader>cpw', 'rhs': '<Plug>ClosePreviewWindow', 'buffer':1}, 'in')
+
+" I've (LH) desactivated the '(' key because I use a bracketing system.
+" inoremap <buffer> <c-space> <C-R>=<sid>PreviewFunctionSignature()<CR>
+
+" g:preview_if_hold {{{2
+let g:preview_if_hold = get(g:, 'preview_if_hold', 0)
+let s:toggle_menu = {
+      \ 'variable': 'preview_if_hold',
+      \ 'idx_crt_value': 1,
+      \ 'values': [0, 1],
+      \ 'texts': [ "No", "Yes" ],
+      \ 'menu': {'priority': '50.10', 'name': 'C++.preview_if_hold'}
+      \}
+call lh#menu#def_toggle_item(s:toggle_menu)
+nnoremap <Plug>TogglePreviewIfHold :Toggle Cpreview_if_hold<cr>
+call lh#mapping#plug({'lhs': '<localleader>tpw', 'rhs': '<Plug>TogglePreviewIfHold'}, 'n')
+
+" autocommands {{{2
+augroup PreviewWord
+  au!
+  au! CursorHold *.[ch] nested :call <sid>DoPreviewWord()
+augroup END
+"=============================================================================
+" Global Definitions {{{1
+" Avoid global reinclusion {{{2
+if &cp || (exists("g:loaded_ftplug_previewWord")
+      \ && (g:loaded_ftplug_previewWord >= s:k_version)
+      \ && !exists('g:force_reload_ftplug_previewWord'))
+  let &cpo=s:cpo_save
+  finish
+endif
+let g:loaded_ftplug_previewWord = s:k_version
+" Avoid global reinclusion
+"------------------------------------------------------------------------
+" Functions {{{2
+"------------------------------------------------------------------------
+" s:ClosePreviewWindow() {{{3
+function! s:ClosePreviewWindow() abort
   silent! wincmd P " jump to preview window
   if &previewwindow " if we really get there...
     silent wincmd c " close the window
   endif
 endfunction
-" }}}
 "------------------------------------------------------------------------
-" s:PreviewWord() {{{
+" s:PreviewWord() {{{3
 " Note:
 " This is literally stolen from Vim help (|CursorHold-example|).
 " The only changes are:
@@ -98,7 +100,7 @@ endfunction
 " (2) exe "silent! ptag " . w  becomes       exe "silent! psearch " . w
 " * The first change prevents PreviewWord of searching while cursor is on some
 "   non-keyword characters, e.g. braces, asterisks, etc.
-function! s:PreviewWord()
+function! s:PreviewWord() abort
   if &previewwindow " don't do this in the preview window
     return
   endif
@@ -138,9 +140,8 @@ function! s:PreviewWord()
     endif
   endif
 endfunction
-" }}}
 "------------------------------------------------------------------------
-" s:PreviewFunctionSignature() {{{
+" s:PreviewFunctionSignature() {{{3
 " Note:
 " When you open a parenthesis after a function name, and at the line end, that
 " function's definition is previewed through PreviewWord().
@@ -148,23 +149,22 @@ endfunction
 " Something similar (PreviewClassMembers) could be written for the C++ users,
 " for previewing the class members when you type a dot after an object name.
 " If somebody decides to write it, please, mail it to me.
-function! s:PreviewFunctionSignature()
+function! s:PreviewFunctionSignature() abort
     " let CharOnCursor = strpart( getline('.'), col('.')-2, 1)
     if col(".") == col("$")
         call s:PreviewWord()
     endif
     return "("
 endfunction
-" }}}
 "------------------------------------------------------------------------
-" s:DoPreviewWord(), automatically called when the cursor is holded {{{
-function! s:DoPreviewWord()
+" s:DoPreviewWord(), automatically called when the cursor is holded {{{3
+function! s:DoPreviewWord() abort
   if g:preview_if_hold
     call s:PreviewWord()
   endif
 endfunction
-" }}}
-" }}}
+
+" }}}1
   let &cpo = s:cpo_save
 "=============================================================================
 " vim600: set fdm=marker:
