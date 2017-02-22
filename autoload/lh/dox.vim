@@ -3,11 +3,11 @@
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:	2.2.0
 " Created:      22nd Feb 2011
-" Last Update:  01st Dec 2016
+" Last Update:  22nd Feb 2017
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -189,7 +189,7 @@ function! lh#dox#_parameter_direction(type) abort
     return '[in]'
   elseif a:type =~ '\%([&*]\|reference\|pointer\|iterator\|_ptr\)\s*$'
     return '[' . lh#marker#txt('in,') . 'out]'
-  elseif lh#dev#cpp#types#IsBaseType(a:type, 0)
+  elseif lh#dev#cpp#types#is_base_type(a:type, 0)
     return '[in]'
   else
     return lh#marker#txt('[in]')
@@ -210,7 +210,7 @@ function! lh#dox#new_function(brief) abort
     if !has_key(param, 'text')
       let param.text = lh#marker#txt(name.'-explanations')
     endif
-    if has_key(param, 'type') && lh#dev#cpp#types#IsPointer(param.type)
+    if has_key(param, 'type') && lh#dev#cpp#types#is_pointer(param.type)
       let self.pre += [ '`'.name.' != NULL`' . lh#marker#txt()]
     endif
     let self.param += [ param ]

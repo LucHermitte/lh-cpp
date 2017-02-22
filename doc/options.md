@@ -3,15 +3,14 @@
 ### Contents
 
   * [Options types](#options-types)
-      * [Global options: `g:`_{option-name}_](#global-options-g_option-name_)
-      * [Local/project-wise options: `p:`_{option-name}_ or `b:`_{option-name}_](#localproject-wise-options-p_option-name_-or-b_option-name_)
-      * [Project-wise options with default: `(bpg):`_{option-name}_](#project-wise-options-with-default-bpg_option-name_)
-      * [[lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bpg):`_[{filetype}__]{option-name}_](#lh-dev-optionshttpsgithubcomluchermittelh-devoptions-1-bpg_filetype__option-name_)
+    * [Global options: `g:`_{option-name}_](#global-options-g_option-name_)
+    * [Local/project-wise options: `p:`_{option-name}_ or `b:`_{option-name}_](#localproject-wise-options-p_option-name_-or-b_option-name_)
+    * [Project-wise options with default: `(bpg):`_{option-name}_](#project-wise-options-with-default-bpg_option-name_)
+    * [[lh-dev options](https://github.com/LucHermitte/lh-dev#options-1): `(bpg):`_[{filetype}__]{option-name}_](#lh-dev-optionshttpsgithubcomluchermittelh-devoptions-1-bpg_filetype__option-name_)
   * [Option list](#option-list)
     * [`(bpg):cpp_always_a_destructor_when_there_is_a_pointer_attribute'`](#bpgcpp_always_a_destructor_when_there_is_a_pointer_attribute)
     * [`(bpg):cpp_std_flavour` and `$CXXFLAGS`](#bpgcpp_std_flavour-and-cxxflags)
     * [`(bpg):({ft}_)FunctionPosArg`, `(bpg):({ft}_)FunctionPosition`](#bpgft_functionposarg-bpgft_functionposition)
-    * [`(bpg):ProjectVersion`](#bpgprojectversion)
     * [`(bpg):({ft}_)ShowDefaultParams`, `(bpg):({ft}_)ShowExplicit`, `(bpg):({ft}_)ShowStatic`, `(bpg):({ft}_)ShowVirtual`](#bpgft_showdefaultparams-bpgft_showexplicit-bpgft_showstatic-bpgft_showvirtual)
     * [`(bpg):accessor_comment_get`, `(bpg):accessor_comment_set`, `(bpg):accessor_comment_ref`](#bpgaccessor_comment_get-bpgaccessor_comment_set-bpgaccessor_comment_ref)
     * [`(bpg):({ft}_)alternateSearchPath`](#bpgft_alternatesearchpath)
@@ -38,15 +37,6 @@
     * [`g:cpp_no_hl_funcdef`](#gcpp_no_hl_funcdef)
     * [`g:cpp_no_hl_throw_spec`](#gcpp_no_hl_throw_spec)
     * [`(bpg):({ft}_)array_size`](#bpgft_array_size)
-    * [`(bpg):({ft}_)dox_CommentLeadingChar`](#bpgft_dox_commentleadingchar)
-    * [`(bpg):({ft}_)dox_TagLeadingChar`](#bpgft_dox_tagleadingchar)
-    * [`(bpg):({ft}_)dox_author_tag`](#bpgft_dox_author_tag)
-    * [`(bpg):({ft}_)dox_author`](#bpgft_dox_author)
-    * [`(bpg):({ft}_)dox_brief`](#bpgft_dox_brief)
-    * [`(bpg):({ft}_)dox_group`](#bpgft_dox_group)
-    * [`(bpg):({ft}_)dox_ingroup`](#bpgft_dox_ingroup)
-    * [`(bpg):({ft}_)dox_sep`](#bpgft_dox_sep)
-    * [`(bpg):({ft}_)dox_throw`](#bpgft_dox_throw)
     * [`(bpg):({ft}_)exception_args`](#bpgft_exception_args)
     * [`(bpg):({ft}_)exception_type`](#bpgft_exception_type)
     * [`(bpg):({ft}_)ext_4_impl_file`](#bpgft_ext_4_impl_file)
@@ -65,6 +55,17 @@
     * [`(bpg):tags_select`](#bpgtags_select)
     * [`(bpg):({ft}_)template_expand_doc`](#bpgft_template_expand_doc)
     * [`(bpg):xsltproc`](#bpgxsltproc)
+    * [Doxygen related options](#doxygen-related-options)
+      * [`(bpg):({ft}_)dox_CommentLeadingChar`](#bpgft_dox_commentleadingchar)
+      * [`(bpg):({ft}_)dox_TagLeadingChar`](#bpgft_dox_tagleadingchar)
+      * [`(bpg):({ft}_)dox_author_tag`](#bpgft_dox_author_tag)
+      * [`(bpg):({ft}_)dox_author`](#bpgft_dox_author)
+      * [`(bpg):({ft}_)dox_brief`](#bpgft_dox_brief)
+      * [`(bpg):({ft}_)dox_group`](#bpgft_dox_group)
+      * [`(bpg):({ft}_)dox_ingroup`](#bpgft_dox_ingroup)
+      * [`(bpg):({ft}_)dox_sep`](#bpgft_dox_sep)
+      * [`(bpg):({ft}_)dox_throw`](#bpgft_dox_throw)
+      * [`(bpg):ProjectVersion`](#bpgprojectversion)
 
 ### Options types
 
@@ -142,10 +143,6 @@ should be placed by [`:GOTOIMPL`](features.md#gotoimpl). We are placed ...
   ... That I still use to insert with |:BLINES|
 - 3 -> ... nowhere, and nothing is inserted. The insertion must be done
   _manually_ thanks to [`:PASTEIMPL`](features.md#pasteimpl) .
-
-#### `(bpg):ProjectVersion`
-Version of the project. Can be used in Doxygen comment through API function
-[`lh#dox#since()`](API.md#lh-dox-since).
 
 #### `(bpg):({ft}_)ShowDefaultParams`, `(bpg):({ft}_)ShowExplicit`, `(bpg):({ft}_)ShowStatic`, `(bpg):({ft}_)ShowVirtual`
 Boolean options used by [`:GOTOIMPL`](features.md#gotoimpl). They tells whether
@@ -405,81 +402,6 @@ __Default value:__ not defined
 **See:**
 - [`cpp/array_size` snippet](snippets.md#cpparray_size)
 
-#### `(bpg):({ft}_)dox_CommentLeadingChar`
-Tells which character to use on each line of a Doxygen comment.
-
-__Default value:__ `"*"`
-
-Wrapped in API function
-[`lh#dox#comment_leading_char()`](API.md#lh-dox-comment_leading_char)
-
-#### `(bpg):({ft}_)dox_TagLeadingChar`
-Tells which character to use on each line of a Doxygen comment.
-
-__Default value:__ `"*"`. Other typical value: `"!"`
-
-Wrapped in API function
-[`lh#dox#tag_leading_char()`](API.md#lh-dox-tag_leading_char)
-
-#### `(bpg):({ft}_)dox_author_tag`
-Tells which tag to use to introduce authors.
-
-__Default value:__ `"author"`.
-
-Wrapped in API function [`lh#dox#author()`](API.md#lh-dox-author)
-
-#### `(bpg):({ft}_)dox_author`
-Returns the default value to use as the author tagged in Doxygen comments.
-
-__Default value:__ None
-
-Wrapped in API function [`lh#dox#author()`](API.md#lh-dox-author)
-
-#### `(bpg):({ft}_)dox_brief`
-Tells if `brief` tag shall be used.
-
-__Default value:__ `"short"`.
-
-__Other possible values:__ `"yes"/"always"/"1"`, `"no"/"never"/"0"/"short"`
-
-Wrapped in API function [`lh#dox#brief()`](API.md#lh-dox-brief)
-
-#### `(bpg):({ft}_)dox_group`
-Default Doxygen group name used in snippets and templates.
-
-__Default value:__ the placeholder `«Project»`
-
-**See:**
-- [`dox/ingroup` snippet](snippets.md#doxingroup)
-- [`dox/file` snippet](snippets.md#doxfile)
-- [`cpp/class` snippet](snippets.md#cppclass)
-- [`cpp/singleton` snippet](snippets.md#cppsingleton)
-- [`cpp/enum2` snippet](snippets.md#cppenum2)
-
-#### `(bpg):({ft}_)dox_ingroup`
-Tells if `ingroup` tag shall be used.
-
-__Default value:__ `"0"`.
-
-__Other possible values:__ `"yes"/"always"/"1"`, `"no"/"never"/"0"`, or a group
-name to use.
-
-Wrapped in API function [`lh#dox#ingroup()`](API.md#lh-dox-ingroup)
-
-#### `(bpg):({ft}_)dox_sep`
-Tells which character use between a tag and its value.
-
-__Default value:__ `" "`. Other typical value: `"\t"`
-
-Wrapped in API function [`lh#dox#tag()`](API.md#lh-dox-tag)
-
-#### `(bpg):({ft}_)dox_throw`
-Tells which tag name to use to document exceptions.
-
-__Default value:__ `"throw"`. Other typical value: `"exception"`
-
-Wrapped in API function [`lh#dox#throw()`](API.md#lh-dox-throw)
-
 #### `(bpg):({ft}_)exception_args`
 Arguments to inject in the exception called in
 [`throw` snippet](snippets.md#cppthrow).
@@ -611,3 +533,85 @@ This options is used by the C-ftplugin that converts PVS-studio output into a
 format compatible with quickfix.
 
 **See:** `:PVSLoad`, `:PVSIgnore`, `:PVSShow` and `:PVSRedraw`
+
+#### Doxygen related options
+
+##### `(bpg):({ft}_)dox_CommentLeadingChar`
+Tells which character to use on each line of a Doxygen comment.
+
+__Default value:__ `"*"`
+
+Wrapped in API function
+[`lh#dox#comment_leading_char()`](API.md#lh-dox-comment_leading_char)
+
+##### `(bpg):({ft}_)dox_TagLeadingChar`
+Tells which character to use on each line of a Doxygen comment.
+
+__Default value:__ `"*"`. Other typical value: `"!"`
+
+Wrapped in API function
+[`lh#dox#tag_leading_char()`](API.md#lh-dox-tag_leading_char)
+
+##### `(bpg):({ft}_)dox_author_tag`
+Tells which tag to use to introduce authors.
+
+__Default value:__ `"author"`.
+
+Wrapped in API function [`lh#dox#author()`](API.md#lh-dox-author)
+
+##### `(bpg):({ft}_)dox_author`
+Returns the default value to use as the author tagged in Doxygen comments.
+
+__Default value:__ None
+
+Wrapped in API function [`lh#dox#author()`](API.md#lh-dox-author)
+
+##### `(bpg):({ft}_)dox_brief`
+Tells if `brief` tag shall be used.
+
+__Default value:__ `"short"`.
+
+__Other possible values:__ `"yes"/"always"/"1"`, `"no"/"never"/"0"/"short"`
+
+Wrapped in API function [`lh#dox#brief()`](API.md#lh-dox-brief)
+
+##### `(bpg):({ft}_)dox_group`
+Default Doxygen group name used in snippets and templates.
+
+__Default value:__ the placeholder `«Project»`
+
+**See:**
+- [`dox/ingroup` snippet](snippets.md#doxingroup)
+- [`dox/file` snippet](snippets.md#doxfile)
+- [`cpp/class` snippet](snippets.md#cppclass)
+- [`cpp/singleton` snippet](snippets.md#cppsingleton)
+- [`cpp/enum2` snippet](snippets.md#cppenum2)
+
+##### `(bpg):({ft}_)dox_ingroup`
+Tells if `ingroup` tag shall be used.
+
+__Default value:__ `"0"`.
+
+__Other possible values:__ `"yes"/"always"/"1"`, `"no"/"never"/"0"`, or a group
+name to use.
+
+Wrapped in API function [`lh#dox#ingroup()`](API.md#lh-dox-ingroup)
+
+##### `(bpg):({ft}_)dox_sep`
+Tells which character use between a tag and its value.
+
+__Default value:__ `" "`. Other typical value: `"\t"`
+
+Wrapped in API function [`lh#dox#tag()`](API.md#lh-dox-tag)
+
+##### `(bpg):({ft}_)dox_throw`
+Tells which tag name to use to document exceptions.
+
+__Default value:__ `"throw"`. Other typical value: `"exception"`
+
+Wrapped in API function [`lh#dox#throw()`](API.md#lh-dox-throw)
+
+##### `(bpg):ProjectVersion`
+Version of the project. Can be used in Doxygen comment through API function
+[`lh#dox#since()`](API.md#lh-dox-since).
+
