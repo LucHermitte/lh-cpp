@@ -97,8 +97,8 @@ You can see:
    as _out_ parameters instead ;
  * pointer types are recognized as such, and `:DOX` suggest adding a
    precondition of non-nullity in their case ;
- * a few other tags let to the user to fill in as nothing could be deduced from
-   the function singature.
+ * a few other tags left to the user to fill in as nothing could be deduced from
+   the function signature.
 
 
 ### `:DOX` specific options
