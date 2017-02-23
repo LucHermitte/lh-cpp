@@ -169,7 +169,6 @@ snippets as most of them have options.
 ### Miscellaneous
   * home like VC++: mappings that override `<home>` and `<end>` to mimic how these keys behave in VC++.
   * omap-param: defines the o-mappings `,i` and `,a` to select the current parameter (in a list of parameters).
-  * a.vim,
   * SiR,
   * lh-cpp imports a [C&C++ Folding plugin](https://github.com/LucHermitte/VimFold4C),
     which is still experimental.
@@ -180,7 +179,7 @@ snippets as most of them have options.
     `member`, `constant`, `static`, `param`, `getter`, `setter`)
 
 ### Installation
-  * Requirements: Vim 7.+, [lh-vim-lib](http://github.com/LucHermitte/lh-vim-lib), [lh-brackets](http://github.com/LucHermitte/lh-brackets), [mu-template](http://github.com/LucHermitte/mu-template), [lh-dev](http://github.com/LucHermitte/lh-dev)
+  * Requirements: Vim 7.+, [lh-vim-lib](http://github.com/LucHermitte/lh-vim-lib), [lh-brackets](http://github.com/LucHermitte/lh-brackets), [mu-template](http://github.com/LucHermitte/mu-template), [lh-dev](http://github.com/LucHermitte/lh-dev), [alternate-lite](http://github.com/LucHermitte/alternate-lite).
   * With [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager), install lh-cpp. This is the preferred method because of the various dependencies.
 ```vim
 ActivateAddons lh-cpp
@@ -199,6 +198,7 @@ git clone git@github.com:LucHermitte/lh-brackets.git
 git clone git@github.com:LucHermitte/searchInRuntime.git
 git clone git@github.com:LucHermitte/mu-template.git
 git clone git@github.com:tomtom/stakeholders_vim.git
+git clone git@github.com:tomtom/alternate-lite.git
 git clone git@github.com:LucHermitte/lh-cpp.git
 ```
   * or with Vundle/NeoBundle (expecting I haven't forgotten anything):
@@ -210,6 +210,7 @@ Bundle 'LucHermitte/lh-brackets'
 Bundle 'LucHermitte/searchInRuntime'
 Bundle 'LucHermitte/mu-template'
 Bundle 'tomtom/stakeholders_vim'
+Bundle 'LucHermitte/alternate-lite'
 Bundle 'LucHermitte/lh-cpp'
 ```
 

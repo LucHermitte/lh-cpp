@@ -15,6 +15,9 @@
 " Patch for spaces in files/directories from Nathan Stien (also reported by
 " Soeren Sonnenburg)
 
+" 23rd Feb 2017: Neutralized by Luc Hermitte has alternate-lite supercedes it
+finish "  Keep it around in case some patches need to be reversed-engineered
+
 " 24th Jan 2008: Non official patches by Luc Hermitte
 " 21st Apr 2010: Other non official patches by Luc Hermitte
 "                -> introduces dependendy to autoplugin/lh/path.vim
@@ -122,7 +125,7 @@ call <SID>SetAlternateExtensionMapping('aspx.vb', 'aspx')
 call <SID>SetAlternateExtensionMapping('aspx', 'aspx.cs,aspx.vb')
 
 " Setup default search path, unless the user has specified
-" a path in their [._]vimrc. 
+" a path in their [._]vimrc.
 let s:alternateSearchPath_default = 'sfr:../source,sfr:../src,sfr:../include,sfr:../inc'
 if (!exists('g:alternateSearchPath'))
   let g:alternateSearchPath = s:alternateSearchPath_default
@@ -142,7 +145,7 @@ endif
 " If this variable is true then a.vim will convert the alternate filename to a
 " filename relative to the current working directory.
 " Feature by Nathan Huizinga
-if (!exists('g:alternateRelativeFiles'))                                        
+if (!exists('g:alternateRelativeFiles'))
    " by default a.vim will not convert the filename to one relative to the
    " current working directory
    let g:alternateRelativeFiles = 0
@@ -155,12 +158,12 @@ endif
 "            Used to iterate all path prefixes
 " Args     : list -- the list (extension spec, file paths) to iterate
 "            n -- the extension to get
-" Returns  : the nth item (extension, path) from the list (extension 
+" Returns  : the nth item (extension, path) from the list (extension
 "            spec), or "" for failure
 " Author   : Michael Sharpe <feline@irendi.com>
 " History  : Renamed from GetNthExtensionFromSpec to GetNthItemFromList
 "            to reflect a more generic use of this function. -- Bindu
-function! <SID>GetNthItemFromList(list, n) 
+function! <SID>GetNthItemFromList(list, n)
    let itemStart = 0
    let itemEnd = -1
    let pos = 0
@@ -176,47 +179,47 @@ function! <SID>GetNthItemFromList(list, n)
          endif
          break
       endif
-   endwhile 
-   if (itemEnd != -1) 
+   endwhile
+   if (itemEnd != -1)
       let item = strpart(a:list, itemStart, itemEnd - itemStart)
    endif
-   return item 
+   return item
 endfunction
 
 " Function : ExpandAlternatePath (PRIVATE)
-" Purpose  : Expand path info.  A path with a prefix of "wdr:" will be 
-"            treated as relative to the working directory (i.e. the 
-"            directory where vim was started.) A path prefix of "abs:" will 
-"            be treated as absolute. No prefix or "sfr:" will result in the 
-"            path being treated as relative to the source file (see sfPath 
-"            argument). 
+" Purpose  : Expand path info.  A path with a prefix of "wdr:" will be
+"            treated as relative to the working directory (i.e. the
+"            directory where vim was started.) A path prefix of "abs:" will
+"            be treated as absolute. No prefix or "sfr:" will result in the
+"            path being treated as relative to the source file (see sfPath
+"            argument).
 "
 "            A prefix of "reg:" will treat the pathSpec as a regular
-"            expression substitution that is applied to the source file 
+"            expression substitution that is applied to the source file
 "            path. The format is:
 "
 "              reg:<sep><pattern><sep><subst><sep><flag><sep>
-"          
-"            <sep> seperator character, we often use one of [/|%#] 
+"
+"            <sep> seperator character, we often use one of [/|%#]
 "            <pattern> is what you are looking for
 "            <subst> is the output pattern
 "            <flag> can be g for global replace or empty
 "
-"            EXAMPLE: 'reg:/inc/src/g/' will replace every instance 
+"            EXAMPLE: 'reg:/inc/src/g/' will replace every instance
 "            of 'inc' with 'src' in the source file path. It is possible
 "            to use match variables so you could do something like:
-"            'reg:|src/\([^/]*\)|inc/\1||' (see 'help :substitute', 
+"            'reg:|src/\([^/]*\)|inc/\1||' (see 'help :substitute',
 "            'help pattern' and 'help sub-replace-special' for more details
 "
 "            NOTE: a.vim uses ',' (comma) internally so DON'T use it
-"            in your regular expressions or other pathSpecs unless you update 
+"            in your regular expressions or other pathSpecs unless you update
 "            the rest of the a.vim code to use some other seperator.
 "
 " Args     : pathSpec -- path component (or substitution patterns)
 "            sfPath -- source file path
 " Returns  : a path that can be used by AlternateFile()
 " Author   : Bindu Wavell <bindu@wavell.net>
-function! <SID>ExpandAlternatePath(pathSpec, sfPath) 
+function! <SID>ExpandAlternatePath(pathSpec, sfPath)
    let prfx = strpart(a:pathSpec, 0, 4)
    if (prfx == "wdr:" || prfx == "abs:")
       let path = strpart(a:pathSpec, 4)
@@ -263,7 +266,7 @@ function! <SID>FindFileInSearchPath(fileName, pathList, relPathBase)
    let pathListLen = strlen(a:pathList)
    if (pathListLen > 0)
       while (1)
-         let pathSpec = <SID>GetNthItemFromList(a:pathList, m) 
+         let pathSpec = <SID>GetNthItemFromList(a:pathList, m)
          if (pathSpec != "")
             let path = <SID>ExpandAlternatePath(pathSpec, a:relPathBase)
             let fullname = path . "/" . a:fileName
@@ -297,7 +300,7 @@ function! <SID>FindFileInSearchPathEx(fileName, pathList, relPathBase, count)
    let pathListLen = strlen(a:pathList)
    if (pathListLen > 0)
       while (1)
-         let pathSpec = <SID>GetNthItemFromList(a:pathList, m) 
+         let pathSpec = <SID>GetNthItemFromList(a:pathList, m)
          if (pathSpec != "")
             let path = <SID>ExpandAlternatePath(pathSpec, a:relPathBase)
             if (spath != "")
@@ -342,7 +345,7 @@ function! EnumerateFilesByExtension(path, baseName, extension)
          let extSpec = g:alternateExtensionsDict[a:extension]
       endif
    endif
-   if (extSpec != "") 
+   if (extSpec != "")
       let n = 1
       let done = 0
       while (!done)
@@ -384,7 +387,7 @@ function! EnumerateFilesByExtensionInPath(baseName, extension, pathList, relPath
    let pathListLen = strlen(a:pathList)
    if (pathListLen > 0)
       while (1)
-         let pathSpec = <SID>GetNthItemFromList(a:pathList, m) 
+         let pathSpec = <SID>GetNthItemFromList(a:pathList, m)
          if (pathSpec != "")
             let path = <SID>ExpandAlternatePath(pathSpec, a:relPathBase)
 	    "LH, 24th Jan 2008: test ExpandAlternatePath result
@@ -407,11 +410,11 @@ endfunction
 
 " Function : DetermineExtension (PRIVATE)
 " Purpose  : Determines the extension of a filename based on the register
-"            alternate extension. This allow extension which contain dots to 
+"            alternate extension. This allow extension which contain dots to
 "            be considered. E.g. foo.aspx.cs to foo.aspx where an alternate
 "            exists for the aspx.cs extension. Note that this will only accept
 "            extensions which contain less than 5 dots. This is only
-"            implemented in this manner for simplicity...it is doubtful that 
+"            implemented in this manner for simplicity...it is doubtful that
 "            this will be a restriction in non-contrived situations.
 " Args     : The path to the file to find the extension in
 " Returns  : The matched extension if any
@@ -421,15 +424,15 @@ endfunction
 "            work well when the curly brace variable has dots in it. And why
 "            should it, dots are not valid in variable names. But the exists
 "            function is wierd too. Lets say foo_c does exist. Then
-"            exists("foo_c.e.f") will be true...even though the variable does 
+"            exists("foo_c.e.f") will be true...even though the variable does
 "            not exist. However the curly brace variables do work when the
-"            variable has dots in it. E.g foo_{'c'} is different from 
+"            variable has dots in it. E.g foo_{'c'} is different from
 "            foo_{'c.d.e'}...and foo_{'c'} is identical to foo_c and
 "            foo_{'c.d.e'} is identical to foo_c.d.e right? Yes in the current
 "            implementation of vim. To trick vim to test for existence of such
-"            variables echo the curly brace variable and look for an error 
+"            variables echo the curly brace variable and look for an error
 "            message.
-function! DetermineExtension(path) 
+function! DetermineExtension(path)
   let mods = ":t"
   let i = 0
   while i <= s:maxDotsInExtension
@@ -490,17 +493,17 @@ function! AlternateFile(splitWindow, ...)
            else
               let allfiles = allfiles1
            endif
-        else 
+        else
            let allfiles = allfiles2
         endif
      endif
 
-     if (allfiles != "") 
+     if (allfiles != "")
         let bestFile = ""
         let bestScore = 0
         let score = 0
         let n = 1
-         
+
         let onefile = <SID>GetNthItemFromList(allfiles, n)
         let bestFile = onefile
         while (onefile != "" && score < 2)
@@ -531,7 +534,7 @@ endfunction
 " Returns  : Nothing
 " Author   : Michael Sharpe (feline@irendi.com) www.irendi.com
 function! AlternateOpenFileUnderCursor(splitWindow,...)
-   let cursorFile = (a:0 > 0) ? a:1 : expand("<cfile>") 
+   let cursorFile = (a:0 > 0) ? a:1 : expand("<cfile>")
    let currentPath = expand("%:p:h")
    let openCount = 1
 
@@ -547,9 +550,9 @@ function! AlternateOpenFileUnderCursor(splitWindow,...)
 endfunction
 
 " Function : AlternateOpenNextFile (PUBLIC)
-" Purpose  : Opens the next file corresponding to the search which found the 
+" Purpose  : Opens the next file corresponding to the search which found the
 "            current file
-" Args     : bang -- indicates what to do if the current file has not been 
+" Args     : bang -- indicates what to do if the current file has not been
 "                    saved
 " Returns  : nothing
 " Author   : Michael Sharpe (feline@irendi.com) www.irendi.com
@@ -576,7 +579,7 @@ function! AlternateOpenNextFile(bang)
          let b:openCount = openCount
          let b:cursorFile = cursorFile
          let b:currentPath = currentPath
-      else 
+      else
          let fileName = <SID>FindFileInSearchPathEx(cursorFile, s:alternateSearchPath(), currentPath, 1)
          if (fileName != "")
             call <SID>FindOrCreateBuffer(fileName, "n".a:bang, 0)
@@ -602,7 +605,7 @@ nmap <Leader>is :IHS<CR>:A<CR>
 imap <Leader>ihn <ESC>:IHN<CR>
 nmap <Leader>ihn :IHN<CR>
 
-"function! <SID>PrintList(theList) 
+"function! <SID>PrintList(theList)
 "   let n = 1
 "   let oneFile = <SID>GetNthItemFromList(a:theList, n)
 "   while (oneFile != "")
@@ -644,7 +647,7 @@ function! NextAlternate(bang)
             endif
             if (filereadable(nextAlternate))
                 " on cygwin filereadable("foo.H") returns true if "foo.h" exists
-               if (has("unix") && $WINDIR != "" && fnamemodify(nextAlternate, ":p") ==? fnamemodify(currentFile, ":p")) 
+               if (has("unix") && $WINDIR != "" && fnamemodify(nextAlternate, ":p") ==? fnamemodify(currentFile, ":p"))
                   continue
                endif
                let foundAlternate = 1
@@ -656,13 +659,13 @@ function! NextAlternate(bang)
             "silent! execute ":e".a:bang." " . nextAlternate
             call <SID>FindOrCreateBuffer(nextAlternate, "n".a:bang, 0)
             let b:AlternateAllFiles = s:AlternateAllFiles
-         else 
+         else
             echo "Only this alternate file exists"
          endif
-      else 
+      else
          echo "Could not find current file in alternates list"
       endif
-   else 
+   else
       echo "No other alternate files exist"
    endif
 endfunction
@@ -693,7 +696,7 @@ function! <SID>BufferOrFileExists(fileName)
      let i += 1
    endwhile
 
-   if (!result) 
+   if (!result)
       let bufName = fnamemodify(a:fileName,":t")
       let memBufName = bufname(bufName)
       if (memBufName != "")
@@ -722,7 +725,7 @@ endfunction
 "            not exist, it creates it.
 " Args     : filename (IN) -- the name of the file
 "            doSplit (IN) -- indicates whether the window should be split
-"                            ("v", "h", "n", "v!", "h!", "n!", "t", "t!") 
+"                            ("v", "h", "n", "v!", "h!", "n!", "t", "t!")
 "            findSimilar (IN) -- indicate weather existing buffers should be
 "                                prefered
 " Returns  : nothing
@@ -740,7 +743,7 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
   let bufNr = -1
   let lastBuffer = bufnr("$")
   let i = 1
-  if (a:findSimilar) 
+  if (a:findSimilar)
      while i <= lastBuffer
        if <SID>EqualFilePaths(expand("#".i.":p"), a:fileName)
          let bufNr = i
@@ -770,7 +773,7 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
      endif
   endif
 
-  if (g:alternateRelativeFiles == 1)                                            
+  if (g:alternateRelativeFiles == 1)
         let FILENAME = fnamemodify(FILENAME, ":p:.")
   endif
 
@@ -825,7 +828,7 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
 
      " Buffer was already open......check to see if it is in a window
      let bufWindow = bufwinnr(bufNr)
-     if (bufWindow == -1) 
+     if (bufWindow == -1)
         " Buffer was not in a window so open one
         let v:errmsg=""
         if (splitType == "h")
@@ -843,7 +846,7 @@ function! <SID>FindOrCreateBuffer(fileName, doSplit, findSimilar)
      else
         " Buffer is already in a window so switch to the window
         execute bufWindow."wincmd w"
-        if (bufWindow != winnr()) 
+        if (bufWindow != winnr())
            " something wierd happened...open the buffer
            let v:errmsg=""
            if (splitType == "h")
