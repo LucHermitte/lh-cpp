@@ -31,7 +31,7 @@ Then, in a local vimrc, you'll have to set the
 Several C++ snippets for classes and functions automatically generate doxygen
 documentation.
 See [doxygen related options](options.md#doxygen-related-options),
-[class snippets](snippets.md#classes) and [Doxygen snippets](snippets#doxygen)
+[class snippets](snippets.md#classes) and [Doxygen snippets](snippets.md#doxygen)
 for more information on the subject.
 
 ## `:DOX`
