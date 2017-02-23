@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  11th Jan 2017
+" Last Update:  19th Jan 2017
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -388,7 +388,7 @@ function! lh#cpp#snippets#_filter_functions(list, ...) abort
     let field = a:1
     let default = ''
   else
-    throw "lh-cpp: incorrect number of arguments: (".string(a:000).')'
+    call lh#assert#unexpected('Incorrect number of argument in lh#cpp#snippets#_filter_functions -> '.string(a:000))
   endif
   let res = copy(a:list)
   if value == "public"
