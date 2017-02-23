@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  08th Dec 2016
+" Last Update:  23rd Feb 2017
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -228,8 +228,10 @@ function! lh#cpp#GotoFunctionImpl#open_cpp_file(expected_extension) abort
     let g:mt_jump_to_first_markers = 0
 
     let split_opt = lh#cpp#GotoFunctionImpl#_find_alternates(a:expected_extension)
-    let split_opt = lh#path#to_relative(split_opt)
-    call s:DoSplit(split_opt, 0)
+    if !empty(split_opt)
+      let split_opt = lh#path#to_relative(split_opt)
+      call s:DoSplit(split_opt)
+    endif
   finally
     " restore mu-template
     call cleanup.finalize()
@@ -623,14 +625,8 @@ let s:split_n_h = 'sp'
 let s:split_n_v = 'vsp'
 
 " Function: s:DoSplit(arg) {{{4
-function! s:DoSplit(arg, use_alternate) abort
-  if a:use_alternate
-    exe 'silent '.s:split_{'a'}_{s:SplitOption()}.' '.a:arg
-  else
-    call lh#buffer#jump(a:arg, s:split_{'n'}_{s:SplitOption()})
-  endif
-  " let a = (a:use_alternate ? 'a' : 'n')
-  " exe 'silent '.s:split_{a}_{s:SplitOption()}.' '.a:arg
+function! s:DoSplit(arg) abort
+  call lh#buffer#jump(a:arg, s:split_n_{s:SplitOption()})
 endfunction
 " }}}2
 " Functions }}}1
