@@ -43,7 +43,19 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.command('silent! unlet g:cpp_noncopyable_class')
     expect(vim.command('MuTemplate cpp/abstract-class')).to match(/^$|#include <boost\/noncopyable.hpp> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <boost/noncopyable.hpp>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Abstract
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : private boost::noncopyable
     {
     public:
@@ -71,7 +83,19 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/abstract-class')).to match(/^$|#include <boost\/noncopyable.hpp> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <boost/noncopyable.hpp>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Abstract
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : private boost::noncopyable
     {
     public:
@@ -99,6 +123,18 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 03')
     expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Abstract
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -130,6 +166,18 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 11')
     expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Abstract
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -162,6 +210,18 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Abstract
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
