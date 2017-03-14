@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  23rd Feb 2017
+" Last Update:  14th Mar 2017
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -440,7 +440,7 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
     let all_rets = lh#list#unique_sort(all_rets)
     if len(all_rets) > 1
       let all_rets = ['::'] + all_rets
-      let choice = CONFIRM('Where does <'.(proto.return).'> comes from?',
+      let choice = lh#ui#confirm('Where does <'.(proto.return).'> comes from?',
             \ join(all_rets, "\n"), 1)
       if     choice == 0 | let scope = []
       elseif choice == 1 | let scope = ['']

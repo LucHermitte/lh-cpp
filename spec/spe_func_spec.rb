@@ -9,6 +9,16 @@ require 'pp'
 # TODO: C++11
 RSpec.describe "Special functions", :cpp, :spe_func do
   let (:filename) { "test.cpp" }
+  
+  before :all do
+    if !defined? vim.runtime
+        vim.define_singleton_method(:runtime) do |path|
+            self.command("runtime #{path}")
+        end
+    end
+    vim.runtime('spec/support/input-mock.vim')
+    expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+  end
 
   # ====[ Always executed before each test {{{2
   before :each do
@@ -22,13 +32,6 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     vim.command('silent! unlet g:mocked_input')
     vim.command('silent! unlet g:mocked_confirm')
     vim.command('silent! unlet g:cpp_use_copy_and_swap')
-    if !defined? vim.runtime
-        vim.define_singleton_method(:runtime) do |path|
-            self.command("runtime #{path}")
-        end
-    end
-    vim.runtime('spec/support/input-mock.vim')
-    expect(vim.command('verbose function INPUT')).to match(/input-mock.vim/)
     clear_buffer
   end
 

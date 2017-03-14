@@ -10,7 +10,7 @@ MuT:  let s:enum_name   = s:enum_args[0]
 MuT:  if empty(s:enum_name)
 MuT:    let s:enum_name   = inputdialog('Name of the enum class ?', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
 MuT:  endif
-MuT:  let s:iterable    = CONFIRM("Shall ".s:enum_name." be iterable ?", "&Yes\n&No", 1) == 1
+MuT:  let s:iterable    = lh#ui#confirm("Shall ".s:enum_name." be iterable ?", "&Yes\n&No", 1) == 1
 MuT:  let s:values      = len(s:enum_args) <=1 ? [lh#marker#txt('values')] : s:enum_args[1:]
 MuT:  let s:lhs_        = lh#dev#naming#param("lhs")
 MuT:  let s:rhs_        = lh#dev#naming#param("rhs")

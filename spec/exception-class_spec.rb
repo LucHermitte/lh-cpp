@@ -6,6 +6,19 @@ require 'pp'
 RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
   let (:filename) { "test.cpp" }
 
+  # ====[ Executed once before all test {{{2
+  before :all do
+    if !defined? vim.runtime
+        vim.define_singleton_method(:runtime) do |path|
+            self.command("runtime #{path}")
+        end
+    end
+    vim.runtime('spec/support/input-mock.vim')
+    expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/exception-class")')).to match(/exception-class.template/)
+  end
+
+  # ====[ Always executed before each test {{{2
   before :each do
     vim.command('filetype plugin on')
     vim.command("file #{filename}")
@@ -16,7 +29,13 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     vim.command('silent! unlet g:cpp_std_flavour')
     vim.command('silent! unlet g:cpp_root_exception')
     clear_buffer
-    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/exception-class")')).to match(/exception-class.template/)
+    set_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+    EOF
+    vim.command(%Q{call append(1, ['', ''])})
+    expect(vim.echo('line("$")')).to eq '3'
+    expect(vim.echo('setpos(".", [1,3,1,0])')).to eq '0'
+    expect(vim.echo('line(".")')).to eq '3'
   end
 
 

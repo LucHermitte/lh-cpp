@@ -6,9 +6,9 @@ VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL:"
-VimL: let s:cont  = INPUT('Container name: ')
-VimL: let s:begin = INPUT('Iterator variable: ', 'b')
-VimL: let s:end   = INPUT('Iterator end variable: ', 'e')
+VimL: let s:cont  = lh#ui#input('Container name: ')
+VimL: let s:begin = lh#ui#input('Iterator variable: ', 'b')
+VimL: let s:end   = lh#ui#input('Iterator end variable: ', 'e')
 VimL:"
 VimL:" Note: The "const" can be deleted or kept thanks to <Plug>MarkersMark
 MuT:  let s:container_type = lh#dev#types#of_var(s:cont, lh#marker#txt('container_type'))

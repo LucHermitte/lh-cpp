@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  19th Jan 2017
+" Last Update:  14th Mar 2017
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -256,7 +256,7 @@ function! lh#cpp#snippets#_begin_end(begin) abort " {{{4
 
   " Add .begin/.end on "foo(bar)" ?
   if lh#position#char_at(saved_pos[1], saved_pos[2]-1) == ')'
-    let choice = WHICH('CONFIRM', 'Do you really want to call begin() *and* end() on a function result?', "&Yes\n&No", 2)
+    let choice = lh#ui#which('lh#ui#confirm', 'Do you really want to call begin() *and* end() on a function result?', "&Yes\n&No", 2)
     if choice == 'No'
       return ""
     endif

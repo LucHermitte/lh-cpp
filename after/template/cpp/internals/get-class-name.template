@@ -7,6 +7,6 @@ VimL: "2- otherwise: we try to extract it
 MuT:    let s:clsname = lh#cpp#AnalysisLib_Class#CurrentScope(line("."), "class")
 MuT:    if empty(s:clsname)
 VimL: "3- otherwise, we ask it to the end-user, default = filename minus extensions
-MuT:      let s:clsname = INPUT("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
+MuT:      let s:clsname = lh#ui#input("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
 MuT:    endif
 MuT:  endif

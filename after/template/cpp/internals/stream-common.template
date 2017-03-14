@@ -3,11 +3,11 @@ VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:type = 'std::'.s:direction.'stream'
-VimL: let s:op = IF(s:direction=='o', '<<', '>>')
-VimL: let s:const = IF(s:direction=='o', 'const ', ' ')
+VimL: let s:op = lh#ui#if(s:direction=='o', '<<', '>>')
+VimL: let s:const = lh#ui#if(s:direction=='o', 'const ', ' ')
 VimL: let s:clsname0 = Cpp_SearchClassDefinition(line('.'))
-VimL: let s:friend = IF(strlen(s:clsname0), 'friend ', ' ')
-VimL: let s:clsname  = INPUT("Template\noperator".s:op." for the class:", s:clsname0)
+VimL: let s:friend = lh#ui#if(strlen(s:clsname0), 'friend ', ' ')
+VimL: let s:clsname  = lh#ui#input("Template\noperator".s:op." for the class:", s:clsname0)
 VimL: call s:Include('stream-signature', 'cpp/internals')
 VimL: call s:Include('stream-implementation', 'cpp/internals')
 <++>

@@ -6,6 +6,17 @@ require 'pp'
 # ======[ Value class w/ attributes {{{1
 RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :with_attributes, :value_attributes do
   let (:filename) { "test.cpp" }
+  
+  # ====[ Executed once before all test {{{2
+  before :all do
+    if !defined? vim.runtime
+        vim.define_singleton_method(:runtime) do |path|
+            self.command("runtime #{path}")
+        end
+    end
+    vim.runtime('spec/support/input-mock.vim')
+    expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+  end
 
   # ====[ Always executed before each test {{{2
   before :each do
@@ -20,6 +31,13 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     vim.command('silent! unlet g:mocked_confirm')
     vim.command('silent! unlet g:cpp_use_copy_and_swap')
     clear_buffer
+    set_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+    EOF
+    vim.command(%Q{call append(1, ['', ''])})
+    expect(vim.echo('line("$")')).to eq '3'
+    expect(vim.echo('setpos(".", [1,3,1,0])')).to eq '0'
+    expect(vim.echo('line(".")')).to eq '3'
   end
 
   # ====[ implictly copyable, explicit definitions, C++98 {{{2
@@ -28,7 +46,19 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <string>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -66,7 +96,19 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <string>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -128,8 +170,20 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     # class, somehow this means that the value behind the pointer could be
     # duplicated)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
     #include <string>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -207,8 +261,20 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     # class, somehow this means that the value behind the pointer could be
     # duplicated)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
     #include <string>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -287,7 +353,19 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <string>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:

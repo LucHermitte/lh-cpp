@@ -28,7 +28,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
         end
     end
     vim.runtime('spec/support/input-mock.vim')
-    expect(vim.command('verbose function INPUT')).to match(/input-mock.vim/)
+    expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
     clear_buffer
     set_buffer_contents <<-EOF
       class Foo {

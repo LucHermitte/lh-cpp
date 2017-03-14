@@ -10,15 +10,15 @@ VimL: let s:absclsname = inputdialog('Name of the "absolute" class ?')
 VimL: let s:relclsname = inputdialog('Name of the "relative" class ?')
 VimL: let s:sharedclsname = inputdialog('Name of the "shared" class ? (empty=none)', s:absclsname . lh#dev#naming#param("Impl"))
 VimL: let s:issharingimpl = ! empty(s:sharedclsname)
-VimL: let s:defaultisenough = CONFIRM( "Are the implicitly generated default constructor, copy-constructor, destructor, and assignement operatror enough?", "&Yes\n&No", 1) == 1
-VimL: let s:istemplate = CONFIRM("Are the classes template ?", "&Yes\n&No", 2) == 1
+VimL: let s:defaultisenough = lh#ui#confirm( "Are the implicitly generated default constructor, copy-constructor, destructor, and assignement operatror enough?", "&Yes\n&No", 1) == 1
+VimL: let s:istemplate = lh#ui#confirm("Are the classes template ?", "&Yes\n&No", 2) == 1
 VimL: let s:tmpl_type = Marker_Txt("T")
-VimL: let s:tmpl_decl = IF(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl_type."> ", "")
-VimL: let s:tmpl = IF(s:istemplate, "<".s:tmpl_type.">", "")
+VimL: let s:tmpl_decl = lh#ui#if(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl_type."> ", "")
+VimL: let s:tmpl = lh#ui#if(s:istemplate, "<".s:tmpl_type.">", "")
 VimL: let s:tmpl2_type = Marker_Txt("U")
-VimL: let s:tmpl2_decl = IF(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl2_type.">\n", "")
-VimL: let s:tmpl2 = IF(s:istemplate, "<".s:tmpl2_type.">", "")
-VimL: let s:typename = IF(s:istemplate, "typename ", "")
+VimL: let s:tmpl2_decl = lh#ui#if(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl2_type.">\n", "")
+VimL: let s:tmpl2 = lh#ui#if(s:istemplate, "<".s:tmpl2_type.">", "")
+VimL: let s:typename = lh#ui#if(s:istemplate, "typename ", "")
 VimL: let s:lhs = lh#dev#naming#param("lhs")
 VimL: let s:rhs = lh#dev#naming#param("rhs")
 VimL: let s:coeff = lh#dev#naming#param("coeff")
@@ -43,27 +43,27 @@ VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | e
  * <+lh#dox#author()+>
  */
 VimL: let s:super = "DETAILS::".s:sharedclsname.s:tmpl
-VimL: let s:inh = IF(s:issharingimpl, "\n: ".s:super."(".Marker_Txt("params").")", "\n".Marker_Txt(" "))
-<+s:tmpl_decl+>class ¡s:absclsname.IF(s:issharingimpl, " : protected ".s:super, "")¡
+VimL: let s:inh = lh#ui#if(s:issharingimpl, "\n: ".s:super."(".Marker_Txt("params").")", "\n".Marker_Txt(" "))
+<+s:tmpl_decl+>class ¡s:absclsname.lh#ui#if(s:issharingimpl, " : protected ".s:super, "")¡
 {
 public:
     friend class <+s:relclsname+><+s:tmpl+>;
-    typedef ¡IF(s:issharingimpl, s:typename.s:super."::scalar_type", "<+scalar_type+>")¡ scalar_type;
+    typedef ¡lh#ui#if(s:issharingimpl, s:typename.s:super."::scalar_type", "<+scalar_type+>")¡ scalar_type;
 
     /**@name Construction/destruction
      */
     //@{
     /** Initialisation constructor.
      */
-    <+s:absclsname+>(<+parameters+>)¡IF(s:istemplate, s:inh."{<++>}", ";")¡
+    <+s:absclsname+>(<+parameters+>)¡lh#ui#if(s:istemplate, s:inh."{<++>}", ";")¡
     ¡lh#cpp#abs_rel#canonicalortodoxform(s:absclsname, ! s:defaultisenough)¡
     //@}
 
     /**@name Operators
      */
     //@{
-    <+s:absclsname+> & operator+=(¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)¡IF(s:issharingimpl, " { this->add(".(s:rhs)."); return *this; }", IF(s:istemplate, "<++>", ";"))¡
-    <+s:absclsname+> & operator-=(¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)¡IF(s:issharingimpl, " { this->dec(".(s:rhs)."); return *this; }", IF(s:istemplate, "<++>", ";"))¡
+    <+s:absclsname+> & operator+=(¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)¡lh#ui#if(s:issharingimpl, " { this->add(".(s:rhs)."); return *this; }", lh#ui#if(s:istemplate, "<++>", ";"))¡
+    <+s:absclsname+> & operator-=(¡s:relclsname.s:tmpl¡ const& <+s:rhs+>)¡lh#ui#if(s:issharingimpl, " { this->dec(".(s:rhs)."); return *this; }", lh#ui#if(s:istemplate, "<++>", ";"))¡
 
     static <+s:super+> const diff(<+s:absclsname+> const& <+s:lhs+>, <+s:absclsname+> const& <+s:rhs+>)
     {
@@ -71,7 +71,7 @@ public:
         tmp.dec(<+s:rhs+>);
         return tmp;
     }
-    friend bool operator==(<+s:absclsname+> const& <+s:rhs+>, <+s:absclsname+> const& <+s:lhs+>)¡IF(s:issharingimpl, "\n{ return ".s:absclsname."::isEqual(".(s:rhs).", ".(s:lhs)."); }", ';')¡
+    friend bool operator==(<+s:absclsname+> const& <+s:rhs+>, <+s:absclsname+> const& <+s:lhs+>)¡lh#ui#if(s:issharingimpl, "\n{ return ".s:absclsname."::isEqual(".(s:rhs).", ".(s:lhs)."); }", ';')¡
     //@}
 };
 
@@ -90,30 +90,30 @@ public:
  * @version ¡'$'¡revision$
  * <+lh#dox#author()+>
  */
-<+s:tmpl_decl+>class ¡s:relclsname.IF(s:issharingimpl, " : protected ".s:super, "")¡
+<+s:tmpl_decl+>class ¡s:relclsname.lh#ui#if(s:issharingimpl, " : protected ".s:super, "")¡
 {
 public:
     friend class <+s:absclsname+><+s:tmpl+>;
-    typedef ¡IF(s:issharingimpl, s:typename.s:super."::scalar_type", "<+scalar_type+>")¡ scalar_type;
+    typedef ¡lh#ui#if(s:issharingimpl, s:typename.s:super."::scalar_type", "<+scalar_type+>")¡ scalar_type;
 
     /**@name Construction/destruction
      */
     //@{
     /** Initialisation constructor.
      */
-    <+s:relclsname+>(<+parameters+>)¡IF(s:istemplate, s:inh."{<++>}", ";")¡
+    <+s:relclsname+>(<+parameters+>)¡lh#ui#if(s:istemplate, s:inh."{<++>}", ";")¡
     ¡lh#cpp#abs_rel#canonicalortodoxform(s:relclsname, ! s:defaultisenough)¡
     //@}
 
     /**@name Operators
      */
     //@{
-    <+s:relclsname+> & operator+=(<+s:relclsname+> const& <+s:rhs+>)¡IF(s:issharingimpl, " { this->add(".(s:rhs)."); return *this; }", ";")¡
-    <+s:relclsname+> & operator-=(<+s:relclsname+> const& <+s:rhs+>)¡IF(s:issharingimpl, " { this->dec(".(s:rhs)."); return *this; }", ";")¡
-    <+s:relclsname+> & operator*=(scalar_type <+s:coeff+>)¡IF(s:issharingimpl, "{ this->mult(".(s:coeff)."); return *this; }", ";")¡
-    <+s:relclsname+> & operator/=(scalar_type <+s:coeff+>)¡IF(s:issharingimpl, "{ this->div(".(s:coeff)."); return *this; }", ";")¡
+    <+s:relclsname+> & operator+=(<+s:relclsname+> const& <+s:rhs+>)¡lh#ui#if(s:issharingimpl, " { this->add(".(s:rhs)."); return *this; }", ";")¡
+    <+s:relclsname+> & operator-=(<+s:relclsname+> const& <+s:rhs+>)¡lh#ui#if(s:issharingimpl, " { this->dec(".(s:rhs)."); return *this; }", ";")¡
+    <+s:relclsname+> & operator*=(scalar_type <+s:coeff+>)¡lh#ui#if(s:issharingimpl, "{ this->mult(".(s:coeff)."); return *this; }", ";")¡
+    <+s:relclsname+> & operator/=(scalar_type <+s:coeff+>)¡lh#ui#if(s:issharingimpl, "{ this->div(".(s:coeff)."); return *this; }", ";")¡
 
-    friend bool operator==(<+s:relclsname+> const& <+s:rhs+>, <+s:relclsname+> const& <+s:lhs+>)¡IF(s:issharingimpl, "\n{ return ".s:relclsname."::isEqual(".(s:rhs).", ".(s:lhs)."); }", ";")¡
+    friend bool operator==(<+s:relclsname+> const& <+s:rhs+>, <+s:relclsname+> const& <+s:lhs+>)¡lh#ui#if(s:issharingimpl, "\n{ return ".s:relclsname."::isEqual(".(s:rhs).", ".(s:lhs)."); }", ";")¡
 
     <+s:tmpl2_decl+>friend ¡s:relclsname.s:tmpl2¡ const operator-(¡s:absclsname.s:tmpl2¡ const& <+s:lhs+>, ¡s:absclsname.s:tmpl2¡ const& <+s:rhs+>);
     //@}

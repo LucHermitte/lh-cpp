@@ -1,10 +1,13 @@
 "=============================================================================
 " File:         autoload/lh/cpp/override.vim                              {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"               <URL:http://code.google.com/p/lh-vim/>
-" Version:      2.1.7
+"               <URL:http://github.com/LucHermitte/lh-cpp>
+" License:      GPLv3 with exceptions
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
+" Version:      2.2.0
+let s:k_version = '220'
 " Created:      15th Apr 2008
-" Last Update:  01st Dec 2015
+" Last Update:  14th Mar 2017
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -26,19 +29,35 @@ let s:cpo_save=&cpo
 set cpo&vim
 
 "------------------------------------------------------------------------
-
-" ## Functions {{{1
-" # Debug {{{2
-function! lh#cpp#override#verbose(level)
-  let s:verbose = a:level
+" ## Misc Functions     {{{1
+" # Version {{{2
+function! lh#cpp#override#version()
+  return s:k_version
 endfunction
 
-function! s:Verbose(expr)
-  if exists('s:verbose') && s:verbose
-    echomsg a:expr
+" # Debug   {{{2
+let s:verbose = get(s:, 'verbose', 0)
+function! lh#cpp#override#verbose(...)
+  if a:0 > 0 | let s:verbose = a:1 | endif
+  return s:verbose
+endfunction
+
+function! s:Log(expr, ...)
+  call call('lh#log#this',[a:expr]+a:000)
+endfunction
+
+function! s:Verbose(expr, ...)
+  if s:verbose
+    call call('s:Log',[a:expr]+a:000)
   endif
 endfunction
 
+function! lh#cpp#override#debug(expr) abort
+  return eval(a:expr)
+endfunction
+
+
+" ## Functions {{{1
 " # API {{{2
 " Function: lh#cpp#override#root_function(classname/ancestors, funcname) {{{3
 function! lh#cpp#override#root_function(classname, funcname) abort

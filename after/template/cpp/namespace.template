@@ -16,7 +16,7 @@ MuT:  let s:namespace = s:Param('namespace', '###')
 MuT:  if (type(s:namespace) == type('')) && (s:namespace == '###')
 MuT:     let s:namespace0 = lh#ft#option#get('project_namespace', &ft, lh#marker#txt('ns'))
 MuT:     let s:namespace = type(s:namespace0) == type([]) ? join(s:namespace0, "::") : s:namespace0
-VimL:    let s:namespace = INPUT('Namespace name: ', s:namespace)
+VimL:    let s:namespace = lh#ui#input('Namespace name: ', s:namespace)
 MuT:  endif
 MuT:  if lh#cpp#use_cpp17() && lh#option#get('cpp_use_nested_namespaces', 1)
 MuT:    let s:namespaces = type(s:namespace) == type([]) ? s:namespace : [s:namespace]

@@ -11,7 +11,7 @@ namespace DETAILS
     <+s:tmpl_decl+>class <+s:sharedclsname+>
     {
     public:
-	typedef ¡IF(s:istemplate, s:tmpl_type, "<+scalar_type+>")¡ scalar_type;
+	typedef ¡lh#ui#if(s:istemplate, s:tmpl_type, "<+scalar_type+>")¡ scalar_type;
 	friend class ¡s:absclsname.s:tmpl¡;
 	friend class ¡s:relclsname.s:tmpl¡;
     protected:
@@ -20,7 +20,7 @@ namespace DETAILS
 	//@{
 	/** Initialisation constructor.
 	 */
-	<+s:sharedclsname+>(<+parameters+>)¡IF(s:istemplate,"\n<+: +>{<++>}", ";")¡
+	<+s:sharedclsname+>(<+parameters+>)¡lh#ui#if(s:istemplate,"\n<+: +>{<++>}", ";")¡
 	/** Protected destructor.
 	 */
 	~<+s:sharedclsname+>();
@@ -30,13 +30,13 @@ namespace DETAILS
 	/**@name Operations
 	 */
 	//@{
-	void add(<+s:sharedclsname+> const& <+s:rhs+>)¡IF(s:istemplate,"\n{<++>}", ";")¡
-	void dec(<+s:sharedclsname+> const& <+s:rhs+>)¡IF(s:istemplate,"\n{<++>}", ";")¡
-	void mult(scalar_type <+s:coeff+>)¡IF(s:istemplate,"\n{<++>}", ";")¡
-	void div(scalar_type <+s:coeff+>)¡IF(s:istemplate,"\n{<++>}", ";")¡
+	void add(<+s:sharedclsname+> const& <+s:rhs+>)¡lh#ui#if(s:istemplate,"\n{<++>}", ";")¡
+	void dec(<+s:sharedclsname+> const& <+s:rhs+>)¡lh#ui#if(s:istemplate,"\n{<++>}", ";")¡
+	void mult(scalar_type <+s:coeff+>)¡lh#ui#if(s:istemplate,"\n{<++>}", ";")¡
+	void div(scalar_type <+s:coeff+>)¡lh#ui#if(s:istemplate,"\n{<++>}", ";")¡
 	static bool isEqual(
 		<+s:sharedclsname+> const& <+s:rhs+>,
-		<+s:sharedclsname+> const& <+s:lhs+>)¡IF(s:istemplate,"\n{<++>}", ";")¡
+		<+s:sharedclsname+> const& <+s:lhs+>)¡lh#ui#if(s:istemplate,"\n{<++>}", ";")¡
 	//@}
     private:
 	<+representation+>;

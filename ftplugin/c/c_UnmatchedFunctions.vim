@@ -1,17 +1,20 @@
 "=============================================================================
-" File:		ftplugin/c/c_UnmatchedFunctions.vim                       {{{1
-" Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	1.1.0
-" Created:	14th Feb 2008
-" Last Update:	$Date$
+" File:         ftplugin/c/c_UnmatchedFunctions.vim                       {{{1
+" Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
+"               <URL:http://github.com/LucHermitte/lh-cpp>
+" License:      GPLv3 with exceptions
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
+" Version:      2.2.0
+let s:k_version = '220'
+" Created:      14th Feb 2008
+" Last Update:  14th Mar 2017
 "------------------------------------------------------------------------
-" Description:	«description»
-" 
+" Description:  «description»
+"
 "------------------------------------------------------------------------
-" Installation:	«install details»
-" History:	«history»
-" TODO:		«missing features»
+" Installation: «install details»
+" History:      «history»
+" TODO:         «missing features»
 " }}}1
 "=============================================================================
 
@@ -62,16 +65,16 @@ function! s:DisplaySelected()
 endfunction
 
 function! s:DisplayCmd(...)
-  if a:0 > 0 
+  if a:0 > 0
     " todo: support option -file/-class
-    let what 
-	  \ = (a:1 =~ '-f\%[ile]') ? 'File'
-	  \ : (a:1 =~ '-c\%[lass]') ? 'Class'
-	  \ : a:1
+    let what
+          \ = (a:1 =~ '-f\%[ile]') ? 'File'
+          \ : (a:1 =~ '-c\%[lass]') ? 'Class'
+          \ : a:1
   else
-    let what = WHICH( 'CONFIRM',
-	  \ "Displaying unmatched functions for the current ...",
-	  \ "&Class\n&File\n&Abort", 1)
+    let what = lh#ui#which( 'lh#ui#confirm',
+          \ "Displaying unmatched functions for the current ...",
+          \ "&Class\n&File\n&Abort", 1)
   endif
   let id = ''
   if what == 'Class'
@@ -91,9 +94,7 @@ function! s:DisplayCmd(...)
   endif
 endfunction
 
-" Functions }}}2
-let s:cpo_save=&cpo
-set cpo&vim
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

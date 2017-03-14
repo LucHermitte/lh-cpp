@@ -42,7 +42,7 @@ Vimrunner::RSpec.configure do |config|
     vim_lib_path      = File.expand_path('../../../lh-vim-lib', __FILE__)
     vim.prepend_runtimepath(vim_lib_path)
     vim.runtime('plugin/let.vim') # LetIfUndef
-    vim.runtime('plugin/ui-functions.vim') # CONFIRM
+    # vim.runtime('plugin/ui-functions.vim') # lh#ui#confirm
     # vim.command(':messages')
 
     # lh-dev
