@@ -98,5 +98,3 @@ RSpec.describe "C++ Value class wizard", :cpp, :class, :value do
 end
 
 # vim:set sw=2:
-
-

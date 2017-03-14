@@ -41,8 +41,20 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "str", "type": "string", "functions": ["set", "get"]}, {"name": "bar", "type": "Bar", "includes":"bar.h"}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <string>
     #include "bar.h"
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -80,7 +92,19 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <string>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Value object
+     * - «Regular object»
+     * - «Comparable»
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
