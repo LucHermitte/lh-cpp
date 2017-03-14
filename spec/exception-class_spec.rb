@@ -42,7 +42,18 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
   specify "exception_class, with implicit definitions, C++98", :cpp98 do
     expect(vim.command('MuTemplate cpp/exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <stdexcept>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Exception class
+     * - Copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : public std::runtime_error
     {
     public:
@@ -62,7 +73,18 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 11')
     expect(vim.command('MuTemplate cpp/exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <stdexcept>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Exception class
+     * - Copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : public std::runtime_error
     {
     public:
@@ -78,7 +100,18 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <stdexcept>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Exception class
+     * - Copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : public std::runtime_error
     {
     public:
@@ -100,7 +133,18 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
   specify "domain (param) exception_class, with implicit definitions, C++98", :cpp98 do
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/exception-class", {"root-exception": {"std::logic_error": {"includes": "<stdexcept>"}}})')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <stdexcept>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Exception class
+     * - Copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : public std::logic_error
     {
     public:
@@ -120,7 +164,18 @@ RSpec.describe "C++ exception class wizard", :exception, :cpp, :class do
     vim.command('let g:cpp_root_exception = {"std::logic_error": {"includes": "<stdexcept>"}}')
     expect(vim.command('MuTemplate cpp/exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <stdexcept>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Exception class
+     * - Copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : public std::logic_error
     {
     public:
