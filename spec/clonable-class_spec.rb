@@ -43,8 +43,18 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.command('silent! unlet g:cpp_noncopyable_class')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
     #include <boost/noncopyable.hpp>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : private boost::noncopyable
     {
     public:
@@ -76,8 +86,18 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
     #include <boost/noncopyable.hpp>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : private boost::noncopyable
     {
     public:
@@ -109,8 +129,18 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
     #include <boost/noncopyable.hpp>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test» : private boost::noncopyable
     {
     public:
@@ -141,7 +171,17 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 03')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -176,7 +216,17 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 11')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -212,7 +262,17 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -257,8 +317,18 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     # pp vim.echo('g:root_clones')
 
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
     #include <memory>
     #include <boost/noncopyable.hpp>
+
+    /**
+     * base.
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class base : private boost::noncopyable
     {
     public:
@@ -282,6 +352,14 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
         base(base const&) /* = default */;
     };
 
+    /**
+     * child.
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Clonable (but not assignable)
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class child : public base
     {
     public:
