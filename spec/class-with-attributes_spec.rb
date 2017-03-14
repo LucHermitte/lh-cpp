@@ -46,14 +46,6 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     #include "bar.h"
 
     /**
-     * «Test».
-     * @invariant «»
-     * <p><b>Semantics</b><br>
-     * - Value object
-     * - «Regular object»
-     * - «Comparable»
-     * @author «author-name», creation
-     * @since Version «1.0»
      */
     class «Test»
     {
@@ -96,14 +88,6 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     #include <string>
 
     /**
-     * «Test».
-     * @invariant «»
-     * <p><b>Semantics</b><br>
-     * - Value object
-     * - «Regular object»
-     * - «Comparable»
-     * @author «author-name», creation
-     * @since Version «1.0»
      */
     class «Test»
     {

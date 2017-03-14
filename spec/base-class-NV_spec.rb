@@ -121,6 +121,17 @@ RSpec.describe "C++ non virtual base class wizard", :base_nv, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 03')
     expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -153,6 +164,17 @@ RSpec.describe "C++ non virtual base class wizard", :base_nv, :cpp, :class do
     vim.command('let g:cpp_std_flavour = 11')
     expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
@@ -186,6 +208,17 @@ RSpec.describe "C++ non virtual base class wizard", :base_nv, :cpp, :class do
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('MuTemplate cpp/base-class-non-virtual')).to eq ""
     assert_buffer_contents <<-EOF
+    /** File Header line to trick auto-inclusion */
+
+    /**
+     * «Test».
+     * @invariant «»
+     * <p><b>Semantics</b><br>
+     * - Entity
+     * - Non-copyable
+     * @author «author-name», creation
+     * @since Version «1.0»
+     */
     class «Test»
     {
     public:
