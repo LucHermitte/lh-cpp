@@ -7,7 +7,7 @@
 let s:k_version = 220
 " Version:	2.2.0
 " Created:      22nd Feb 2011
-" Last Update:  22nd Feb 2017
+" Last Update:  14th Mar 2017
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -167,13 +167,12 @@ endfunction
 " Function: lh#dox#since(...) {{{3
 function! lh#dox#since_value(...) abort
   let ver  = lh#option#get('ProjectVersion', a:0==0 ? lh#marker#txt('1.0') : a:1)
-  return 'Version '.ver
+  return ver
 endfunction
 
 function! lh#dox#since(...) abort
   let tag  = lh#dox#tag('since ')
-  let ver  = lh#option#get('ProjectVersion', a:0==0 ? lh#marker#txt('1.0') : a:1)
-  return tag . call('lh#dox#since_value', a:000)
+  return tag . 'Version '.call('lh#dox#since_value', a:000)
 endfunction
 
 "------------------------------------------------------------------------
