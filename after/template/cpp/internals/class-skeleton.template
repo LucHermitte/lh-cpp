@@ -96,8 +96,17 @@ MuT:  let s:pri_special_functions = lh#cpp#snippets#_filter_functions(s:spe_func
 VimL: call extend(s:pub_functions, map(copy(s:pub_special_functions), 'v:val'))
 VimL: call extend(s:pro_functions, map(copy(s:pro_special_functions), 'v:val'))
 VimL: call extend(s:pri_functions, map(copy(s:pri_special_functions), 'v:val'))
+VimL: " =====[ Doxygen
+MuT:  let s:cls_comments_default = {}
+VimL: let s:cls_comments_default.brief = lh#dox#brief(s:clsname)
+VimL: let s:cls_comments_default.ingroup = {}
+VimL: let s:cls_comments_default.invariant = lh#marker#txt()
+VimL: let s:cls_comments_default.author = lh#dox#author_value(). ', creation'
+VimL: let s:cls_comments_default.since = lh#dox#since_value()
+MuT:  let s:cls_comments = s:Param('comments', {})
+VimL: call extend(s:cls_comments, s:cls_comments_default, 'keep')
+VimL: call s:Include('function-comment', 'cpp/internals', s:cls_comments)
 VimL: " =====[ The Skeleton
-VimL: call s:Include('function-comment', 'cpp/internals', s:Param('comments', {}))
 class <+s:clsname+><+s:final_str+><+s:parents_data[0]+>
 {
 public:

@@ -15,10 +15,6 @@ VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: " Defines Doxygen comments
 MuT:  let s:cls_comments = s:parameters.comments
 VimL: let s:cls_comments.brief = lh#dox#brief(s:clsname.' singleton.')
-VimL: let s:cls_comments.ingroup = {}
-VimL: let s:cls_comments.invariant = lh#marker#txt()
-VimL: let s:cls_comments.author = lh#dox#author_value(). ', creation'
-VimL: let s:cls_comments.since = lh#dox#since_value()
 VimL: " Ask which kind
 MuT:  let s:type = confirm('Of what type of the singleton should be?', "&Meyers' (local-static, MT-safe (in C++11), default ctr)\n" .'&Explicit Initialisation (MT-safe)', 2 - lh#cpp#use_cpp11())
 MuT:  if s:type == 1
