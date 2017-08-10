@@ -75,8 +75,8 @@ function! lh#cpp#enum#expand_enum_to_switch() abort
   endif
 endfunction
 
-" Function: lh#cpp#analyse#token(name, ...) {{{3
-function! lh#cpp#analyse#token(name, ...) abort
+" Function: lh#cpp#enum#analyse_token(name, ...) {{{3
+function! lh#cpp#enum_analyse#token(name, ...) abort
   let cleanup = lh#on#exit()
         \.register('call lh#dev#end_tag_session()')
   let tags = lh#dev#start_tag_session()
