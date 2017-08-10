@@ -59,17 +59,14 @@ function! lh#cpp#snippets#def_abbr(key, expr) abort
   endif
   " Default behaviour
   if type(a:expr) == type({})
-    for [cond, expr] in items(a:expr)
-      if eval(cond)
-        let rhs = lh#dev#style#apply(expr)
-      endif
-    endfor
-    if !exists('rhs')
-      call lh#assert#unexpected("No case found for the mapping")
-    endif
+    " This is a switch
+    let exprs = filter(items(a:expr), 'eval(v:val[0])')
+    call lh#assert#value(exprs).not().empty("No case found for the mapping ". string(a:key)." --> ".string(a:expr))
+    let expr = exprs[0][1]
   else
-    let rhs = lh#dev#style#apply(a:expr)
+    let expr = a:expr
   endif
+  let rhs = lh#dev#style#apply(expr)
   return lh#map#insert_seq(a:key, rhs)
 endfunction
 
