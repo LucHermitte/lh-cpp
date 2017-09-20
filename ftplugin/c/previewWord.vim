@@ -56,7 +56,6 @@ call lh#mapping#plug({'lhs': '<localleader>cpw', 'rhs': '<Plug>ClosePreviewWindo
 let g:preview_if_hold = get(g:, 'preview_if_hold', 0)
 let s:toggle_menu = {
       \ 'variable': 'preview_if_hold',
-      \ 'idx_crt_value': 1,
       \ 'values': [0, 1],
       \ 'texts': [ "No", "Yes" ],
       \ 'menu': {'priority': '50.10', 'name': 'C++.preview_if_hold'}
