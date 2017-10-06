@@ -5,7 +5,7 @@
 " Version:      2.2.0
 let s:k_version = 220
 " Created:      25th Jun 2014
-" Last Update:  16th Nov 2016
+" Last Update:  06th Oct 2017
 "------------------------------------------------------------------------
 " Description:
 "       API functions to obtain symbol declarations
@@ -93,7 +93,7 @@ function! lh#cpp#tags#strip_included_paths(filename, includes)
       let filename = lh#path#strip_start(filename, a:includes)
     endif
   else
-    let filename_simplify = lh#dev#option#get('filename_simplify_for_inclusion', &ft, ':t')
+    let filename_simplify = lh#ft#option#get('filename_simplify_for_inclusion', &ft, ':t')
     let filename = fnamemodify(filename, filename_simplify)
   endif
   return filename
@@ -134,10 +134,10 @@ function! lh#cpp#tags#fetch(feature) abort
     throw a:feature.": no tags for `".id."'"
   endif
   " Filter for function definitions and #defines, ...
-  let accepted_kinds = lh#dev#option#get('tag_kinds_for_inclusion', &ft, '[dfptcs]')
+  let accepted_kinds = lh#ft#option#get('tag_kinds_for_inclusion', &ft, '[dfptcs]')
   call filter(info, "v:val.kind =~ ".string(accepted_kinds))
   " Filter for include files only
-  let accepted_files = lh#dev#option#get('file_regex_for_inclusion', &ft, '\.h')
+  let accepted_files = lh#ft#option#get('file_regex_for_inclusion', &ft, '\.h')
   call filter(info, "v:val.filename =~? ".string(accepted_files))
   " Is there any symbol left ?
   if len(info) == 0

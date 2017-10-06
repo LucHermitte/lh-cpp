@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  14th Mar 2017
+" Last Update:  06th Oct 2017
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -131,7 +131,7 @@ endfunction
 
 " Function: lh#cpp#snippets#current_namespace(default) {{{3
 function! lh#cpp#snippets#current_namespace(default) abort
-  let ns = lh#dev#option#get('project_namespace', &ft, '')
+  let ns = lh#ft#option#get('project_namespace', &ft, '')
   return empty(ns) ? a:default : (ns.'::')
 endfunction
 
@@ -535,7 +535,7 @@ endfunction
 " - nl (bool)
 function! lh#cpp#snippets#build_param_list(parameters) abort
   " 1- Handle default params, if any. {{{4
-  let l:ShowDefaultParams       = lh#dev#option#get('ShowDefaultParams', &ft, 1)
+  let l:ShowDefaultParams       = lh#ft#option#get('ShowDefaultParams', &ft, 1)
   "    0 -> ""              : ignored
   "    1 -> "/* = value */" : commented
   "    2 -> "/*=value*/"    : commented, spaces trimmed

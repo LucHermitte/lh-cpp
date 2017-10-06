@@ -4,7 +4,7 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " Version:      2.0.0b16
 " Created:      05th Apr 2012
-" Last Update:  $Date$
+" Last Update:  06th Oct 2017
 "------------------------------------------------------------------------
 " Description:
 "       Options for lh-cpp
@@ -59,20 +59,20 @@ endfunction
 " Write each '(' on a new line; -> if \n() ... {}
 function! lh#cpp#option#nl_before_bracket()
   call s:Deprecated()
-  return lh#dev#option#get('nl_before_bracket', &ft, 0)
+  return lh#ft#option#get('nl_before_bracket', &ft, 0)
 endfunction
 
 " Function: lh#cpp#option#nl_before_curlyB() {{{3
 " Write each '{' on a new line; -> if ...() \n {}
 function! lh#cpp#option#nl_before_curlyB()
   call s:Deprecated()
-  return lh#dev#option#get('nl_before_curlyB', &ft, 0)
+  return lh#ft#option#get('nl_before_curlyB', &ft, 0)
 endfunction
 
 " Function: lh#cpp#option#multiple_namespace_on_same_line() {{{3
 " Write each "namespace Foo {" on a same line
 function! lh#cpp#option#multiple_namespaces_on_same_line()
-  return lh#dev#option#get('multiple_namespaces_on_same_line', &ft, 1)
+  return lh#ft#option#get('multiple_namespaces_on_same_line', &ft, 1)
 endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1

@@ -4,11 +4,11 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " Version:      001
 " Created:      30th Oct 2012
-" Last Update:  $Date$
+" Last Update:  06th Oct 2017
 "------------------------------------------------------------------------
 " Description:
 "       ftplugin to swap between a .gcov file and its source
-" 
+"
 "------------------------------------------------------------------------
 " Installation:
 "       Drop this file into {rtp}/ftplugin/c
@@ -64,7 +64,7 @@ let s:k_gcov_ext = '.gcov'
 function! s:FindGCOVFile(source_file)
   let current_file = fnamemodify(a:source_file, ':t')
   let current_path = fnamemodify(a:source_file,':p:h')
-  let gcov_files_path = lh#dev#option#get('gcov_files_path', &ft, current_path)
+  let gcov_files_path = lh#ft#option#get('gcov_files_path', &ft, current_path)
   let files = lh#path#glob_as_list(gcov_files_path, current_file.s:k_gcov_ext)
   if empty(files)
     throw "Cannot find <".current_file.s:k_gcov_ext."> in ".string(files).". Please set b:[{ft}_]gcov_files_path"
