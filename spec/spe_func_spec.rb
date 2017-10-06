@@ -9,7 +9,7 @@ require 'pp'
 # TODO: C++11
 RSpec.describe "Special functions", :cpp, :spe_func do
   let (:filename) { "test.cpp" }
-  
+
   before :all do
     if !defined? vim.runtime
         vim.define_singleton_method(:runtime) do |path|
@@ -18,6 +18,10 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+    expect(vim.echo('lh#dev#style#clear()')).to eq '0'
+    vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
+    vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
+    vim.command('UseStyle empty_braces=nl -ft=c')
   end
 
   # ====[ Always executed before each test {{{2
@@ -226,7 +230,8 @@ RSpec.describe "Special functions", :cpp, :spe_func do
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        «Test»& operator=(«Test» rhs) {
+        «Test»& operator=(«Test» rhs)
+        {
             this->swap(rhs);
             return *this;
         }
@@ -251,7 +256,8 @@ RSpec.describe "Special functions", :cpp, :spe_func do
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        «Test»& operator=(«Test» rhs) {
+        «Test»& operator=(«Test» rhs)
+        {
             this->swap(rhs);
             return *this;
         }
@@ -276,7 +282,8 @@ RSpec.describe "Special functions", :cpp, :spe_func do
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        FooBar& operator=(FooBar rhs) {
+        FooBar& operator=(FooBar rhs)
+        {
             this->swap(rhs);
             return *this;
         }
@@ -315,7 +322,8 @@ RSpec.describe "Special functions", :cpp, :spe_func do
            * @note based on copy-and-swap idiom, with copy-elision exploited
            * @note exception-safe
            */
-          Foo& operator=(Foo rhs) {
+          Foo& operator=(Foo rhs)
+          {
               this->swap(rhs);
               return *this;
           }

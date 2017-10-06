@@ -44,11 +44,11 @@ VimL:    call map(lines, "substitute(v:val, ' *$', '', '')")
 VimL:    call s:Inject(lines)
 VimL: endfunction
 MuT: if lh#dev#option#get("template_expand_doc", &ft, 1)
-MuT:   let s:restore_options = lh#on#exit().restore('s:content.can_apply_style')
-VimL:  let s:content.can_apply_style = s:Param('style', 1)
+MuT:   let s:restore_options = lh#on#exit().restore(s:content, 'can_apply_style')
+VimL:  let s:content.can_apply_style = s:Param('style', 0)
 /**
 VimL:  call s:_LoopOverDoxItems(empty(s:Args()) ? [] : s:Args()[0])
  */
-VimL: let g:lines = deepcopy(s:content.lines)
+VimL: " let g:lines = deepcopy(s:content.lines)
 VimL:  call s:restore_options.finalize()
 MuT: endif

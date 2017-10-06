@@ -10,6 +10,22 @@ require 'pp'
 RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   let (:filename) { "test.cpp" }
 
+  # ====[ Executed once before all test {{{2
+  before :all do
+    if !defined? vim.runtime
+        vim.define_singleton_method(:runtime) do |path|
+            self.command("runtime #{path}")
+        end
+    end
+    vim.runtime('spec/support/input-mock.vim')
+    expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+    expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
+    expect(vim.echo('lh#dev#style#clear()')).to eq '0'
+    vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
+    vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
+    vim.command('UseStyle empty_braces=empty -ft=c')
+  end
+
   # ====[ Always executed before each test {{{2
   before :each do
     vim.command('filetype plugin on')
@@ -22,13 +38,6 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     vim.command('silent! unlet g:mocked_input')
     vim.command('silent! unlet g:mocked_confirm')
     vim.command('silent! unlet g:cpp_use_copy_and_swap')
-    if !defined? vim.runtime
-        vim.define_singleton_method(:runtime) do |path|
-            self.command("runtime #{path}")
-        end
-    end
-    vim.runtime('spec/support/input-mock.vim')
-    expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
     clear_buffer
     set_buffer_contents <<-EOF
       class Foo {
@@ -41,9 +50,11 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     EOF
     vim.write()
     vim.feedkeys('a\<esc>') # pause
-    expect(system("ctags --c++-kinds=+p --fields=+imaS --extra=+q --language-force=C++ -f tags #{filename}")).to be true
+    expect(system("ctags --c++-kinds=+p --fields=+imaS --extras=+q --language-force=C++ -f tags #{filename}")).to be true
     # system('less tags')
     vim.command("let b:tags_dirname = expand('%:p:h')")
+    vim.command("let &l:tags.=','.b:tags_dirname.'/tags'")
+    # system('echo "'+vim.echo('lh#dev#class#attributes("Foo")')+'"')
     assert_buffer_contents <<-EOF
       class Foo {
       public:
@@ -133,7 +144,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
              * @param[in] rhs source data to be copied.
              * «@throw »
              */
-            Foo& operator=(Foo const& rhs) ;
+            Foo& operator=(Foo const& rhs);
         private:
             std::string m_bar;
             int * m_foo;
@@ -144,6 +155,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
             m_bar = rhs.m_bar;
             m_foo = «duplicate(rhs.m_foo)»;
         }
+
       EOF
     end
 
@@ -166,7 +178,8 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
              * @note based on copy-and-swap idiom, with copy-elision exploited
              * @note exception-safe
              */
-            Foo& operator=(Foo rhs) {
+            Foo& operator=(Foo rhs)
+            {
                 this->swap(rhs);
                 return *this;
             }
@@ -175,18 +188,19 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
              * @param[in,out] other data with which content is swapped
              * @throw None
              */
-            void swap(Foo & other) throw() ;
+            void swap(Foo & other) throw();
         private:
             std::string m_bar;
             int * m_foo;
         };
 
-        void Foo::swap(Foo & other) throw ()
+        void Foo::swap(Foo & other) throw()
         {
             using std::swap;
             swap(m_bar, other.m_bar);
             swap(m_foo, other.m_foo);
         }
+
         EOF
     end
 

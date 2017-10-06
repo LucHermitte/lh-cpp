@@ -16,6 +16,10 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
+    expect(vim.echo('lh#dev#style#clear()')).to eq '0'
+    vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
+    vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
+    vim.command('UseStyle empty_braces=nl -ft=c')
   end
 
   # ====[ Always executed before each test {{{2
@@ -66,11 +70,14 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
             : m_foo(foo)
             , m_str(str)
             , m_bar(bar)
-            {}
-        void setStr(std::string const& str) {
+            {
+            }
+        void setStr(std::string const& str)
+        {
             m_str = str;
         }
-        std::string const& getStr() const {
+        std::string const& getStr() const
+        {
             return m_str;
         }
 
@@ -110,11 +117,14 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)
-            {}
-        void setBar(std::string const& bar) {
+            {
+            }
+        void setBar(std::string const& bar)
+        {
             m_bar = bar;
         }
-        std::string const& getBar() const {
+        std::string const& getBar() const
+        {
             return m_bar;
         }
 

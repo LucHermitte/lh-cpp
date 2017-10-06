@@ -6,7 +6,7 @@ require 'pp'
 # ======[ Value class w/ attributes {{{1
 RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :with_attributes, :value_attributes do
   let (:filename) { "test.cpp" }
-  
+
   # ====[ Executed once before all test {{{2
   before :all do
     if !defined? vim.runtime
@@ -16,6 +16,10 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     end
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+    expect(vim.echo('lh#dev#style#clear()')).to eq '0'
+    vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
+    vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
+    vim.command('UseStyle empty_braces=nl -ft=c')
   end
 
   # ====[ Always executed before each test {{{2
@@ -72,11 +76,14 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)
-            {}
-        void setBar(std::string const& bar) {
+            {
+            }
+        void setBar(std::string const& bar)
+        {
             m_bar = bar;
         }
-        std::string const& getBar() const {
+        std::string const& getBar() const
+        {
             return m_bar;
         }
 
@@ -130,11 +137,14 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         «Test»(int foo, std::string const& bar)
             : m_foo(foo)
             , m_bar(bar)
-            {}
-        void setBar(std::string const& bar) {
+            {
+            }
+        void setBar(std::string const& bar)
+        {
             m_bar = bar;
         }
-        std::string const& getBar() const {
+        std::string const& getBar() const
+        {
             return m_bar;
         }
 
@@ -196,13 +206,15 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         «Test»(«Test» const& rhs)
             : m_foo(rhs.m_foo)
             , m_bar(«duplicate(rhs.m_bar)»)
-            {}
+            {
+            }
         /**
          * Assignment operator.
          * @param[in] rhs source data to be copied.
          * «@throw »
          */
-        «Test»& operator=(«Test» const& rhs) {
+        «Test»& operator=(«Test» const& rhs)
+        {
             m_foo = rhs.m_foo;
             m_bar = «duplicate(rhs.m_bar)»;
         }
@@ -222,14 +234,18 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         «Test»(int foo, std::auto_ptr<std::string> bar)
             : m_foo(foo)
             , m_bar(bar)
-            {}
-        void setBar(std::string const& bar) {
+            {
+            }
+        void setBar(std::string const& bar)
+        {
             *m_bar = bar;
         }
-        void setBar(std::auto_ptr<std::string> bar) {
+        void setBar(std::auto_ptr<std::string> bar)
+        {
             m_bar = bar;
         }
-        std::string const& getBar() const {
+        std::string const& getBar() const
+        {
             return *m_bar;
         }
 
@@ -287,7 +303,8 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         «Test»(«Test» const& rhs)
             : m_foo(rhs.m_foo)
             , m_bar(«duplicate(rhs.m_bar)»)
-            {}
+            {
+            }
         /**
          * Assignment operator.
          * @param[in] rhs source data to be copied.
@@ -296,7 +313,8 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @note based on copy-and-swap idiom, with copy-elision exploited
          * @note exception-safe
          */
-        «Test»& operator=(«Test» rhs) {
+        «Test»& operator=(«Test» rhs)
+        {
             this->swap(rhs);
             return *this;
         }
@@ -305,7 +323,8 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @param[in,out] other data with which content is swapped
          * @throw None
          */
-        void swap(«Test» & other) throw() {
+        void swap(«Test» & other) throw()
+        {
             using std::swap;
             swap(m_foo, other.m_foo);
             swap(m_bar, other.m_bar);
@@ -326,14 +345,18 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         «Test»(int foo, std::auto_ptr<std::string> bar)
             : m_foo(foo)
             , m_bar(bar)
-            {}
-        void setBar(std::string const& bar) {
+            {
+            }
+        void setBar(std::string const& bar)
+        {
             *m_bar = bar;
         }
-        void setBar(std::auto_ptr<std::string> bar) {
+        void setBar(std::auto_ptr<std::string> bar)
+        {
             m_bar = bar;
         }
-        std::string const& getBar() const {
+        std::string const& getBar() const
+        {
             return *m_bar;
         }
 

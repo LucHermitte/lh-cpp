@@ -17,7 +17,8 @@ VimL: " =====[ Attributes
 VimL: " Fetch attributes from the parameters passed to the class skeleton
 MuT:  let s:attributes = s:Param('attributes', [])
 VimL: " And also use the surrounded attributes
-VimL: let s:attributes += lh#cpp#snippets#_decode_selected_attributes(s:Surround(1, ''))
+VimL: let s:attributes += lh#cpp#snippets#_decode_selected_attributes(s:SurroundRaw(1, ''))
+VimL: call s:Verbose('attributes: %1', s:attributes)
 VimL: " Finally fill the related function with these information
 MuT:  let s:attrb_functions = []
 MuT:  if !empty(s:attributes)

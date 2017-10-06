@@ -16,6 +16,10 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/clonable-class")')).to match(/clonable-class.template/)
+    expect(vim.echo('lh#dev#style#clear()')).to eq '0'
+    vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
+    vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
+    vim.command('UseStyle empty_braces=nl -ft=c')
   end
 
   # ====[ Always executed before each test {{{2
@@ -64,7 +68,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::auto_ptr<«Test»> clone() const {
+        virtual std::auto_ptr<«Test»> clone() const
+        {
             return std::auto_ptr<«Test»>(new «Test»(*this));
         }
 
@@ -107,7 +112,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const {
+        virtual std::unique_ptr<«Test»> clone() const
+        {
             return std::unique_ptr<«Test»>(new «Test»(*this));
         }
 
@@ -150,7 +156,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const {
+        virtual std::unique_ptr<«Test»> clone() const
+        {
             return std::make_unique(*this);
         }
 
@@ -191,7 +198,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::auto_ptr<«Test»> clone() const {
+        virtual std::auto_ptr<«Test»> clone() const
+        {
             return std::auto_ptr<«Test»>(new «Test»(*this));
         }
 
@@ -236,7 +244,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const {
+        virtual std::unique_ptr<«Test»> clone() const
+        {
             return std::unique_ptr<«Test»>(new «Test»(*this));
         }
 
@@ -282,7 +291,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~«Test»();
-        virtual std::unique_ptr<«Test»> clone() const {
+        virtual std::unique_ptr<«Test»> clone() const
+        {
             return std::unique_ptr<«Test»>(new «Test»(*this));
         }
 
@@ -310,7 +320,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.write()
     # pp vim.echo('expand("%:p")')
     # pp system('pwd')
-    expect(system("ctags --c++-kinds=+p --fields=+imaS --extra=+q --language-force=C++ -f tags #{filename}")).to be true
+    expect(system("ctags --c++-kinds=+p --fields=+imaS --extras=+q --language-force=C++ -f tags #{filename}")).to be true
     vim.command("let b:tags_dirname = expand('%:p:h')")
 
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "child", "parents": [{"base": {}}]})')).to match(/^$|memory is already included/)
@@ -338,7 +348,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * @throw Nothing
          */
         virtual ~base();
-        virtual std::auto_ptr<base> clone() const {
+        virtual std::auto_ptr<base> clone() const
+        {
             return std::auto_ptr<base>(new base(*this));
         }
 
@@ -375,7 +386,8 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
          * «@throw »
          */
         child(«ctr-parameters»);
-        virtual std::auto_ptr<base> clone() const /* override */ {
+        virtual std::auto_ptr<base> clone() const /* override */
+        {
             return std::auto_ptr<base>(new child(*this));
         }
 
