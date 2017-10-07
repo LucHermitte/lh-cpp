@@ -1,0 +1,8 @@
+VimL:" unordered_map File Template, Luc Hermitte, 07th Oct 2017
+VimL:" hint: std::unordered_map
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<unordered_map>")')
+std::unordered_map<¡s:Surround(1, '<+key+>')¡, ¡s:Surround(2, '<+value+>')¡><+s:TerminalPlaceHolder()+>

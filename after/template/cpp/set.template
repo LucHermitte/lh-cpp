@@ -5,4 +5,4 @@ VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<set>")')
-std::set<¡s:Surround(1, '<+type+>')¡> <++>
+std::set<¡s:Surround(1, '<+type+>')¡><+s:TerminalPlaceHolder()+>

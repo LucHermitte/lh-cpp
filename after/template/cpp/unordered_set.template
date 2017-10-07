@@ -1,0 +1,8 @@
+VimL:" unordered_set File Template, Luc Hermitte, 07th Oct 2017
+VimL:" hint: std::unordered_map
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<unordered_set>")')
+std::unordered_set<¡s:Surround(1, '<+type+>')¡><+s:TerminalPlaceHolder()+>

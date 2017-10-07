@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.0
 " Created:	06th Nov 2007
-" Last Update:	19th Dec 2016
+" Last Update:	07th Oct 2017
 "------------------------------------------------------------------------
 let s:version = '2.2.0'
 let s:project = 'lh-cpp'
@@ -112,6 +112,8 @@ after/template/cpp/traits.template
 after/template/cpp/try.template
 after/template/cpp/typeid.template
 after/template/cpp/unique_ptr.template
+after/template/cpp/unordered_map.template
+after/template/cpp/unordered_set.template
 after/template/cpp/utf8.template
 after/template/cpp/value-class.template
 after/template/cpp/vector.template
