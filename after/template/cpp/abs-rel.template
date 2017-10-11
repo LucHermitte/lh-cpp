@@ -12,11 +12,11 @@ VimL: let s:sharedclsname = inputdialog('Name of the "shared" class ? (empty=non
 VimL: let s:issharingimpl = ! empty(s:sharedclsname)
 VimL: let s:defaultisenough = lh#ui#confirm( "Are the implicitly generated default constructor, copy-constructor, destructor, and assignement operatror enough?", "&Yes\n&No", 1) == 1
 VimL: let s:istemplate = lh#ui#confirm("Are the classes template ?", "&Yes\n&No", 2) == 1
-VimL: let s:tmpl_type = Marker_Txt("T")
-VimL: let s:tmpl_decl = lh#ui#if(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl_type."> ", "")
+VimL: let s:tmpl_type = lh#marker#txt("T")
+VimL: let s:tmpl_decl = lh#ui#if(s:istemplate, "template <".lh#marker#txt("typename")." ".s:tmpl_type."> ", "")
 VimL: let s:tmpl = lh#ui#if(s:istemplate, "<".s:tmpl_type.">", "")
-VimL: let s:tmpl2_type = Marker_Txt("U")
-VimL: let s:tmpl2_decl = lh#ui#if(s:istemplate, "template <".Marker_Txt("typename")." ".s:tmpl2_type.">\n", "")
+VimL: let s:tmpl2_type = lh#marker#txt("U")
+VimL: let s:tmpl2_decl = lh#ui#if(s:istemplate, "template <".lh#marker#txt("typename")." ".s:tmpl2_type.">\n", "")
 VimL: let s:tmpl2 = lh#ui#if(s:istemplate, "<".s:tmpl2_type.">", "")
 VimL: let s:typename = lh#ui#if(s:istemplate, "typename ", "")
 VimL: let s:lhs = lh#dev#naming#param("lhs")
@@ -43,7 +43,7 @@ VimL: if s:issharingimpl | call s:Include('abs-rel-shared', 'cpp/internals') | e
  * <+lh#dox#author()+>
  */
 VimL: let s:super = "DETAILS::".s:sharedclsname.s:tmpl
-VimL: let s:inh = lh#ui#if(s:issharingimpl, "\n: ".s:super."(".Marker_Txt("params").")", "\n".Marker_Txt(" "))
+VimL: let s:inh = lh#ui#if(s:issharingimpl, "\n: ".s:super."(".lh#marker#txt("params").")", "\n".lh#marker#txt(" "))
 <+s:tmpl_decl+>class ¡s:absclsname.lh#ui#if(s:issharingimpl, " : protected ".s:super, "")¡
 {
 public:

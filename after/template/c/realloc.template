@@ -5,10 +5,10 @@ VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
 VimL: silent! unlet s:_args
 VimL: let s:_args = empty(s:Args()) ? {} : (s:Args()[0])
-VimL: if (! has_key(s:_args, "ptr"))     | let s:_args.ptr     = Marker_Txt("p")    | endif
+VimL: if (! has_key(s:_args, "ptr"))     | let s:_args.ptr     = lh#marker#txt("p")    | endif
 VimL: if (! has_key(s:_args, "lhs"))     | let s:_args.lhs     = "new_".s:_args.ptr | endif
-VimL: if (! has_key(s:_args, "type"))    | let s:_args.type    = Marker_Txt("T")    | endif
-VimL: if (! has_key(s:_args, "count"))   | let s:_args.count   = Marker_Txt("count")| endif
+VimL: if (! has_key(s:_args, "type"))    | let s:_args.type    = lh#marker#txt("T")    | endif
+VimL: if (! has_key(s:_args, "count"))   | let s:_args.count   = lh#marker#txt("count")| endif
 VimL: if (! has_key(s:_args, "size"))    | let s:_args.size    = s:_args.count." * sizeof(".s:_args.type.")" | endif
 VimL: if (! has_key(s:_args, "realloc")) | let s:_args.realloc = "realloc"          | endif
 VimL: if (! has_key(s:_args, "free"))    | let s:_args.free    = "free"             | endif

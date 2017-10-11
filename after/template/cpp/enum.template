@@ -5,7 +5,7 @@ VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-VimL: let s:enum_name = inputdialog('Name of the enum class ?', Marker_Txt(expand('%:t:r')))
+VimL: let s:enum_name = inputdialog('Name of the enum class ?', lh#marker#txt(expand('%:t:r')))
 struct ¡s:enum_name¡ {
     enum type { <+values+>, MAX__ };
     static type next(type e_) {

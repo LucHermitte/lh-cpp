@@ -1,10 +1,10 @@
 VimL:" Doxygen local group File-Template, Luc Hermitte, 26th Jan 2011
-VimL:" hint: Doxygen local group 
+VimL:" hint: Doxygen local group
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:reindent     = 1
 /**<+lh#dox#tag("name ")+><+group-name+> */
-VimL: let s:text = s:Surround(1, "<++>")
-VimL: let s:text = s:text != "<++>" ? ("\n".s:text) : Marker_Txt()
+MuT:  let s:text = s:Surround(1, "<++>")
+VimL: let s:text = s:text != "<++>" ? ("\n".s:text) : lh#marker#txt()
 //@{<+s:text+>
-//@}<++>
+//@}<+s:TerminalPlaceHolder()+>
