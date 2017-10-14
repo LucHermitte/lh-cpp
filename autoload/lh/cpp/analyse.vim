@@ -5,7 +5,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      08th Apr 2016
-" Last Update:  02nd Jun 2017
+" Last Update:  14th Oct 2017
 "------------------------------------------------------------------------
 " Description:
 "       Various functions to analyse C and C++ codes
@@ -110,7 +110,7 @@ function! lh#cpp#analyse#token(name, ...) abort
     if !empty(defs)
       let t_types = lh#list#copy_if(defs, [], 'v:1_.kind == "g"')
       let var_kinds = 'lvx'
-      if lh#tags#ctags_flavour() == 'utags'
+      if lh#tags#ctags_flavour() =~ 'utags'
         let var_kinds .= 'z' " parameters
       endif
       let t_vars  = lh#list#copy_if(defs, [], 'v:1_.kind =~ "['.var_kinds.']"')
