@@ -1,4 +1,4 @@
-flavor 'LucHermitte/lh-vim-lib', '>= 4.0.0'
+flavor 'LucHermitte/lh-vim-lib', '>= 4.1.0'
 flavor 'LucHermitte/lh-brackets', '>= 3.1.1'
 flavor 'LucHermitte/lh-style'
 flavor 'LucHermitte/lh-dev'

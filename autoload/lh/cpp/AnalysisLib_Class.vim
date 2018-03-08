@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  08th Dec 2016
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -179,7 +179,7 @@ function! s:CurrentScope(bMove, scope_type)
 
       " Then, check whether this is the kind of scoping block we are looking for
       let start = substitute(s:both_part, '(', '%(', 'g'). s:{a:scope_type}_open
-      let last_pos = getcurpos()
+      let last_pos = lh#position#getcur()
       let result = searchpair(
             \ start, '', '{', 'bW',
             \ s:k_skip_comments.'&&'.s:k_skip_using_ns)
@@ -202,7 +202,7 @@ function! s:CurrentScope(bMove, scope_type)
           call s:Verbose('|  +-> This was searched scope => return %1', result)
           return result
         endif
-        call s:Verbose('|   +-> The previous scope start (%1) is not compatible with the current scope found (%2)', getcurpos(), last_pos)
+        call s:Verbose('|   +-> The previous scope start (%1) is not compatible with the current scope found (%2)', lh#position#getcur(), last_pos)
         call setpos('.', last_pos) " go back and search again
       endif
     endwhile
