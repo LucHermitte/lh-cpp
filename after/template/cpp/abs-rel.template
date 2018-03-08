@@ -8,7 +8,7 @@ VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 VimL: let s:absclsname = inputdialog('Name of the "absolute" class ?')
 VimL: let s:relclsname = inputdialog('Name of the "relative" class ?')
-VimL: let s:sharedclsname = inputdialog('Name of the "shared" class ? (empty=none)', s:absclsname . lh#dev#naming#param("Impl"))
+VimL: let s:sharedclsname = inputdialog('Name of the "shared" class ? (empty=none)', s:absclsname . lh#naming#param("Impl"))
 VimL: let s:issharingimpl = ! empty(s:sharedclsname)
 VimL: let s:defaultisenough = lh#ui#confirm( "Are the implicitly generated default constructor, copy-constructor, destructor, and assignement operatror enough?", "&Yes\n&No", 1) == 1
 VimL: let s:istemplate = lh#ui#confirm("Are the classes template ?", "&Yes\n&No", 2) == 1
@@ -19,9 +19,9 @@ VimL: let s:tmpl2_type = lh#marker#txt("U")
 VimL: let s:tmpl2_decl = lh#ui#if(s:istemplate, "template <".lh#marker#txt("typename")." ".s:tmpl2_type.">\n", "")
 VimL: let s:tmpl2 = lh#ui#if(s:istemplate, "<".s:tmpl2_type.">", "")
 VimL: let s:typename = lh#ui#if(s:istemplate, "typename ", "")
-VimL: let s:lhs = lh#dev#naming#param("lhs")
-VimL: let s:rhs = lh#dev#naming#param("rhs")
-VimL: let s:coeff = lh#dev#naming#param("coeff")
+VimL: let s:lhs = lh#naming#param("lhs")
+VimL: let s:rhs = lh#naming#param("rhs")
+VimL: let s:coeff = lh#naming#param("coeff")
 VimL:"
 VimL:"
 <+s:tmpl_decl+>class <+s:absclsname+>;

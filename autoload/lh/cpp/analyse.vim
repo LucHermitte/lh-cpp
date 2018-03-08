@@ -5,7 +5,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      08th Apr 2016
-" Last Update:  14th Oct 2017
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:
 "       Various functions to analyse C and C++ codes

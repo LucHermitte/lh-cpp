@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  06th Oct 2017
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -485,8 +485,8 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
         \ . (proto.final ? ' final' : '')
         \ . (proto.overriden ? ' override' : '')
         \ . "{}"
-  let styles = lh#dev#style#get(&ft)
-  let styled = lh#dev#style#apply(unstyled)
+  let styles = lh#style#get(&ft)
+  let styled = lh#style#apply(unstyled)
 
   let res = unstyled
   if !empty(styles)

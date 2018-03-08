@@ -9,7 +9,7 @@ MuT:  if s:how =~ "deleted\\|defaulted"
 <+s:clsname+>(<+s:clsname+> const&) <+lh#cpp#snippets#{s:how}()+>;
 MuT:  else
 VimL:   let s:lead = lh#dox#comment_leading_char()." "
-VimL:   let s:param = lh#dev#naming#param("rhs")
+VimL:   let s:param = lh#naming#param("rhs")
 VimL:   let s:fn_comments = { }
 VimL:   let s:fn_comments.brief = "Copy constructor."
 VimL:   let s:fn_comments.throw = {"optional": 1}
@@ -18,7 +18,7 @@ VimL:   let s:fn_comments.param = [{"dir": "in", "name": (s:param), "text": "sou
 VimL:   call s:Include("function-comment", "cpp/internals",s:fn_comments)
 MuT:    let s:attributes = s:Param("attributes", lh#option#unset())
 MuT:    if lh#option#is_set(s:attributes) && !empty(s:attributes)
-MuT:      let s:definition = (len(s:attributes)>1?"\n": "").": ".join(map(copy(s:attributes), 'lh#dev#naming#member(v:val.name)."(".lh#cpp#snippets#duplicate_param(s:param.".".lh#dev#naming#member(v:val.name), v:val.type).")"'), "\n, ").'{}'
+MuT:      let s:definition = (len(s:attributes)>1?"\n": "").": ".join(map(copy(s:attributes), 'lh#naming#member(v:val.name)."(".lh#cpp#snippets#duplicate_param(s:param.".".lh#naming#member(v:val.name), v:val.type).")"'), "\n, ").'{}'
 MuT:    else
 MuT:      let s:definition = ';'
 MuT:    endif

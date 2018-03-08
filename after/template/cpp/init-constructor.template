@@ -11,7 +11,7 @@ VimL: let s:fn_comments.throw = {"optional": 1}
 VimL: " let s:fn_comments.text  = []
 MuT:  if lh#option#is_set(s:parameters)
 MuT:    let s:parameterList = lh#cpp#snippets#build_param_list(s:parameters)
-MuT:    let s:definition = (empty(s:parameters)? "" : (len(s:parameters)>1?"\n": "").": ").join(map(copy(s:parameters), 'lh#dev#naming#member(v:val.name)."(".lh#dev#naming#param(v:val.name).")"'), "\n, ").'{}'
+MuT:    let s:definition = (empty(s:parameters)? "" : (len(s:parameters)>1?"\n": "").": ").join(map(copy(s:parameters), 'lh#naming#member(v:val.name)."(".lh#naming#param(v:val.name).")"'), "\n, ").'{}'
 VimL:   for param in s:parameters | call s:fn_comments.add_param(param) | unlet param | endfor
 MuT:  else
 MuT:    let s:parameterList = lh#marker#txt('ctr-parameters')

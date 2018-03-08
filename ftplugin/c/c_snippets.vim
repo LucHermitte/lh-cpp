@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      14th Apr 2008
-" Last Update:  13th Jan 2017
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:  Snippets of C Control Statements
 "
@@ -81,10 +81,10 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
         \ '\<c-f\>if(!cursorhere!){!mark!}!mark!')<cr>
 "--,if    insert "if" statement
   xnoremap <buffer> <silent> <localleader>if
-        \ <c-\><c-n>@=lh#dev#style#surround('if(!cursorhere!){', '}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('if(!cursorhere!){', '}!mark!',
         \ 0, 1, '', 1, 'if ')<cr>
   xnoremap <buffer> <silent> <LocalLeader><localleader>if
-        \ <c-\><c-n>@=lh#dev#style#surround('if(', '!cursorhere!) {!mark!}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('if(', '!cursorhere!) {!mark!}!mark!',
         \ 0, 1, '', 1, 'if ')<cr>
       nmap <buffer> <LocalLeader>if V<LocalLeader>if
       nmap <buffer> <LocalLeader><LocalLeader>if
@@ -95,10 +95,10 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
         \ '\<c-f\>else if(!cursorhere!) {!mark!}!mark!')<cr>
 "--,elif  insert else clause of if statement with following if statement
   xnoremap <buffer> <silent> <localleader>elif
-        \ <c-\><c-n>@=lh#dev#style#surround('else if(!cursorhere!){', '}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('else if(!cursorhere!){', '}!mark!',
         \ 0, 1, '', 1, 'elif ')<cr>
   xnoremap <buffer> <silent> <localleader><localleader>elif
-        \ <c-\><c-n>@=lh#dev#style#surround('else if(', '!cursorhere!){!mark!}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('else if(', '!cursorhere!){!mark!}!mark!',
         \ 0, 1, '', 1, 'elif ')<cr>
       nmap <buffer> <localleader><LocalLeader>elif
             \ <Plug>C_SelectExpr4Surrounding<localleader><LocalLeader>elif
@@ -109,7 +109,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
         \ '\<c-f\>else{!cursorhere!}!mark!', 'if')<cr><c-f>
 "--,else  insert else clause of if statement
   xnoremap <buffer> <silent> <localleader>else
-        \ <c-\><c-n>@=lh#dev#style#surround('else {', '}',
+        \ <c-\><c-n>@=lh#style#surround('else {', '}',
         \ 0, 1, '``l', 1, 'else ')<cr>
       nmap <buffer> <LocalLeader>else V<LocalLeader>else
 
@@ -123,7 +123,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
       \ })<cr>
 "--,for   insert "for" statement
   xnoremap <buffer> <silent> <localleader>for
-        \ <c-\><c-n>@=lh#dev#style#surround('for(!cursorhere!;!mark!;!mark!){', '}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('for(!cursorhere!;!mark!;!mark!){', '}!mark!',
         \ 0, 1, '', 1, 'for ')<cr>
       nmap <buffer> <LocalLeader>for V<LocalLeader>for
 
@@ -133,11 +133,11 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
         \ '\<c-f\>while(!cursorhere!){!mark!}!mark!')<cr>
 "--,while insert "while" statement
   xnoremap <buffer> <silent> <localleader>wh
-        \ <c-\><c-n>@=lh#dev#style#surround('while(!cursorhere!){', '}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('while(!cursorhere!){', '}!mark!',
         \ 0, 1, '', 1, 'while ')<cr>
 
   xnoremap <buffer> <silent> <localleader><localleader>wh
-        \ <c-\><c-n>@=lh#dev#style#surround('while(',
+        \ <c-\><c-n>@=lh#style#surround('while(',
         \ '!cursorhere!){!mark!}!mark!',
         \ 0, 1, '', 1, 'while ')<cr>
   " Note: \<esc\>lcw is used to strip every spaces at the beginning of the
@@ -152,7 +152,7 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
         \ '\<c-f\>do{!cursorhere!}while(!mark!);!mark!')<cr><c-f>
 "--,do insert "do" statement
   xnoremap <buffer> <silent> <localleader>do
-        \ <c-\><c-n>@=lh#dev#style#surround('do{', '!cursorhere!}while(!mark!);!mark!',
+        \ <c-\><c-n>@=lh#style#surround('do{', '!cursorhere!}while(!mark!);!mark!',
         \ 0, 1, '', 1, 'do ')<cr>
   xnoremap <buffer> µ
         \ <c-\><c-n>@=SurroundBySubstitute('do{', '!cursorhere!}while(!mark!);!mark!',
@@ -179,13 +179,13 @@ nnoremap <Plug>C_SelectExpr4Surrounding :call lh#cpp#snippets#select_expr_4_surr
         \ '\<c-f\>switch(!cursorhere!){!mark!}!mark!')<cr>
 "--,switch insert "switch" statement
   xnoremap <buffer> <silent> <localleader>switch
-        \ <c-\><c-n>@=lh#dev#style#surround('switch(!cursorhere!){case !mark!:',
+        \ <c-\><c-n>@=lh#style#surround('switch(!cursorhere!){case !mark!:',
         \ '}!mark!', 1, 1, '', 1, 'switch ')<cr>
       nmap <buffer> <LocalLeader>switch V<LocalLeader>switch
 
 "--- {\n} --------------------------------------------------------{{{4
   " xnoremap <buffer> <silent> <localleader>{
-        " \ <c-\><c-n>@=lh#dev#style#surround('{!cursorhere!', '}!mark!',
+        " \ <c-\><c-n>@=lh#style#surround('{!cursorhere!', '}!mark!',
         " \ 1, 1, '', 1, ',{ ')<cr>
       " nmap <buffer> <LocalLeader>{ V<LocalLeader>{
 

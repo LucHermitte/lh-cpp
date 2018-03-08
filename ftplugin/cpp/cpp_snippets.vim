@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      15th Apr 2008
-" Last Update:  11th Jan 2017
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:  Snippets of C++ Control Statements
 "
@@ -68,7 +68,7 @@ inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippet
   " Inoreabbr <buffer> namespace <C-R>=lh#cpp#snippets#insert_if_not_after('namespace ',
         " \ '\<c-f\>namespace !cursorhere! {!mark!}!mark!', 'using')<cr>
   vnoremap <buffer> <silent> <LocalLeader>ns
-        \ <c-\><c-n>@=lh#dev#style#surround('namespace !cursorhere!{', '!mark!}!mark!',
+        \ <c-\><c-n>@=lh#style#surround('namespace !cursorhere!{', '!mark!}!mark!',
         \ 0, 1, '', 1, 'namespace ')<cr>
       nmap <buffer> <LocalLeader>ns V<LocalLeader>ns
 
@@ -88,7 +88,7 @@ inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippet
         " \ '\<c-f\>try {!cursorhere!} catch (!mark!) {!mark!}!mark!')<cr>
 "--,try insert "try - catch" statement
   vnoremap <buffer> <LocalLeader>try
-        \ <c-\><c-n>@=lh#dev#style#surround('try{!cursorhere!', '!mark!}catch(!mark!){!mark!}',
+        \ <c-\><c-n>@=lh#style#surround('try{!cursorhere!', '!mark!}catch(!mark!){!mark!}',
         \ 0, 1, '', 1, 'try ')<cr>
       nmap <buffer> <LocalLeader>try V<LocalLeader>try
 
@@ -97,11 +97,11 @@ inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippet
   Inoreabbr <buffer> catch <C-R>=lh#cpp#snippets#def_abbr('catch ',
         \ '\<c-f\>catch(!cursorhere!){!mark!}!mark!')<cr>
   vnoremap <buffer> <LocalLeader>catch
-        \ <c-\><c-n>@=lh#dev#style#surround('catch(!cursorhere!){', '!mark!}',
+        \ <c-\><c-n>@=lh#style#surround('catch(!cursorhere!){', '!mark!}',
         \ 0, 1, '', 1, 'catch ')<cr>
       nmap <buffer> <LocalLeader>catch V<LocalLeader>catch
   vnoremap <buffer> <LocalLeader><LocalLeader>catch
-        \ <c-\><c-n>@=lh#dev#style#surround('catch(', '!cursorhere!){!mark!}',
+        \ <c-\><c-n>@=lh#style#surround('catch(', '!cursorhere!){!mark!}',
         \ 0, 1, '', 1, 'catch ')<cr>
       nmap <buffer> <LocalLeader><LocalLeader>catch V<LocalLeader><LocalLeader>catch
 
@@ -122,7 +122,7 @@ let s:k_cast = {
 " 2,*c -> surround selection/current with "cast<«selection»>(«cursor»)>"
 for cast in ['sc', 'cc', 'rc', 'dc', 'lc']
   exe 'vnoremap <silent> <buffer> <LocalLeader>'.cast
-        \ ." <c-\\><c-n>@=lh#dev#style#surround('".s:k_cast[cast]."<!cursorhere!>(', '!mark!)',"
+        \ ." <c-\\><c-n>@=lh#style#surround('".s:k_cast[cast]."<!cursorhere!>(', '!mark!)',"
         \ ."0, 0, '', 1, '".s:k_cast[cast]."<')<cr>"
   exe '    nmap <silent> <buffer> <LocalLeader>'.cast.' viw<LocalLeader>'.cast
 endfor

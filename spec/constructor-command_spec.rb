@@ -20,7 +20,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
-    expect(vim.echo('lh#dev#style#clear()')).to eq '0'
+    expect(vim.echo('lh#style#clear()')).to eq '0'
     vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
     vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
     vim.command('UseStyle empty_braces=empty -ft=c')

@@ -15,9 +15,9 @@ VimL:"
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  let s:_exception_type = lh#dev#option#get('exception_type', &ft, 'std::runtime_error')
+MuT:  let s:_exception_type = lh#ft#option#get('exception_type', &ft, 'std::runtime_error')
 MuT:  let s:_exception_txt  = empty(s:CmdLineParams()) ? lh#marker#txt('text') : (s:CmdLineParams()[0])
-MuT:  let s:_exception_args = lh#function#bind(lh#dev#option#get('exception_args', &ft, 'v:1_'))
+MuT:  let s:_exception_args = lh#function#bind(lh#ft#option#get('exception_args', &ft, 'v:1_'))
 MuT:  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
 <+lh#dox#throw(lh#marker#txt(s:_exception_type))+><++>
 MuT:  else

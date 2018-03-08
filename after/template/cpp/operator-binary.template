@@ -16,7 +16,7 @@ VimL: "1.1.3- otherwise, we try to get the name of the last class found
 MuT:      let s:clsname = lh#cpp#AnalysisLib_Class#search_closest_class(line('.'))
 VimL: "1.1.4- otherwise, we ask it to the end-user, default = filename minus extensions
 MuT:      if empty(s:clsname)
-MuT:        let s:clsname = lh#ui#input("class name ?", lh#marker#txt(lh#dev#naming#type(expand("%:t:r"))))
+MuT:        let s:clsname = lh#ui#input("class name ?", lh#marker#txt(lh#naming#type(expand("%:t:r"))))
 MuT:      endif
 MuT:      let s:_friend = ''
 MuT:    else
@@ -28,8 +28,8 @@ MuT:  endif
 VimL: "1.2- the operator
 MuT:  let s:_op      = s:Param('operator', lh#marker#txt('X'))
 VimL: "1.3- operator parameters
-MuT:  let s:_lhs     = lh#dev#naming#param('lhs')
-MuT:  let s:_rhs     = lh#dev#naming#param('rhs')
+MuT:  let s:_lhs     = lh#naming#param('lhs')
+MuT:  let s:_rhs     = lh#naming#param('rhs')
 VimL: "
 VimL:" 2- the code
 <+s:_friend+><+s:clsname+> operator<+s:_op+>(<+s:clsname+> <+s:_lhs+>, <+s:clsname+> const& <+s:_rhs+>){ return <+s:_lhs+> <+s:_op+>= <+s:_rhs+>; }

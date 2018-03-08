@@ -1,10 +1,10 @@
 VimL:" clonable-class File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 27th Nov 2015
 VimL:" hint: Base class with clone function -- duplicable object within a hierarchy
-MuT:  let s:clsname     = s:Param('clsname', lh#marker#txt(lh#dev#naming#type(expand('%:t:r'))))
+MuT:  let s:clsname     = s:Param('clsname', lh#marker#txt(lh#naming#type(expand('%:t:r'))))
 MuT:  let s:functions = s:Param('functions', lh#cpp#snippets#new_function_list())
 MuT:  let s:parents     = s:Param('parents', [])
 MuT:  let s:pub_parents = filter(copy(s:parents), '!empty(lh#cpp#snippets#_filter_functions(v:val, "public"))')
-MuT:  let s:clone_funcname = lh#dev#naming#function('clone')
+MuT:  let s:clone_funcname = lh#naming#function('clone')
 VimL: " s:clsname in not yet under ctags DB, but fortunately we know the first level parents
 MuT:  let s:root_clones = lh#cpp#override#root_function(lh#list#flatten(map(copy(s:pub_parents), 'keys(v:val)')), s:clone_funcname)
 VimL: let g:root_clones = s:root_clones

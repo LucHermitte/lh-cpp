@@ -7,7 +7,7 @@
 let s:k_version = 220
 " Version:	2.2.0
 " Created:      22nd Feb 2011
-" Last Update:  14th Mar 2017
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -202,7 +202,7 @@ function! lh#dox#new_function(brief) abort
     " dict with: "dir", "name", "text"
     " if no "dir", but a "type" => compute "dir"
     let param = a:param
-    let name = lh#dev#naming#param(param.name)
+    let name = lh#naming#param(param.name)
     if !has_key(param, 'dir')
       let param.dir = lh#dox#_parameter_direction(param.type)
     endif

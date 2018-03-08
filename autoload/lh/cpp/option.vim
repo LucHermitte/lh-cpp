@@ -2,9 +2,9 @@
 " File:         autoload/lh/cpp/option.vim                        {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      2.0.0b16
+" Version:      2.2.0
 " Created:      05th Apr 2012
-" Last Update:  06th Oct 2017
+" Last Update:  08th Mar 2018
 "------------------------------------------------------------------------
 " Description:
 "       Options for lh-cpp
@@ -80,11 +80,11 @@ endfunction
 " # Deprecated {{{2
 let s:deprecated_notified = 0
 function! s:Deprecated()
-  echomsg "lh#cpp#option#nl_before_bracket() API has been deprecated, please use lh#dev#style#*() and AddStyle instead."
+  echomsg "lh#cpp#option#nl_before_bracket() API has been deprecated, please use lh#style#*() and AddStyle instead."
   let s:deprecated_notified = 1
 endfunction
 
-
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
