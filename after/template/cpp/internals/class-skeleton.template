@@ -27,7 +27,7 @@ VimL:   for attr in s:attributes | for fct in get(attr, 'functions', []) | let s
 VimL:   for attr in s:attributes | let attr.type_info = lh#cpp#types#get_info(attr.type, {'type': attr.type}) | let attr.type = attr.type_info.typename_for_header() |endfor
 VimL:   " Set attributes as parameters to init-ctr, unless already set
 MuT:    let s:init_constructor = s:functions.get1({'kind' : 'init-constructor'})
-VimL:   call s:init_constructor.add_new({'parameters': lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#ConstCorrectType(v:val)'), 'visibility': 'public'})
+VimL:   call s:init_constructor.add_new({'parameters': lh#list#map_on(deepcopy(s:attributes), 'type', 'lh#dev#cpp#types#const_correct_type(v:val)'), 'visibility': 'public'})
 VimL:   " Remove default-constructor unless already set visible
 MuT:    let s:default_constructor = s:Param('default-constructor', {})
 VimL:   call lh#dict#add_new(s:default_constructor, {'visibility': 'none'})

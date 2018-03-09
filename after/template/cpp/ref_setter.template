@@ -11,6 +11,6 @@ MuT:  if !lh#dev#cpp#types#IsPointer(s:attribute.type)
 VimL:   throw "ref_setter snippet: ".s:attribute.type." is not recognized as a pointer type"
 MuT:  else
 MuT:    let s:in_type = lh#dev#cpp#types#remove_ptr(s:attribute.type)
-VimL:   let s:in_type = lh#dev#cpp#types#ConstCorrectType(s:in_type)
+VimL:   let s:in_type = lh#dev#cpp#types#const_correct_type(s:in_type)
 void <+lh#naming#setter(s:attrb_name)+>(<+s:in_type+> <+s:attrb_param+>){*<+lh#naming#member(s:attrb_name)+> = <+s:attrb_param+>;}
 MuT:  endif

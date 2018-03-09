@@ -13,5 +13,5 @@ VimL:   let s:ret_expr = '*'.s:ret_expr
 MuT:  else
 MuT:    let s:ret_type = s:attribute.type
 MuT:  endif
-VimL: let s:ret_type = lh#dev#cpp#types#ConstCorrectType(s:ret_type)
+VimL: let s:ret_type = lh#dev#cpp#types#const_correct_type(s:ret_type)
 <+s:ret_type+> <+lh#naming#getter(s:attrb_name)+>() const{return <+s:ret_expr+>;}
