@@ -31,7 +31,7 @@ RSpec.describe "C++ check dependencies are loaded", :cpp, :deps do
     expect(vim.echo('g:lh#mut#dirs#cache')).to match(/cpp/)
     # pp vim.echo('g:lh#mut#dirs#cache')
 
-    expect(vim.echo('lh#dev#naming#type("toto")')).to eq "Toto"
+    expect(vim.echo('lh#naming#type("toto")')).to eq "Toto"
   end
 
 end
