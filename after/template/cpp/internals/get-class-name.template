@@ -9,4 +9,9 @@ MuT:    if empty(s:clsname)
 VimL: "3- otherwise, we ask it to the end-user, default = filename minus extensions
 MuT:      let s:clsname = lh#ui#input("class name ?", lh#marker#txt(lh#naming#type(expand("%:t:r"))))
 MuT:    endif
+VimL: "4- reinject the new clsname into the arguments
+VimL: "   However, as this template-file is included, arguments will be popped
+VimL: "   => clsname will be lost in crt context
+VimL: "   => it has to be injected in parent context! (yes, this is quite dirty!)
+VimL:   call s:InjectInParentArgs({'clsname': (s:clsname)})
 MuT:  endif
