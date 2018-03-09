@@ -7,7 +7,7 @@ VimL: let s:reindent     = 1
 VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL: let s:how = get(s:Param("assignment-operator", {}), "how", "")
 MuT:  if s:how =~ "deleted\\|defaulted"
-<+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+>) <+lh#cpp#snippets#{s:how}()+>;
+<+s:clsname+>& operator=(<+s:clsname+> const&) <+lh#cpp#snippets#{s:how}()+>;
 MuT:  else
 MuT:    let s:use_copyandswap0 =  s:Param('use_copy_and_swap', lh#option#get('cpp_use_copy_and_swap'))
 VimL:   let s:use_copyandswap =  lh#option#is_set(s:use_copyandswap0) ? s:use_copyandswap0 : lh#ui#confirm("Use copy-and-swap idiom?", "Yes\nNo", 1)
@@ -26,6 +26,6 @@ MuT:        let s:definition = '{'.join(map(copy(s:attributes), 'lh#naming#membe
 MuT:      else
 MuT:        let s:definition = ';'
 MuT:      endif
-<+s:clsname+>& operator=(<+lh#dev#cpp#types#ConstCorrectType(s:clsname)+> <+s:rhs+>)<+s:definition+>
+<+s:clsname+>& operator=(<+s:clsname+> const& <+s:rhs+>)<+s:definition+>
 MuT:    endif
 MuT: endif
