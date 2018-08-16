@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  08th Mar 2018
+" Last Update:  16th Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -48,6 +48,7 @@ let s:k_version = '220'
 "       (*) Use new alternate-lite API to determine the destination file
 "       (*) Update options to support specialization
 "       (*) Fix extra space introduced by `:MOVETOIMPL`
+"       (*) Update to new lh-tags v3.0 and lh-dev new API
 " TODO:
 "       (*) add knowledge about C99/C++11 new numeric types
 "       (*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -438,7 +439,7 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
 
   " 4- Add scope to other types {{{4
   try
-    let ltags = lh#dev#start_tag_session()
+    let ltags = lh#dev#start_tag_session().tags
     " 4.1- ... return type
     let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
     let all_rets = lh#list#get(all_ret_dicts, 'class', '')
