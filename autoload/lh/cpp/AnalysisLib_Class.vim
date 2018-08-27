@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  08th Dec 2016
+" Last Update:  27th Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -303,7 +303,7 @@ function! lh#cpp#AnalysisLib_Class#search_closest_class(line)
     let tags = filter(copy(tags), 'v:val.kind=~"[sc]" && v:val.line < a:line')
     " and they are sorted by lines numbers...
     if empty(tags)
-      call lh#common#error_masg("No class defintion upstream")
+      call lh#common#error_msg("No class definition upstream")
       return ''
     else
       return tags[-1].name
