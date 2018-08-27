@@ -1,14 +1,24 @@
 // nnoremap µ :echo lh#cpp#AnalysisLib_Function#AnalysePrototype(lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0))<cr>
 // nnoremap £ :echo lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0)<cr>
 
+enum Ee { E_a, E_b};
+enum class Ec {a, c};
 
 // test refactorinng
 void f(int z) {
     int i = 42 + z;
     printf("ttoto %d\n", i);
     int j = i / 2 ;
-}
 
+    Ee ee;
+}
+Ec ec;
+int ec;
+
+
+struct MyEnum {
+    enum type { E1, E2, MAX__};
+};
 
 void f(int)
 {

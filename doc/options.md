@@ -615,3 +615,9 @@ Wrapped in API function [`lh#dox#throw()`](API.md#lh-dox-throw)
 Version of the project. Can be used in Doxygen comment through API function
 [`lh#dox#since()`](API.md#lh-dox-since).
 
+
+### TODO: Options to be documented
+##### `(bpg):({ft}_)place_const_after_type`
+Used in `lh#dev#cpp#types#const_correct_type()`
+
+Default: true

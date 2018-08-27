@@ -131,7 +131,7 @@ if (!exists('g:alternateSearchPath'))
   let g:alternateSearchPath = s:alternateSearchPath_default
 endif
 function! s:alternateSearchPath()
-  return lh#dev#option#get('alternateSearchPath', &ft, s:alternateSearchPath_default)
+  return lh#ft#option#get('alternateSearchPath', &ft, s:alternateSearchPath_default)
 endfunction
 
 " If this variable is true then a.vim will not alternate to a file/buffer which

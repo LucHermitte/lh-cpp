@@ -4,7 +4,7 @@ VimL: let s:value_start = 'Â¡'
 VimL: let s:value_end   = s:value_start
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-MuT:  let s:array_size = lh#dev#option#get('array_size', &ft)
+MuT:  let s:array_size = lh#ft#option#get('array_size', &ft)
 MuT:  if lh#option#is_unset(s:array_size) && lh#cpp#use_cpp17()
 MuT:      let s:array_size = {'file': '<iterator>', 'funcname': 'std::size(%1)'}
 MuT:  endif

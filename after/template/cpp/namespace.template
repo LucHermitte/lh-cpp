@@ -4,7 +4,7 @@ VimL:" Options:
 VimL:" - snippet parameter: {'namespace' : xxx}
 VimL:" - (bg):[cpp_]project_namespace
 VimL:" - (bg):cpp_use_nested_namespace (bool) when [bg]:cpp_std_flavour=/CXXFLAGS/CMake match C++17
-VimL:" - lh#dev#style options
+VimL:" - lh#style options
 VimL: let s:value_start  = '¡'
 VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1

@@ -7,7 +7,7 @@ VimL: let s:reindent     = 1
 VimL: " in case the class name is already known, no need to extract it
 VimL: call s:Include('get-class-name', 'cpp/internals')
 VimL:"
-VimL: let s:rhs = lh#dev#naming#param("rhs")
+VimL: let s:rhs = lh#naming#param("rhs")
 VimL: let s:fn_comments = lh#dox#new_function("Assignment operator")
 VimL: let s:fn_comments.text  = []
 VimL: let s:fn_comments.note  = [] " => empty line

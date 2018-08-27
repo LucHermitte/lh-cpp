@@ -5,7 +5,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      08th Apr 2016
-" Last Update:  02nd Jun 2017
+" Last Update:  16th Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       Various functions to analyse C and C++ codes
@@ -68,13 +68,15 @@ function! lh#cpp#analyse#var_type(name,...) abort
       " class)
       let cleanup = cleanup
             \.register('call lh#dev#end_tag_session()')
-      let tags = lh#dev#start_tag_session()
+      let session    = lh#dev#start_tag_session()
+      let [var_kind] = session.indexer.get_kind_flags(&ft, ['variable', 'v', 'l'])
+      let tags       = session.tags
       let pat = '.*\<'.a:name.'\>.*'
       " FIXME: get the scopename of the current function as well=> ClassName::foobar()
       let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), 'class')
       let defs = filter(copy(tags), 'v:val.name =~ classname."::".pat || (v:val.name =~ pat && s:GetClassName(v:val) =~ classname)')
       call s:Verbose('Attributes of %1 matching %2: %3', classname, pat, defs)
-      let t_vars  = lh#list#copy_if(defs, [], 'v:1_.kind =~ "[lvx]"')
+      let t_vars  = filter(copy(defs), 'index(var_kind,  v:val.kind)>=0')
       if empty(t_vars)
         return call('s:NoDecl', [a:name]+a:000)
       elseif len(t_vars) == 1
@@ -95,10 +97,13 @@ function! lh#cpp#analyse#var_type(name,...) abort
 endfunction
 
 " Function: lh#cpp#analyse#token(name, ...) {{{3
+" TODO: finish
 function! lh#cpp#analyse#token(name, ...) abort
   let cleanup = lh#on#exit()
         \.register('call lh#dev#end_tag_session()')
-  let tags = lh#dev#start_tag_session()
+  let session    = lh#dev#start_tag_session()
+  let tags       = session.tags
+  let type_kinds = session.indexer.get_kind_flags('cpp', 'classes\|structure names\|enumeration names\|typedefs')
   try
     " 1- check whether its a variable or a type
     " 1.1- ask clang, if available
@@ -110,7 +115,7 @@ function! lh#cpp#analyse#token(name, ...) abort
     if !empty(defs)
       let t_types = lh#list#copy_if(defs, [], 'v:1_.kind == "g"')
       let var_kinds = 'lvx'
-      if lh#tags#ctags_flavour() == 'utags'
+      if lh#tags#ctags_flavour() =~ 'utags'
         let var_kinds .= 'z' " parameters
       endif
       let t_vars  = lh#list#copy_if(defs, [], 'v:1_.kind =~ "['.var_kinds.']"')
