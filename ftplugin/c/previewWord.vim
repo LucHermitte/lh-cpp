@@ -7,9 +7,9 @@
 " Version:      2.2.0
 let s:k_version = '2.2.0'
 " Created:      ?
-" Last Update:  15th Feb 2017
+" Last Update:  27th Aug 2018
 "------------------------------------------------------------------------
-" Description:  «description» {{{
+" Description:  {{{
 " Have you ever tried to call a function which parameters you have forgotten?
 " Especially those long named and with long parameter list GTK+ functions like
 " gtk_menu_item_image_from_stock_new(..........) !!!
@@ -62,7 +62,7 @@ let s:toggle_menu = {
       \}
 call lh#menu#def_toggle_item(s:toggle_menu)
 nnoremap <Plug>TogglePreviewIfHold :Toggle Cpreview_if_hold<cr>
-call lh#mapping#plug({'lhs': '<localleader>tpw', 'rhs': '<Plug>TogglePreviewIfHold'}, 'n')
+call lh#mapping#plug({'lhs': '<localleader>ctpw', 'rhs': '<Plug>TogglePreviewIfHold'}, 'n')
 
 " autocommands {{{2
 augroup PreviewWord
