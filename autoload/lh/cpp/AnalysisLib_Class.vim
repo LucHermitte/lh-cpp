@@ -156,7 +156,7 @@ endfunction
 let s:skip_comments = 'synIDattr(synID(line("."), col("."), 0), "name") =~?'
       \ . '"string\\|comment\\|doxygen"'
 
-function! s:SearchBracket()
+function! s:SearchBracket() abort
   let flag = 'bW'
   let res = searchpair('{', '', '}', flag, s:skip_comments)
   call s:Verbose('|   +-> s:SearchBracket("{", "", "}", "bW" -- from=%1) --> %2', getpos('.'), res)
@@ -166,7 +166,7 @@ endfunction
 let s:k_skip_comments = '(synIDattr(synID(line("."), col("."), 0), "name") '
       \ . '!~? "c\\%(pp\\)\\=Structure")'
 let s:k_skip_using_ns = '(getline(".") =~ "using\s*namespace")'
-function! s:CurrentScope(bMove, scope_type)
+function! s:CurrentScope(bMove, scope_type) abort
   call s:Verbose('+-> s:CurrentScope(%1) at %2', a:, getpos('.'))
   let flag = a:bMove ? 'bW' : 'bnW'
   let pos = 'call cursor(' . line('.') . ',' . col('.') . ')'
@@ -216,7 +216,7 @@ endfunction
 
 
 " obsolete
-function! s:CurrentScope000(bMove,scope_type)
+function! s:CurrentScope000(bMove,scope_type) abort
   let flag = a:bMove ? 'bW' : 'bnW'
   return searchpair(
         \ substitute(s:{a:scope_type}_part, '(', '%(', 'g')
@@ -230,7 +230,7 @@ endfunction
 " Search for a class definition (not forwarded definition) {{{
 " Checks whether lineNo is in between the '{' at line classStart and its
 " '}' counterpart ; in that case, returns "::".className
-function! s:SearchClassOrNamespaceDefinition(class_or_ns)
+function! s:SearchClassOrNamespaceDefinition(class_or_ns) abort
   call s:Verbose('s:SearchClassOrNamespaceDefinition(%1)', a:)
   let pos = 1
   let scope = ''
@@ -256,7 +256,7 @@ endfunction
 " Function: Cpp_SearchClassDefinition(lineNo [, bNamespaces])
 " Checks whether lineNo is in between the '{' at line classStart and its
 " '}' counterpart ; in that case, returns "::".className
-function! lh#cpp#AnalysisLib_Class#SearchClassDefinition(lineNo,...)
+function! lh#cpp#AnalysisLib_Class#SearchClassDefinition(lineNo,...) abort
   " let pos = a:lineNo
   exe a:lineNo
   let scope = s:SearchClassOrNamespaceDefinition('class')
@@ -272,7 +272,7 @@ endfunction
 "  - 'class'
 "  - 'namespace'
 "  - 'any'
-function! lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type)
+function! lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type) abort
   exe a:lineNo
   if a:scope_type =~ 'any\|##'
     let scope = s:SearchClassOrNamespaceDefinition('class')
@@ -293,7 +293,7 @@ endfunction
 " }}}
 " ==========================================================================
 " Function: lh#cpp#AnalysisLib_Class#search_closest_class(line) {{{
-function! lh#cpp#AnalysisLib_Class#search_closest_class(line)
+function! lh#cpp#AnalysisLib_Class#search_closest_class(line) abort
   " We can't use search('class|struct', b') as it will not distinguish
   " "class foo" from "template <class Foo> void f()"
   " So, we'll use ctags for now, and libclang in the future
@@ -316,12 +316,12 @@ endfunction
 " }}}
 " ==========================================================================
 " Search for templates specs <internal> {{{
-function! s:TemplateSpecs()
+function! s:TemplateSpecs() abort
 endfunction
 " }}}
 " ==========================================================================
 " Search for the direct base classes <internal> <deprecated> {{{
-function! s:BaseClasses0(pos)
+function! s:BaseClasses0(pos) abort
   " a- Retrieve the declaration: 'class xxx : yyy {' zone limits {{{
   let pos = a:pos
   let end_pos = line('$')
@@ -344,7 +344,7 @@ function! s:BaseClasses0(pos)
   " }}}
   return base
 endfunction
-function! lh#cpp#AnalysisLib_Class#BaseClasses0(lineNo)
+function! lh#cpp#AnalysisLib_Class#BaseClasses0(lineNo) abort
   exe a:lineNo
   let pos = s:CurrentScope(1, 'class')
   exe a:lineNo
@@ -360,18 +360,18 @@ endfunction
 " @todo get overidable functions
 " @todo follow typedefs
 
-function! lh#cpp#AnalysisLib_Class#GetClassTag(id)
+function! lh#cpp#AnalysisLib_Class#GetClassTag(id) abort
   call lh#common#error_msg("lh#cpp#AnalysisLib_Class#GetClassTag is deprecated, use lh#dev#class#get_class_tag() instead")
   return lh#dev#option#call('class#get_class_tag', &ft, a:id)
 endfunction
 
 
-function! lh#cpp#AnalysisLib_Class#FetchDirectParents(id)
+function! lh#cpp#AnalysisLib_Class#FetchDirectParents(id) abort
   call lh#common#error_msg("lh#cpp#AnalysisLib_Class#FetchDirectParents is deprecated, use lh#dev#class#fetch_direct_parents() instead")
   return lh#dev#option#call('class#fetch_direct_parents', &ft, a:id)
 endfunction
 
-function! lh#cpp#AnalysisLib_Class#Ancestors(id)
+function! lh#cpp#AnalysisLib_Class#Ancestors(id) abort
   call lh#common#error_msg("lh#cpp#AnalysisLib_Class#Ancestors is deprecated, use lh#dev#class#ancestors() instead")
   return lh#dev#option#call('class#ancestors', &ft, a:id)
 endfunction
@@ -382,7 +382,7 @@ endfunction
 " a:namespace_where_to_search is a hack because listing all element to extract
 " classes is very slow!
 " lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search [, recheck_namespace])
-function! lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search, ...)
+function! lh#cpp#AnalysisLib_Class#FetchDirectChildren(id, namespace_where_to_search, ...) abort
   call lh#common#error_msg("lh#cpp#AnalysisLib_Class#FetchDirectChildren is deprecated, use lh#dev#class#fetch_direct_children() instead")
   return lh#dev#option#call('class#fetch_direct_children', &ft, a:id)
 endfunction
@@ -393,7 +393,7 @@ endfunction
 " Function: lh#cpp#AnalysisLib_Class#used_namespaces([up_to]) {{{3
 " @return list of imported namespaces
 " @todo take the "namespace xx {" scop into account
-function! lh#cpp#AnalysisLib_Class#used_namespaces(...)
+function! lh#cpp#AnalysisLib_Class#used_namespaces(...) abort
   let up_to_line = (a:0>0) ? (a:1) : line('$')
   let imported_ns = map(
         \filter(
@@ -408,7 +408,7 @@ endfunction
 " List of available namespaces {{{1
 " Function: lh#cpp#AnalysisLib_Class#available_namespaces(up_to) {{{3
 " @return list of available namespaces (imported + current)
-function! lh#cpp#AnalysisLib_Class#available_namespaces(up_to_line)
+function! lh#cpp#AnalysisLib_Class#available_namespaces(up_to_line) abort
   let current_ns = lh#cpp#AnalysisLib_Class#CurrentScope(a:up_to_line, 'namespace')
   let imported_ns = lh#cpp#AnalysisLib_Class#used_namespaces(a:up_to_line)
   let ns_list = imported_ns + [current_ns]
@@ -421,7 +421,7 @@ endfunction
 " Strips the best scope that matches the {id}. If
 " {return_ns_found} is set, return the matching scope as well.
 " @see tests/lh/analysis.vim
-function! lh#cpp#AnalysisLib_Class#simplify_id(id, available_scopes, ...)
+function! lh#cpp#AnalysisLib_Class#simplify_id(id, available_scopes, ...) abort
   let return_ns_found = a:0==0 ? 0 : a:1
   let scopes = reverse(sort(a:available_scopes))
   let re = join(
@@ -441,7 +441,7 @@ endfunction
 
 " ==========================================================================
 " Fetch Attributes {{{1
-function! lh#cpp#AnalysisLib_Class#attributes(id)
+function! lh#cpp#AnalysisLib_Class#attributes(id) abort
   call lh#common#error_msg("lh#cpp#AnalysisLib_Class#attributes is deprecated, use lh#dev#class#attributes() instead")
   return lh#dev#option#call('class#attributes', &ft, a:id)
 endfunction

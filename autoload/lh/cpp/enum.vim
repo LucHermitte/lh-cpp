@@ -164,7 +164,7 @@ function! lh#cpp#enum#analyse_token(name, ...) abort
 endfunction
 
 " Function: lh#cpp#enum#get_definition(name) {{{2
-function! lh#cpp#enum#get_definition(name)
+function! lh#cpp#enum#get_definition(name) abort
   let what = lh#cpp#enum#analyse_token(a:name)
   if empty(what)
     throw "Cannot obtain information on the alleged ".(a:name)." enum"
@@ -206,7 +206,7 @@ function! lh#cpp#enum#get_definition(name)
 endfunction
 
 " Function: lh#cpp#enum#_new(...) {{{2
-function! lh#cpp#enum#_new(...)
+function! lh#cpp#enum#_new(...) abort
   try
     " Inhibits the jump part in lh#mut#expand_and_jump()
     let cleanup = lh#on#exit()

@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  02nd Dec 2016
+" Last Update:  31st Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -97,7 +97,7 @@ endfunction
 "   identifier.
 " * Retrieve the const modifier even when it is not on the same line as the
 "   ')'.
-function! lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, onlyDeclaration)
+function! lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, onlyDeclaration) abort
   " deprecated
   return lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
 endfunction
@@ -141,7 +141,7 @@ endfunction
 " Function: s:SplitTypeParam(typed_param) {{{3
 " @return 4-uple -> [parameter-type, parameter-name, default-value, new-line-before]
 " @under deprecation...
-function! s:SplitTypeParam(typed_param)
+function! s:SplitTypeParam(typed_param) abort
   let pa = lh#dev#option#call('function#_analyse_parameter', &ft, a:typed_param)
   return [pa.type, pa.name, pa.default, pa.nl]
 endfunction
@@ -151,7 +151,7 @@ endfunction
 " todo: beware of exception specifications
 " todo: check about of functions types ; to be done with templates... ?
 " todo: Arrays of pointers       : "T (*p)[n]"
-function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype, mustCleanSpace)
+function! lh#cpp#AnalysisLib_Function#GetListOfParams(prototype, mustCleanSpace) abort
   " 1- Strip comments and parenthesis
   let prototype = a:prototype
   let prototype = substitute(prototype, '//.\{-}\n', '', 'g')
@@ -196,7 +196,7 @@ let s:re_final                      = '\<final\>'
 let s:re_override                   = '\<override\>'
 
 " Implementation {{{4
-function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype)
+function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) abort
   " 0- strip comments                            {{{5
   let prototype = substitute(a:prototype, "\\(\\s\\|\n\\)\\+", ' ', 'g')
   let prototype = substitute(prototype, '/\*.\{-}\*/\|//.*$', '', 'g')
@@ -293,7 +293,7 @@ endfunction
 " @param[in] sig2 Signature 2 (GetListOfParams() format)
 " @return whether the two signatures are similar (parameters names, default
 " parameters and other comment are ignored)
-function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2)
+function! lh#cpp#AnalysisLib_Function#HaveSameSignature(sig1, sig2) abort
   return a:sig1 == a:sig2
 
   if len(a:sig1) != len(a:sig2) | return 0 | endif
@@ -307,13 +307,13 @@ endfunction
 " }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SignatureToString(fn) {{{3
-function! s:ParamToString(param)
+function! s:ParamToString(param) abort
   " 0:Type + 1:param name
   let p = (a:param.type) . ' ' .(a:param.name)
   return p
 endfunction
 
-function! lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
+function! lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn) abort
   let params = []
   for param in a:fn.parameters
     call add(params, s:ParamToString(param))
@@ -331,7 +331,7 @@ endfunction
   " return a:def.name == a:decl[0].name
         " \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl[0].parameters)
 " endfunction
-function! lh#cpp#AnalysisLib_Function#IsSame(def, decl)
+function! lh#cpp#AnalysisLib_Function#IsSame(def, decl) abort
   let res = a:def.name == a:decl.name
         \ && lh#cpp#AnalysisLib_Function#HaveSameSignature(a:def.parameters, a:decl.parameters)
   " if a:def.name == a:decl.name
@@ -395,7 +395,7 @@ endfunction
 " }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#SearchUnmatched(fn) {{{3
-function! s:CmpSig(lhs, rhs)
+function! s:CmpSig(lhs, rhs) abort
   if     len(a:lhs) < len(a:rhs) | return -1
   elseif len(a:lhs) > len(a:rhs) | return  1
   else
@@ -410,14 +410,14 @@ function! s:CmpSig(lhs, rhs)
   endif
 endfunction
 
-function! lh#cpp#AnalysisLib_Function#_ByNameAndSig(lhs, rhs)
+function! lh#cpp#AnalysisLib_Function#_ByNameAndSig(lhs, rhs) abort
   let res = a:lhs.name <  a:rhs.name ? -1
         \ : a:lhs.name == a:rhs.name ? s:CmpSig(lh#list#get(a:lhs.parameters,'type'), lh#list#get(a:rhs.parameters, 'type'))
         \ :                             1
   return res
 endfunction
 
-function! s:SearchUnmatched(functions)
+function! s:SearchUnmatched(functions) abort
   let decls = sort(a:functions.declarations, function('lh#cpp#AnalysisLib_Function#_ByNameAndSig'))
   call s:Verbose('%1 function declarations sorted', len(a:functions.declarations))
   let defs  = sort(a:functions.definitions,  function('lh#cpp#AnalysisLib_Function#_ByNameAndSig'))
@@ -449,7 +449,7 @@ endfunction
 " Function: lh#cpp#AnalysisLib_Function#SearchAllDeclarations(fn) {{{3
 " inline member function are seen as "p" (instead of "f") by ctags, hence this
 " function
-function! lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
+function! lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions) abort
   let declarations = deepcopy(a:functions.declarations)
   let unmatched_def = copy(a:functions.definitions)
 
@@ -472,7 +472,7 @@ endfunction
 " todo:
 " - ignore default arguments
 " - template types like std::auto_ptr<foo::bar>
-function! s:Type2Regex(type, param)
+function! s:Type2Regex(type, param) abort
   let type = a:type
   "
   " let id = (""!=ptr) ? ' ( \* \%(\<\I\i*\>\)\= ) ' : ' \%(\<\I\i*\>\)\= '
@@ -489,7 +489,7 @@ function! s:Type2Regex(type, param)
   return re_param
 endfunction
 
-function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className)
+function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className) abort
   let function_data = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:signature)
 
   " Return type {{{4
@@ -544,7 +544,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
 endfunction
 
 " Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{3
-function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className)
+function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) abort
   let g:signature = a:signature
   let g:className = a:className
   " trim spaces {{{4
@@ -632,7 +632,7 @@ let s:re = '^\s*\%(\<const\>\s*\)\='.
       \ '\%(\%('.s:type_simple.'\|\s\+\)\+\|'.s:type_scope.'\)'.
       \ '\%(\<const\>\|\*\|&\|\s\+\)*'
 " }}}4
-function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str)
+function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str) abort
   " Stuff Supported: {{{4
   " - Simple parameters          : "T p"
   " - Arrays                     : "T p[][n]"
