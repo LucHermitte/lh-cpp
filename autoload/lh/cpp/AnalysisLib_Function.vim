@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  31st Aug 2018
+" Last Update:  01st Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -580,6 +580,8 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   " virtual, static and explicit -> comment => ignored along with spaces {{{4
   let impl2search = substitute(impl2search,
         \ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
+  " Extract throw specs {{{4
+  let throw_specs = matchstr(impl2search, '\v\)\s*\zs(throw|noexcept).*$')
   " Trim the variables names {{{4
   " Todo: \(un\)signed \(short\|long\) \(int\|float\|double\)
   "       const, *
@@ -606,6 +608,8 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   " echo impl2search
   let g:impl2search1 = impl2search
 
+  " Reinject throw specs {{{4
+  let impl2search .= ' '.throw_specs
   " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{4
   " let impl2search = substitute(' \zs'.impl2search, ' ',
   let impl2search = substitute(impl2search, ' ',
