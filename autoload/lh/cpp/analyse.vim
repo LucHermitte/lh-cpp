@@ -5,7 +5,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      08th Apr 2016
-" Last Update:  16th Aug 2018
+" Last Update:  31st Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       Various functions to analyse C and C++ codes
@@ -66,9 +66,7 @@ function! lh#cpp#analyse#var_type(name,...) abort
     else
       " Then: search in the tags DB (it may be an attribute from the current
       " class)
-      let cleanup = cleanup
-            \.register('call lh#dev#end_tag_session()')
-      let session    = lh#dev#start_tag_session()
+      let session    = lh#tags#session#get()
       let [var_kind] = session.indexer.get_kind_flags(&ft, ['variable', 'v', 'l'])
       let tags       = session.tags
       let pat = '.*\<'.a:name.'\>.*'
@@ -93,15 +91,16 @@ function! lh#cpp#analyse#var_type(name,...) abort
     return var.type
   finally
     call cleanup.finalize()
+    if exists('session')
+      call session.finalize()
+    endif
   endtry
 endfunction
 
 " Function: lh#cpp#analyse#token(name, ...) {{{3
 " TODO: finish
 function! lh#cpp#analyse#token(name, ...) abort
-  let cleanup = lh#on#exit()
-        \.register('call lh#dev#end_tag_session()')
-  let session    = lh#dev#start_tag_session()
+  let session    = lh#tags#session#get()
   let tags       = session.tags
   let type_kinds = session.indexer.get_kind_flags('cpp', 'classes\|structure names\|enumeration names\|typedefs')
   try
@@ -186,7 +185,7 @@ function! lh#cpp#analyse#token(name, ...) abort
 
     " 2- find the type definition
   finally
-    call cleanup.finalize()
+    call session.finalize()
   endtry
 endfunction
 

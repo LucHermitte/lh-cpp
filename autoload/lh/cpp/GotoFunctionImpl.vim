@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  16th Aug 2018
+" Last Update:  31st Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -439,7 +439,8 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
 
   " 4- Add scope to other types {{{4
   try
-    let ltags = lh#dev#start_tag_session().tags
+    let session = lh#tags#session#get()
+    let ltags   = session.tags
     " 4.1- ... return type
     let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
     let all_rets = lh#list#get(all_ret_dicts, 'class', '')
@@ -468,7 +469,7 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
       let return = 'constexpr ' . return
     endif
   finally
-    call lh#dev#end_tag_session()
+    call session.finalize()
   endtry
 
   " 5- Return{{{4

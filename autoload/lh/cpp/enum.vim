@@ -7,7 +7,7 @@
 let s:k_version = 220
 " Version:      2.2.0
 " Created:      06th Jan 2011
-" Last Update:  16th Aug 2018
+" Last Update:  31st Aug 2018
 "------------------------------------------------------------------------
 " Description:
 "       Support autoload-plugin for :SwitchEnum.
@@ -77,9 +77,7 @@ endfunction
 
 " Function: lh#cpp#enum#analyse_token(name, ...) {{{3
 function! lh#cpp#enum#analyse_token(name, ...) abort
-  let cleanup = lh#on#exit()
-        \.register('call lh#dev#end_tag_session()')
-  let session               = lh#dev#start_tag_session()
+  let session               = lh#tags#session#get()
   let tags                  = session.tags
   " "variable" => regex
   let [var_kind, enum_kind] = session.indexer.get_kind_flags(&ft, ['variable', 'v', 'l'], ['enumeration name', 'g'])
@@ -161,7 +159,7 @@ function! lh#cpp#enum#analyse_token(name, ...) abort
     return res
     " 2- find the type definition
   finally
-    call cleanup.finalize()
+    call session.finalize()
   endtry
 endfunction
 
