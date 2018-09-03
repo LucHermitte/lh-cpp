@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 " Version:      2.2.0
 " Created:      09th Feb 2009
-" Last Update:  08th Mar 2018
+" Last Update:  03rd Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -59,7 +59,7 @@ endfunction
 "Function: s:Attributes(classname) {{{3
 function! s:Attributes(classname) abort
   " fetch the attributes
-  let attributes = lh#dev#class#attributes(a:classname)
+  let attributes = lh#dev#class#attributes(a:classname, 1)
   " The attributes need to be sorted by their order of definition in the class
   " definition
 

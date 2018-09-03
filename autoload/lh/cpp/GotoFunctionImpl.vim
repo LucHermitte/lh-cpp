@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  31st Aug 2018
+" Last Update:  03rd Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -438,39 +438,37 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
   " \ className.'\0', '')
 
   " 4- Add scope to other types {{{4
-  try
-    let session = lh#tags#session#get()
-    let ltags   = session.tags
-    " 4.1- ... return type
-    let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
-    let all_rets = lh#list#get(all_ret_dicts, 'class', '')
-    " let all_rets = lh#list#transform(all_ret_dicts, [], 'v:1_.class')
-    let all_rets = lh#list#unique_sort(all_rets)
-    if len(all_rets) > 1
-      let all_rets = ['::'] + all_rets
-      let choice = lh#ui#confirm('Where does <'.(proto.return).'> comes from?',
-            \ join(all_rets, "\n"), 1)
-      if     choice == 0 | let scope = []
-      elseif choice == 1 | let scope = ['']
-      else               | let scope = [all_rets[choice-1]]
-      endif
-    elseif len(all_rets) == 1
-      let scope = all_rets
-    else
-      let scope = []
+  " 4.1- ... return type
+  " return type is stored in function signature extracted by ... ctags
+  let session = lh#tags#session#get()
+  let ltags   = session.tags
+  call session.finalize()
+  let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
+  let all_rets = lh#list#get(all_ret_dicts, 'class', '')
+  " let all_rets = lh#list#transform(all_ret_dicts, [], 'v:1_.class')
+  let all_rets = lh#list#unique_sort(all_rets)
+  if len(all_rets) > 1
+    let all_rets = ['::'] + all_rets
+    let choice = lh#ui#confirm('Where does <'.(proto.return).'> comes from?',
+          \ join(all_rets, "\n"), 1)
+    if     choice == 0 | let scope = []
+    elseif choice == 1 | let scope = ['']
+    else               | let scope = [all_rets[choice-1]]
     endif
-    let scope += [proto.return]
-    let return = join(scope, '::')
-    " 4.2- ... parameters types
-    " 4.3- ... constexpr
-    " TODO: Check: not sure this really makes sense: constexpr function shall
-    " be inlined
-    if proto.constexpr
-      let return = 'constexpr ' . return
-    endif
-  finally
-    call session.finalize()
-  endtry
+  elseif len(all_rets) == 1
+    let scope = all_rets
+  else
+    let scope = []
+  endif
+  let scope += [proto.return]
+  let return = join(scope, '::')
+  " 4.2- ... parameters types
+  " 4.3- ... constexpr
+  " TODO: Check: not sure this really makes sense: constexpr function shall
+  " be inlined
+  if proto.constexpr
+    let return = 'constexpr ' . return
+  endif
 
   " 5- Return{{{4
   " TODO: some styles like to put return types and function names on two
