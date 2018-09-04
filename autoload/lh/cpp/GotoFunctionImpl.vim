@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  03rd Sep 2018
+" Last Update:  04th Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -486,10 +486,10 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
         \ . (proto.overriden ? ' override' : '')
         \ . "{}"
   let styles = lh#style#get(&ft)
-  let styled = lh#style#apply(unstyled)
 
   let res = unstyled
   if !empty(styles)
+    let styled = lh#style#apply(unstyled)
     let res = styled
   endif
 
@@ -564,7 +564,7 @@ function! s:InsertCodeAtLine(...) abort
     " call confirm('ns  ='.ns."\nimpl=".impl, '&Ok', 1)
   endwhile
   " Change my namespace delimiters (#::#) to normal scope delimiters (::)
-  let impl = substitute(impl, '#::#', '::', '') . "\n\n"
+  let impl = substitute(impl, '#::#', '::', '') . "\n"
   " Unfold folders otherwise there could be side effects with ':put'
   let folder=&foldenable
   set nofoldenable
