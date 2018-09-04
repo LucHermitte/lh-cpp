@@ -220,7 +220,7 @@ endfunction
 " # Internals {{{2
 " Function: lh#cpp#constructors#_complete(A,L,P) {{{3
 function! lh#cpp#constructors#_complete(A,L,P) abort
-  return ['init', 'copy', 'default', 'assign']
+  return filter(['init', 'copy', 'default', 'assign'], 'v:val =~ "^".a:A.".*"')
 endfunction
 
 " # GUI {{{2
