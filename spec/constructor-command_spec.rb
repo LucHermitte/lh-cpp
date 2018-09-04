@@ -49,8 +49,8 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       };
     EOF
     vim.write()
-    vim.feedkeys('a\<esc>') # pause
-    expect(system("ctags --c++-kinds=+p --fields=+imaS --extras=+q --language-force=C++ -f tags #{filename}")).to be true
+    # vim.feedkeys('a\<esc>') # pause
+    # expect(system("ctags --c++-kinds=+p --fields=+imaS --extras=+q --language-force=C++ -f tags #{filename}")).to be true
     # system('less tags')
     vim.command("let b:tags_dirname = expand('%:p:h')")
     vim.command("let &l:tags.=','.b:tags_dirname.'/tags'")
@@ -80,7 +80,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       vim.command('Constructor default')
       # expect(vim.echo('g:step."--".string(g:implproto)')).to eq('42')
       # expect(vim.echo('g:step')).to eq('42')
-      vim.feedkeys('a\<esc>') # pause
+      # vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
         class Foo {
         public:
@@ -155,7 +155,6 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
             m_bar = rhs.m_bar;
             m_foo = «duplicate(rhs.m_foo)»;
         }
-
       EOF
     end
 
@@ -200,7 +199,6 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
             swap(m_bar, other.m_bar);
             swap(m_foo, other.m_foo);
         }
-
         EOF
     end
 
