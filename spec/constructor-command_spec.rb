@@ -19,6 +19,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     end
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+    vim.set('report=9999')
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.echo('lh#style#clear()')).to eq '0'
     vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
@@ -50,7 +51,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     EOF
     vim.write()
     vim.feedkeys('a\<esc>') # pause
-    expect(system("ctags --c++-kinds=+p --fields=+imaS --extras=+q --language-force=C++ -f tags #{filename}")).to be true
+    # expect(system("ctags --c++-kinds=+p --fields=+imaS --extras=+q --language-force=C++ -f tags #{filename}")).to be true
     # system('less tags')
     vim.command("let b:tags_dirname = expand('%:p:h')")
     vim.command("let &l:tags.=','.b:tags_dirname.'/tags'")
@@ -77,7 +78,8 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       # initialisation at class scope
       # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
       # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
-      vim.command('Constructor default')
+      # vim.command('Constructor default')
+      vim.echo('lh#cpp#constructors#Main("default")')
       # expect(vim.echo('g:step."--".string(g:implproto)')).to eq('42')
       # expect(vim.echo('g:step')).to eq('42')
       vim.feedkeys('a\<esc>') # pause
@@ -106,7 +108,9 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   # ====[ copy-constructor {{{2
   context "when expanding copy-constructor", :copy_ctr do
     it "has a pointer attribute" do # {{{3
-      vim.command('Constructor copy')
+      # vim.command('Constructor copy')
+      vim.echo('lh#cpp#constructors#Main("copy")')
+      vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
         class Foo {
         public:
@@ -135,7 +139,14 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
 
     it "has a pointer attribute" do # {{{3
       vim.command('let g:mocked_confirm = 0')
-      vim.command('Constructor assign')
+      # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
+      # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
+      vim.echo('lh#cpp#constructors#Main("assign")')
+      # expect(vim.echo('lh#cpp#constructors#Main("assign")')).to eq '0'
+      # vim.command('Constructor assign')
+      # expect(vim.echo('string(g:implproto)')).to eq('42')
+      # expect(vim.echo('g:step')).to eq('42')
+      vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
         class Foo {
         public:
@@ -155,7 +166,6 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
             m_bar = rhs.m_bar;
             m_foo = «duplicate(rhs.m_foo)»;
         }
-
       EOF
     end
 
@@ -166,7 +176,9 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
 
     it "has a pointer attribute" do # {{{3
       vim.command('let g:mocked_confirm = 1')
-      vim.command('Constructor assign')
+      # vim.command('Constructor assign')
+      vim.echo('lh#cpp#constructors#Main("assign")')
+      vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
         class Foo {
         public:
@@ -200,7 +212,6 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
             swap(m_bar, other.m_bar);
             swap(m_foo, other.m_foo);
         }
-
         EOF
     end
 
