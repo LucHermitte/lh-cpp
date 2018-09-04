@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 " Version:      2.2.0
 " Created:      09th Feb 2009
-" Last Update:  03rd Sep 2018
+" Last Update:  04th Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -74,7 +74,15 @@ function! s:Attributes(classname) abort
   unlet attr
 
   let filename = attributes[0].filename
-  let buffer = readfile(filename)
+  " The buffer may not be associated to a real file, in that case, use its
+  " current content.
+  let bid = bufnr(filename)
+  if bid >= 0
+    let buffer = getbufline(bid, 1, '$')
+  else
+    call lh#assert#true(filereadable(filename), "Cannot read lines from a file that cannot be read...")
+    let buffer = readfile(filename)
+  endif
   let search = join(lh#list#transform(attributes,[], 'escape(matchstr(v:1_.cmd,"/^\\s*\\zs.*\\ze\\s*;"),"*")'), '\|')
   call filter(buffer, 'v:val =~ '.string(search))
   call map(buffer, 'matchstr(v:val,"\\s*\\zs.*\\ze\\s*;")')
