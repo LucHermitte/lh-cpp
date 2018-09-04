@@ -75,11 +75,11 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     it "has a pointer attribute" do # {{{3
       # TODO: In C++11, no need for m_bar() if there is a default
       # initialisation at class scope
-      expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
-      expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
+      # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
+      # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
       vim.command('Constructor default')
-      expect(vim.echo('g:step."--".string(g:implproto)')).to eq('42')
-      expect(vim.echo('g:step')).to eq('42')
+      # expect(vim.echo('g:step."--".string(g:implproto)')).to eq('42')
+      # expect(vim.echo('g:step')).to eq('42')
       vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
         class Foo {
@@ -136,7 +136,11 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
 
     it "has a pointer attribute" do # {{{3
       vim.command('let g:mocked_confirm = 0')
+      expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
+      expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
       vim.command('Constructor assign')
+      expect(vim.echo('g:step."--".string(g:implproto)')).to eq('42')
+      expect(vim.echo('g:step')).to eq('42')
       vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
         class Foo {
