@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 " Version:      2.2.0
 " Created:      09th Feb 2009
-" Last Update:  04th Sep 2018
+" Last Update:  05th Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -162,7 +162,7 @@ function! lh#cpp#constructors#AssignmentOperator() abort
     while line('.') > 1 && getline('.') =~ '\v^\s*\{|^\s*$'
       normal! k
     endwhile
-    MOVETOIMPL
+    call lh#cpp#GotoFunctionImpl#MoveImpl()
   endif
 endfunction
 
