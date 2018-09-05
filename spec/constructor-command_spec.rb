@@ -19,6 +19,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     end
     vim.runtime('spec/support/input-mock.vim')
     expect(vim.command('verbose function lh#ui#input')).to match(/input-mock.vim/)
+    vim.set('report=9999')
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.echo('lh#style#clear()')).to eq '0'
     vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
@@ -138,7 +139,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       vim.command('let g:mocked_confirm = 0')
       # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
       # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
-      expect(vim.echo('lh#cpp#constructors#Main("assign")')).to eq(0)
+      expect(vim.echo('lh#cpp#constructors#Main("assign")')).to eq '0'
       # vim.command('Constructor assign')
       expect(vim.echo('string(g:implproto)')).to eq('42')
       # expect(vim.echo('g:step')).to eq('42')

@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      07th Oct 2006
-" Last Update:  04th Sep 2018
+" Last Update:  05th Sep 2018
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -133,6 +133,7 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...) abort
     :exe "normal! :GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
     " was:
     " :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
+    return @a
   finally
     let @a = a_save
     let @/ = s
