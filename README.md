@@ -179,12 +179,12 @@ snippets as most of them have options.
     `member`, `constant`, `static`, `param`, `getter`, `setter`)
 
 ### Installation
-  * Requirements: Vim 7.+, [lh-vim-lib](http://github.com/LucHermitte/lh-vim-lib), [lh-brackets](http://github.com/LucHermitte/lh-brackets), [mu-template](http://github.com/LucHermitte/mu-template), [lh-dev](http://github.com/LucHermitte/lh-dev), [alternate-lite](http://github.com/LucHermitte/alternate-lite).
+  * Requirements: Vim 7.+, [lh-vim-lib](https://github.com/LucHermitte/lh-vim-lib), [lh-style](https://github.com/LucHermitte/lh-style) [lh-brackets](https://github.com/LucHermitte/lh-brackets), [mu-template](https://github.com/LucHermitte/mu-template), [lh-dev](https://github.com/LucHermitte/lh-dev), [alternate-lite](https://github.com/LucHermitte/alternate-lite).
   * With [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager), install lh-cpp. This is the preferred method because of the various dependencies.
 ```vim
 ActivateAddons lh-cpp
 ```
-  * or with [vim-flavor](http://github.com/kana/vim-flavor) which also supports
+  * or with [vim-flavor](https://github.com/kana/vim-flavor) which also supports
     dependencies:
 ```
 flavor 'LucHermitte/lh-cpp'
@@ -192,6 +192,7 @@ flavor 'LucHermitte/lh-cpp'
   * or you can clone the git repositories (expecting I haven't forgotten anything):
 ```
 git clone git@github.com:LucHermitte/lh-vim-lib.git
+git clone git@github.com:LucHermitte/lh-style.git
 git clone git@github.com:LucHermitte/lh-tags.git
 git clone git@github.com:LucHermitte/lh-dev.git
 git clone git@github.com:LucHermitte/lh-brackets.git
@@ -204,6 +205,7 @@ git clone git@github.com:LucHermitte/lh-cpp.git
   * or with Vundle/NeoBundle (expecting I haven't forgotten anything):
 ```vim
 Bundle 'LucHermitte/lh-vim-lib'
+Bundle 'LucHermitte/lh-style'
 Bundle 'LucHermitte/lh-tags'
 Bundle 'LucHermitte/lh-dev'
 Bundle 'LucHermitte/lh-brackets'
