@@ -1,0 +1,18 @@
+The following people have contributed to lh-cpp
+
+# Direct contributors
+Luc Hermitte, maintainer, 2002(?)-2018
+Leif Wickland, original mapping for `GOTOIMPL` (VIM-TIP#335)
+Robert KellyIV, first plugin version of `GOTOIMPL`, plus contributions to present code, 2002
+Olivier Teuliere, highlight function definitions, 2004 (https://vim.wikia.com/wiki/Highlighting_of_method_names_in_the_definition)
+Sven Speckmaier, Apply styles to `GOTOIMPL`, 2016, PR#4
+fwSmit, Fix missing dep in doc, 2018, PR#9
+
+Discl. I'm likely to have forgottent old contributors, drop me an email
+if you're one of them.
+
+# Plugins imported from other projects:
+Charles E. Campbell, Jr., initial flistmaps definition
+Georgi Slavchev <goyko at gbg dot bg>, previewWord initial definition, 2002 (https://vim.wikia.com/wiki/Function_signature_previewer)
+
+
