@@ -129,11 +129,17 @@ default_random_engine
 defined
 definition
 delete
+denorm_absent
+denorm_indeterminate
+denorm_min
+denorm_present
 deque
 description
 descriptor
 destroy
 difference_type
+digits
+digits10
 dimension
 disable_if
 disable_if_t
@@ -158,6 +164,7 @@ enable_if
 enable_if_t
 end
 enum
+epsilon
 equal
 equal_range
 equal_to
@@ -185,6 +192,8 @@ find_if
 find_if_not
 fisher_f_distribution
 float
+float_denorm_style
+float_round_style
 for
 for_each
 format
@@ -215,6 +224,12 @@ goto
 greater
 greater_equal
 handling
+has_denorm
+has_denorm_loss
+has_infinity
+has_inifinity
+has_quiet_NaN
+has_signaling_NaN
 has_virtual_destructor
 hash
 hash_function
@@ -232,6 +247,7 @@ implementation
 includes
 increment
 independent_bits_engine
+infinity
 initialization
 initializer_list
 inline
@@ -271,6 +287,7 @@ is_assignable
 is_assignable_v
 is_baseof
 is_baseof_v
+is_bounded
 is_class
 is_class_v
 is_compound
@@ -293,6 +310,7 @@ is_empty
 is_empty_v
 is_enum
 is_enum_v
+is_exact
 is_final
 is_final_v
 is_function
@@ -303,6 +321,8 @@ is_heap
 is_heap_until
 is_heap_until_v
 is_heap_v
+is_iec559
+is_integer
 is_integral
 is_integral_v
 is_literal_type
@@ -310,6 +330,7 @@ is_lvalue_reference
 is_member_function_pointer
 is_member_object_pointer
 is_member_pointer
+is_modulo
 is_move_assignable
 is_move_constructible
 is_nothrow_assignable
@@ -334,6 +355,7 @@ is_scalar
 is_signed
 is_sorted
 is_sorted_until
+is_specialized
 is_standard_layout
 is_trivial
 is_trivially_assignable
@@ -380,6 +402,7 @@ long
 lookup
 loop
 lower_bound
+lowest
 lvalue
 make_heap
 make_iterator
@@ -399,7 +422,10 @@ match_results
 max
 max_align_t
 max_bucket_count
+max_digits10
 max_element
+max_exponent
+max_exponent10
 max_load_factor
 max_size
 mem_fun
@@ -412,6 +438,8 @@ merge
 mersenne_twister_engine
 min
 min_element
+min_exponent
+min_exponent10
 minmax
 minmax_element
 minstd_rand
@@ -450,6 +478,7 @@ notify_all_at_thread_exit
 nth_element
 nullptr
 nullptr_t
+numeric_limits
 numerical
 offsetof
 once_flag
@@ -505,6 +534,8 @@ public
 push_back
 push_heap
 queue
+quiet_NaN
+radix
 random
 random_access_iterator
 random_access_iterator_tag
@@ -577,6 +608,13 @@ reverse_iterator
 rope
 rotate
 rotate_copy
+round_error
+round_indeterminate
+round_style
+round_to_nearest
+round_toward_infinity
+round_toward_neg_infinity
+round_toward_zero
 scope
 search
 search_n
@@ -598,6 +636,7 @@ short
 shrink_to_fit
 shuffle
 shuffle_order_engine
+signaling_NaN
 signed
 size
 size_t
@@ -639,7 +678,9 @@ tie
 time_point
 timed_mutex
 timed_recursive_mutex
+tinyness_before
 transform
+traps
 true
 true_type
 try
