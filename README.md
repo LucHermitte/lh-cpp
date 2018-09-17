@@ -199,7 +199,7 @@ git clone git@github.com:LucHermitte/lh-brackets.git
 git clone git@github.com:LucHermitte/searchInRuntime.git
 git clone git@github.com:LucHermitte/mu-template.git
 git clone git@github.com:tomtom/stakeholders_vim.git
-git clone git@github.com:tomtom/alternate-lite.git
+git clone git@github.com:LucHermitte/alternate-lite.git
 git clone git@github.com:LucHermitte/lh-cpp.git
 ```
   * or with Vundle/NeoBundle (expecting I haven't forgotten anything):
