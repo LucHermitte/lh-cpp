@@ -11,6 +11,7 @@ It provides the following things:
   * an [API](doc/API.md) to build even more complex wizards and advanced features
 
   An exhaustive [list of all options](doc/options.md) is also available.
+  For help using this plugin for the first time, please take a look at `:h lh-cpp-first-steps`
 
 ### Text insertion facilities
 
