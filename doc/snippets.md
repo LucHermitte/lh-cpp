@@ -27,6 +27,8 @@
       * [cpp/shared_ptr](#cppshared_ptr)
       * [cpp/string](#cppstring)
       * [cpp/unique_ptr](#cppunique_ptr)
+      * [cpp/unordered_map](#cppunordered_map)
+      * [cpp/unordered_set](#cppunordered_set)
       * [cpp/vector](#cppvector)
       * [cpp/weak_ptr](#cppweak_ptr)
   * [Standard (and boost) Functions and Idioms](#standard-and-boost-functions-and-idioms)
@@ -103,9 +105,9 @@
 ## Remarks
 
  * Styling options from
-   [lh-dev](http://github.com/LucHermitte/lh-dev#options-1) are applied on the
-   snippets. In other words, the code presented here may be formatted
-   differently regarding spaces and newlines.
+   [lh-style](https://lh-style.readthedocs.io/en/latest/code-formatting.html)
+   are applied on the snippets. In other words, the code presented here may be
+   formatted differently regarding spaces and newlines.
 
  * [Placeholders](http://github.com/LucHermitte/lh-brackets) are represented
    within «French quotation marks».
@@ -180,9 +182,6 @@ for («type» «elem» : «range») {
 **Surround:**
   1. The selection can be surrounded to become the loop code
 
-**To do:**
-  * Have _type_ default to nothing in C++17
-
 #### cpp/fori
 **Produces:**
 ```C++
@@ -209,13 +208,13 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
 **Produces:** `namespace «ns» { ... } // «ns»`
 
 **Parameters:**
-  * _ns_, default: `(bg):[{ft}_]project_namespace`
+  * _ns_, default: `(bpg):[{ft}_]project_namespace`
 
 **Options:**
-  * [`(bg):[{ft}_]project_namespace`](options.md#bgft_project_namespace), which
+  * [`(bpg):[{ft}_]project_namespace`](options.md#bpgft_project_namespace), which
     defaults to `«ns»`
-  * [`lh#cpp#use_cpp17()`](options.md#bgcpp_std_flavour)
-  * [`(bg):cpp_use_nested_namespaces`](options.md#bgcpp_use_nested_namespaces)
+  * [`lh#cpp#use_cpp17()`](options.md#bpgcpp_std_flavour)
+  * [`(bpg):cpp_use_nested_namespaces`](options.md#bpgcpp_use_nested_namespaces)
 
 **Surround:**
   1. The selection can be surrounded to become the namespace code
@@ -223,7 +222,7 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
 **Notes:**
   * If the namespace parameter is `foo::bar`, this snippet produces two nested
     namespace definitions.
-  * If C++17 flavour is selected, and `(bg):cpp_use_nested_namespaces` is true,
+  * If C++17 flavour is selected, and `(bpg):cpp_use_nested_namespaces` is true,
     then a C++17 _nested namespace_ will be used.
 
 #### cpp/throw
@@ -235,8 +234,8 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   * `exception_text`, default: cpp/internals/formatted-comm
 
 **Options:**
-  * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
-  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter. A typical value would be:
+  * `(bpg):({ft}_)exception_type`, default: `std:runtime_error`
+  * `(bpg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter. A typical value would be:
 
   ```vim
 :let b:exception_args = 'v:1_.lh#marker#txt(", ".b:cpp_project_namespace."::ExitCode::")'
@@ -244,8 +243,8 @@ for («std::size_t» «i»=0, «N»=...;«i»!=«N»;++«i») {
   Note that this expression dynamically adapts to the current
   `b:cpp_project_namespace`, and to the current marker characters.
   *  Doxygen related options:
-    * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
-    * [`(bg):({ft_}dox_throw)`](options.mg#bgft_dox_throw)
+    * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
+    * [`(bpg):({ft_}dox_throw)`](options.mg#bpgft_dox_throw)
 
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
@@ -303,7 +302,7 @@ while(std::getline(«stream»,«line»)) {
   * `<memory>`
 
 **Notes:**
-  * I hesitate to called it `cpp/make_auto_ptr`
+  * I hesitate to call it `cpp/make_auto_ptr`
 
 #### cpp/file
 **Produces:** `«i»fstream f(«filename»);`
@@ -365,11 +364,11 @@ while(std::getline(«stream»,«line»)) {
 
 #### cpp/shared_ptr
 **Produces:**
-  * `std::shared_ptr<«type»> «»`, in [C++11 or more](options.md#bgcpp_std_flavour)
+  * `std::shared_ptr<«type»> «»`, in [C++11 or more](options.md#bpgcpp_std_flavour)
   * `boost::shared_ptr<«type»> «»`, otherwise
 
 **Options:**
-  * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+  * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
 
 **Surround:**
   1. The selection can be surrounded to become the value type
@@ -393,6 +392,26 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<memory>`
 
+#### cpp/unordered_map
+**Produces:** `std::unordered_map<«key»,«value»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+  2. The selection can be surrounded to become the key type
+
+**Also includes:**
+  * `<unordered_map>`
+
+#### cpp/unordered_set
+**Produces:** `std::unordered_set<«key»,«value»> «»`
+
+**Surround:**
+  1. The selection can be surrounded to become the value type
+  2. The selection can be surrounded to become the key type
+
+**Also includes:**
+  * `<unordered_set>`
+
 #### cpp/vector
 **Produces:** `std::vector<«type»> «»`
 
@@ -404,11 +423,11 @@ while(std::getline(«stream»,«line»)) {
 
 #### cpp/weak_ptr
 **Produces:**
-  * `std::weak_ptr<«type»> «»`, in [C++11 or more](options.md#bgcpp_std_flavour)
+  * `std::weak_ptr<«type»> «»`, in [C++11 or more](options.md#bpgcpp_std_flavour)
   * `boost::weak_ptr<«type»> «»`, otherwise
 
 **Options:**
-  * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
+  * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
 
 **Surround:**
   1. The selection can be surrounded to become the value type
@@ -434,6 +453,9 @@ while(std::getline(«stream»,«line»)) {
 **Also includes:**
   * `<time.h>` in C, `<ctime>` in C++
   * `<stdlib.h>` in C, `<cstdlib>` in C++
+
+**TODO:**
+  * Adapt the snippet to C++11 new random functions
 
 #### c/realloc
 **Produces:**
@@ -473,7 +495,7 @@ std::size(«array»)
 ```
 
 Or whatever is specified into
-[`(bg):({ft}_)array_size`](options.md#bgcpp_array_size). Up to C++14, it's
+[`(bpg):({ft}_)array_size`](options.md#bpgcpp_array_size). Up to C++14, it's
 recommended to follow the instructions generated as comments, and to put an
 equivalent of C++17 `std::size()` in a header file and use it. Let's say the
 function is named `myarray_size()` and put into `myrange.h`, then define into
@@ -488,8 +510,8 @@ let b:cpp_array_size = {'file': 'myrange.h', 'funcname': 'myarray_size(%1)'}
   * _array_, default «array»
 
 **Options:**
-  * [`lh#cpp#use_cpp11()` and `lh#cpp#use_cpp17()`](options.md#bgcpp_std_flavour)
-  * [`(bg):({ft}_)array_size`](options.md#bgcpp_array_size)
+  * [`lh#cpp#use_cpp11()` and `lh#cpp#use_cpp17()`](options.md#bpgcpp_std_flavour)
+  * [`(bpg):({ft}_)array_size`](options.md#bpgcpp_array_size)
 
 **Surround:**
   1. The selection can be surrounded to become the array name
@@ -505,6 +527,10 @@ let b:cpp_array_size = {'file': 'myrange.h', 'funcname': 'myarray_size(%1)'}
 **TODO:**
   * Define the unsafe C equivalent `c/array_size`:
     `sizeof «array»/sizeof «array»[0]`
+  * In C++17, detect whether there is a `using std::size` in the context to
+    rely on ADL and/or
+    [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
+    "adl ;"
 
 #### cpp/internals/get-b-e
 **Assign values to mu-template snippet variables:**
@@ -514,21 +540,21 @@ let b:cpp_array_size = {'file': 'myrange.h', 'funcname': 'myarray_size(%1)'}
 
 Their values will be:
   * either `std::begin(«container»)` and `std::end(«container»)`
-    if [C++11 flavour](options.md#bgcpp_std_flavour) is used, or
-    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    if [C++11 flavour](options.md#bpgcpp_std_flavour) is used, or
+    if [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
     "std ;"
   * or `boost::begin(«container»)` and `boost::end(«container»)`
-    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    if [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
     "boost ;"
   * or `begin(«container»)` and `end(«container»)`
-    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    if [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
     "adl ;"
   * or `«container».begin()` and `«container».end()` otherwise.
 
 **Also includes:**
-  * `<iterator>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"std"`
-  * `<boost/range/begin.hpp>` and `<boost/range/end.hpp>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"boost"`
-  * or whatever [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes) specifies
+  * `<iterator>` when [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style) is `"std"`
+  * `<boost/range/begin.hpp>` and `<boost/range/end.hpp>` when [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style) is `"boost"`
+  * or whatever [`(bpg):cpp_begin_end_includes`](options.md#bpgcpp_begin_end_includes) specifies
 
 **Parameters:**
   * _container_, default: «container»
@@ -537,28 +563,28 @@ Their values will be:
   1. The selection can be surrounded to become the container name
 
 **Options:**
-  * [C++11 flavour](options.md#bgcpp_std_flavour)
-  * [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style)
-  * [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes)
+  * [C++11 flavour](options.md#bpgcpp_std_flavour)
+  * [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style)
+  * [`(bpg):cpp_begin_end_includes`](options.md#bpgcpp_begin_end_includes)
 
 #### cpp/b-e
 **Produces:**
   * either `std::begin(«container»), std::end(«container»)`
-    if [C++11 flavour](options.md#bgcpp_std_flavour) is used, or
-    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    if [C++11 flavour](options.md#bpgcpp_std_flavour) is used, or
+    if [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
     "std" ;
   * or `boost::begin(«container»), boost::end(«container»)`
-    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    if [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
     "boost" ;
   * or `«container».begin(), «container».end()`
-    if [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style) equals
+    if [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style) equals
     "adl" ;
   * or `begin(«container»), end(«container»)` otherwise.
 
 **Also includes:**
-  * `<iterator>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"std"`
-  * `<boost/range/begin.hpp>` and `<boost/range/end.hpp>` when [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style) is `"boost"`
-  * or whatever [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes) specifies
+  * `<iterator>` when [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style) is `"std"`
+  * `<boost/range/begin.hpp>` and `<boost/range/end.hpp>` when [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style) is `"boost"`
+  * or whatever [`(bpg):cpp_begin_end_includes`](options.md#bpgcpp_begin_end_includes) specifies
 
 **Parameters:**
   * _container_, default: «container»
@@ -567,9 +593,9 @@ Their values will be:
   1. The selection can be surrounded to become the container name
 
 **Options:**
-  * [C++11 flavour](options.md#bgcpp_std_flavour)
-  * [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style)
-  * [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes)
+  * [C++11 flavour](options.md#bpgcpp_std_flavour)
+  * [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style)
+  * [`(bpg):cpp_begin_end_includes`](options.md#bpgcpp_begin_end_includes)
 
 **Variation Points:**
   * [`cpp/internals/get-b-e`](#cppinternalsget-b-e) snippet
@@ -713,7 +739,7 @@ BOOST_STATIC_ASSERT(«cond»)
   *  _message_, default: «message»
 
 **Options:**
-  * [C++11 flavour](options.md#bgcpp_std_flavour)
+  * [C++11 flavour](options.md#bpgcpp_std_flavour)
 
 **Also includes:**
   * `<boost/static_assert.hpp>`, in C++98/03
@@ -746,8 +772,8 @@ BOOST_STATIC_ASSERT(«cond»)
     * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
-  * [`(bg):cpp_use_copy_and_swap`](#bgcpp_use_copy_and_swap)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
+  * [`(bpg):cpp_use_copy_and_swap`](#bpgcpp_use_copy_and_swap)
 
 **Variation Points:**
   * [`cpp/copy-and-swap`](#cppcopy-and-swap) snippet, if the idiom is used
@@ -794,7 +820,7 @@ void swap(T & other);
     [`lh#cpp#AnalysisLib_Class#CurrentScope`](API.md#lhcppanalysislib_classcurrentscope), «clsname» otherwise
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
 **Variation Points:**
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
@@ -815,7 +841,7 @@ void swap(T & other);
     * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
 **Variation Points:**
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
@@ -837,7 +863,7 @@ void swap(T & other);
     * "how": *""*/"deleted"/"defaulted"
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
 **Variation Points:**
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
@@ -862,7 +888,7 @@ void swap(T & other);
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
 #### cpp/operator-binary
 **Produces:**
@@ -877,7 +903,7 @@ void swap(T & other);
     [`lh#cpp#AnalysisLib_Class#search_closest_class`](API.md#lhcppanalysislib_classsearch_closest_class)
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
 **Note:**
   *  The code generated may change to encompass C++11 best practices and
@@ -941,7 +967,7 @@ For now, use
 [vim-refactor](http://github.com/LucHermitte/vim-refactor) to generate
 [const correct](https://isocpp.org/wiki/faq/const-correctness) getters
 and setters that follow the
-[naming policy](https://github.com/LucHermitte/lh-dev#styling-options)
+[naming policy](https://lh-style.readthedocs.io/en/latest/naming.html)
 configured for my plugins.
 
 **API:** All these snippets can be used programmatically to generate even more
@@ -968,9 +994,9 @@ TBD
   * Any options used by
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
     particular:
-    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
-    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
-    * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
+    * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
+    * [`(bpg):cpp_deleted`](options.md#bpgcpp_deleted)
+    * [`(bpg):cpp_noncopyable_class`](#bpgcpp_noncopyable_class)
 
 **Relies on:**
   * [`cpp/base-class`](#cppbase-class)
@@ -991,8 +1017,8 @@ TBD
   * Any options used by
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
     particular:
-    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
-    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+    * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
+    * [`(bpg):cpp_deleted`](options.md#bpgcpp_deleted)
 
 **Relies on:**
   * [`cpp/entity-class`](#cppentity-class)
@@ -1012,8 +1038,8 @@ TBD
   * Any options used by
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
     particular:
-    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
-    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+    * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
+    * [`(bpg):cpp_deleted`](options.md#bpgcpp_deleted)
 
 **Relies on:**
   * [`cpp/entity-class`](#cppentity-class)
@@ -1030,8 +1056,8 @@ TBD
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
 
 **Options:**
-  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):dox_group`](options.md#bpgdox_group) , default: «Project»
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
   * Any options used by
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton).
 
@@ -1060,8 +1086,8 @@ TBD:
   * Any options used by
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
     particular:
-    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
-    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
+    * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
+    * [`(bpg):cpp_deleted`](options.md#bpgcpp_deleted)
 
 **Relies on:**
   * [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton)
@@ -1077,12 +1103,12 @@ TBD
 Meant to be used through [`:InsertEnum`](Enum.md#enum-snippet) command.
 
 **Options:**
-  * [`(bg):({ft}_)dox_group`](#options.md#bgft_dox_group)
-  * [`(bg):cpp_begin_end_style`](options.md#bgft_begin_end_style)
-  * [`lh#cpp#use_cpp11()` and `lh#cpp#use_cpp17()`](options.md#bgcpp_std_flavour)
-  * [`(bg):({ft}_)array_size`](options.md#bgcpp_array_size)
-  * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
-  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
+  * [`(bpg):({ft}_)dox_group`](#options.md#bpgft_dox_group)
+  * [`(bpg):cpp_begin_end_style`](options.md#bpgft_begin_end_style)
+  * [`lh#cpp#use_cpp11()` and `lh#cpp#use_cpp17()`](options.md#bpgcpp_std_flavour)
+  * [`(bpg):({ft}_)array_size`](options.md#bpgcpp_array_size)
+  * `(bpg):({ft}_)exception_type`, default: `std:runtime_error`
+  * `(bpg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
 
 **Variation Points/Relies on:**
   * [`cpp/array_size`](#cpparray_size) snippet
@@ -1098,10 +1124,10 @@ TBD:
 Meant to be used through [`:InsertEnum`](Enum.md#enum-snippet) command.
 
 **Options:**
-  * `(bg):({ft}_)exception_type`, default: `std:runtime_error`
-  * `(bg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
-  * [`(bg):cpp_begin_end_style`](options.md#bgcpp_begin_end_style)
-  * [`(bg):cpp_begin_end_includes`](options.md#bgcpp_begin_end_includes)
+  * `(bpg):({ft}_)exception_type`, default: `std:runtime_error`
+  * `(bpg):({ft}_)exception_args`, default: `v:1_`, functor that gets `exception_txt` injected as parameter
+  * [`(bpg):cpp_begin_end_style`](options.md#bpgcpp_begin_end_style)
+  * [`(bpg):cpp_begin_end_includes`](options.md#bpgcpp_begin_end_includes)
 
 **Variation Points/Relies on:**
   * [`cpp/throw`](#cppthrow) snippet
@@ -1126,9 +1152,9 @@ TBD:
   * Any options used by
     [`cpp/internals/class-skeleton`](#cppinternalsclass-skeleton). In
     particular:
-    * [`lh#cpp#use_cpp11()`](options.md#bgcpp_std_flavour)
-    * [`(bg):cpp_deleted`](options.md#bgcpp_deleted)
-    * [`(bg):cpp_noncopyable_class`](#bgcpp_noncopyable_class)
+    * [`lh#cpp#use_cpp11()`](options.md#bpgcpp_std_flavour)
+    * [`(bpg):cpp_deleted`](options.md#bpgcpp_deleted)
+    * [`(bpg):cpp_noncopyable_class`](#bpgcpp_noncopyable_class)
 
 **Relies on:**
   * [`cpp/base-class`](#cppbase-class)
@@ -1149,8 +1175,8 @@ TBD:
   * _singleton name_, default: asked to the user
 
 **Options:**
-  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):dox_group`](options.md#bpgdox_group) , default: «Project»
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Notes:**
   * A Doxygen documentation skeleton is inserted
@@ -1188,9 +1214,9 @@ template <typename «T»> struct «name»_traits
 **Produces:** `@author`
 
 **Options:**
-  * [`(bg):({ft_}dox_author_tag)`](options.mg#bgft_dox_author_tag)
-  * [`(bg):({ft_}dox_author)`](options.mg#bgft_dox_author)
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):({ft_}dox_author_tag)`](options.mg#bpgft_dox_author_tag)
+  * [`(bpg):({ft_}dox_author)`](options.mg#bpgft_dox_author)
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Relies on:**
   * [`lh#dox#author()`](API.md#lhdoxauthor)
@@ -1202,7 +1228,7 @@ template <typename «T»> struct «name»_traits
   * «code», default: empty placeholder «»
 
 **Options:**
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Surround:**
   1. The selection can be surrounded by `<code>` tags.
@@ -1217,7 +1243,7 @@ template <typename «T»> struct «name»_traits
   * cpp/internals/formatted-comm, default: empty placeholder «»
 
 **Options:**
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Surround:**
   1. The selection can be surrounded by `<em>` tags.
@@ -1229,9 +1255,9 @@ template <typename «T»> struct «name»_traits
 **Produces:** `/** @file ... */`
 
 **Options:**
-  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
-  * [`(bg):ProjectVersion`](options.md#bgproject_version) , default: «1.0»
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):dox_group`](options.md#bpgdox_group) , default: «Project»
+  * [`(bpg):ProjectVersion`](options.md#bpgproject_version) , default: «1.0»
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Notes:**
   * The filename written with the `@file` tag is deduced from `expand(%:t)`
@@ -1270,7 +1296,7 @@ template <typename «T»> struct «name»_traits
   * cpp/internals/formatted-comm, default: empty placeholder «»
 
 **Options:**
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Surround:**
   1. The selection can be surrounded by the html-tags
@@ -1283,8 +1309,8 @@ template <typename «T»> struct «name»_traits
 **Produces:** `/**@ingroup ... */`
 
 **Options:**
-  * [`(bg):dox_group`](options.md#bgdox_group) , default: «Project»
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):dox_group`](options.md#bpgdox_group) , default: «Project»
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
@@ -1293,8 +1319,8 @@ template <typename «T»> struct «name»_traits
 **Produces:** `@since Version`
 
 **Options:**
-  * [`(bg):ProjectVersion`](options.md#bgproject_version) , default: «1.0»
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):ProjectVersion`](options.md#bpgproject_version) , default: «1.0»
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Relies on:**
   * [`lh#dox#tag()`](API.md#lhdoxtag)
@@ -1307,7 +1333,7 @@ template <typename «T»> struct «name»_traits
   * cpp/internals/formatted-comm, default: empty placeholder «»
 
 **Options:**
-  * [`(bg):({ft_}dox_TagLeadingChar)`](options.mg#bgft_dox_tagleadingchar)
+  * [`(bpg):({ft_}dox_TagLeadingChar)`](options.mg#bpgft_dox_tagleadingchar)
 
 **Surround:**
   1. The selection can be surrounded by `<tt>` tags.
@@ -1431,7 +1457,7 @@ C++ classes (values, entities, base classes, interfaces, exceptions, etc).
   * `s:direction`: `i` or `o`
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
 **Also includes:**
   * `<istream>` if `s:direction == "i"`
@@ -1452,5 +1478,5 @@ C++ classes (values, entities, base classes, interfaces, exceptions, etc).
   * `s:const`: `const` or empty string
 
 **Options:**
-  * [lh-dev naming conventions](http://github.com/LucHermitte/lh-dev#naming-conventions)
+  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
 
