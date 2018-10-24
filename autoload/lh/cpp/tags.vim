@@ -2,10 +2,10 @@
 " File:         autoload/lh/cpp/tags.vim                          {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      2.2.0
-let s:k_version = 220
+" Version:      2.3.0
+let s:k_version = 230
 " Created:      25th Jun 2014
-" Last Update:  06th Oct 2017
+" Last Update:  24th Oct 2018
 "------------------------------------------------------------------------
 " Description:
 "       API functions to obtain symbol declarations
@@ -71,6 +71,7 @@ endfunction
 
 " Function: lh#cpp#tags#compiler_includes() {{{3
 " Fetch standard includes (hard coded in the compiler)
+" TODO: find a way to support intel compiler
 let s:compiler_includes = {}
 function! lh#cpp#tags#compiler_includes() abort
   let compiler = lh#cpp#tags#find_compiler()
@@ -100,6 +101,10 @@ function! lh#cpp#tags#strip_included_paths(filename, includes)
 endfunction
 
 " Function: lh#cpp#tags#get_included_paths([default]) {{{3
+function! s:as_list(p) abort
+  return type(a:p) == type([]) ? a:p : [a:p]
+endfunction
+
 function! lh#cpp#tags#get_included_paths(...)
   let includes = []
   " sources_root: from mu-template & lh-suite(s)
@@ -112,7 +117,8 @@ function! lh#cpp#tags#get_included_paths(...)
   " includes: old path
   let def_includes = lh#option#get(['paths.includes', 'includes'])
   if lh#option#is_set(def_includes)
-    let includes += def_includes
+    call map(copy(def_includes), 'extend(includes, s:as_list(type(v:val)==type(function("has")) ? call(v:val,[]) : v:val))')
+    call filter(includes, '!empty(v:val)')
   elseif a:0 > 0
     let includes += type(a:1) == type([]) ? a:1 : split(a:1, ',')
   endif
