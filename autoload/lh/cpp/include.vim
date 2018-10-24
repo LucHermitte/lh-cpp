@@ -4,11 +4,11 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " Version:      002
 " Created:      28th Apr 2014
-" Last Update:  $Date$
+" Last Update:  01st Oct 2018
 "------------------------------------------------------------------------
 " Description:
 "       «description»
-" 
+"
 "------------------------------------------------------------------------
 " History:      «history»
 " TODO:         «missing features»
@@ -49,9 +49,9 @@ endfunction
 " Function: lh#cpp#include#add(filename, ...) {{{3
 " @return if anything was added
 " usages
-" - add('"filename"') 
-" - add('<filename>') 
-" - add('<filename>', 'first')  " ou 'last' 
+" - add('"filename"')
+" - add('<filename>')
+" - add('<filename>', 'first')  " ou 'last'
 " - add('filename', 0)  -> "filename"
 " - add('filename', 1)  -> <filename>
 " - add('filename', 0, 'first')  -> "filename"
@@ -140,6 +140,7 @@ endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

@@ -6,14 +6,14 @@
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " Version:	2.0.0b4
 " Created:	09th Feb 2009
-" Last Update:	$Date$
+" Last Update:	05th Sep 2018
 "------------------------------------------------------------------------
 " Description:
-" 	Helper MMIs to generate constructors 
-" 
+" 	Helper MMIs to generate constructors
+"
 "------------------------------------------------------------------------
 " Installation:	«install details»
-" History:	
+" History:
 " 	v1.1.0: creation
 "	v.2.0.0b4
 "	        New commands: :ConstructorCopy, :ConstructorDefault,
@@ -43,6 +43,7 @@ command! -b -nargs=0 ConstructorDefault :call lh#cpp#constructors#GenericConstru
 command! -b -nargs=0 AssignmentOperator :call lh#cpp#constructors#AssignmentOperator()
 
 "=============================================================================
+"}}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
