@@ -43,6 +43,7 @@
     * [`(bpg):({ft}_)file_regex_for_inclusion`](#bpgft_file_regex_for_inclusion)
     * [`(bpg):({ft}_)filename_simplify_for_inclusion`](#bpgft_filename_simplify_for_inclusion)
     * [`(bpg):({ft}_)gcov_files_path`](#bpgft_gcov_files_path)
+    * [`(bpg):({ft}_)guard_headers_with`](#bpgft_guard_headers_with)
     * [`(bpg):({ft}_)implPlace`](#bpgft_implplace)
     * [`g:inlinesPlace`](#ginlinesplace)
     * [`(bpg):({ft}_)includes`](#bpgft_includes)
@@ -437,6 +438,16 @@ same path as the one where the current file is.
 
 **See:** `<localleader>g` which permits to swap between a `.gcov` file and its
 source.
+
+#### `(bpg):({ft}_)guard_headers_with`
+This option tells how multiple inclusions of header files is prevented. This
+can be done with (portable) `#ifndef SOME_GUARD` + `#define SOME_GUARD`, or
+with `#pragma once` (non-standard) directive.
+
+Valid values for this option are: `ifndef`, `ifndef,pragma`, or `pragma`
+
+**Note:** This option is actually used by the default template-file from
+mu-template.
 
 #### `(bpg):({ft}_)implPlace`
 Tells where a generated accessor shall go (with `:ADDATTRIBUTE`):
