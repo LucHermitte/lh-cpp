@@ -1,11 +1,11 @@
 "=============================================================================
 " File:         ftplugin/c/c_complete_include.vim                 {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
-" Version:      2.2.0
-let s:k_version = 220
+"		<URL:http://github.com/LucHermitte/lh-cpp>
+" Version:      2.2.1
+let s:k_version = 221
 " Created:      08th Nov 2011
-" Last Update:  16th Nov 2016
+" Last Update:  16th Jan 2019
 "------------------------------------------------------------------------
 " Description:
 "       Mapping to complete #include filename not based on &path (as
@@ -24,14 +24,16 @@ let s:k_version = 220
 
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
+let s:cpo_save=&cpo
+set cpo&vim
+
 if &cp || (exists("b:loaded_ftplug_c_complete_include")
       \ && (b:loaded_ftplug_c_complete_include >= s:k_version)
       \ && !exists('g:force_reload_ftplug_c_complete_include'))
+  let &cpo=s:cpo_save
   finish
 endif
 let b:loaded_ftplug_c_complete_include = s:k_version
-let s:cpo_save=&cpo
-set cpo&vim
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -50,9 +52,9 @@ endif
 "=============================================================================
 " Global Definitions {{{1
 " Avoid global reinclusion {{{2
-if &cp || (exists("g:loaded_ftplug_c_complete_include")
+if exists("g:loaded_ftplug_c_complete_include")
       \ && (g:loaded_ftplug_c_complete_include >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_c_complete_include'))
+      \ && !exists('g:force_reload_ftplug_c_complete_include')
   let &cpo=s:cpo_save
   finish
 endif
@@ -67,12 +69,12 @@ let g:loaded_ftplug_c_complete_include = s:k_version
 " ftplugin.
 
 " Function: s:Complete() {{{3
-function! s:Complete()
+function! s:Complete() abort
   let cleanup = lh#on#exit()
         \.restore('&isk')
   try
     set isk+=/
-    let prev = GetLikeCTRL_W()
+    let prev = lh#ui#GetLikeCTRL_W()
   finally
     call cleanup.finalize()
   endtry
@@ -89,7 +91,7 @@ endfunction
 
 " Function: s:Open() {{{3
 " built on top of SearchInRuntime
-function! s:Open()
+function! s:Open() abort
   try
     let path = &path
     let paths = lh#cpp#tags#get_included_paths()

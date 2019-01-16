@@ -1,11 +1,12 @@
 " ========================================================================
 " File:		ftplugin/cpp/cpp_InsertAccessors.vim                  {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
-" Last Change:	$Date$ (28th July 2003)
+" 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
+" Version:	2.2.1
+let s:k_version = 221
+" Last Change:	$Date$ (28th July 2003)
 "
 "------------------------------------------------------------------------
 " Description:
@@ -33,25 +34,25 @@
 " }}}1
 " ==========================================================================
 
-let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
+let s:cpo_save=&cpo
+set cpo&vim
 if &cp || (exists("b:loaded_ftplug_cpp_InsertAccessors")
       \ && (b:loaded_ftplug_cpp_InsertAccessors >= s:k_version)
       \ && !exists('g:force_reload_ftplug_cpp_InsertAccessors'))
+  let &cpo=s:cpo_save
   finish
 endif
 let b:loaded_ftplug_cpp_InsertAccessors = s:k_version
-let s:cpo_save=&cpo
-set cpo&vim
 " Avoid local reinclusion }}}2
 
 "=============================================================================
 " Global Definitions {{{1
 " Avoid global reinclusion {{{2
-if &cp || (exists("g:loaded_ftplug_cpp_InsertAccessors")
+if exists("g:loaded_ftplug_cpp_InsertAccessors")
       \ && (g:loaded_ftplug_cpp_InsertAccessors >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_cpp_InsertAccessors'))
+      \ && !exists('g:force_reload_ftplug_cpp_InsertAccessors')
   let &cpo=s:cpo_save
   finish
 endif
@@ -78,13 +79,13 @@ let s:k_accessor_comment_proxy_ref = '/** Proxy-Ref. accessor to %a */'
 " Insertion of accessors {{{3
 
 " Function: s:InsertLines(lines) "{{{4
-function! s:InsertLines(lines)
+function! s:InsertLines(lines) abort
   silent put = a:lines
   silent '[,']normal! ==
 endfunction
 
 " Function: s:WriteAccessor	{{{4
-function! s:WriteAccessor(returnType, signature, instruction, comment)
+function! s:WriteAccessor(returnType, signature, instruction, comment) abort
   try
     let old_foldenable = &foldenable
     set nofoldenable
@@ -115,7 +116,7 @@ function! s:WriteAccessor(returnType, signature, instruction, comment)
 endfunction
 
 " Function: s:InsertAccessor {{{4
-function! s:InsertAccessor(className, returnType, signature, instruction, comment)
+function! s:InsertAccessor(className, returnType, signature, instruction, comment) abort
   try
     let old_foldenable = &foldenable
     set nofoldenable
@@ -177,7 +178,7 @@ endfunction
 " Nb: the mt_jump stuff is required in order to not mess things up with
 " automatically (by the mean of mu-template) built .cpp files.
 
-function! s:Comment(attribute, accessor_type) "{{{4
+function! s:Comment(attribute, accessor_type) abort "{{{4
   let template = lh#option#get('accessor_comment_'.a:accessor_type,
         \ s:k_accessor_comment_{a:accessor_type})
   return substitute(template, '%a',a:attribute,'g')
@@ -187,7 +188,7 @@ endfunction
 " Options:	g:getPrefix (default = "get_")
 " 		g:setPrefix (default = "set_")
 " 		g:refPrefix (default = "ref_")
-function! Cpp_AddAttribute()
+function! Cpp_AddAttribute() abort
   :CheckOptions
   " Todo: factorize and move this elsewhere
   " GUI : request name and type  {{{
@@ -271,6 +272,7 @@ function! Cpp_AddAttribute()
 endfunction
 
 " Functions }}}2
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

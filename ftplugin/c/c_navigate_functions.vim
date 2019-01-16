@@ -2,34 +2,35 @@
 " File:         ftplugin/c/c_navigate_functions.vim {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "		<URL:http://code.google.com/p/lh-vim/>
-" Version:      001
+" Version:      221
+let s:k_version = 221
 " Created:      08th Jul 2011
-" Last Update:  $Date$
+" Last Update:  16th Jan 2019
 "------------------------------------------------------------------------
 " Description:
 "       mappings ]m, ]M, [m and [M to navigate into functions begin/end
-" 
+"
 "------------------------------------------------------------------------
 " Installation:
 "       Drop this file into {rtp}/lh-cpp/ftplugin/c
 "       Requires Vim7+, lh-dev
-" History:      
+" History:
 " 08th Jul 2011: first implementation
 " TODO:         «missing features»
 " }}}1
 "=============================================================================
 
-let s:k_version = 001
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
+let s:cpo_save=&cpo
+set cpo&vim
 if &cp || (exists("b:loaded_ftplug_c_navigate_functions")
       \ && (b:loaded_ftplug_c_navigate_functions >= s:k_version)
       \ && !exists('g:force_reload_ftplug_c_navigate_functions'))
+  let &cpo=s:cpo_save
   finish
 endif
 let b:loaded_ftplug_c_navigate_functions = s:k_version
-let s:cpo_save=&cpo
-set cpo&vim
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -62,9 +63,9 @@ endif
 "=============================================================================
 " Global Definitions {{{1
 " Avoid global reinclusion {{{2
-if &cp || (exists("g:loaded_ftplug_c_navigate_functions")
+if exists("g:loaded_ftplug_c_navigate_functions")
       \ && (g:loaded_ftplug_c_navigate_functions >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_c_navigate_functions'))
+      \ && !exists('g:force_reload_ftplug_c_navigate_functions')
   let &cpo=s:cpo_save
   finish
 endif
@@ -78,7 +79,7 @@ let g:loaded_ftplug_c_navigate_functions = s:k_version
 " loaded, like functions that help building a vim-menu for this
 " ftplugin.
 
-function! s:NextFunction(start_or_end)
+function! s:NextFunction(start_or_end) abort
   let line = line('.')
   let info = lh#dev#__FindFunctions(line)
   let crt_function = info.idx " function starting just after the current line
@@ -103,7 +104,7 @@ function! s:NextFunction(start_or_end)
   endif
 endfunction
 
-function! s:PrevFunction(start_or_end)
+function! s:PrevFunction(start_or_end) abort
   let line = line('.')
   let info = lh#dev#__FindFunctions(line)
   let crt_function = info.idx " function starting just after the current line

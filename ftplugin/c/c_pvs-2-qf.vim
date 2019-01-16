@@ -1,15 +1,15 @@
 "=============================================================================
-" $Id$
 " File:         ftplugin/c/c_pvs-2-qf.vim                         {{{1
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-"		<URL:http://code.google.com/p/lh-vim/>
-" Version:      200
+"		<URL:http://github.com/LucHermitte/lh-cpp>
+" Version:      221
+let s:k_version = 221
 " Created:      10th Jul 2012
-" Last Update:  $Date$
+" Last Update:  16th Jan 2019
 "------------------------------------------------------------------------
 " Description:
 "       «description»
-" 
+"
 "------------------------------------------------------------------------
 " Installation:
 "       Drop this file into {rtp}/ftplugin/c
@@ -20,17 +20,17 @@
 " }}}1
 "=============================================================================
 
-let s:k_version = 200
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
+let s:cpo_save=&cpo
+set cpo&vim
 if &cp || (exists("b:loaded_ftplug_c_pvs_2_qf")
       \ && (b:loaded_ftplug_c_pvs_2_qf >= s:k_version)
       \ && !exists('g:force_reload_ftplug_c_pvs_2_qf'))
+  let &cpo=s:cpo_save
   finish
 endif
 let b:loaded_ftplug_c_pvs_2_qf = s:k_version
-let s:cpo_save=&cpo
-set cpo&vim
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
@@ -44,9 +44,9 @@ command! -b -nargs=0 PVSRedraw call s:ReDisplay()
 "=============================================================================
 " Global Definitions {{{1
 " Avoid global reinclusion {{{2
-if &cp || (exists("g:loaded_ftplug_c_pvs_2_qf")
+if exists("g:loaded_ftplug_c_pvs_2_qf")
       \ && (g:loaded_ftplug_c_pvs_2_qf >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_c_pvs_2_qf'))
+      \ && !exists('g:force_reload_ftplug_c_pvs_2_qf')
   let &cpo=s:cpo_save
   finish
 endif
@@ -61,7 +61,7 @@ let g:loaded_ftplug_c_pvs_2_qf = s:k_version
 " ftplugin.
 let s:xsl = lh#path#glob_as_list(&rtp, 'script/PVS2qf.xsl')[0]
 " Function: s:PVSLoad(plog) {{{3
-function! s:PVSLoad(plog)
+function! s:PVSLoad(plog) abort
   let xsltproc = lh#option#get('xsltproc', 'xsltproc')
   if !executable(xsltproc)
     throw "Sorry <" . xsltproc . "> is not a valid executable. Please set g:xsltproc or $PATH"
@@ -85,7 +85,7 @@ if !exists('s:filters_mess') " filter for messages
 endif
 
 " Function: s:PVSAddFilters(filters...) {{{3
-function! s:PVSAddFilters(...)
+function! s:PVSAddFilters(...) abort
   if len(a:000) == 0
     echo "Errors ignored are: " . join(map(copy(s:filters_nr), '"V".v:val'), ', ') . ', and messages containing: ' . join(s:filters_mess, ', ')
   else
@@ -101,7 +101,7 @@ function! s:PVSAddFilters(...)
 endfunction
 
 " Function: s:PVSDelFilters(filters...) {{{3
-function! s:PVSDelFilters(...)
+function! s:PVSDelFilters(...) abort
   let to_remove_nr = []
   let to_remove_mess = []
   for pat in a:000
@@ -117,7 +117,7 @@ function! s:PVSDelFilters(...)
 endfunction
 
 " Function: s:ReDisplay() {{{3
-function! s:ReDisplay()
+function! s:ReDisplay() abort
   let qf = filter(copy(s:qf), 'match(s:filters_nr, v:val.nr)<0')
   call filter(qf, 'lh#list#find_if(s:filters_mess, escape(string(v:val.text), "[") . "=~ v:1_")<0')
   call setqflist(qf)
@@ -125,7 +125,7 @@ function! s:ReDisplay()
   call lh#common#warning_msg(len(qf).'/'.len(s:qf).' warnings found')
 endfunction
 
-" Functions }}}2
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

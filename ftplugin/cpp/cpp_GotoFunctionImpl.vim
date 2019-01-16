@@ -7,12 +7,12 @@
 " 		<Feral at FireTop.Com>
 " 		Rewritten by Luc Hermitte <hermitte at free.fr>, but features
 " 		and fixes still mainly coming from Robert's ideas.
-" 		<URL:http://code.google.com/p/lh-vim/>
+" 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " }}}2
-" Last Change:	$Date$ (05th May 2006)
-" Version:	2.0.0
+" Last Change:	16th Jan 2019
+" Version:	2.2.1
 "------------------------------------------------------------------------
 " Description:
 " 	Defines mappings and commands to jumps to the implementation of a
@@ -204,13 +204,14 @@
 " }}}1
 "#############################################################################
 " Buffer Relative stuff {{{1
-if exists("b:loaded_ftplug_cpp_GotoFunctionImpl")
-      \ && !exists('g:force_load_cpp_GotoFunctionImpl')
-    finish
-endif
-let b:loaded_ftplug_cpp_GotoFunctionImpl = 200
 let s:cpo_save=&cpo
 set cpo&vim
+if &cp || (exists("b:loaded_ftplug_cpp_GotoFunctionImpl")
+      \ && !exists('g:force_load_cpp_GotoFunctionImpl'))
+  let &cpo=s:cpo_save
+  finish
+endif
+let b:loaded_ftplug_cpp_GotoFunctionImpl = 221
 
 " ==========================================================================
 

@@ -4,10 +4,10 @@
 "               From <URL:http://vim.sf.net>
 "               Adapted by Luc Hermitte <EMAIL:hermitte at free.fr>
 "               <URL:http://github.com/LucHermitte/lh-cpp>
-" Version:      2.2.0
-let s:k_version = '2.2.0'
+" Version:      2.2.1
+let s:k_version = '2.2.1'
 " Created:      ?
-" Last Update:  27th Aug 2018
+" Last Update:  16th Jan 2019
 "------------------------------------------------------------------------
 " Description:  {{{
 " Have you ever tried to call a function which parameters you have forgotten?
@@ -26,14 +26,15 @@ let s:k_version = '2.2.0'
 "=============================================================================
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
+let s:cpo_save=&cpo
+set cpo&vim
 if &cp || (exists("b:loaded_ftplug_previewWord")
       \ && (b:loaded_ftplug_previewWord >= s:k_version)
       \ && !exists('g:force_reload_ftplug_previewWord'))
+  let &cpo=s:cpo_save
   finish
 endif
 let b:loaded_ftplug_previewWord = s:k_version
-let s:cpo_save=&cpo
-set cpo&vim
 " Avoid local reinclusion }}}2
 
 " Settings {{{2
@@ -72,9 +73,9 @@ augroup END
 "=============================================================================
 " Global Definitions {{{1
 " Avoid global reinclusion {{{2
-if &cp || (exists("g:loaded_ftplug_previewWord")
+if exists("g:loaded_ftplug_previewWord")
       \ && (g:loaded_ftplug_previewWord >= s:k_version)
-      \ && !exists('g:force_reload_ftplug_previewWord'))
+      \ && !exists('g:force_reload_ftplug_previewWord')
   let &cpo=s:cpo_save
   finish
 endif
@@ -164,6 +165,6 @@ function! s:DoPreviewWord() abort
 endfunction
 
 " }}}1
-  let &cpo = s:cpo_save
+let &cpo = s:cpo_save
 "=============================================================================
 " vim600: set fdm=marker:

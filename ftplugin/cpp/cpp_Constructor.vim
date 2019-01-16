@@ -1,12 +1,12 @@
 "=============================================================================
 " File:		ftplugin/cpp/cpp_Constructor.vim                          {{{1
 " Author:	Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
-" 		<URL:http://code.google.com/p/lh-vim/>
+" 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
-"               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.0.0b4
+"               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
+" Version:	2.2.1
 " Created:	09th Feb 2009
-" Last Update:	05th Sep 2018
+" Last Update:	16th Jan 2019
 "------------------------------------------------------------------------
 " Description:
 " 	Helper MMIs to generate constructors
@@ -23,13 +23,14 @@
 
 " Buffer-local Definitions {{{1
 " Avoid local reinclusion {{{2
-if &cp || (exists("b:loaded_ftplug_cpp_Constructor")
-      \ && !exists('g:force_reload_ftplug_cpp_Constructor'))
-  finish
-endif
-let b:loaded_ftplug_cpp_Constructor = 200
 let s:cpo_save=&cpo
 set cpo&vim
+if &cp || (exists("b:loaded_ftplug_cpp_Constructor")
+      \ && !exists('g:force_reload_ftplug_cpp_Constructor'))
+  let &cpo=s:cpo_save
+  finish
+endif
+let b:loaded_ftplug_cpp_Constructor = 221
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
