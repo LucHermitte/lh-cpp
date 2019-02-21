@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.1
 " Created:      10th Feb 2005
-" Last Update:  16th Jan 2019
+" Last Update:  21st Feb 2019
 "------------------------------------------------------------------------
 " Description:  Some refactoring oriented mappings and commands
 "
@@ -59,7 +59,9 @@ command! -buffer -range ToInitList
       \ |<line1>,<line2>normal! ==
 
 
-command! -b -nargs=* Parents :call <sid>ShowParents(<f-args>)
+command! -buffer -nargs=* Parents :call <sid>ShowParents(<f-args>)
+
+command! -buffer -range -nargs=0 Modernize :call lh#cpp#refactor#_modernize()
 
 " Commands and mappings }}}1
 "=============================================================================
