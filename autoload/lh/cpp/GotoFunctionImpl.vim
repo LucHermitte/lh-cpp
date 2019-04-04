@@ -4,10 +4,10 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
-" Version:      2.2.0
-let s:k_version = '220'
+" Version:      2.2.1
+let s:k_version = '221'
 " Created:      07th Oct 2006
-" Last Update:  04th Sep 2018
+" Last Update:  04th Apr 2019
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -49,6 +49,8 @@ let s:k_version = '220'
 "       (*) Update options to support specialization
 "       (*) Fix extra space introduced by `:MOVETOIMPL`
 "       (*) Update to new lh-tags v3.0 and lh-dev new API
+"       v2.2.1
+"       (*) override and final cannot be used outside class definition
 " TODO:
 "       (*) add knowledge about C99/C++11 new numeric types
 "       (*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -482,8 +484,6 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
         \ . (proto.volatile ? ' volatile' : '')
         \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
         \ . (!empty(proto.noexcept) ? ' ' . proto.noexcept : '')
-        \ . (proto.final ? ' final' : '')
-        \ . (proto.overriden ? ' override' : '')
         \ . "{}"
   let styles = lh#style#get(&ft)
 
