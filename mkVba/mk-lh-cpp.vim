@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.1
 " Created:	06th Nov 2007
-" Last Update:	21st Feb 2019
+" Last Update:	24th Apr 2019
 "------------------------------------------------------------------------
 let s:version = '2.2.1'
 let s:project = 'lh-cpp'
@@ -41,6 +41,7 @@ after/template/cpp/benchmark.template
 after/template/cpp/bool-operator.template
 after/template/cpp/catch.template
 after/template/cpp/cerr.template
+after/template/cpp/chrono-how-long.template
 after/template/cpp/cin.template
 after/template/cpp/class.template
 after/template/cpp/clonable-class.template

@@ -1,0 +1,12 @@
+VimL:" chrono-how-long File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 24th Apr 2019
+VimL:" hint: Compute duration
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: let s:reindent     = 1
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<chrono>")')
+const auto <+start+> = std::chrono::system_clock::now();
+¡s:Surround(1, '<++>')¡
+const auto <+end+> = std::chrono::system_clock::now();
+const auto elapsed_seconds = std::chrono::duration<double>(<+end+> - <+start+>).count();
