@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      14th Apr 2008
-" Last Update:  08th Mar 2018
+" Last Update:  30th Apr 2019
 "------------------------------------------------------------------------
 " Description:  Snippets of C Control Statements
 "
@@ -35,9 +35,6 @@ let b:loaded_ftplug_c_snippets = s:k_version
 " Avoid local reinclusion }}}2
 
 "------------------------------------------------------------------------
-" This must be loaded before continuing
-runtime! ftplugin/c/c_localleader.vim
-
 " Local mappings {{{2
 
 " Some C++ abbreviated Keywords {{{3
