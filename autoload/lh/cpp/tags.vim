@@ -5,7 +5,7 @@
 " Version:      2.3.0
 let s:k_version = 230
 " Created:      25th Jun 2014
-" Last Update:  24th Oct 2018
+" Last Update:  22nd May 2019
 "------------------------------------------------------------------------
 " Description:
 "       API functions to obtain symbol declarations
@@ -69,12 +69,12 @@ function! lh#cpp#tags#find_compiler() abort
   endif
 endfunction
 
-" Function: lh#cpp#tags#compiler_includes() {{{3
+" Function: lh#cpp#tags#compiler_includes([compiler]) {{{3
 " Fetch standard includes (hard coded in the compiler)
 " TODO: find a way to support intel compiler
 let s:compiler_includes = {}
-function! lh#cpp#tags#compiler_includes() abort
-  let compiler = lh#cpp#tags#find_compiler()
+function! lh#cpp#tags#compiler_includes(...) abort
+  let compiler = a:0 > 0 ? a:1 : lh#cpp#tags#find_compiler()
   if ! has_key(s:compiler_includes, compiler)
     " Let's assume a *nix compiler (g++, clang++)
     let includes = split(lh#os#system(compiler . ' -E -xc++ - -Wp,-v < /dev/null'), "\n")
