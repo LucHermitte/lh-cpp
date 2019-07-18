@@ -188,7 +188,8 @@ let s:re_qualified_oper             = '\%('.s:re_qualified_name . '\s*::\s*\)\='
 let s:re_const_member_fn            = ')\s*\zs\<const\>'
 let s:re_volatile_member_fn         = ')\s*\zs\<volatile\>'
 let s:re_throw_spec                 = ')\s*\%(\%(\<const\>\|\<volatile\>\)\s\+\)\=\<throw\>(\(\zs.*\ze\))'
-let s:re_noexcept_spec              = '\<noexcept\>\((\zs.*\ze)\)\='
+" let s:re_noexcept_spec              = ')\s*\%(\%(\<const\>\|\<volatile\>\)\s\+\)\=\<noexcept\>\((\zs.*\ze)\)\='
+let s:re_noexcept_spec              = '\<noexcept\>\%((\zs.*\ze)\)\='
 let s:re_defined_by_compiler_prefix = ')\s*\%(\%(\<const\>\|\<volatile\>\)\s*\)\=\%(\<noexcept\>\%((.*)\)\=\s*\)\==\s*'
 let s:re_pure_virtual               = s:re_defined_by_compiler_prefix . '0\s*[;{]'
 let s:re_special_definition         = s:re_defined_by_compiler_prefix . '\zs\<\(default\|delete\)\>\ze\s*[;{]'
@@ -258,11 +259,13 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) abort
   if len(lThrowSpec) == 0 && match(prototype, s:re_throw_spec) > 0
     let lThrowSpec = [ '' ]
   endif
-  let sNoexceptSpec = matchstr(prototype, s:re_noexcept_spec)
+  let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(prototype, s:re_noexcept_spec)
+  call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
   if !empty(sNoexceptSpec)
-    let idx = stridx(prototype, sNoexceptSpec)
-    let prototype = prototype[:idx-1].prototype[idx+len(sNoexceptSpec)+2:]
+    " call s:Verbose("Prototype before trimming noexcept(): %1", prototype)
+    let prototype = prototype[:idx_s-2].prototype[idx_e+1:]
     " +2: to remove () that'll mess param extraction
+    call s:Verbose("Prototype after trimming noexcept(): %1", prototype)
   endif
 
   " 5- Parameters                                {{{5

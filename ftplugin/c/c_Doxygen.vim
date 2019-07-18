@@ -4,10 +4,10 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
-" Version:	2.1.2
-let s:k_version = 212
+" Version:	2.2.0
+let s:k_version = 220
 " Created:	22nd Nov 2005
-" Last Update:	26th Oct 2015
+" Last Update:	18th Jul 2019
 "------------------------------------------------------------------------
 " Description:
 " 	Provides the command :DOX that expands a doxygened documentation for
@@ -55,8 +55,6 @@ set cpo&vim
 
 " todo: arguments (with auto completion) for brief, ingroup, author, since, ...
 " todo: align arguments and their descriptions
-" todo: exceptions specifications
-" todo: detect returned type
 
 command! -buffer -nargs=0 DOX :call s:Doxygenize()
 
@@ -142,12 +140,19 @@ function! s:Doxygenize() abort
       let g:CppDox_return_snippet	  = lh#dox#tag('return ').lh#marker#txt(ret)
     endif
 
-    " todo
-    " empty => @throw None
+    " empty => <+@throw None+>
     " list => n x @throw list
     " non-existant => markerthrow
     " noexcept
-    if !has_key(info, 'throw') || len(info.throw) == 0
+    let noexcept = get(info, 'noexcept')
+    if !empty(noexcept)
+      if noexcept == 'noexcept'
+        let noexcept = 'None'
+      else
+        let noexcept = 'None if `'.noexcept.'`'
+      endif
+      let g:CppDox_exceptions_snippet = lh#dox#throw(noexcept)
+    elseif !has_key(info, 'throw') || len(info.throw) == 0
       let g:CppDox_exceptions_snippet = lh#dox#throw()
     else
       let throws = info.throw
