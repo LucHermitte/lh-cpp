@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  01st Sep 2018
+" Last Update:  18th Jul 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -46,6 +46,7 @@
 "       (*) Add detection of final, override, constexpr, noexept, volatile,
 "          =default, =delete
 "       (*) Fix regex building for operator()
+"       (*) Support `decltype(auto)`
 "       v2.0.0
 "       (*) GPLv3 w/ exception
 "       (*) AnalysePrototype() accepts spaces between functionname and (
@@ -216,10 +217,17 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) abort
   "   operators
   if iName == -1
     " if not an operator -> just a function
-    " "\s*(" -> parenthesis may be aligned and not sticking to the function
-    " name
-    let iName = match   (prototype, s:re_qualified_name . '\ze\s*(')
-    let sName = matchstr(prototype, s:re_qualified_name . '\ze\s*(')
+
+    " First: special case of `decltype(auto)`
+    let iName = match   (prototype, 'decltype(auto)\s*\zs'.s:re_qualified_name . '\ze\s*(')
+    if  iName >= 0
+      let sName = matchstr(prototype, 'decltype(auto)\s*\zs'.s:re_qualified_name . '\ze\s*(')
+    else
+      " "\s*(" -> parenthesis may be aligned and not sticking to the function
+      " name
+      let iName = match   (prototype, s:re_qualified_name . '\ze\s*(')
+      let sName = matchstr(prototype, s:re_qualified_name . '\ze\s*(')
+    endif
   else
     " echo "operator"
     let sName = matchstr(prototype, s:re_qualified_oper)
