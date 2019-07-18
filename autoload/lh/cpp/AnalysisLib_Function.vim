@@ -252,21 +252,26 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) abort
     let prototype = matchstr(prototype, '\v^.{-}\ze\s*-\>')
   endif
 
-  " 4- Parameters                                {{{5
-  let sParams = strpart(prototype, iName+len(sName))
-  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(sParams, 0)
-
-  " 5- Const member function ?                   {{{5
-  let isConst    = match(prototype, s:re_const_member_fn) != -1
-  let isVolatile = match(prototype, s:re_volatile_member_fn) != -1
-
-  " 6- Throw specification                       {{{5
+  " 4- Throw specification                       {{{5
   let sThrowSpec = matchstr(prototype, s:re_throw_spec)
   let lThrowSpec = split(sThrowSpec, '\s*,\s*')
   if len(lThrowSpec) == 0 && match(prototype, s:re_throw_spec) > 0
     let lThrowSpec = [ '' ]
   endif
   let sNoexceptSpec = matchstr(prototype, s:re_noexcept_spec)
+  if !empty(sNoexceptSpec)
+    let idx = stridx(prototype, sNoexceptSpec)
+    let prototype = prototype[:idx-1].prototype[idx+len(sNoexceptSpec)+2:]
+    " +2: to remove () that'll mess param extraction
+  endif
+
+  " 5- Parameters                                {{{5
+  let sParams = strpart(prototype, iName+len(sName))
+  let params = lh#cpp#AnalysisLib_Function#GetListOfParams(sParams, 0)
+
+  " 6- Const member function ?                   {{{5
+  let isConst    = match(prototype, s:re_const_member_fn) != -1
+  let isVolatile = match(prototype, s:re_volatile_member_fn) != -1
 
   " 7- Pure member function ?                    {{{5
   let isPure =  prototype =~ s:re_pure_virtual
