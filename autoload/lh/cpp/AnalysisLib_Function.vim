@@ -47,6 +47,7 @@
 "          =default, =delete
 "       (*) Fix regex building for operator()
 "       (*) Support `decltype(auto)`
+"       (*) Support `->` return type specification
 "       v2.0.0
 "       (*) GPLv3 w/ exception
 "       (*) AnalysePrototype() accepts spaces between functionname and (
@@ -245,6 +246,11 @@ function! lh#cpp#AnalysisLib_Function#AnalysePrototype(prototype) abort
     let retType = ''
   endif
   let retType = substitute(retType, s:re_constexpr.'\s*', '', '')
+  if retType =~ '\v^$|auto' && prototype =~ '->'
+    " New C++11 syntax for return type specification
+    let retType = matchstr(prototype, '\v-\>\s*\zs.{-}\ze\s*[{;]\s*$')
+    let prototype = matchstr(prototype, '\v^.{-}\ze\s*-\>')
+  endif
 
   " 4- Parameters                                {{{5
   let sParams = strpart(prototype, iName+len(sName))
