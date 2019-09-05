@@ -26,6 +26,7 @@ addon-info.json
 after/plugin/a.vim
 after/template/c/assert.template
 after/template/c/comment.template
+after/template/c/internals/c-header-content.template
 after/template/c/rand_init.template
 after/template/c/realloc.template
 after/template/cpp/abs-rel.template

@@ -1,0 +1,10 @@
+VimL:" Typical C++ header content, Luc Hermitte, 05th Sep 2019
+VimL:" override content for header files for OTK like projects
+VimL: let s:default_text = empty(s:Args()) ? "" : (s:Args()[0])
+VimL: call s:Include('namespace-name', 'cpp/internals')
+MuT:  if !empty(s:namespace)
+VimL:   call s:Include('namespace', 'cpp', {'content': s:default_text, 'included': 1})
+MuT:  else
+<+default_text+>
+MuT:  endif
+VimL: call s:Include('post-namespace-header-content', 'cpp/internals')
