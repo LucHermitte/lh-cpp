@@ -1,0 +1,7 @@
+VimL:" Factorize namespace name "computation"
+MuT:  let s:namespace = s:Param('namespace', '###')
+MuT:  if (type(s:namespace) == type('')) && (s:namespace == '###')
+MuT:     let s:namespace0 = lh#ft#option#get('project_namespace', &ft, lh#marker#txt('ns'))
+MuT:     let s:namespace = type(s:namespace0) == type([]) ? join(s:namespace0, "::") : s:namespace0
+VimL:    let s:namespace = lh#ui#input('Namespace name: ', s:namespace)
+MuT:  endif

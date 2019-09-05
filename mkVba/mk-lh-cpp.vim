@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.1
 " Created:	06th Nov 2007
-" Last Update:	30th Apr 2019
+" Last Update:	05th Sep 2019
 "------------------------------------------------------------------------
 let s:version = '2.2.1'
 let s:project = 'lh-cpp'
@@ -80,6 +80,7 @@ after/template/cpp/internals/get-b-e.template
 after/template/cpp/internals/get-class-name.template
 after/template/cpp/internals/includes.template
 after/template/cpp/internals/list-constructors.template
+after/template/cpp/internals/namespace-name.template
 after/template/cpp/internals/shall_explicit_defaults.template
 after/template/cpp/internals/stream-common.template
 after/template/cpp/internals/stream-implementation.template
