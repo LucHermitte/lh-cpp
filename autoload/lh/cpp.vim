@@ -4,10 +4,10 @@
 "		<URL:http://code.google.com/p/lh-vim/>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
-" Version:      2.1.7
-let s:k_version = '217'
+" Version:      2.2.1
+let s:k_version = '221'
 " Created:      08th Jun 2014
-" Last Update:  23rd Nov 2015
+" Last Update:  25th Sep 2019
 "------------------------------------------------------------------------
 " Description:
 "       Various C++ related functions
@@ -46,11 +46,11 @@ endfunction
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
 
-" # Obtain C++ flavour (03, TR1, 11, 14, 17) {{{2
+" # Obtain C++ flavour (03, TR1, 11, 14, 17, 20) {{{2
 " @note this set of functions deprecates lh#dev#cpp#use_cpp11()
 
 " Function: lh#cpp#get_flavour() {{{3
-" @return a value among: 03 (C++98/03), 05 (TR1), 11 (C++11), 14, 17
+" @return a value among: 03 (C++98/03), 05 (TR1), 11 (C++11), 14, 17, 20
 function! lh#cpp#get_flavour()
   " First check a dedicated set of variables
   let flavour = lh#option#get('cpp_std_flavour', 0)
@@ -75,8 +75,30 @@ function! lh#cpp#get_flavour()
     let flags = lh#cmake#get_variables('CXXFLAGS')
   catch /.*/
   endtry
+  " Or compile_commands.json database
+  " as newer versions of CMake use the CXX_STANDARD property that
+  " doesn't set any variable that can be fetched.
+  if empty(flags)
+    try
+      " The following may fail if build-tools-wrapper is not installed
+      " or if the project isn't using CMake
+      let prj_dirname = lh#project#_check_project_variables(
+        \ ['paths.sources', 'project_sources_dir', ['BTW_project_config', '_.paths.sources']])
+      let dbs = lh#path#glob_as_list(
+            \ [lh#btw#compilation_dir(), prj_dirname],
+            \ 'compile_commands.json', 0)
+      if  !empty(dbs)
+        let db = dbs[0]
+        let l_flags = filter(readfile(db), 'v:val =~ "-std="')
+        let flags = empty(l_flags) ? '' : l_flags[0]
+      endif
+    catch /.*/
+    endtry
+  endif
+
+  " And ... decode!
   if !empty(flags)
-    let std=matchstr(flags, '-std=\zs\S\+\zs')
+    let std=matchstr(flags, '-std=\zs\S\+\ze')
     if !empty(std)
       return s:DecodeStdFlavour(std)
     endif
@@ -121,6 +143,16 @@ function! lh#cpp#use_cpp17(...)
   endif
 endfunction
 
+" Function: lh#cpp#use_cpp20([and_no_more = 0]) {{{3
+function! lh#cpp#use_cpp20(...)
+  let flavour = lh#cpp#get_flavour()
+  if a:0 == 0 || a:1 == 0
+    return flavour >= 20
+  else
+    return flavour == 20
+  endif
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
@@ -133,8 +165,10 @@ function! s:CheckFlavour()
         \ 'cpp05': 05,
         \ 'cpp11': 11,
         \ 'cpp14': 14,
-        \ 'cpp17': 17
+        \ 'cpp17': 17,
+        \ 'cpp20': 20
         \ }
+  " TODO: use filter!
   for kv in reverse(items(flavours))
     if lh#option#get('cpp_use_'.kv[0], 0)
       return kv[1]
@@ -150,10 +184,12 @@ function! s:DecodeStdFlavour(std)
   elseif std =~ '\(11\|0x\)' | return 11
   elseif std =~ '\(14\|1y\)' | return 14
   elseif std =~ '\(17\|1z\)' | return 17
+  elseif std =~ '\(20\|2a\)' | return 20
   else                       | return 03
   endif
 endfunction
 
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
