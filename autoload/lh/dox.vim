@@ -4,10 +4,10 @@
 " 		<URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
-let s:k_version = 220
-" Version:	2.2.0
+let s:k_version = 221
+" Version:	2.2.1
 " Created:      22nd Feb 2011
-" Last Update:  08th Mar 2018
+" Last Update:  22nd Nov 2019
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -180,6 +180,7 @@ endfunction
 " Function: lh#dox#_parameter_direction(type) {{{3
 function! lh#dox#_parameter_direction(type) abort
   " todo: enhance the heuristics.
+  " - add string_view, span, mdspan
   " First strip any namespace/scope stuff
 
   " Support for boost smart pointers, custom types, ...
@@ -210,7 +211,7 @@ function! lh#dox#new_function(brief) abort
       let param.text = lh#marker#txt(name.'-explanations')
     endif
     if has_key(param, 'type') && lh#dev#cpp#types#is_pointer(param.type)
-      let self.pre += [ '`'.name.' != NULL`' . lh#marker#txt()]
+      let self.pre += [ '`'.name.' != '.lh#cpp#snippets#nullptr().'`' . lh#marker#txt()]
     endif
     let self.param += [ param ]
   endfunction
