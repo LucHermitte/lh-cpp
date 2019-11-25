@@ -101,6 +101,9 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
     if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
       " TODO move cursor to function name
       let py_info = clang#get_symbol()
+      if py_info.is_definition && a:onlyDeclaration
+        return {}
+      endif
 
       let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_noexcept_spec)
       call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
