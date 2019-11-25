@@ -7,7 +7,7 @@
 " Version:	2.2.0
 let s:k_version = 220
 " Created:	22nd Nov 2005
-" Last Update:	18th Jul 2019
+" Last Update:	25th Nov 2019
 "------------------------------------------------------------------------
 " Description:
 " 	Provides the command :DOX that expands a doxygened documentation for
@@ -98,8 +98,7 @@ function! s:Doxygenize() abort
         \.restore('g:CppDox_brief_snippet')
   try
     " Obtain informations from the function at the current cursor position.
-    let proto  = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(line('.'), 0)
-    let info   = lh#cpp#AnalysisLib_Function#AnalysePrototype(proto)
+    let info   = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), 0)
     let params = info.parameters
     let ret    = info.return
 
@@ -108,6 +107,14 @@ function! s:Doxygenize() abort
     " Parameters & preconditions
     let g:CppDox_Params_snippet = []
     let g:CppDox_preconditions_snippet = []
+    for param in get(info, 'tparams', [])
+      " @tparam
+      let sValue =
+            \  lh#dox#tag("tparam")
+            \ . ' ' . param.name
+            \ . '  ' . lh#marker#txt((param.name).'-explanations')
+      call add (g:CppDox_Params_snippet, sValue)
+    endfor
     for param in params
       " @param
       let sValue =

@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  18th Jul 2019
+" Last Update:  25th Nov 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -93,6 +93,76 @@ endfunction
 
 "------------------------------------------------------------------------
 " # Public {{{2
+let s:k_not_available = lh#option#unset('libclang cannot tell')
+
+" " Function: lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration) {{{3
+function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration) abort
+  try
+    if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
+      " TODO move cursor to function name
+      let py_info = clang#get_symbol()
+
+      let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_noexcept_spec)
+      call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
+
+      let info = {}
+      let info.qualifier
+            \ = py_info.static   ? 'static'
+            \ : py_info.virtual  ? 'virtual'
+            \ : ''
+            " \ : py_info.explicit ? 'explicit'
+            " As of 9, libclang still cannot tell whether a constructor is
+            " declared explicit
+      let info.return     = py_info.true_kind =~ '\vCONSTRUCTOR|DESTRUCTOR'
+            \ ? ''
+            \ : py_info.result_type.spelling
+      let info.name       = py_info.spelling
+      let info.constexpr  = s:k_not_available
+      let info.const      = py_info.const
+      let info.volatile   = py_info.type.spelling =~ '\v<volatile>'
+      let info.pure       = py_info.pure
+      let info.special_definition
+            \ = py_info.is_default_method ? '= default'
+            \ : ''
+            " \ : py_info.deleted   ? '= delete'
+            " As of 9, libclang still cannot tell whether a function is
+            " deleted...
+      let info.throw      = [] " Let's forget about this
+      let info.noexcept   = sNoexceptSpec
+      let info.final      = ! empty(get(py_info.children, 'CursorKind.CXX_FINAL_ATTR', {}))
+      let info.overriden  = ! empty(get(py_info.children, 'CursorKind.CXX_OVERRIDE_ATTR', {}))
+      let info.parameters = []
+      for py_param in get(py_info.children, 'CursorKind.PARM_DECL', [])
+        let param = {
+              \ 'name'   : py_param.spelling
+              \,'type'   : py_param.type.spelling
+              \,'default': s:k_not_available
+              \,'nl'     : s:k_not_available
+              \ }
+        let info.parameters += [param]
+      endfor
+      let info.tparams    = []
+      for py_param in get(py_info.children, 'CursorKind.TEMPLATE_TYPE_PARAMETER', [])
+            \ + get(py_info.children, 'CursorKind.TEMPLATE_NON_TYPE_PARAMETER', [])
+        let param = {
+              \ 'name'   : py_param.spelling
+              \,'default': s:k_not_available
+              \,'nl'     : s:k_not_available
+              \ }
+        let info.tparams += [param]
+      endfor
+      return info
+    endif
+  catch /.*/
+    call lh#common#warning_msg("We cannot use vim-clang+libclang to decode function prototype, falling back to pure vimscript analysis. ".v:exception)
+  endtry
+
+  " If vim-clang + libclang could not be used....
+  let proto = lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
+  let info  = lh#cpp#AnalysisLib_Function#AnalysePrototype(proto)
+  return info
+endfunction
+
 " Function: lh#cpp#AnalysisLib_Function#GetFunctionPrototype " {{{3
 " Todo:
 " * Retrieve the type even when it is not on the same line as the function
