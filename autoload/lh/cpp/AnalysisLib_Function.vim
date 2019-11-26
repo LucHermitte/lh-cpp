@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  25th Nov 2019
+" Last Update:  26th Nov 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -154,6 +154,8 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
               \ }
         let info.tparams += [param]
       endfor
+      let info.start = py_info.extent.start
+      let info.end   = py_info.extent.end
       return info
     endif
   catch /.*/

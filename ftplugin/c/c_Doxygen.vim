@@ -7,7 +7,7 @@
 " Version:	2.2.0
 let s:k_version = 220
 " Created:	22nd Nov 2005
-" Last Update:	25th Nov 2019
+" Last Update:	26th Nov 2019
 "------------------------------------------------------------------------
 " Description:
 " 	Provides the command :DOX that expands a doxygened documentation for
@@ -173,6 +173,9 @@ function! s:Doxygenize() abort
     endif
 
     " goto begining of the function
+    if has_key(info, 'start')
+      exe info.start.line
+    endif
     :put!=''
     " Load the template
     :MuTemplate dox/function
