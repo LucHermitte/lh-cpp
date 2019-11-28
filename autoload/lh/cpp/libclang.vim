@@ -24,6 +24,8 @@ endif
 
 let s:cpo_save=&cpo
 set cpo&vim
+
+let s:k_has_compil_hints = lh#has#plugin('autoload/lh/compil_hints.vim')
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
 " # Version {{{2
@@ -56,12 +58,14 @@ endfunction
 "------------------------------------------------------------------------
 " ## API      functions {{{1
 " # Ancestors {{{2
-function! s:add_info_to_qf(qf, info, level) abort " {{{3
+function! s:add_info_to_qf(qf, balloons, info, level, balloon_ctx) abort " {{{3
   let info = a:info.location
   let info.text = a:level. '+- '.a:info.access.' '.a:info.spelling
   call add(a:qf, info)
+  let balloon_ctx = ' : '.a:info.access.' '.a:info.spelling . a:balloon_ctx
+  call add(a:balloons, balloon_ctx)
   if has_key(a:info, 'parents')
-    call map(copy(a:info.parents), 's:add_info_to_qf(a:qf, v:val, "|  ".a:level)')
+    call map(copy(a:info.parents), 's:add_info_to_qf(a:qf, a:balloons, v:val, "|  ".a:level, balloon_ctx)')
   endif
 endfunction
 
@@ -73,8 +77,15 @@ function! lh#cpp#libclang#show_ancestors(...) abort
   let [parents, current] = clang#parents()
   let qf = []
   let qf += [extend(current.location, {'text': current.name})]
-  call map(copy(parents), 's:add_info_to_qf(qf, v:val, "")')
+  let balloons = [' : inspected leaf']
+  call map(copy(parents), 's:add_info_to_qf(qf, balloons, v:val, "", "")')
   call setqflist(qf)
+  if lh#has#properties_in_qf()
+    call setqflist([], 'a', {'title': current.name . ' base classes'})
+    if s:k_has_compil_hints
+      call lh#compil_hints#set_balloon_format({k, v -> l:current.name . l:balloons[v.key]})
+    endif
+  endif
   if exists(':Copen')
     Copen
   else
