@@ -75,6 +75,11 @@ function! lh#cpp#libclang#show_ancestors(...) abort
   let qf += [extend(current.location, {'text': current.name})]
   call map(copy(parents), 's:add_info_to_qf(qf, v:val, "")')
   call setqflist(qf)
+  if exists(':Copen')
+    Copen
+  else
+    copen
+  endif
 endfunction
 
 "------------------------------------------------------------------------
