@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.1
 " Created:	06th Nov 2007
-" Last Update:	05th Sep 2019
+" Last Update:	28th Nov 2019
 "------------------------------------------------------------------------
 let s:version = '2.2.1'
 let s:project = 'lh-cpp'
@@ -142,6 +142,7 @@ autoload/lh/cpp/constructors.vim
 autoload/lh/cpp/enum.vim
 autoload/lh/cpp/ftplugin.vim
 autoload/lh/cpp/include.vim
+autoload/lh/cpp/libclang.vim
 autoload/lh/cpp/macros.vim
 autoload/lh/cpp/option.vim
 autoload/lh/cpp/override.vim
