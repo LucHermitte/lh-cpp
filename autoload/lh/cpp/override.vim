@@ -236,7 +236,14 @@ endfunction
 function! s:libclang_override(function_tag) abort " {{{4
   call s:Verbose("Overriding: %1", a:function_tag)
   let extent = a:function_tag.extent
-  let lines = readfile(extent.filename)
+  if resolve(fnamemodify(extent.file, ':p')) == resolve(expand('%:p'))
+    " Current buffer may have been changed since last save
+    " => need to use its current state
+    let lines = getline(1, '$')
+  else
+    " libclang has certainly parsed a saved file => use readfile
+    let lines = readfile(extent.filename)
+  endif
   call s:Verbose("Extract %1 from %2: l:%3, c:%4 ... l:%5, c:%6",
         \ a:function_tag.name, extent.filename,
         \ extent.start.lnum, extent.start.col,
