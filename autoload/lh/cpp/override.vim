@@ -4,10 +4,10 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
-" Version:      2.2.0
-let s:k_version = '220'
+" Version:      2.3.0
+let s:k_version = '230'
 " Created:      15th Apr 2008
-" Last Update:  14th Mar 2017
+" Last Update:  02nd Dec 2019
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -21,7 +21,7 @@ let s:k_version = '220'
 "     - first: the less overridden functions
 "     - last: the ones already overridden for the current class
 " (*) Build and insert the prototypes ; try to fetch the doc as well
-" (*) Add override C++11 keyword
+" (*) Add override C++11 keyword, with vimscript API
 " }}}1
 "=============================================================================
 
@@ -30,12 +30,12 @@ set cpo&vim
 
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
-" # Version {{{2
+" # Version   {{{2
 function! lh#cpp#override#version()
   return s:k_version
 endfunction
 
-" # Debug   {{{2
+" # Debug     {{{2
 let s:verbose = get(s:, 'verbose', 0)
 function! lh#cpp#override#verbose(...)
   if a:0 > 0 | let s:verbose = a:1 | endif
@@ -56,6 +56,11 @@ function! lh#cpp#override#debug(expr) abort
   return eval(a:expr)
 endfunction
 
+" # Script ID {{{2
+function! s:getSID() abort
+  return eval(matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_getSID$'))
+endfunction
+let s:k_script_name      = s:getSID()
 
 " ## Functions {{{1
 " # API {{{2
@@ -80,7 +85,7 @@ function! lh#cpp#override#root_function(classname, funcname) abort
 endfunction
 
 " Function: s:OverrideableFunctions(classname) {{{3
-function! s:OverrideableFunctions(classname)
+function! s:OverrideableFunctions(classname) abort
   let result = {}
   " todo: do not sort ancestors (find the inheritance (tree) order) because
   " some virtual functions are not marked virtual in childs
@@ -99,7 +104,7 @@ function! s:OverrideableFunctions(classname)
       let fn2 = copy(fn)
       let name    = matchstr(fn.name, '^[^(]*::\zs.*$')
       let context = matchstr(fn.name, '^[^(]*::\ze.*$')
-      let fn2.contexts = [ context ]
+      let fn2.defined_in = [ context ]
       let fn2.name  = name
 
       if !has_key(result, name)
@@ -108,7 +113,7 @@ function! s:OverrideableFunctions(classname)
         for overload in result[name]
           if lh#cpp#AnalysisLib_Function#IsSame(overload, fn2)
             " an override
-            call add(overload.contexts, context)
+            call add(overload.defined_in, context)
             " echomsg "SAME: " . string(overload). " -- " . string(fn2)
           else
             " new overload
@@ -153,7 +158,7 @@ function! s:OverrideableFunctions(classname)
 endfunction
 
 " Function: s:OverrideFunction(function_tag) {{{3
-function! s:OverrideFunction(function_tag)
+function! s:OverrideFunction(function_tag) abort
   " a- open the related file in a new window
   let filename = a:function_tag.filename
   call lh#window#create_window_with('sp '.filename)
@@ -184,18 +189,94 @@ function! s:OverrideFunction(function_tag)
     return lines
 endfunction
 
-" # Main {{{2
-function! lh#cpp#override#Main()
-  " 1- Obtain current class name
+" Vimscript API {{{3
+function! s:vim_get_classname() abort " {{{4
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
+  return classname
+endfunction
+
+function! s:vim_get_overridable_functions(classname) abort " {{{4
+  let virtual_fcts = s:OverrideableFunctions(classname)
+  for fn in virtual_fcts
+    let signature = lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
+    let fn['fullsignature' ] = signature
+  endfor
+  return virtual_fcts
+endfunction
+
+function! s:vim_override(function_tag) abort " {{{4
+  return s:OverrideFunction(a:function_tag)
+endfunction
+
+function! s:make_vimscript_API() abort " {{{4
+  let res = lh#object#make_top_type({'API': 'vimscript'})
+  call lh#object#inject(res, 'get_classname', 'vim_get_classname', s:k_script_name)
+  call lh#object#inject(res, 'get_overridable_functions', 'vim_get_overridable_functions', s:k_script_name)
+  call lh#object#inject(res, 'override', 'vim_override', s:k_script_name)
+  return res
+endfunction
+
+" libclang API {{{3
+function! s:libclang_get_classname() abort " {{{4
+  let classname = pyxeval('findClass().spelling')
+  return classname
+endfunction
+
+function! s:libclang_get_overridable_functions(classname) abort " {{{4
+  " Given the way it works, we don't need to forward the classname: we will get
+  " another cursor to it.
+  let virtual_fcts = clang#non_overridden_virtual_functions()
+  for fn in virtual_fcts
+    let signature = substitute(fn.signature, '(', fn.name.'(', '')
+    let fn['fullsignature' ] = signature
+  endfor
+  return virtual_fcts
+endfunction
+
+function! s:libclang_override(function_tag) abort " {{{4
+  call s:Verbose("Overriding: %1", a:function_tag)
+  let extent = a:function_tag.extent
+  let lines = readfile(extent.filename)
+  call s:Verbose("Extract %1 from %2: l:%3, c:%4 ... l:%5, c:%6",
+        \ a:function_tag.name, extent.filename,
+        \ extent.start.lnum, extent.start.col,
+        \ extent.end.lnum, extent.end.col)
+  let lines = lines[(extent.start.lnum-1) : (extent.end.lnum-1)]
+  let lines[0]  = lines[0][extent.start.col-1 :]
+  let lines[-1] = lines[0][: extent.end.col]
+  call s:Verbose("Definition found: %1", lines)
+  " TODO: could be "final" instead
+  let lines[0]  = substitute(lines[0], '\s*virtual\s\+', '', '')
+  let lines[-1]  = substitute(lines[-1], '\s*=\s*0', ' '.lh#cpp#snippets#override(), '')
+
+  return lines
+endfunction
+
+function! s:make_libclang_API() abort " {{{4
+  let res = lh#object#make_top_type({'API': 'libclang'})
+  call lh#object#inject(res, 'get_classname', 'libclang_get_classname', s:k_script_name)
+  call lh#object#inject(res, 'get_overridable_functions', 'libclang_get_overridable_functions', s:k_script_name)
+  call lh#object#inject(res, 'override', 'libclang_override', s:k_script_name)
+  return res
+endfunction
+
+" # Main {{{2
+function! lh#cpp#override#Main() abort
+  if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
+    let api = s:make_libclang_API()
+  else
+    let api = s:make_vimscript_API()
+  endif
+  " 1- Obtain current class name
+  let classname = api.get_classname()
   call s:Verbose ("classname=".classname)
   " 2- Obtain overrideable functions
-  let virtual_fcts = s:OverrideableFunctions(classname)
+  let virtual_fcts = api.get_overridable_functions(classname)
   call s:Verbose ("virtual fct=".string(virtual_fcts))
   let g:decls = virtual_fcts
 
   " 3- Propose to select the functions to override
-  call s:Display(classname, virtual_fcts)
+  call s:Display(classname, virtual_fcts, api)
   " 4- Insert them in the current class
   " -> asynchrounous
 endfunction
@@ -203,7 +284,7 @@ endfunction
 " # GUI {{{2
 " ==========================[ Menu ]====================================
 " Function: s:Access(fn) {{{3
-function! s:Access(fn)
+function! s:Access(fn) abort
   if has_key(a:fn, 'access')
     if     a:fn.access == 'public'    | return '+'
     elseif a:fn.access == 'protected' | return '#'
@@ -214,20 +295,20 @@ function! s:Access(fn)
   endif
 endfunction
 
-function! s:Overriden(fn)
+" Function: s:Overriden(fn) {{{3
+function! s:Overriden(fn) abort
   return has_key(a:fn, 'overriden') ? '!' : ' '
 endfunction
 
 " Function: s:AddToMenu(lines, fns) {{{3
-function! s:AddToMenu(lines, fns)
+function! s:AddToMenu(lines, fns) abort
   " 1- Compute max function length
   let max_length = 0
   let fns=[]
   " for overloads in a:fns
     " for fn in overloads
     for fn in a:fns
-      let signature = lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
-      let fn['fullsignature' ] = signature
+      let signature = fn.fullsignature
       let length = lh#encoding#strlen(signature)
       if length > max_length | let max_length = length | endif
       call add(fns, fn)
@@ -238,20 +319,20 @@ function! s:AddToMenu(lines, fns)
   for fn in fns
     let line = s:Overriden(fn).s:Access(fn).' '.fn.fullsignature
           \ . repeat(' ', max_length-lh#encoding#strlen(fn.fullsignature))
-          \ . ' ' . string(fn.contexts)
+          \ . ' ' . string(fn.defined_in)
     call add(a:lines, line)
   endfor
 endfunction
 
 " Function: s:BuildMenu(declarations) {{{3
-function! s:BuildMenu(declarations)
+function! s:BuildMenu(declarations) abort
   let res = ['--abort--']
   call s:AddToMenu(res, a:declarations)
   return res
 endfunction
 
-" Function: s:Display(className, declarations) {{{3
-function! s:Display(className, declarations)
+" Function: s:Display(className, declarations, api) {{{3
+function! s:Display(className, declarations, api) abort
   let choices = s:BuildMenu(a:declarations)
   " return
   let b_id = lh#buffer#dialog#new(
@@ -266,13 +347,14 @@ function! s:Display(className, declarations)
   call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in one of the ancestor class', 'long')
   " Added the lonely functions to the b_id
   let b_id['declarations'] = a:declarations
+  let b_id['api']          = a:api
   " Syntax and co
   call s:PostInitDialog()
   return ''
 endfunction
 
 " Function: s:PostInitDialog() {{{3
-function! s:PostInitDialog()
+function! s:PostInitDialog() abort
   if has("syntax")
     syn clear
 
@@ -300,7 +382,7 @@ function! s:PostInitDialog()
 endfunction
 
 " Function: lh#cpp#override#select(results) {{{3
-function! lh#cpp#override#select(results)
+function! lh#cpp#override#select(results) abort
   if len(a:results.selection)==1 && a:results.selection[0]==0
     call lh#buffer#dialog#quit()
     return
@@ -318,14 +400,15 @@ function! lh#cpp#override#select(results)
     "
     let selected_virt = a:results.dialog.declarations[selection-1]
     " echomsg string(selected_virt)
-    call extend(lines, s:OverrideFunction(selected_virt))
+    let api = a:results.dialog.api
+    call extend(lines, api.override(selected_virt))
   endfor
   " Go back to the original buffer, and insert the built lines
   let where_it_started = a:results.dialog.where_it_started
   call lh#buffer#find(where_it_started[0])
   if 0==append(where_it_started[1]-1, lines)
-    exe (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
-    echo (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
+    silent exe (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
+    " echo (where_it_started[1]-1).',+'.(len(lines)-1).'normal! =='
   endif
 endfunction
 
