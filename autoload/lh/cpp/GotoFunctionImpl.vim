@@ -4,10 +4,10 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
-" Version:      2.2.1
-let s:k_version = '221'
+" Version:      2.3.0
+let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  04th Apr 2019
+" Last Update:  03rd Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -63,12 +63,12 @@ let s:cpo_save=&cpo
 set cpo&vim
 "------------------------------------------------------------------------
 " ## Misc Functions     {{{1
-" # Version {{{2
+" # Version   {{{2
 function! lh#cpp#GotoFunctionImpl#version()
   return s:k_version
 endfunction
 
-" # Debug   {{{2
+" # Debug     {{{2
 let s:verbose = get(s:, 'verbose', 0)
 function! lh#cpp#GotoFunctionImpl#verbose(...)
   if a:0 > 0 | let s:verbose = a:1 | endif
@@ -89,7 +89,99 @@ function! lh#cpp#GotoFunctionImpl#debug(expr) abort
   return eval(a:expr)
 endfunction
 
+" # Script ID {{{2
+function! s:getSID() abort
+  return eval(matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_getSID$'))
+endfunction
+let s:k_script_name      = s:getSID()
+
 " ## Functions {{{1
+" # API {{{2
+function! s:get_code_analyser() abort " {{{3
+  if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
+    let api_kind = 'libclang'
+  else
+    let api_kind = 'vimscript'
+  endif
+  return s:make_API(api_kind)
+endfunction
+
+function! s:make_API(kind) abort " {{{3
+  let k_functions = ['get_classname', 'get_prototype', 'proto_to_regex',
+        \ 'generate_definition_signature']
+  let res = lh#object#make_top_type({'API': a:kind})
+  for func in k_functions
+    call lh#object#inject(res, func, a:kind.'_'.func, s:k_script_name)
+  endfor
+  return res
+endfunction
+
+" Vimscript API {{{3
+function! s:vimscript_get_classname() dict abort " {{{3
+  " Get the class name, if any -- thanks to cpp_FindContextClass.vim
+  if ! has_key(self, '_classname')
+    let self._classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
+  endif
+  return self._classname
+endfunction
+
+function! s:vimscript_get_prototype(opt) dict abort " {{{3
+  let onlyDeclaration      = get(a:opt, 'onlyDeclaration', 0)
+  let returnEndProtoExtent = get(a:opt, 'returnEndProtoExtent', 0)
+  let res = call('lh#dev#c#function#get_prototype', [line('.'), onlyDeclaration, returnEndProtoExtent])
+  if returnEndProtoExtent
+    let self._end_proto = res[0]
+    let self._proto = res[1]
+  else
+    let self._proto = res[0]
+  endif
+  return res
+endfunction
+
+function! s:vimscript_proto_to_regex() dict abort " {{{3
+  let impl2search = s:BuildRegexFromImpl(self._proto,self._className)
+  return impl2search
+endfunction
+
+function! s:vimscript_generate_definition_signature() dict abort " {{{3
+  return s:BuildFunctionSignature4impl(self._proto,self.get_classname())
+endfunction
+
+" libclang API {{{3
+function! s:libclang_get_classname() dict abort " {{{3
+  if ! has_key(self, '_classname')
+    let self._classname = pyxeval('findClass().spelling')
+  endif
+  return self._classname
+endfunction
+
+function! s:libclang_get_prototype(opt, ...) dict abort " {{{3
+  let onlyDeclaration      = get(a:opt, 'onlyDeclaration', 0)
+  let returnEndProtoExtent = get(a:opt, 'returnEndProtoExtent', 0)
+
+  let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration)
+  let scope = get(self._info, 'scope', [])
+  let self._classname = get(scope, 0, '')
+  let self._proto     = get(self._info, 'fullsignature', '')
+  return self._proto
+endfunction
+
+function! s:libclang_proto_to_regex() dict abort " {{{3
+  " TODO: problems to fix
+  " - libclang adds complete type scopes
+  " - libclang returns west-const qualified types
+  let impl2search = s:BuildRegexFromImpl(self._proto, self.get_classname())
+  let impl2search.isWithoutDefinition = !empty(self._info.special_definition)
+  let impl2search.ispure = self._info.pure
+  return impl2search
+endfunction
+
+function! s:libclang_generate_definition_signature() dict abort " {{{3
+  return s:BuildFunctionSignature4implFromFunctionInfo(self._info, self._classname)
+endfunction
+
+"------------------------------------------------------------------------
+"------------------------------------------------------------------------
 " # Public {{{2
 "------------------------------------------------------------------------
 " Function: lh#cpp#GotoFunctionImpl#MoveImpl() "{{{3
@@ -151,25 +243,28 @@ endfunction
 "             'ShowDefaultParamson', '..off', '..0', '..1',  or '..2'
 " TODO: add C++11 override and final
 let s:option_value = '\%(on\|off\|\d\+\)$'
+
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
+  let code_analyser = s:get_code_analyser()
   let expected_extension = call('s:CheckOptions', a:000)
   let ft = &ft
 
   " 1- Retrieve the context {{{4
-  " 1.1- Get the class name,if any -- thanks to cpp_FindContextClass.vim
-  let className = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
-  " 1.2- Get the whole prototype of the function (even if on several lines)
-  let proto = lh#dev#c#function#get_prototype(line('.'), 1)
-  if "" == proto
-    call lh#common#error_msg('cpp#GotoFunctionImpl.vim: We are not uppon the declaration of a function prototype!')
+  " 1.1- Get the whole prototype of the function (even if on several lines)
+  let proto = code_analyser.get_prototype({'onlyDeclaration': 1})
+  if empty(proto)
+    call lh#common#error_msg('cpp#GotoFunctionImpl.vim: We are not upon the declaration of a function prototype!')
     return
   endif
+
+  " 1.2- Get the class name, if any
+  let className = code_analyser.get_classname()
 
   " 2- Build the result strings {{{4
   try
     let isk_save = &isk
     set isk-=:
-    let impl2search = s:BuildRegexFromImpl(proto,className)
+    let impl2search = code_analyser.proto_to_regex()
     if impl2search.isWithoutDefinition
       call lh#common#error_msg("cpp#GotoFunctionImpl.vim:\n\n".
             \ "=delete and =default functions don't have an implementation!")
@@ -190,7 +285,7 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
 
     " Search or insert the C++ implementation
     if !s:Search4Impl((impl2search.regex).'\_s*[{:]', className)
-      let impl        = s:BuildFunctionSignature4impl(proto,className)
+      let impl        = code_analyser.generate_definition_signature()
       " Todo: Support looking into other files like the .inl file
 
       " Insert the C++ code at the end of the file
@@ -309,7 +404,7 @@ endfunction
 " implementations file
 function! s:BuildRegexFromImpl(impl,className) abort
   let impl2search=lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(a:impl,a:className)
-  let g:impl2search2 = impl2search
+  let g:lh#cpp#GotoFunctionImpl#debug_impl2search  = impl2search
   return impl2search
   " }}}4
 endfunction
@@ -385,9 +480,14 @@ endfunction
 " Function: s:BuildFunctionSignature4impl " {{{3
 let s:k_operators = '\<operator\%([=~%+-\*/^&|]\|[]\|()\|&&\|||\|->\|<<\|>>\)'
 function! s:BuildFunctionSignature4impl(proto,className) abort
-  let proto = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:proto)
-  let g:implproto = proto
+  let info = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:proto)
+  let g:lh#cpp#GotoFunctionImpl#debug_funcinfo = info
+  return s:BuildFunctionSignature4implFromFunctionInfo(info, a:className)
+endfunction
 
+"------------------------------------------------------------------------
+" Function: s:BuildFunctionSignature4implFromFunctionInfo " {{{3
+function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   let re_qualifiers = []
   " 1.a- XXX if you want virtual commented in the implementation: {{{4
   if s:ShowVirtual
@@ -403,7 +503,7 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
   if s:ShowExplicit
     let re_qualifiers += ['\<explicit\>']
   endif
-  let comments = matchstr(proto.qualifier, join(re_qualifiers, '\|'))
+  let comments = matchstr(a:info.qualifier, join(re_qualifiers, '\|'))
   if !empty(comments)
     let comments = '/*'.comments.'*/ '
   endif
@@ -422,12 +522,12 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
   "
 
   let implParams = []
-  for param in proto.parameters
+  for param in a:info.parameters
     call s:Verbose("Parameter: %1", param)
     " TODO: param type may need to be fully-qualified, see 4.2
     let sParam = (get(param, 'nl', 0) ? "\n" : '')
           \ . (param.type) . ' ' . (param.name)
-          \ . substitute((param.default), '\(.\+\)', pattern, '')
+          \ . substitute(get(param, 'default', ''), '\(.\+\)', pattern, '')
     " echo "param=".param
     call add(implParams, sParam)
   endfor
@@ -445,13 +545,13 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
   let session = lh#tags#session#get()
   let ltags   = session.tags
   call session.finalize()
-  let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(proto.return))
+  let all_ret_dicts = filter(copy(ltags), 'v:val.name == '.string(a:info.return))
   let all_rets = lh#list#get(all_ret_dicts, 'class', '')
   " let all_rets = lh#list#transform(all_ret_dicts, [], 'v:1_.class')
   let all_rets = lh#list#unique_sort(all_rets)
   if len(all_rets) > 1
     let all_rets = ['::'] + all_rets
-    let choice = lh#ui#confirm('Where does <'.(proto.return).'> comes from?',
+    let choice = lh#ui#confirm('Where does <'.(a:info.return).'> comes from?',
           \ join(all_rets, "\n"), 1)
     if     choice == 0 | let scope = []
     elseif choice == 1 | let scope = ['']
@@ -462,13 +562,13 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
   else
     let scope = []
   endif
-  let scope += [proto.return]
+  let scope += [a:info.return]
   let return = join(scope, '::')
   " 4.2- ... parameters types
   " 4.3- ... constexpr
   " TODO: Check: not sure this really makes sense: constexpr function shall
   " be inlined
-  if proto.constexpr
+  if get(a:info, 'constexpr', 0)
     let return = 'constexpr ' . return
   endif
 
@@ -478,12 +578,12 @@ function! s:BuildFunctionSignature4impl(proto,className) abort
   let unstyled = comments
         \ . return . ' '
         \ . className
-        \ . join(proto.name, '::')
+        \ . (type(a:info.name) == type('') ? a:info.name : join(a:info.name, '::'))
         \ . '('.implParamsStr . ')'
-        \ . (proto.const ? ' const' : '')
-        \ . (proto.volatile ? ' volatile' : '')
-        \ . (!empty(proto.throw) ? ' throw ('.join(proto.throw, ',').')' : '')
-        \ . (!empty(proto.noexcept) ? ' ' . proto.noexcept : '')
+        \ . (a:info.const ? ' const' : '')
+        \ . (a:info.volatile ? ' volatile' : '')
+        \ . (!empty(a:info.throw) ? ' throw ('.join(a:info.throw, ',').')' : '')
+        \ . (!empty(a:info.noexcept) ? ' ' . a:info.noexcept : '')
         \ . "{}"
   let styles = lh#style#get(&ft)
 
@@ -557,7 +657,6 @@ function! s:InsertCodeAtLine(...) abort
             \ "\n\nCan't insert <".
             \ matchstr(impl0, '\%(::\|#::#\|\<\I\i*\>\)*\ze\_s*(').
             \ '> within the namespace <'.ns.'>')
-      " let g:impl0=impl0
       return
     endif
     let ns = matchstr(ns, '::\zs.*$')
