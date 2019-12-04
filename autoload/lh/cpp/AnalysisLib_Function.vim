@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  03rd Dec 2019
+" Last Update:  04th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -112,8 +112,8 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
       let info.qualifier
             \ = py_info.static   ? 'static'
             \ : py_info.virtual  ? 'virtual'
+            \ : py_info.explicit ? 'explicit'
             \ : ''
-            " \ : py_info.explicit ? 'explicit'
             " As of 9, libclang still cannot tell whether a constructor is
             " declared explicit
       let info.scope         = py_info.scope
@@ -126,17 +126,17 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
       let info.volatile      = py_info.type.spelling =~ '\v<volatile>'
       let info.pure          = py_info.pure
       let info.special_definition
-            \ = py_info.is_defaulted_method ? '= default'
-            \ : py_info.is_deleted_method   ? '= delete'
+            \ = py_info.is_defaulted ? '= default'
+            \ : py_info.is_deleted   ? '= delete'
             \ : ''
       let info.throw          = [] " Let's forget about this
       let info.noexcept       = sNoexceptSpec
-      let info.final          = ! empty(get(py_info.children, 'CursorKind.CXX_FINAL_ATTR', {}))
-      let info.overriden      = ! empty(get(py_info.children, 'CursorKind.CXX_OVERRIDE_ATTR', {}))
+      let info.final          = py_info.final
+      let info.overriden      = py_info.override
       let info.signature      = py_info.type.spelling
       let info.fullsignature  = substitute(info.signature, '(', info.name.'(', '')
       let info.parameters     = []
-      for py_param in get(py_info.children, 'CursorKind.PARM_DECL', [])
+      for py_param in py_info.parameters
         let param = {
               \ 'name'   : py_param.spelling
               \,'type'   : py_param.type.spelling
@@ -146,8 +146,7 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
         let info.parameters += [param]
       endfor
       let info.tparams       = []
-      for py_param in get(py_info.children, 'CursorKind.TEMPLATE_TYPE_PARAMETER', [])
-            \ + get(py_info.children, 'CursorKind.TEMPLATE_NON_TYPE_PARAMETER', [])
+      for py_param in py_info.template_parameters
         let param = {
               \ 'name'   : py_param.spelling
               \ }
