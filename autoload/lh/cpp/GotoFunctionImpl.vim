@@ -161,7 +161,8 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{3
 
   let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration)
   let scope = get(self._info, 'scope', [])
-  let self._classname = get(scope, 0, '')
+  " let self._classname = get(scope, 0, '')
+  let self._classname = join(reverse(scope), '::')
   let self._proto     = get(self._info, 'fullsignature', '')
   return self._proto
 endfunction
