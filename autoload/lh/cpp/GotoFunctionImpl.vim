@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  03rd Dec 2019
+" Last Update:  04th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -575,15 +575,19 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   " 5- Return{{{4
   " TODO: some styles like to put return types and function names on two
   " different lines
+  let noexcept
+        \ = empty(a:info.noexcept)        ? ''
+        \ : a:info.noexcept == 'noexcept' ? ' noexcept'
+        \ :                                 ' noexcept('.(a:info.noexcept).')'
   let unstyled = comments
         \ . return . ' '
         \ . className
         \ . (type(a:info.name) == type('') ? a:info.name : join(a:info.name, '::'))
         \ . '('.implParamsStr . ')'
-        \ . (a:info.const ? ' const' : '')
-        \ . (a:info.volatile ? ' volatile' : '')
+        \ . (a:info.const         ? ' const'    : '')
+        \ . (a:info.volatile      ? ' volatile' : '')
         \ . (!empty(a:info.throw) ? ' throw ('.join(a:info.throw, ',').')' : '')
-        \ . (!empty(a:info.noexcept) ? ' ' . a:info.noexcept : '')
+        \ . noexcept
         \ . "{}"
   let styles = lh#style#get(&ft)
 
