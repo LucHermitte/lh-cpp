@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      15th Apr 2008
-" Last Update:  02nd Dec 2019
+" Last Update:  05th Dec 2019
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -235,26 +235,13 @@ endfunction
 
 function! s:libclang_override(function_tag) abort " {{{4
   call s:Verbose("Overriding: %1", a:function_tag)
-  let extent = a:function_tag.extent
-  if resolve(fnamemodify(extent.file, ':p')) == resolve(expand('%:p'))
-    " Current buffer may have been changed since last save
-    " => need to use its current state
-    let lines = getline(1, '$')
-  else
-    " libclang has certainly parsed a saved file => use readfile
-    let lines = readfile(extent.filename)
-  endif
-  call s:Verbose("Extract %1 from %2: l:%3, c:%4 ... l:%5, c:%6",
-        \ a:function_tag.name, extent.filename,
-        \ extent.start.lnum, extent.start.col,
-        \ extent.end.lnum, extent.end.col)
-  let lines = lines[(extent.start.lnum-1) : (extent.end.lnum-1)]
-  let lines[0]  = lines[0][extent.start.col-1 :]
-  let lines[-1] = lines[0][: extent.end.col]
+  let lines = clang#extract_from_extent(a:function_tag.extent, a:function_tag.name)
   call s:Verbose("Definition found: %1", lines)
   " TODO: could be "final" instead
   let lines[0]  = substitute(lines[0], '\s*virtual\s\+', '', '')
-  let lines[-1]  = substitute(lines[-1], '\s*=\s*0', ' '.lh#cpp#snippets#override(), '')
+  let lines[-1]  = substitute(lines[-1], '\s*=\s*0', '', '')
+  let lines[-1]  = substitute(lines[-1], '\v(<noexcept>|<throw>|$)', lh#cpp#snippets#override().' &', '')
+  let lines[-1]  = substitute(lines[-1], ' *$', ';', '')
 
   return lines
 endfunction
