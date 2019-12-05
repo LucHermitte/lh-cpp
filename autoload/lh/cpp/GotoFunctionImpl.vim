@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  04th Dec 2019
+" Last Update:  05th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -573,13 +573,22 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
     let return = 'constexpr ' . return
   endif
 
-  " 5- Return{{{4
-  " TODO: some styles like to put return types and function names on two
-  " different lines
+  " 5- Exceptions {{{4
   let noexcept
         \ = empty(a:info.noexcept)        ? ''
         \ : a:info.noexcept == 'noexcept' ? ' noexcept'
         \ :                                 ' noexcept('.(a:info.noexcept).')'
+
+  " 6- Templates {{{4
+  if !empty(get(a:info, 'tparams', []))
+    let g:tparams = a:info.tparams
+    let tpl_list = map(copy(a:info.tparams), 'join(clang#extract_from_extent(v:val.extent, "template ".v:val.name), "\\n")')
+    let tpl = 'template<'.join(tpl_list, ',').'>'
+    let comments = tpl.comments
+  endif
+  " 7- Return {{{4
+  " TODO: some styles like to put return types and function names on two
+  " different lines
   let unstyled = comments
         \ . return . ' '
         \ . className
