@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  04th Dec 2019
+" Last Update:  05th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -156,6 +156,15 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
       endfor
       let info.start = py_info.extent.start
       let info.end   = py_info.extent.end
+      let info.special_func
+            \ = py_info.true_kind == 'CursorKind.CONSTRUCTOR' ? py_info.constructor_kind . (empty(py_info.constructor_kind)?'':' ').'constructor'
+            \ : py_info.true_kind == 'CursorKind.DESTRUCTOR' ? 'destructor'
+            \ : info.name == 'operator='
+            \   ? (info.parameters[0].type =~ 'const' ? 'copy-assignment operator'
+            \     :info.parameters[0].type =~ '&&' ? 'move-assignment operator'
+            \     :                                  'assignment operator'
+            \ )
+            \ : ''
       return info
     endif
   catch /.*/

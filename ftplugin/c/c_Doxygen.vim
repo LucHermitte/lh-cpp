@@ -7,7 +7,7 @@
 " Version:	2.2.0
 let s:k_version = 220
 " Created:	22nd Nov 2005
-" Last Update:	04th Dec 2019
+" Last Update:	05th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 " 	Provides the command :DOX that expands a doxygened documentation for
@@ -129,7 +129,7 @@ function! s:Doxygenize() abort
       if lh#dev#cpp#types#IsPointer(param.type)
         let sValue =
               \  lh#dox#tag("pre")
-              \ . ' <tt>'.(param.name).' != NULL</tt>'
+              \ . ' `'.(param.name).' != '.lh#cpp#snippets#nullptr().'`'
               \ . lh#marker#txt()
         call add(g:CppDox_preconditions_snippet, sValue)
       endif
@@ -139,12 +139,25 @@ function! s:Doxygenize() abort
     let g:CppDox_ingroup_snippet = lh#dox#ingroup()
 
     " Brief
-    let g:CppDox_brief_snippet = lh#dox#brief('')
+    if has_key(info, 'special_func')
+      let brief = info.special_func
+    else
+      let brief = ''
+    endif
+    if empty(brief)
+      let brief = lh#marker#txt('brief explanation')
+    endif
+    if get(info, 'special_definition', '') =~ 'delete'
+      let brief = 'Deleted '.brief
+    endif
+    " Capitalize the first character
+    let brief = substitute(brief, '^.', '\u&', '')
+    let g:CppDox_brief_snippet = lh#dox#brief(brief)
 
     if ret =~ 'void\|^$'
       let g:CppDox_return_snippet = ''
     else
-      let g:CppDox_return_snippet	  = lh#dox#tag('return ').lh#marker#txt(ret)
+      let g:CppDox_return_snippet = lh#dox#tag('return ').lh#marker#txt(ret)
     endif
 
     " empty => <+@throw None+>
