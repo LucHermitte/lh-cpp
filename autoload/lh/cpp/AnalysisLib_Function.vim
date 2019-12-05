@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  05th Dec 2019
+" Last Update:  06th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -116,6 +116,7 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
             \ : ''
             " As of 9, libclang still cannot tell whether a constructor is
             " declared explicit
+      " TODO: Some outer scopes may be template classes actually
       let info.scope         = py_info.scope
       let info.return        = py_info.true_kind =~ '\vCONSTRUCTOR|DESTRUCTOR'
             \ ? ''
@@ -136,24 +137,34 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
       let info.signature      = py_info.type.spelling
       let info.fullsignature  = substitute(info.signature, '(', info.name.'(', '')
       let info.parameters     = []
+      " TODO: analyse get_tokens() to be more precise
+      let last_line = -1
       for py_param in py_info.parameters
         let param = {
               \ 'name'   : py_param.spelling
               \,'type'   : py_param.type.spelling
+              \,'nl'     : last_line >= 0 && last_line != py_param.extent.start.lnum
               \ }
               " \,'default': s:k_not_available
-              " \,'nl'     : s:k_not_available
         let info.parameters += [param]
+        let last_line = py_param.extent.end.lnum
       endfor
       let info.tparams       = []
+      " TODO: analyse get_tokens() to be more precise
+      let last_line = py_info.extent.start.lnum
       for py_param in py_info.template_parameters
         let param = {
-              \ 'name'   : py_param.spelling
+              \ 'spelling' : py_param.spelling
+              \,'what'     : py_param.what
+              \,'extent'   : py_param.extent
+              \,'nl'       : last_line >= 0 && last_line != py_param.extent.start.lnum
               \ }
               " \,'default': s:k_not_available
-              " \,'nl'     : s:k_not_available
         let info.tparams += [param]
+        let last_line = py_param.extent.end.lnum
       endfor
+      " TODO: analyse get_tokens() to know whether there is a new line after
+      " template<....>, the type, the func name...
       let info.start = py_info.extent.start
       let info.end   = py_info.extent.end
       let info.special_func

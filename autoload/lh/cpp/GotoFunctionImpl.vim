@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  04th Dec 2019
+" Last Update:  06th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -51,6 +51,9 @@ let s:k_version = '230'
 "       (*) Update to new lh-tags v3.0 and lh-dev new API
 "       v2.2.1
 "       (*) override and final cannot be used outside class definition
+"       v2.3.0
+"       (*) Use vim-clang to implement `:GOTOIMPL` -> support
+"           templates, and all other C++ constructs
 " TODO:
 "       (*) add knowledge about C99/C++11 new numeric types
 "       (*) :MOVETOIMPL should not expect the open-brace "{" to be of the same
@@ -117,7 +120,7 @@ function! s:make_API(kind) abort " {{{3
 endfunction
 
 " Vimscript API {{{3
-function! s:vimscript_get_classname() dict abort " {{{3
+function! s:vimscript_get_classname() dict abort " {{{4
   " Get the class name, if any -- thanks to cpp_FindContextClass.vim
   if ! has_key(self, '_classname')
     let self._classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
@@ -125,7 +128,7 @@ function! s:vimscript_get_classname() dict abort " {{{3
   return self._classname
 endfunction
 
-function! s:vimscript_get_prototype(opt) dict abort " {{{3
+function! s:vimscript_get_prototype(opt) dict abort " {{{4
   let onlyDeclaration      = get(a:opt, 'onlyDeclaration', 0)
   let returnEndProtoExtent = get(a:opt, 'returnEndProtoExtent', 0)
   let res = call('lh#dev#c#function#get_prototype', [line('.'), onlyDeclaration, returnEndProtoExtent])
@@ -138,36 +141,63 @@ function! s:vimscript_get_prototype(opt) dict abort " {{{3
   return res
 endfunction
 
-function! s:vimscript_proto_to_regex() dict abort " {{{3
+function! s:vimscript_proto_to_regex() dict abort " {{{4
   let impl2search = s:BuildRegexFromImpl(self._proto,self._className)
   return impl2search
 endfunction
 
-function! s:vimscript_generate_definition_signature() dict abort " {{{3
+function! s:vimscript_generate_definition_signature() dict abort " {{{4
   return s:BuildFunctionSignature4impl(self._proto,self.get_classname())
 endfunction
 
 " libclang API {{{3
-function! s:libclang_get_classname() dict abort " {{{3
+function! s:tpl_extent_up_to_assign(tpl_info) abort " {{{4
+  let l_res = clang#extract_from_extent(a:tpl_info.extent, 'template '.a:tpl_info.spelling)
+  let res = join(l_res, "\n")
+  " NB: more care may be required on this part
+  let res = substitute(res, '\s*=.*', '', '')
+  return res
+endfunction
+
+function! s:libclang_get_classname() dict abort " {{{4
   if ! has_key(self, '_classname')
     let self._classname = pyxeval('findClass().spelling')
   endif
   return self._classname
 endfunction
 
-function! s:libclang_get_prototype(opt, ...) dict abort " {{{3
+function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
   let onlyDeclaration      = get(a:opt, 'onlyDeclaration', 0)
   let returnEndProtoExtent = get(a:opt, 'returnEndProtoExtent', 0)
 
   let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration)
   let scope = get(self._info, 'scope', [])
+  let classname = []
+  let templates = []
+  for sc in reverse(scope)
+    call s:Verbose("scope: %1", sc)
+    let name = sc.name
+    if sc.kind =~ 'TEMPLATE'
+      let inst     = []
+      let tpl_line = []
+      for tpl in sc.tparams
+        let inst     += [tpl.spelling]
+        let tpl_line += [s:tpl_extent_up_to_assign(tpl)]
+      endfor
+      let name .= '<'.join(inst, ',').'>'
+      let line = 'template<'.join(tpl_line, ',').'>'
+      let templates += [line]
+    endif
+    let classname += [name]
+  endfor
   " let self._classname = get(scope, 0, '')
-  let self._classname = join(reverse(scope), '::')
+  let self._classname = join(classname, '::')
+  let self._templates = templates
   let self._proto     = get(self._info, 'fullsignature', '')
   return self._proto
 endfunction
 
-function! s:libclang_proto_to_regex() dict abort " {{{3
+function! s:libclang_proto_to_regex() dict abort " {{{4
   " TODO: problems to fix
   " - libclang adds complete type scopes
   " - libclang returns west-const qualified types
@@ -177,8 +207,12 @@ function! s:libclang_proto_to_regex() dict abort " {{{3
   return impl2search
 endfunction
 
-function! s:libclang_generate_definition_signature() dict abort " {{{3
-  return s:BuildFunctionSignature4implFromFunctionInfo(self._info, self._classname)
+function! s:libclang_generate_definition_signature() dict abort " {{{4
+  let res = s:BuildFunctionSignature4implFromFunctionInfo(self._info, self._classname)
+  if !empty(self._templates)
+    let res = join(self._templates + [res], "\n")
+  endif
+  return res
 endfunction
 
 "------------------------------------------------------------------------
@@ -573,13 +607,22 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
     let return = 'constexpr ' . return
   endif
 
-  " 5- Return{{{4
-  " TODO: some styles like to put return types and function names on two
-  " different lines
+  " 5- Exceptions {{{4
   let noexcept
         \ = empty(a:info.noexcept)        ? ''
         \ : a:info.noexcept == 'noexcept' ? ' noexcept'
         \ :                                 ' noexcept('.(a:info.noexcept).')'
+
+  " 6- Templates {{{4
+  if !empty(get(a:info, 'tparams', []))
+    " let g:tparams = a:info.tparams
+    let tpl_list = map(copy(a:info.tparams), 's:tpl_extent_up_to_assign(v:val)')
+    let tpl = 'template<'.join(tpl_list, ',').">\n"
+    let comments = tpl.comments
+  endif
+  " 7- Return {{{4
+  " TODO: some styles like to put return types and function names on two
+  " different lines
   let unstyled = comments
         \ . return . ' '
         \ . className
