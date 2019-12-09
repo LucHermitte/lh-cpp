@@ -111,8 +111,8 @@ function! s:Doxygenize() abort
       " @tparam
       let sValue =
             \  lh#dox#tag("tparam")
-            \ . ' ' . param.name
-            \ . '  ' . lh#marker#txt((param.name).'-explanations')
+            \ . ' ' . param.spelling
+            \ . '  ' . lh#marker#txt((param.spelling).'-explanations')
       call add (g:CppDox_Params_snippet, sValue)
     endfor
     for param in params
