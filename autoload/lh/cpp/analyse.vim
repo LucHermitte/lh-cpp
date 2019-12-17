@@ -2,10 +2,10 @@
 " File:         autoload/lh/cpp/analyse.vim                       {{{1
 " Author:       Luc Hermitte <EMAIL:luc {dot} hermitte {at} gmail {dot} com>
 "               <URL:http://github.com/LucHermitte/lh-cpp>
-" Version:      2.2.0.
-let s:k_version = '220'
+" Version:      2.2.1.
+let s:k_version = '221'
 " Created:      08th Apr 2016
-" Last Update:  31st Aug 2018
+" Last Update:  17th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       Various functions to analyse C and C++ codes
@@ -50,7 +50,114 @@ endfunction
 "------------------------------------------------------------------------
 " ## Exported functions {{{1
 
-" Function: lh#cpp#analyse#var_type(name [,default]) {{{3
+" Decode information from vim-clang {{{2
+" s:re_noexcept_spec is from autoload/lh/cpp/AnalysisLib_Function.vim
+let s:re_noexcept_spec              = '\<noexcept\>\%((\zs.*\ze)\)\='
+
+function! s:decode_function(py_info) abort " {{{3
+  let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(a:py_info.type.spelling, s:re_noexcept_spec)
+  call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
+
+  let info = {}
+  let info.is_function   = 1
+  let info.kind          = a:py_info.true_kind
+  let info.qualifier
+        \ = a:py_info.static   ? 'static'
+        \ : a:py_info.virtual  ? 'virtual'
+        \ : a:py_info.explicit ? 'explicit'
+        \ : ''
+  let info.return        = a:py_info.true_kind =~ '\vCONSTRUCTOR|DESTRUCTOR'
+        \ ? ''
+        \ : a:py_info.result_type.spelling
+  " let info.constexpr     = s:k_not_available
+  let info.const         = a:py_info.const
+  let info.volatile      = a:py_info.type.spelling =~ '\v<volatile>'
+  let info.pure          = a:py_info.pure
+  let info.special_definition
+        \ = a:py_info.is_defaulted ? '= default'
+        \ : a:py_info.is_deleted   ? '= delete'
+        \ : ''
+  let info.throw          = [] " Let's forget about this
+  let info.noexcept       = sNoexceptSpec
+  let info.final          = a:py_info.final
+  let info.overriden      = a:py_info.override
+  let info.signature      = a:py_info.type.spelling
+  let info.fullsignature  = substitute(info.signature, '(', a:py_info.spelling .'(', '')
+  let info.parameters     = []
+  " TODO: analyse get_tokens() to be more precise
+  let last_line = -1
+  for py_param in a:py_info.parameters
+    let param = {
+          \ 'name'   : py_param.spelling
+          \,'type'   : py_param.type.spelling
+          \,'nl'     : last_line >= 0 && last_line != py_param.extent.start.lnum
+          \ }
+    " \,'default': s:k_not_available
+    let info.parameters += [param]
+    let last_line = py_param.extent.end.lnum
+  endfor
+  let info.special_func
+        \ = a:py_info.true_kind == 'CursorKind.CONSTRUCTOR' ? a:py_info.constructor_kind . (empty(a:py_info.constructor_kind)?'':' ').'constructor'
+        \ : a:py_info.true_kind == 'CursorKind.DESTRUCTOR' ? 'destructor'
+        \ : a:py_info.spelling == 'operator='
+        \   ? (info.parameters[0].type =~ 'const' ? 'copy-assignment operator'
+        \     :info.parameters[0].type =~ '&&' ? 'move-assignment operator'
+        \     :                                  'assignment operator'
+        \ )
+        \ : ''
+  return info
+endfunction
+
+" Function: lh#cpp#analyse#get_info([what]) {{{3
+function! lh#cpp#analyse#get_info(...) abort
+  if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
+    let py_info = call('clang#get_symbol', a:000)
+
+    let info = {}
+    let info.is_function   = 0
+    let info.is_class      = 0
+    let info.is_namespace  = 0
+    let info.kind          = py_info.kind
+    let info.name          = py_info.spelling
+    " TODO: Some outer scopes may be template classes actually
+    let info.scope         = py_info.scope
+
+    " ----< decode tparams
+    " TODO: analyse get_tokens() to be more precise
+    let info.tparams       = []
+    let last_line = py_info.extent.start.lnum
+    for py_param in py_info.template_parameters
+      let param = {
+            \ 'spelling' : py_param.spelling
+            \,'what'     : py_param.what
+            \,'extent'   : py_param.extent
+            \,'nl'       : last_line >= 0 && last_line != py_param.extent.start.lnum
+            \ }
+      " \,'default': s:k_not_available
+      let info.tparams += [param]
+      let last_line = py_param.extent.end.lnum
+    endfor
+    " ----< decode extent
+    " TODO: analyse get_tokens() to know whether there is a new line after
+    " template<....>, the type, the func name...
+    let info.start = py_info.extent.start
+    let info.end   = py_info.extent.end
+
+    " ----< decode specific kinds (function, class...)
+    if py_info.kind =~ '\vFUNCTION|METHOD|CONSTRUCTOR|DESTRUCTOR'
+      call extend(info, s:decode_function(py_info), 'force')
+    elseif py_info.kind =~ '\vCLASS|STRUCT|UNION'
+      let info.is_class = 1
+    elseif py_info.kind =~ '\vNAMESPACE'
+      let info.is_namespace = 1
+    endif
+    return info
+  else
+    return lh#option#unset("Sorry vim-clang cannot be used")
+  endif
+endfunction
+
+" Function: lh#cpp#analyse#var_type(name [,default]) {{{2
 function! lh#cpp#analyse#var_type(name,...) abort
   try
     let p = getpos('.')
@@ -97,7 +204,7 @@ function! lh#cpp#analyse#var_type(name,...) abort
   endtry
 endfunction
 
-" Function: lh#cpp#analyse#token(name, ...) {{{3
+" Function: lh#cpp#analyse#token(name, ...) {{{2
 " TODO: finish
 function! lh#cpp#analyse#token(name, ...) abort
   let session    = lh#tags#session#get()

@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.2.0
 " Created:      05th Oct 2006
-" Last Update:  06th Dec 2019
+" Last Update:  17th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -99,8 +99,7 @@ let s:k_not_available = lh#option#unset('libclang cannot tell')
 function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration) abort
   try
     if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
-      " TODO move cursor to function name
-      let py_info = clang#get_symbol()
+      let py_info = clang#get_symbol('function')
       if py_info.is_definition && a:onlyDeclaration
         return {}
       endif
