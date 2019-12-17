@@ -7,7 +7,7 @@
 " Version:	2.2.0
 let s:k_version = 220
 " Created:	22nd Nov 2005
-" Last Update:	05th Dec 2019
+" Last Update:	17th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 " 	Provides the command :DOX that expands a doxygened documentation for
@@ -56,7 +56,7 @@ set cpo&vim
 " todo: arguments (with auto completion) for brief, ingroup, author, since, ...
 " todo: align arguments and their descriptions
 
-command! -buffer -nargs=0 DOX :call s:Doxygenize()
+command! -buffer -nargs=0 DOX :call lh#dox#doxygenize()
 
 " Commands and mappings }}}1
 "=============================================================================
@@ -70,135 +70,12 @@ let s:loaded_c_Doxygen_vim = 1
 " Avoid global reinclusion }}}1
 "------------------------------------------------------------------------
 " Functions {{{1
-
-" require Cpp_GetListOfParams and Cpp_GetFunctionPrototype
-
 function! CppDox_snippet(tagname, commentLeadingChar)
-  let varType = type(g:CppDox_{a:tagname}_snippet)
-  if varType == type([]) " List
-    let sValue = join(g:CppDox_{a:tagname}_snippet, "\n".a:commentLeadingChar)
-  else
-    let sValue = g:CppDox_{a:tagname}_snippet
-  endif
-  if strlen(sValue) != 0
-    let sValue = a:commentLeadingChar . sValue
-  endif
-  " echomsg a:tagname . " -> " . sValue
-  return sValue
+  call lh#notify#deprecated('CppDox_snippet', 'lh#dox#snippet')
+  return lh#dox#snippet(a:tagname, a:commentLeadingChar)
 endfunction
 
-" Function: s:Doxygenize()                            {{{2
-function! s:Doxygenize() abort
-  let cleanup = lh#on#exit()
-        \.restore('g:CppDox_Params_snippet')
-        \.restore('g:CppDox_preconditions_snippet')
-        \.restore('g:CppDox_return_snippet')
-        \.restore('g:CppDox_exceptions_snippet')
-        \.restore('g:CppDox_ingroup_snippet')
-        \.restore('g:CppDox_brief_snippet')
-  try
-    " Obtain informations from the function at the current cursor position.
-    let info   = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), 0)
-    let params = info.parameters
-    let ret    = info.return
-
-    " Build data to insert
-    "
-    " Parameters & preconditions
-    let g:CppDox_Params_snippet = []
-    let g:CppDox_preconditions_snippet = []
-    for param in get(info, 'tparams', [])
-      " @tparam
-      let sValue =
-            \  lh#dox#tag("tparam")
-            \ . ' ' . param.spelling
-            \ . '  ' . lh#marker#txt((param.spelling).'-explanations')
-      call add (g:CppDox_Params_snippet, sValue)
-    endfor
-    for param in params
-      " @param
-      let sValue =
-            \  lh#dox#tag("param")
-            \ . lh#dox#_parameter_direction(param.type)
-            \ . ' ' . param.name
-            \ . '  ' . lh#marker#txt((param.name).'-explanations')
-      call add (g:CppDox_Params_snippet, sValue)
-      " pointer ? -> default non null precondition
-      " todo: add an option if we don't want that by default (or even better, use
-      " clang to check whether an assert is being used for that purpose...)
-      if lh#dev#cpp#types#IsPointer(param.type)
-        let sValue =
-              \  lh#dox#tag("pre")
-              \ . ' `'.(param.name).' != '.lh#cpp#snippets#nullptr().'`'
-              \ . lh#marker#txt()
-        call add(g:CppDox_preconditions_snippet, sValue)
-      endif
-    endfor
-
-    " Ingroup
-    let g:CppDox_ingroup_snippet = lh#dox#ingroup()
-
-    " Brief
-    if has_key(info, 'special_func')
-      let brief = info.special_func
-    else
-      let brief = ''
-    endif
-    if empty(brief)
-      let brief = lh#marker#txt('brief explanation')
-    endif
-    if get(info, 'special_definition', '') =~ 'delete'
-      let brief = 'Deleted '.brief
-    endif
-    " Capitalize the first character
-    let brief = substitute(brief, '^.', '\u&', '')
-    let g:CppDox_brief_snippet = lh#dox#brief(brief)
-
-    if ret =~ 'void\|^$'
-      let g:CppDox_return_snippet = ''
-    else
-      let g:CppDox_return_snippet = lh#dox#tag('return ').lh#marker#txt(ret)
-    endif
-
-    " empty => <+@throw None+>
-    " list => n x @throw list
-    " non-existant => markerthrow
-    " noexcept
-    let noexcept = get(info, 'noexcept')
-    if !empty(noexcept)
-      if noexcept == 'noexcept'
-        let noexcept = 'None'
-      else
-        let noexcept = 'None if `'.noexcept.'`'
-      endif
-      let g:CppDox_exceptions_snippet = lh#dox#throw(noexcept)
-    elseif !has_key(info, 'throw') || len(info.throw) == 0
-      let g:CppDox_exceptions_snippet = lh#dox#throw()
-    else
-      let throws = info.throw
-      let empty_marker = lh#marker#txt('')
-      if len(throws) == 1 && strlen(throws[0]) == 0
-        let g:CppDox_exceptions_snippet = lh#dox#throw('None').empty_marker
-      else
-        call map(throws, 'lh#dox#throw(v:val). empty_marker')
-        let g:CppDox_exceptions_snippet = throws
-      endif
-    endif
-
-    " goto begining of the function
-    if has_key(info, 'start')
-      exe info.start.lnum
-    endif
-    :put!=''
-    " Load the template
-    :MuTemplate dox/function
-
-  finally
-    call cleanup.finalize()
-  endtry
-endfunction
-
-" Functions }}}1
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================

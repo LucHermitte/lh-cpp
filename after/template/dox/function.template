@@ -7,12 +7,12 @@ VimL: let s:value_end    = '¡'
 VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
-/**¡CppDox_snippet('ingroup', '')¡
- ¡CppDox_snippet('brief', '* ')¡
+/**¡lh#dox#snippet('ingroup', '')¡
+ ¡lh#dox#snippet('brief', '* ')¡
  * <+details+>
- ¡CppDox_snippet('Params', '* ')¡
+ ¡lh#dox#snippet('Params', '* ')¡
  *
- ¡CppDox_snippet('return', '* ')¡
- ¡CppDox_snippet('exceptions', '* ')¡
- ¡CppDox_snippet('preconditions', '* ')¡
+ ¡lh#dox#snippet('return', '* ')¡
+ ¡lh#dox#snippet('exceptions', '* ')¡
+ ¡lh#dox#snippet('preconditions', '* ')¡
  */

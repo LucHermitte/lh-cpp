@@ -152,7 +152,7 @@ snippets as most of them have options.
 #### Wizards and other high-level features
   * [class](doc/snippets.md#cppclass): builds a class skeleton based on the selected (simplified) semantics (value copyable, stack-based non copyable, entity non-copyable, entity clonable)
   * [singleton](doc/snippets.md#cppsingleton): my very own way to define singletons based on my conclusions on this anti-pattern -- you may prefer Loki's or ACE's solutions
-  * [:DOX](doc/Doxygen.md): analyses a function signature (parameters, return type, throw specification) and provide a default Doxygenized documentation
+  * [:DOX](doc/Doxygen.md): analyses a class, a namespace or a function signature (parameters, return type, throw specification) and provide a default Doxygenized documentation
   * [:GOTOIMPL](doc/GotoImplementation.md), :MOVETOIMPL: search and jump to a function definition from its declaration, provide a default one in the _ad'hoc_ implementation file if no definition is found
   * [:ADDATTRIBUTE](doc/Accessors.md): old facility that helps define const-correct accessors and mutator, will be reworked. [lh-refactor](http://github.com/LucHermitte/vim-refactor) provides more ergonomic mappings for this purpose.
   * [:CppDisplayUnmatchedFunctions](doc/UmatchedFunctions.md), `<c-x>u`: shows the list of functions for which there is neither a declaration, nor a definition

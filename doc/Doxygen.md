@@ -36,7 +36,16 @@ for more information on the subject.
 
 ## `:DOX`
 
-lh-cpp provides the `:DOX` command that analyses the current function signature to build a doxygen skeleton.
+lh-cpp provides the `:DOX` command that analyses:
+- the current namespace definition (requires
+  [vim-clang](https://github.com/LucHermitte/vim-clang))
+- the current class definition (requires
+  [vim-clang](https://github.com/LucHermitte/vim-clang))
+- the current function signature to build a doxygen skeleton.
+
+     It'll give better result with
+     [vim-clang](https://github.com/LucHermitte/vim-clang) which permits to
+     analyse template parameters and other complex parameter types.
 
 The ([configurable](#configuration)) skeleton will have:
   * a brief line
@@ -45,7 +54,6 @@ The ([configurable](#configuration)) skeleton will have:
   * `@exception` specifications if known
   * other tags like `@version`
   * etc.
-
 
 ### Examples
 
