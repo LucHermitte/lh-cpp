@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  08th Mar 2018
+" Last Update:  19th Dec 2019
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -321,58 +321,6 @@ endfunction
 "------------------------------------------------------------------------
 " # Functions for mu-template template-files {{{2
 
-" Function: lh#cpp#snippets#_merge_include_data(name_and_maybe_more, data2) {{{3
-function! lh#cpp#snippets#_merge_include_data(name_and_maybe_more, data2) abort
-  let data = copy(a:data2)
-  if type(a:name_and_maybe_more) == type({})
-    " No "name" key => error
-    let name = a:name_and_maybe_more.name
-    call extend(data, a:name_and_maybe_more)
-    call remove(data, 'name')
-  else
-    let name = a:name_and_maybe_more
-  endif
-  return {name : data}
-endfunction
-
-" Function: lh#cpp#snippets#parents(parents) {{{3
-function! lh#cpp#snippets#parents(parents) abort
-  let includes = []
-  let list = []
-  for parent in a:parents
-    for [name, data] in items(parent)
-      let type_info = lh#cpp#types#get_info(name)
-      let list += [
-            \  get(data, 'visibility', 'public') . ' '
-            \ .(get(data, 'virtual', 0) ? 'virtual ' : '')
-            \ .type_info.typename_for_header()
-            \ ]
-      if has_key(data, 'includes')
-        call lh#list#flat_extend(includes, data['includes'])
-      endif
-      if has_key(type_info, 'includes')
-        call extend(includes, type_info.includes)
-      endif
-    endfor
-  endfor
-  let res = ''
-  if !empty(list)
-    let res = len(list) > 1 ? "\n" : " "
-    let res .= ': '.join(list, "\n, ")
-  endif
-  call lh#list#unique_sort(includes)
-  return [res, includes]
-endfunction
-
-" Function: lh#cpp#snippets#constructor_name(class) {{{3
-function! lh#cpp#snippets#constructor_name(class) abort
-  " Assert len(values(a:class)) == 1
-  let data = split(keys(a:class)[0], '::')
-  let data += [data[-1]]
-  let res = join(data, '::')
-  return res
-endfunction
-
 " Function: lh#cpp#snippets#_filter_functions(list, visibility) {{{3
 " Function: lh#cpp#snippets#_filter_functions(list, field, value)
 function! lh#cpp#snippets#_filter_functions(list, ...) abort
@@ -400,131 +348,18 @@ function! lh#cpp#snippets#_filter_functions(list, ...) abort
   return res
 endfunction
 
-" Function: lh#cpp#snippets#nullptr() {{{3
-function! lh#cpp#snippets#nullptr(...) abort
-  return lh#option#get('cpp_nullptr', lh#cpp#use_cpp11() ? 'nullptr' : '0')
-endfunction
-
-" Function: lh#cpp#snippets#noexcept([condition]) {{{3
-function! lh#cpp#snippets#noexcept(...) abort
-  let noexcept = lh#option#get('cpp_noexcept')
-  let args = empty(a:000) ? '' : '('.a:1.')'
-  if lh#option#is_set(noexcept)
-    return lh#fmt#printf(noexcept, args)
-  endif
-  if lh#cpp#use_cpp11()
-    return 'noexcept'.args
+" Function: lh#cpp#snippets#_merge_include_data(name_and_maybe_more, data2) {{{3
+function! lh#cpp#snippets#_merge_include_data(name_and_maybe_more, data2) abort
+  let data = copy(a:data2)
+  if type(a:name_and_maybe_more) == type({})
+    " No "name" key => error
+    let name = a:name_and_maybe_more.name
+    call extend(data, a:name_and_maybe_more)
+    call remove(data, 'name')
   else
-    return 'throw()'
+    let name = a:name_and_maybe_more
   endif
-endfunction
-
-" Function: lh#cpp#snippets#deleted() {{{3
-function! lh#cpp#snippets#deleted() abort
-  let deleted = lh#option#get('cpp_deleted')
-  let args = empty(a:000) ? '' : a:1
-  if lh#option#is_set(deleted)
-    return deleted
-  endif
-  if lh#cpp#use_cpp11()
-    return '= delete'
-  else
-    return '/* = delete */'
-  endif
-endfunction
-
-" Function: lh#cpp#snippets#override() {{{3
-function! lh#cpp#snippets#override() abort
-  let override = lh#option#get('cpp_override')
-  let args = empty(a:000) ? '' : a:1
-  if lh#option#is_set(override)
-    return override
-  endif
-  if lh#cpp#use_cpp11()
-    return 'override'
-  else
-    return '/* override */'
-  endif
-endfunction
-
-" Function: lh#cpp#snippets#defaulted() {{{3
-function! lh#cpp#snippets#defaulted() abort
-  let defaulted = lh#option#get('cpp_defaulted')
-  let args = empty(a:000) ? '' : a:1
-  if lh#option#is_set(defaulted)
-    return defaulted
-  endif
-  if lh#cpp#use_cpp11()
-    return '= default'
-  else
-    " Don't know how to default functions in C++98
-    return '/* = default */'
-  endif
-endfunction
-
-" Function: lh#cpp#snippets#pure() {{{3
-function! lh#cpp#snippets#pure() abort
-  return "= 0"
-endfunction
-
-" Function: lh#cpp#snippets#return_ptr_type(type) {{{3
-function! lh#cpp#snippets#return_ptr_type(type) abort
-  let return_type = lh#option#get('cpp_return_ptr_type')
-  let args = empty(a:000) ? '' : a:1
-  if lh#option#is_set(return_type)
-    return printf(return_type, a:type)
-  endif
-  call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
-  if lh#cpp#use_cpp11()
-    return 'std::unique_ptr<'.a:type.'>'
-  else
-    return 'std::auto_ptr<'.a:type.'>'
-  endif
-endfunction
-
-" Function: lh#cpp#snippets#make_ptr(type, args) {{{3
-function! lh#cpp#snippets#make_ptr(type_dynamic, type_static, args) abort
-  let make_ptr = lh#option#get('cpp_make_ptr')
-  let args = empty(a:000) ? '' : a:1
-  if lh#option#is_set(make_ptr)
-    return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
-  else
-    unlet make_ptr
-  endif
-  call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
-  if lh#cpp#use_cpp14()
-    " upcast is implicit with unique_ptr => using only the dynamic type
-    let make_ptr = 'std::make_unique(%3)'
-  elseif lh#cpp#use_cpp11()
-    " upcast is implicit with unique_ptr => using only the dynamic type
-    let make_ptr = 'std::unique_ptr<%2>(new %2(%3))'
-  else
-    let make_ptr = 'std::auto_ptr<%1>(new %2(%3))'
-  endif
-  return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
-endfunction
-
-" Function: lh#cpp#snippets#requires_destructor(attributes) {{{3
-" - T* will require a destructor in current class
-" - auto_ptr<> will require a destructor in current class, even an empty (this
-"   is because otherwise we can't garanty the deletion function called is the
-"   right one)
-" - unique_ptr<>, doesn't require anything
-" - Let's suppose other types to follow RAII => don't need
-" - still an option in case code is not idiomatic and destructors may be needed
-function! lh#cpp#snippets#requires_destructor(attributes) abort
-  return lh#list#find_if(a:attributes, 'lh#cpp#snippets#_this_param_requires_a_destructor(v:val)') >= 0
-endfunction
-
-" Function: lh#cpp#snippets#requires_copy_operations(attributes) {{{3
-" - pointer, references, uncopyable types (stream, mutex, lock, entities, ...) => yes
-function! lh#cpp#snippets#requires_copy_operations(attributes) abort
-  return lh#list#find_if(a:attributes, 'lh#cpp#snippets#_this_param_requires_copy_operations(v:val)') >= 0
-endfunction
-
-" Function: lh#cpp#snippets#shall_explicit_defaults() {{{3
-function! lh#cpp#snippets#shall_explicit_defaults() abort
-  return lh#cpp#use_cpp11() && lh#option#get("cpp_explicit_default", 0)
+  return {name : data}
 endfunction
 
 " Function: lh#cpp#snippets#build_param_list(parameters) {{{3
@@ -563,6 +398,44 @@ function! lh#cpp#snippets#build_param_list(parameters) abort
   return implParamsStr
 endfunction
 
+" Function: lh#cpp#snippets#constructor_name(class) {{{3
+function! lh#cpp#snippets#constructor_name(class) abort
+  " Assert len(values(a:class)) == 1
+  let data = split(keys(a:class)[0], '::')
+  let data += [data[-1]]
+  let res = join(data, '::')
+  return res
+endfunction
+
+" Function: lh#cpp#snippets#defaulted() {{{3
+function! lh#cpp#snippets#defaulted() abort
+  let defaulted = lh#option#get('cpp_defaulted')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(defaulted)
+    return defaulted
+  endif
+  if lh#cpp#use_cpp11()
+    return '= default'
+  else
+    " Don't know how to default functions in C++98
+    return '/* = default */'
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#deleted() {{{3
+function! lh#cpp#snippets#deleted() abort
+  let deleted = lh#option#get('cpp_deleted')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(deleted)
+    return deleted
+  endif
+  if lh#cpp#use_cpp11()
+    return '= delete'
+  else
+    return '/* = delete */'
+  endif
+endfunction
+
 " Function: lh#cpp#snippets#duplicate_param(param) {{{3
 function! lh#cpp#snippets#duplicate_param(param, type) abort
   if  lh#cpp#snippets#_this_param_requires_copy_operations(a:type)
@@ -570,6 +443,133 @@ function! lh#cpp#snippets#duplicate_param(param, type) abort
   else
     return a:param
   endif
+endfunction
+
+" Function: lh#cpp#snippets#make_ptr(type, args) {{{3
+function! lh#cpp#snippets#make_ptr(type_dynamic, type_static, args) abort
+  let make_ptr = lh#option#get('cpp_make_ptr')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(make_ptr)
+    return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
+  else
+    unlet make_ptr
+  endif
+  call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
+  if lh#cpp#use_cpp14()
+    " upcast is implicit with unique_ptr => using only the dynamic type
+    let make_ptr = 'std::make_unique(%3)'
+  elseif lh#cpp#use_cpp11()
+    " upcast is implicit with unique_ptr => using only the dynamic type
+    let make_ptr = 'std::unique_ptr<%2>(new %2(%3))'
+  else
+    let make_ptr = 'std::auto_ptr<%1>(new %2(%3))'
+  endif
+  return lh#fmt#printf(make_ptr, a:type_static, a:type_dynamic, a:args)
+endfunction
+
+" Function: lh#cpp#snippets#noexcept([condition]) {{{3
+function! lh#cpp#snippets#noexcept(...) abort
+  let noexcept = lh#option#get('cpp_noexcept')
+  let args = empty(a:000) ? '' : '('.a:1.')'
+  if lh#option#is_set(noexcept)
+    return lh#fmt#printf(noexcept, args)
+  endif
+  if lh#cpp#use_cpp11()
+    return 'noexcept'.args
+  else
+    return 'throw()'
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#nullptr() {{{3
+function! lh#cpp#snippets#nullptr(...) abort
+  return lh#option#get('cpp_nullptr', lh#cpp#use_cpp11() ? 'nullptr' : '0')
+endfunction
+
+" Function: lh#cpp#snippets#override() {{{3
+function! lh#cpp#snippets#override() abort
+  let override = lh#option#get('cpp_override')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(override)
+    return override
+  endif
+  if lh#cpp#use_cpp11()
+    return 'override'
+  else
+    return '/* override */'
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#parents(parents) {{{3
+function! lh#cpp#snippets#parents(parents) abort
+  let includes = []
+  let list = []
+  for parent in a:parents
+    for [name, data] in items(parent)
+      let type_info = lh#cpp#types#get_info(name)
+      let list += [
+            \  get(data, 'visibility', 'public') . ' '
+            \ .(get(data, 'virtual', 0) ? 'virtual ' : '')
+            \ .type_info.typename_for_header()
+            \ ]
+      if has_key(data, 'includes')
+        call lh#list#flat_extend(includes, data['includes'])
+      endif
+      if has_key(type_info, 'includes')
+        call extend(includes, type_info.includes)
+      endif
+    endfor
+  endfor
+  let res = ''
+  if !empty(list)
+    let res = len(list) > 1 ? "\n" : " "
+    let res .= ': '.join(list, "\n, ")
+  endif
+  call lh#list#unique_sort(includes)
+  return [res, includes]
+endfunction
+
+" Function: lh#cpp#snippets#pure() {{{3
+function! lh#cpp#snippets#pure() abort
+  return "= 0"
+endfunction
+
+" Function: lh#cpp#snippets#requires_destructor(attributes) {{{3
+" - T* will require a destructor in current class
+" - auto_ptr<> will require a destructor in current class, even an empty (this
+"   is because otherwise we can't garanty the deletion function called is the
+"   right one)
+" - unique_ptr<>, doesn't require anything
+" - Let's suppose other types to follow RAII => don't need
+" - still an option in case code is not idiomatic and destructors may be needed
+function! lh#cpp#snippets#requires_destructor(attributes) abort
+  return lh#list#find_if(a:attributes, 'lh#cpp#snippets#_this_param_requires_a_destructor(v:val)') >= 0
+endfunction
+
+" Function: lh#cpp#snippets#requires_copy_operations(attributes) {{{3
+" - pointer, references, uncopyable types (stream, mutex, lock, entities, ...) => yes
+function! lh#cpp#snippets#requires_copy_operations(attributes) abort
+  return lh#list#find_if(a:attributes, 'lh#cpp#snippets#_this_param_requires_copy_operations(v:val)') >= 0
+endfunction
+
+" Function: lh#cpp#snippets#return_ptr_type(type) {{{3
+function! lh#cpp#snippets#return_ptr_type(type) abort
+  let return_type = lh#option#get('cpp_return_ptr_type')
+  let args = empty(a:000) ? '' : a:1
+  if lh#option#is_set(return_type)
+    return printf(return_type, a:type)
+  endif
+  call lh#mut#_add_post_expand_callback('lh#dev#import#add("<memory>")')
+  if lh#cpp#use_cpp11()
+    return 'std::unique_ptr<'.a:type.'>'
+  else
+    return 'std::auto_ptr<'.a:type.'>'
+  endif
+endfunction
+
+" Function: lh#cpp#snippets#shall_explicit_defaults() {{{3
+function! lh#cpp#snippets#shall_explicit_defaults() abort
+  return lh#cpp#use_cpp11() && lh#option#get("cpp_explicit_default", 0)
 endfunction
 
 " # Functions to tune mu-template class skeleton {{{2
