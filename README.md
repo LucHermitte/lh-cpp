@@ -15,7 +15,6 @@ It provides the following things:
 
 ### Text insertion facilities
 
-
 #### Brackets
 
 The insertion of pair of brackets-like characters is eased thanks to [lh-brackets](http://github.com/LucHermitte/lh-brackets).
@@ -28,9 +27,9 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
 | `[` after a `[`         | `[[<cursor>]]«»`                                                    | n/a                                           | n/a                       |
 | `]` before `]]`         | close all `]]`                                                      | n/a                                           | n/a                       |
 | `<localleader>[`        |                                                                     | `[<selection>]`                               | word                      |
-| `{`                     | `{<cursor>}«»`<sup>3</sup>                                          | `{<selection>}`                               | word                      |
+| `{`                     | `{<cursor>}«»`<sup>3, 4</sup>                                       | `{<selection>}`                               | word                      |
 | `<localleader>{`        |                                                                     | `{\n<selection>\n}«»`                         | line                      |
-| <                       | `<<cursor>>«»` after `#include`, or `template` on the same line     |                                               |                           |
+| <                       | `<<cursor>>«»` after `#include`, `template`, `class`, or `_cast`    |                                               |                           |
 | `"` (1 double quote)    | `"<cursor>"«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
 | `""`                    |                                                                     | `"<selection>"`                               | word                      |
 | `'`                     | `'<cursor>'«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
@@ -40,9 +39,12 @@ The insertion of pair of brackets-like characters is eased thanks to [lh-bracket
 ##### Notes:
   * <sup>1</sup> Not defined to avoid hijacking default vim key bindings.
   * <sup>2</sup> The visual mode mappings do not surround the current marker/placeholder selected, but trigger the INSERT-mode mappings instead.
-  * <sup>3</sup> The exact behavior of this mapping has changed with release r719 (on Google Code). Now, no newline is inserted by default. However, hitting `<cr>` in the middle of a pair of curly-bracket will expand into `{\n<cursor>\n}`.
+  * <sup>3</sup> No newline is inserted by default. However, hitting `<cr>` in the middle of a pair of curly-brackets will expand into `{\n<cursor>\n}`.
+  * <sup>4</sup> After, `struct`, `class`, `enum` or `union` on the same line, a semicolon (`;`) is appended after the closing bracket.
   * `«»` represents a marker/placeholder, it may be expanded with other characters like `<++>` depending on your preferences.
-  * There is no way (yet) to deactivate this feature from the `.vimrc`
+  * `}` jumps to the next non whitespace/newline that is a `}`
+  * `<bs>` take care of semi-colons after the closing curly-bracket -- set `(bpg):[{ft}_]semicolon_closes_bracket` to 0 to inhibit this setting.
+  * These mappings can be disabled from the `.vimrc` by setting `g:cb_no_default_brackets` to 1 (default: 0)
 
 
 #### Code snippets
@@ -75,7 +77,7 @@ In the same idea, `<LocalLeader><LocalLeader>if` surrounds the selection with `i
 ##### Other notes
 All the three mode oriented mappings respect and force the indentation regarding the current setting and what was typed.
 
-More precisely, regarding the value of the buffer relative option b:usemarks (_cf._ [lh-brackets](http://github.com/LucHermitte/lh-brackets)), `if` could be expanded into:
+More precisely, regarding the value of the buffer relative option `b:usemarks` (_cf._ [lh-brackets](http://github.com/LucHermitte/lh-brackets)), `if` could be expanded into:
 ```C++
 if () {
     «»
@@ -83,11 +85,11 @@ if () {
 ```
 
 The exact style (Alman, Stroustroup, ...) regarding whether brackets are on a
-new line, or not, can be tuned thanks to [lh-dev `:AddStyle` feature](http://github.com/LucHermitte/lh-dev#formatting-of-brackets-characters).
+new line, or not, can be tuned thanks to [lh-style `:UseStyle` feature](https://lh-style.readthedocs.io/en/latest/code-formatting.html#usestyle-style-family-value-buffer-ft-ft-prio-prio).
 
 #### Miscellaneous shortcuts
 Note: in all the following mappings, `,` is actually the localleader that
-lh-cpp sets to the comma characcter if it isn't set already.
+lh-cpp sets to the comma character if it isn't set already.
 
   * `tpl` expands into `template <<cursor>>«»` ;
   * `<m-t>` inserts `typedef`, or `typename` depending on what is before the cursor ;
@@ -170,27 +172,55 @@ snippets as most of them have options.
 ### Miscellaneous
   * home like VC++: mappings that override `<home>` and `<end>` to mimic how these keys behave in VC++.
   * omap-param: defines the o-mappings `,i` and `,a` to select the current parameter (in a list of parameters).
-  * SiR,
   * lh-cpp imports a [C&C++ Folding plugin](https://github.com/LucHermitte/VimFold4C),
     which is still experimental.
-  * [lh-dev](http://github.com/LucHermitte/lh-dev), which is required by
+  * [lh-style](http://github.com/LucHermitte/lh-style), which is required by
     lh-cpp, provides a few commands like `:NameConvert` that permits to change
     the naming style of a symbol. The possible styles are: `upper_camel_case`,
     `lower_camel_case`, `snake`/`underscore`, `variable`, `local`, `global`,
     `member`, `constant`, `static`, `param`, `getter`, `setter`)
 
 ### Installation
-  * Requirements: Vim 7.+, [lh-vim-lib](https://github.com/LucHermitte/lh-vim-lib), [lh-style](https://github.com/LucHermitte/lh-style), [lh-brackets](https://github.com/LucHermitte/lh-brackets), [mu-template](https://github.com/LucHermitte/mu-template), [lh-dev](https://github.com/LucHermitte/lh-dev), [alternate-lite](https://github.com/LucHermitte/alternate-lite).
-  * With [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager), install lh-cpp. This is the preferred method because of the various dependencies.
+##### Requirements
+* Vim 7.+
+* [lh-vim-lib](https://github.com/LucHermitte/lh-vim-lib)
+* [lh-style](https://github.com/LucHermitte/lh-style)
+* [lh-brackets](https://github.com/LucHermitte/lh-brackets)
+* [mu-template](https://github.com/LucHermitte/mu-template)
+* [lh-dev](https://github.com/LucHermitte/lh-dev)
+* [alternate-lite](https://github.com/LucHermitte/alternate-lite).
+
+###### Optional dependencies
+* [vim-clang](https://github.com/LucHermitte/vim-clang) will improve the
+  quality of various features (`:DOX`, `:GOTOIMPL`, `:Constructor`,
+  `:Override`, `:Ancestors`...) from lh-cpp. Indeed it uses libclang to analyse
+  C++ instead of ctags + vimscript.
+
+  This dependency isn't automatically installed w/ VAM or vim-flavor. It also
+  require Python (preferably 3), a Vim flavour compiled with Python support,
+  libclang, and Python bindings for libclang.
+
+* [tomtom/stakeholders_vim](https://github.com/tomtom/stakeholders_vim.git)
+  will add multi-cursor like feature to mu-template snippets
+
+  This dependency is automatically installed w/ VAM or vim-flavor.
+
+##### Install w/ [vim-addon-manager](https://github.com/MarcWeber/vim-addon-manager)
+Install `lh-cpp`. This is one of the two recommended methods because of the various dependencies.
 ```vim
 ActivateAddons lh-cpp
 ```
-  * or with [vim-flavor](https://github.com/kana/vim-flavor) which also supports
-    dependencies:
+
+##### Install w/ [vim-flavor](https://github.com/kana/vim-flavor)
+This is the second recommended method because of the various dependencies.
 ```
 flavor 'LucHermitte/lh-cpp'
 ```
-  * or you can clone the git repositories (expecting I haven't forgotten anything):
+
+#### Install manually
+You can clone the git repositories (expecting I haven't forgotten anything),
+and don't forget to update your
+[`'runtimepath'`](http://vimhelp.appspot.com/options.txt.html#%27runtimepath%27):
 ```
 git clone git@github.com:LucHermitte/lh-vim-lib.git
 git clone git@github.com:LucHermitte/lh-style.git
@@ -203,7 +233,8 @@ git clone git@github.com:tomtom/stakeholders_vim.git
 git clone git@github.com:LucHermitte/alternate-lite.git
 git clone git@github.com:LucHermitte/lh-cpp.git
 ```
-  * or with Vundle/NeoBundle (expecting I haven't forgotten anything):
+##### Install w/ Vundle/NeoBundle
+(expecting I haven't forgotten anything):
 ```vim
 Bundle 'LucHermitte/lh-vim-lib'
 Bundle 'LucHermitte/lh-style'
@@ -231,7 +262,7 @@ Many people have to be credited:
 ## License
 
   * Documentation is under CC-BY-SA 3.0
-  * lh-cpp is under GPLv3 with exceptions. See acompagning [license file](License.md), i.e.
+  * lh-cpp is under GPLv3 with exceptions. See accompanying [license file](License.md), i.e.
       * Plugin, snippets and templates are under GPLv3
       * Most code generated from snippets (for control statements, proto
         -> definition, accessors, ...) are under the License Exception
@@ -249,6 +280,6 @@ Many people have to be credited:
   * **Errors Highlighting**: syntastic, [compil-hints](http://github.com/LucHermitte/vim-compil-hints) (a non-dynamic syntastic-lite plugin that'll only highlight errors found after a compilation stage)
   * **CMake Integration**: [lh-cmake](https://github.com/LucHermitte/lh-cmake) + [local\_vimrc](https://github.com/LucHermitte/local_vimrc) + [BuildToolsWrappers](http://github.com/LucHermitte/vim-build-tools-wrapper)
   * **Refactoring**: refactor.vim, [my generic refactoring plugin](http://github.com/LucHermitte/vim-refactor)
-  * **Code Completion**: [YouCompleteMe](https://github.com/Valloric/YouCompleteMe), really, check this one!, or [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520), or [clang\_complete](https://github.com/Rip-Rip/clang_complete)
-  * **Code Indexing**: [clang\_indexer](https://github.com/LucHermitte/clang_indexer) and [vim-clang](https://github.com/LucHermitte/vim-clang), [lh-tags](http://github.com/LucHermitte/lh-tags)
+  * **Code Completion**: COC+ccls/clang, [YouCompleteMe](https://github.com/Valloric/YouCompleteMe), really, check this one!, or [OmniCppComplete](http://www.vim.org/scripts/script.php?script_id=1520), or [clang\_complete](https://github.com/Rip-Rip/clang_complete)
+  * **Code Indexing**: <del>[clang\_indexer](https://github.com/LucHermitte/clang_indexer) and [vim-clang](https://github.com/LucHermitte/vim-clang),</del> COC+ccls/clang, [lh-tags](http://github.com/LucHermitte/lh-tags)
 
