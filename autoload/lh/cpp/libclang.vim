@@ -7,7 +7,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      28th Nov 2019
-" Last Update:  28th Nov 2019
+" Last Update:  10th Jan 2020
 "------------------------------------------------------------------------
 " Description:
 "       Adapt results from vim-clang
@@ -65,7 +65,7 @@ function! s:add_info_to_qf(qf, balloons, info, level, balloon_ctx) abort " {{{3
   let balloon_ctx = ' : '.a:info.access.' '.a:info.spelling . a:balloon_ctx
   call add(a:balloons, balloon_ctx)
   if has_key(a:info, 'parents')
-    call map(copy(a:info.parents), 's:add_info_to_qf(a:qf, a:balloons, v:val, "|  ".a:level, balloon_ctx)')
+    call map(copy(a:info.parents), 's:add_info_to_qf(a:qf, a:balloons, v:val, a:level."|  ", balloon_ctx)')
   endif
 endfunction
 
@@ -76,9 +76,10 @@ endfunction
 function! lh#cpp#libclang#show_ancestors(...) abort
   let [parents, current] = clang#parents()
   let qf = []
-  let qf += [extend(current.location, {'text': current.name})]
+  let qf += [extend(current.location, {'text': "~\t" . current.name})]
   let balloons = [' : inspected leaf']
-  call map(copy(parents), 's:add_info_to_qf(qf, balloons, v:val, "", "")')
+  call map(copy(parents), 's:add_info_to_qf(qf, balloons, v:val, "~\t", "")')
+  let max_length = max(map(copy(qf), {k,v -> strdisplaywidth(v.filename)}))
   call setqflist(qf)
   if lh#has#properties_in_qf()
     call setqflist([], 'a', {'title': current.name . ' base classes'})
@@ -90,6 +91,11 @@ function! lh#cpp#libclang#show_ancestors(...) abort
     Copen
   else
     copen
+  endif
+  let qf_winnr = lh#qf#get_winnr()
+  if qf_winnr > 0
+    let qf_bufnr = winbufnr(qf_winnr)
+    call setbufvar(qf_bufnr, '&tabstop', max_length+15)
   endif
 endfunction
 
