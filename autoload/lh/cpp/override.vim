@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      15th Apr 2008
-" Last Update:  05th Dec 2019
+" Last Update:  10th Jan 2020
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -196,7 +196,7 @@ function! s:vim_get_classname() abort " {{{4
 endfunction
 
 function! s:vim_get_overridable_functions(classname) abort " {{{4
-  let virtual_fcts = s:OverrideableFunctions(classname)
+  let virtual_fcts = s:OverrideableFunctions(a:classname)
   for fn in virtual_fcts
     let signature = lh#cpp#AnalysisLib_Function#BuildSignatureAsString(fn)
     let fn['fullsignature' ] = signature
