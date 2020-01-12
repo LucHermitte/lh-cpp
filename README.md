@@ -183,7 +183,7 @@ snippets as most of them have options.
 ### Installation
 ##### Requirements
 * Vim 7.+
-* [lh-vim-lib](https://github.com/LucHermitte/lh-vim-lib)
+* [lh-vim-lib](https://github.com/LucHermitte/lh-vim-lib) 4.7.1+
 * [lh-style](https://github.com/LucHermitte/lh-style)
 * [lh-brackets](https://github.com/LucHermitte/lh-brackets)
 * [mu-template](https://github.com/LucHermitte/mu-template)

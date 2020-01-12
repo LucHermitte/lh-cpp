@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      15th Apr 2008
-" Last Update:  10th Jan 2020
+" Last Update:  12th Jan 2020
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -204,7 +204,8 @@ function! s:vim_get_overridable_functions(classname) abort " {{{4
   return virtual_fcts
 endfunction
 
-function! s:vim_override(function_tag) abort " {{{4
+function! s:vim_override(function_tag, should_paste_comment) abort " {{{4
+  " This version isn't able to extract comments/doc
   return s:OverrideFunction(a:function_tag)
 endfunction
 
@@ -233,9 +234,13 @@ function! s:libclang_get_overridable_functions(classname) abort " {{{4
   return virtual_fcts
 endfunction
 
-function! s:libclang_override(function_tag) abort " {{{4
+function! s:libclang_override(function_tag, should_paste_comment) abort " {{{4
   call s:Verbose("Overriding: %1", a:function_tag)
-  let lines = clang#extract_from_extent(a:function_tag.extent, a:function_tag.name)
+  let lines = []
+  if a:should_paste_comment
+    let lines += split(a:function_tag.comment, "\n")
+  endif
+  let lines += clang#extract_from_extent(a:function_tag.extent, a:function_tag.name)
   call s:Verbose("Definition found: %1", lines)
   " TODO: could be "final" instead
   let lines[0]  = substitute(lines[0], '\s*virtual\s\+', '', '')
@@ -330,15 +335,17 @@ function! s:Display(className, declarations, api) abort
   let choices = s:BuildMenu(a:declarations)
   " return
   let b_id = lh#buffer#dialog#new(
-        \ 'C++Override('.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ).')',
+        \ 'override://'.substitute(a:className, '[^A-Za-z0-9_.]', '_', 'g' ),
         \ 'Overrideable functions for '.a:className,
         \ 'bot below',
         \ 1,
-        \ 'lh#cpp#override#select',
+        \ { '\<CR\>': 'lh#cpp#override#select', 'd': {l -> lh#cpp#override#select(l, 1)} },
         \ choices
         \)
+  call lh#buffer#dialog#add_help(b_id, '@| d                       : override with documentation', 'long')
+  call lh#buffer#dialog#add_help(b_id, '@|', 'long')
   call lh#buffer#dialog#add_help(b_id, '@| !==already overridden function in '.a:className, 'long')
-  call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in one of the ancestor class', 'long')
+  call lh#buffer#dialog#add_help(b_id, '@| +==public, #==protected, -==private in the ancestor class(es)', 'long')
   " Added the lonely functions to the b_id
   let b_id['declarations'] = a:declarations
   let b_id['api']          = a:api
@@ -376,12 +383,15 @@ function! s:PostInitDialog() abort
 endfunction
 
 " Function: lh#cpp#override#select(results) {{{3
-function! lh#cpp#override#select(results) abort
+function! lh#cpp#override#select(results, ...) abort
   if len(a:results.selection)==1 && a:results.selection[0]==0
     call lh#buffer#dialog#quit()
     return
   endif
   if exists('s:quit') | :quit | endif
+
+  " TODO: use an option
+  let should_paste_comment = get(a:, 1, 0)
 
   " let unmatched = b:dialog.unmatched
   " let cmd = b:cmd
@@ -395,7 +405,7 @@ function! lh#cpp#override#select(results) abort
     let selected_virt = a:results.dialog.declarations[selection-1]
     " echomsg string(selected_virt)
     let api = a:results.dialog.api
-    call extend(lines, api.override(selected_virt))
+    call extend(lines, api.override(selected_virt, should_paste_comment))
   endfor
   " Go back to the original buffer, and insert the built lines
   let where_it_started = a:results.dialog.where_it_started
