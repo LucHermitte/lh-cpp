@@ -7,7 +7,7 @@
 " Version:      2.2.1
 let s:k_version = 221
 " Created:      11th Sep 2008
-" Last Update:  28th Nov 2019
+" Last Update:  13th Jan 2020
 "------------------------------------------------------------------------
 " Description:
 "       C++ ftplugin that provides command to inpect various information:
@@ -30,13 +30,15 @@ let b:loaded_ftplug_cpp_Inspect = s:k_version
 "------------------------------------------------------------------------
 " Local commands {{{2
 
-if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
-  command! -b -nargs=? Ancestors
-        \ call lh#cpp#libclang#show_ancestors(<q-args>)
-else
-  command! -b -nargs=? Ancestors
-        \ echo lh#dev#option#call('class#ancestors', &ft, lh#cpp#ftplugin#OptionalClass(<q-args>))
-endif
+function! s:Ancestors(...) abort
+  if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
+    call call('lh#cpp#libclang#show_ancestors', a:000)
+  else
+    echo lh#dev#option#call('class#ancestors', &ft, call('lh#cpp#ftplugin#OptionalClass', a:000))
+  endif
+endfunction
+
+command! -b -nargs=?       Ancestors call s:Ancestors(<q-args>)
 command! -b -nargs=? -bang Children  call s:Children("<bang>", <f-args>)
 
 "=============================================================================
