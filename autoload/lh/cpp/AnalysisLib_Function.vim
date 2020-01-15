@@ -4,9 +4,9 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
-" Version:      2.2.0
+" Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  17th Dec 2019
+" Last Update:  15th Jan 2020
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -42,6 +42,8 @@
 "       Drop it into: {rtp}/autoload
 "       Requirements: Vim7
 " History:
+"       v2.3.0
+"       (*) Improve/fix Vim based :Override command
 "       v2.2.0
 "       (*) Add detection of final, override, constexpr, noexept, volatile,
 "          =default, =delete
@@ -474,36 +476,44 @@ function! s:ConvertTag(t) abort
   return fn_data
 endfunction
 
-function! lh#cpp#AnalysisLib_Function#LoadTags(id) abort
+function! lh#cpp#AnalysisLib_Function#LoadTags(id, ...) abort
+  let options = get(a:, 1, {})
   let tags = taglist(a:id)
-  call s:Verbose('%1 functions definitions & declarations matching %2 found', len(tags), a:id)
+  call s:Verbose('%2 -> %1 functions definitions & declarations matching %2 found', len(tags), a:id)
 
   " # Definitions (f)
   let f_tags = filter(copy(tags), 'v:val.kind == "f"')
   let definitions = map(copy(f_tags), 's:ConvertTag(v:val)')
-  call s:Verbose('%1 functions definitions found', len(definitions))
+  call s:Verbose('%2 -> %1 functions definitions found: %3', len(definitions), a:id, lh#list#get(definitions, 'name'))
   " Remove inline definitions
   " -> a definition with an access specifier is an inline definition
   call filter(definitions, '! has_key(v:val, "access")')
   " -> We can also use universal ctags {c++.properties} field option
   call filter(definitions, 'get(v:val, "properties","") =~ "inline"')
-  call s:Verbose('%1 functions definitions kept (class-inline definitions removed)', len(definitions))
+  call s:Verbose('%2 -> %1 functions definitions kept (class-inline definitions removed): %3', len(definitions), a:id, lh#list#get(definitions, 'name'))
 
   " # Declarations (p)
   let p_tags = filter(copy(tags), 'v:val.kind == "p"')
   let declarations = map(copy(p_tags), 's:ConvertTag(v:val)')
-  call s:Verbose('%1 functions declarations found', len(declarations))
+  call s:Verbose('%2 -> %1 functions declarations found: %3', len(declarations), a:id, lh#list#get(declarations, 'name'))
 
   " Remove "= 0"
-  call filter(declarations, 'v:val.implementation !~ "pure"')
-  call s:Verbose('%1 functions declarations kept (pure virtual function removed)', len(declarations))
+  if get(options, 'remove_pure', 1)
+    call filter(declarations, 'v:val.implementation !~ "pure"')
+    call s:Verbose('%2 -> %1 functions declarations kept (pure virtual function removed): %3', len(declarations), a:id, lh#list#get(declarations, 'name'))
+  endif
+  " Remove destructor
+  if get(options, 'remove_destructor', 0)
+    call filter(declarations, 'stridx(v:val.name, "~") < 0')
+    call s:Verbose('%2 -> %1 functions declarations kept (destructors removed): %3', len(declarations), a:id, lh#list#get(declarations, 'name'))
+  endif
   " Remove "= default" & "= delete"
   " -> not present in the signature.
   " -> at best, it may be in the command
   call filter(declarations, 'v:val.cmd !~ "=\\v\\s*(default|delete)"')
   " -> We can also use universal ctags {c++.properties} field option
-  call filter(declarations, 'get(v:val, "properties","") =~ "default\\|delete"')
-  call s:Verbose('%1 functions declarations found and kept (defaulted/deleted function removed)', len(declarations))
+  call filter(declarations, 'get(v:val, "properties","") !~ "default\\|delete"')
+  call s:Verbose('%2 -> %1 functions declarations found and kept (defaulted/deleted function removed): %3', len(declarations), a:id, lh#list#get(declarations, 'name'))
 
   let result = { 'definitions':definitions, 'declarations': declarations }
   return result
