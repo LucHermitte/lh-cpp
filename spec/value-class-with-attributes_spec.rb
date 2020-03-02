@@ -229,7 +229,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @param[in] foo «foo-explanations»
          * @param«[in]» bar «bar-explanations»
          * «@throw »
-         * @pre `bar != NULL`«»
+         * @pre `bar != 0`«»
          */
         «Test»(int foo, std::auto_ptr<std::string> bar)
             : m_foo(foo)
@@ -340,7 +340,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @param[in] foo «foo-explanations»
          * @param«[in]» bar «bar-explanations»
          * «@throw »
-         * @pre `bar != NULL`«»
+         * @pre `bar != 0`«»
          */
         «Test»(int foo, std::auto_ptr<std::string> bar)
             : m_foo(foo)
