@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      15th Apr 2008
-" Last Update:  12th Jan 2020
+" Last Update:  15th Jan 2020
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -96,7 +96,7 @@ function! s:OverrideableFunctions(classname) abort
     "   (see omnicppcomplete for a better Ancestors function ?)
     " - "\>" strips the symbols from nested classes
     let base_pattern = ((base =~ '::') ? '^' : '::') . base . '\>'
-    let functions = lh#cpp#AnalysisLib_Function#LoadTags(base_pattern)
+    let functions = lh#cpp#AnalysisLib_Function#LoadTags(base_pattern, {'remove_pure': 0, 'remove_destructor': 1})
     let declarations = lh#cpp#AnalysisLib_Function#SearchAllDeclarations(functions)
     " - only keep virtual functions
     let virtual_fcts = filter(declarations, 'v:val.implementation =~ "virtual"')
@@ -176,6 +176,7 @@ function! s:OverrideFunction(function_tag) abort
     " c- extract all the relevant text (beware of =0)
     let code = lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, 1)
     let code = substitute(code, '\s*=\s*0\s*;$', '', '')
+    let code = substitute(code, '\s*;$', '', '')
   finally
     " quit the split-opened window
     :q
@@ -185,7 +186,7 @@ function! s:OverrideFunction(function_tag) abort
     " signatures + the comments
     let lines = []
     call add(lines, code.';') " where is the return type ?
-    call add(lines, '')
+    " call add(lines, '')
     return lines
 endfunction
 
