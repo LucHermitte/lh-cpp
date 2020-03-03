@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  15th Jan 2020
+" Last Update:  03rd Mar 2020
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -102,7 +102,10 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
   try
     if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
       let py_info = clang#get_symbol('function')
-      if py_info.is_definition && a:onlyDeclaration
+      if py_info is v:none
+        throw "Cannot decode function with libclang"
+      endif
+      if (get(py_info, 'is_definition', 0) && a:onlyDeclaration)
         return {}
       endif
 
@@ -181,6 +184,16 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
     endif
   catch /.*/
     call lh#common#warning_msg("We cannot use vim-clang+libclang to decode function prototype, falling back to pure vimscript analysis. ".v:exception)
+    if s:verbose
+      let qf = lh#exception#decode(v:throwpoint).as_qf('')
+      let qf[0].text = substitute(qf[0].text, '^\.\.\.', v:exception, '')
+      call setqflist(reverse(qf))
+      if exists(':Copen')
+        Copen
+      else
+        copen
+      endif
+    endif
   endtry
 
   " If vim-clang + libclang could not be used....
