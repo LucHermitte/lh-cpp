@@ -71,7 +71,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   end
 
   # ====[ default constructor {{{2
-  context "when expanding default-constructor", :default_ctr do
+  context "when expanding default-constructor", :default_ctr, :default_ctr_cmd do
 
     it "has a pointer attribute" do # {{{3
       # TODO: In C++11, no need for m_bar() if there is a default
@@ -80,7 +80,6 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
       # vim.command('Constructor default')
       vim.echo('lh#cpp#constructors#Main("default")')
-      # expect(vim.echo('g:step."--".string(g:implproto)')).to eq('42')
       # expect(vim.echo('g:step')).to eq('42')
       vim.feedkeys('a\<esc>') # pause
       assert_buffer_contents <<-EOF
