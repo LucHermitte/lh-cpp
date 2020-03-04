@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  06th Dec 2019
+" Last Update:  04th Mar 2020
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -136,13 +136,13 @@ function! s:vimscript_get_prototype(opt) dict abort " {{{4
     let self._end_proto = res[0]
     let self._proto = res[1]
   else
-    let self._proto = res[0]
+    let self._proto = res
   endif
   return res
 endfunction
 
 function! s:vimscript_proto_to_regex() dict abort " {{{4
-  let impl2search = s:BuildRegexFromImpl(self._proto,self._className)
+  let impl2search = s:BuildRegexFromImpl(self._proto,self._classname)
   return impl2search
 endfunction
 
@@ -711,7 +711,7 @@ function! s:InsertCodeAtLine(...) abort
     " call confirm('ns  ='.ns."\nimpl=".impl, '&Ok', 1)
   endwhile
   " Change my namespace delimiters (#::#) to normal scope delimiters (::)
-  let impl = substitute(impl, '#::#', '::', '') . "\n"
+  let impl = substitute(impl, '#::#', '::', '')
   " Unfold folders otherwise there could be side effects with ':put'
   let folder=&foldenable
   set nofoldenable
@@ -722,12 +722,11 @@ function! s:InsertCodeAtLine(...) abort
     endif
     let p=line('$')
   endif
-  silent exe p."put=impl"
-  " Note: unlike 'put', 'append' can't insert multiple lines.
-  " call append(p, impl)
+  let l_impl = split(impl, '\n', 1)
+  call append(p, l_impl)
   " Reindent the newly inserted lines
-  let nl = strlen(substitute(impl, "[^\n]", '', 'g')) - 1
-  let p +=  1
+  let nl = len(l_impl) - 1
+  let p += 1
   silent exe p.','.(p+nl).'v/^$/normal! =='
   " Restore folding
   let &foldenable=folder

@@ -4,9 +4,9 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " License:      GPLv3 with exceptions
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
-" Version:      2.2.0
+" Version:      2.3.0
 " Created:      09th Feb 2009
-" Last Update:  05th Sep 2018
+" Last Update:  04th Mar 2020
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -193,6 +193,7 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
   " => We don't use the constructor snippets at their full capacity for now,
   " and thus duplicate their attribute-duplication code.
   GOTOIMPL
+  " call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource()
   normal! %
   " 4.2- Prepare init-list code
   let rhs = lh#naming#param('rhs').'.'
@@ -213,7 +214,7 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
     if len(init_list) > 0
       call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
     endif
-    put!=impl_lines
+    call append(line('.')-1, impl_lines)
   endif
 endfunction
 
