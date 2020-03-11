@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  04th Mar 2020
+" Last Update:  11th Mar 2020
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -172,6 +172,7 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
 
   let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration)
   let scope = get(self._info, 'scope', [])
+  let namespace = []
   let classname = []
   let templates = []
   for sc in reverse(scope)
@@ -187,11 +188,16 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
       let name .= '<'.join(inst, ',').'>'
       let line = 'template<'.join(tpl_line, ',').'>'
       let templates += [line]
+      let classname += [name]
+    elseif sc.kind =~ 'NAMESPACE'
+      let namespace += [name]
+    else
+      let classname += [name]
     endif
-    let classname += [name]
   endfor
   " let self._classname = get(scope, 0, '')
-  let self._classname = join(classname, '::')
+  let self._namespace = join(namespace, '::')
+  let self._classname = self._namespace . '#::#' . join(classname, '::')
   let self._templates = templates
   let self._proto     = get(self._info, 'fullsignature', '')
   return self._proto
@@ -446,6 +452,7 @@ endfunction
 "------------------------------------------------------------------------
 " Function: s:Search4Impl(re_impl, scope):bool {{{3
 function! s:Search4Impl(re_impl, scope) abort
+  call s:Verbose("Searching for %1:: function definition w/ regex = %2", a:scope, a:re_impl)
   " 0- Pretransformations {{{4
   let required_ns = matchstr(a:scope, '^.*\ze#::#')
   " 1- Memorize position {{{4
@@ -463,6 +470,7 @@ function! s:Search4Impl(re_impl, scope) abort
 
     " b- Get the current namespace at the line found {{{5
     let ns_list = lh#cpp#AnalysisLib_Class#available_namespaces(l)
+    call s:Verbose("At line %1, namespaces are %2", l, ns_list)
 
     " c- Build the function name that must be found on the current line {{{5
     "    The function aname also contain the scope
@@ -492,6 +500,7 @@ function! s:Search4Impl(re_impl, scope) abort
       if ("" != required_ns) && (required_ns !~ '.*::$')
         let required_ns .=  '::'
       endif
+      call s:Verbose("required_ns=%1\ncurrent_proto=%2\ncurrent_ns=%3\n#%4 -> %5", required_ns, current_proto, ns, l, getline('.'))
       " call confirm('required_ns='.required_ns.
       " \ "\ncurrent_proto=".current_proto.
       " \ "\ncurrent_ns=".ns.
