@@ -117,7 +117,7 @@ function! lh#cpp#tags#get_included_paths(...) abort
   " includes: old path
   let def_includes = lh#option#get(['paths.includes', 'includes'])
   if lh#option#is_set(def_includes)
-    call map(copy(def_includes), 'extend(includes, s:as_list(type(v:val)==type(function("has")) ? call(v:val,[]) : v:val))')
+    call map(copy(def_includes), 'extend(includes, s:as_list(type(v:val)==type(function("has")) ? call("s:call_dont_fail", [v:val]) : v:val))')
     call filter(includes, '!empty(v:val)')
   elseif a:0 > 0
     let includes += type(a:1) == type([]) ? a:1 : split(a:1, ',')
@@ -166,6 +166,16 @@ endfunction
 function! s:TagsSelectPolicy() abort
   let select_policy = lh#option#get('tags_select', "expand('<cword>')", 'bg')
   return select_policy
+endfunction
+
+function! s:call_dont_fail(funcname, ...) abort
+  try
+    return call(a:funcname, a:000)
+  catch /.*/
+    let g:lh#cpp#tags#error = lh#exception#decode(v:throwpoint)
+    call lh#common#warning_msg('Error while extracting include paths: '.v:exception.'. // Exceptions callstack saved in g:lh#cpp#tags#error')
+  endtry
+  return []
 endfunction
 
 " }}}1
