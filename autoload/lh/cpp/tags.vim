@@ -5,7 +5,7 @@
 " Version:      2.3.0
 let s:k_version = 230
 " Created:      25th Jun 2014
-" Last Update:  22nd May 2019
+" Last Update:  27th Oct 2020
 "------------------------------------------------------------------------
 " Description:
 "       API functions to obtain symbol declarations
@@ -87,7 +87,7 @@ function! lh#cpp#tags#compiler_includes(...) abort
 endfunction
 
 " Function: lh#cpp#tags#strip_included_paths(filename, includes) {{{3
-function! lh#cpp#tags#strip_included_paths(filename, includes)
+function! lh#cpp#tags#strip_included_paths(filename, includes) abort
   let filename = a:filename
   if !empty(a:includes)
     if filename[0] == '/' " absolute => try to remove things from b:includes and/or b:sources_root
@@ -105,7 +105,7 @@ function! s:as_list(p) abort
   return type(a:p) == type([]) ? a:p : [a:p]
 endfunction
 
-function! lh#cpp#tags#get_included_paths(...)
+function! lh#cpp#tags#get_included_paths(...) abort
   let includes = []
   " sources_root: from mu-template & lh-suite(s)
   " paths.sources: from lh#project
@@ -163,7 +163,7 @@ function! lh#cpp#tags#fetch(feature) abort
 endfunction
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
-function! s:TagsSelectPolicy()
+function! s:TagsSelectPolicy() abort
   let select_policy = lh#option#get('tags_select', "expand('<cword>')", 'bg')
   return select_policy
 endfunction
