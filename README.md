@@ -19,22 +19,22 @@ It provides the following things:
 
 The insertion of pair of brackets-like characters is eased thanks to [lh-brackets](http://github.com/LucHermitte/lh-brackets).
 
-|   In mode               |   INSERT                                                            |   VISUAL                                      |   NORMAL                  |
-|:------------------------|:--------------------------------------------------------------------|:----------------------------------------------|:--------------------------|
-| **keys**                | Expands into ..                                                     | Surrounds the selection with ... <sup>2</sup> | Surrounds the current ... |
-| `(`                     | `(<cursor>)«»`                                                      | `(<selection>)`                               | word                      |
-| `[`                     | `[<cursor>]«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
-| `[` after a `[`         | `[[<cursor>]]«»`                                                    | n/a                                           | n/a                       |
-| `]` before `]]`         | close all `]]`                                                      | n/a                                           | n/a                       |
-| `<localleader>[`        |                                                                     | `[<selection>]`                               | word                      |
-| `{`                     | `{<cursor>}«»`<sup>3, 4</sup>                                       | `{<selection>}`                               | word                      |
-| `<localleader>{`        |                                                                     | `{\n<selection>\n}«»`                         | line                      |
-| <                       | `<<cursor>>«»` after `#include`, `template`, `class`, or `_cast`    |                                               |                           |
-| `"` (1 double quote)    | `"<cursor>"«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
-| `""`                    |                                                                     | `"<selection>"`                               | word                      |
-| `'`                     | `'<cursor>'«»`                                                      | <sup>1</sup>                                  | <sup>1</sup>              |
-| `''` (2 single quotes)  |                                                                     | `'<selection>'`                               | word                      |
-| `;`                     | closes all parenthesis after the cursor -- if there is nothing else |                                               |                           |
+|   In mode               |   INSERT                                                                           |   VISUAL                                      |   NORMAL                  |
+|:------------------------|:---------------------------------------------------------------------------------- |:----------------------------------------------|:--------------------------|
+| **keys**                | Expands into ..                                                                    | Surrounds the selection with ... <sup>2</sup> | Surrounds the current ... |
+| `(`                     | `(<cursor>)«»`                                                                     | `(<selection>)`                               | word                      |
+| `[`                     | `[<cursor>]«»`                                                                     | <sup>1</sup>                                  | <sup>1</sup>              |
+| `[` after a `[`         | `[[<cursor>]]«»`                                                                   | n/a                                           | n/a                       |
+| `]` before `]]`         | close all `]]`                                                                     | n/a                                           | n/a                       |
+| `<localleader>[`        |                                                                                    | `[<selection>]`                               | word                      |
+| `{`                     | `{<cursor>}«»`<sup>3, 4</sup>                                                      | `{<selection>}`                               | word                      |
+| `<localleader>{`        |                                                                                    | `{\n<selection>\n}«»`                         | line                      |
+| <                       | `<<cursor>>«»` after `#include`, `template`, `class`, `_cast` or standard types    |                                               |                           |
+| `"` (1 double quote)    | `"<cursor>"«»`                                                                     | <sup>1</sup>                                  | <sup>1</sup>              |
+| `""`                    |                                                                                    | `"<selection>"`                               | word                      |
+| `'`                     | `'<cursor>'«»`                                                                     | <sup>1</sup>                                  | <sup>1</sup>              |
+| `''` (2 single quotes)  |                                                                                    | `'<selection>'`                               | word                      |
+| `;`                     | closes all parenthesis after the cursor -- if there is nothing else                |                                               |                           |
 
 ##### Notes:
   * <sup>1</sup> Not defined to avoid hijacking default vim key bindings.

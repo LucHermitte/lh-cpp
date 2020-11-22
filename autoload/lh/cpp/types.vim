@@ -2,10 +2,10 @@
 " File:         autoload/lh/cpp/types.vim                         {{{1
 " Author:       Luc Hermitte <EMAIL:luc {dot} hermitte {at} gmail {dot} com>
 "		<URL:http://github.com/LucHermitte/lh-cpp>
-" Version:      2.2.0.
-let s:k_version = '220'
+" Version:      2.2.1.
+let s:k_version = '221'
 " Created:      15th Dec 2015
-" Last Update:  15th Dec 2015
+" Last Update:  22nd Nov 2020
 "------------------------------------------------------------------------
 " Description:
 "       C++ types database
@@ -67,6 +67,10 @@ function! lh#cpp#types#get_info(type, ...) abort
     let type += [call('lh#fmt#printf', [self.type] + args)]
     return join(type, '::')
   endfunction
+
+  function! res.is_template() abort
+    return self.type =~ '<'
+  endfunction
   return res
 endfunction
 
@@ -108,17 +112,90 @@ let s:types = {}
 let s:std_types = ['fstream', 'string', 'stringstring', 'istream', 'ostream', 'regex', 'thread', 'mutex', 'shared_mutex', 'condition_variable', 'future', 'exception']
 call s:RegisterTypes(s:std_types, 'std')
 
+call s:RegisterTypes(['ifstream', 'ofstream'], 'std', 'fstream')
 
-" - types with template parameters {{{4
+
+" - common types with template parameters {{{4
+"   ... defined in the eponym header file
 let s:std_types = [
       \ 'array<%1,%2>', 'bitset<%1>', 'complex<%1>', 'deque<%1>',
       \ 'forward_list<%1>', 'function<%1>', 'hash<%1>', 'initializer_list<%1>',
       \ 'list<%1>', 'map<%1,%2>', 'multimap<%1,%2>', 'multiset<%1>',
-      \ 'priority_queue<%1>', 'queue<%1>', 'set<%1>', 'stack<%1>', 'tuple<%1>',
-      \ 'unordered_map<%1>', 'unordered_multimap<%1,%2>',
-      \ 'unordered_multiset<%1>', 'unordered_set<%1>', 'vector<%1>'
+      \ 'priority_queue<%1>', 'queue<%1>', 'set<%1>', 'span<%1>',
+      \ 'stack<%1>', 'tuple<%1>', 'unordered_map<%1>',
+      \'unordered_multimap<%1,%2>', 'unordered_multiset<%1>',
+      \ 'unordered_set<%1>', 'vector<%1>'
       \]
 call s:RegisterTypes(s:std_types, 'std')
+
+" - traits {{{4
+let s:std_types = [
+      \ 'is_void<%1>', 'is_null_pointer<%1>', 'is_integral<%1>',
+      \ 'is_floating_point<%1>', 'is_array<%1>', 'is_enum<%1>',
+      \ 'is_union<%1>', 'is_class<%1>', 'is_function<%1>', 'is_pointer<%1>',
+      \ 'is_lvalue_reference<%1>', 'is_rvalue_reference<%1>',
+      \ 'is_member_object_pointer<%1>', 'is_member_function_pointer<%1>',
+      \ 'is_fundamental<%1>', 'is_arithmetic<%1>', 'is_scalar<%1>',
+      \ 'is_object<%1>', 'is_compound<%1>', 'is_reference<%1>',
+      \ 'is_member_pointer<%1>', 'is_const<%1>', 'is_volatile<%1>',
+      \ 'is_trivial<%1>', 'is_trivially_assignable<%1>',
+      \ 'is_standard_layout<%1>', 'is_pod<%1>', 'is_literal_type<%1>',
+      \ 'has_unique_object_representation<%1>', 'is_empty<%1>',
+      \ 'is_polymorphic<%1>', 'is_abstract<%1>', 'is_final<%1>',
+      \ 'is_aggregate<%1>', 'is_signed<%1>', 'is_unsigned<%1>',
+      \ 'is_bounded_array<%1>', 'is_unbounded_array<%1>', 'is_scoped_enum<%1>',
+      \ 'is_constructible<%1>', 'is_trivially_constructible<%1>',
+      \ 'is_nothrow_constructible<%1>', 'is_default_constructible<%1>',
+      \ 'is_trivially_default_constructible<%1>',
+      \ 'is_nothrow_default_constructible<%1>', 'is_copy_constructible<%1>',
+      \ 'is_trivially_copy_constructible<%1>',
+      \ 'is_nothrow_copy_constructible<%1>', 'is_move_constructible<%1>',
+      \ 'is_trivially_move_constructible<%1>',
+      \ 'is_nothrow_move_constructible<%1>', 'is_assignable<%1>',
+      \ 'is_trivially_assignable<%1>', 'is_nothrow_assignable<%1>',
+      \ 'is_default_assignable<%1>', 'is_trivially_default_assignable<%1>',
+      \ 'is_nothrow_default_assignable<%1>', 'is_copy_assignable<%1>',
+      \ 'is_trivially_copy_assignable<%1>', 'is_nothrow_copy_assignable<%1>',
+      \ 'is_move_assignable<%1>', 'is_trivially_move_assignable<%1>',
+      \ 'is_nothrow_move_assignable<%1>', 'is_destructible<%1>',
+      \ 'is_trivially_destructible<%1>', 'is_nothrow_destructible<%1>',
+      \ 'has_virtual_destructor<%1>', 'is_swappable<%1>',
+      \ 'is_swappable_with<%1>', 'is_nothrow_swappable<%1>',
+      \ 'is_nothrow_swappable_with<%1>', 'is_same<%1>', 'is_baseof<%1>',
+      \ 'is_convertible<%1>', 'is_nothrow_convertible<%1>',
+      \ 'is_invocable<%1>', 'is_invocable_r<%1>', 'is_nothrow_invocable<%1>',
+      \ 'is_nothrow_invocable_r<%1>', 'is_layout_compatible<%1>',
+      \ 'is_pointer_inconvertible_base_of<%1>',
+      \ 'is_pointer_inconvertible_with_class<%1>',
+      \ 'is_corresponding_member<%1>', 'is_constant_evaluated<%1>'
+      \]
+call s:RegisterTypes(s:std_types, 'std', 'type_traits')
+" (Almost) all boolean traits have a constexpr variable in the form _v
+" They are not types, but let's store them here for now
+call map(s:std_types, 'substitute(v:val, "<", "_v<", "")')
+call s:RegisterTypes(s:std_types, 'std', 'type_traits')
+
+call s:RegisterTypes(['void_t'], 'std', 'type_traits')
+let s:std_types = [
+      \ 'remove_cv<%1>', 'remove_const<%1>', 'remove_volatile<%1>',
+      \ 'add_cv<%1>', 'add_const<%1>', 'add_volatile<%1>',
+      \ 'remove_reference<%1>', 'add_lvalue_reference<%1>',
+      \ 'add_rvalue_reference<%1>', 'remove_pointer<%1>',
+      \'add_pointer<%1>', 'make_signed<%1>', 'make_unsigned<%1>',
+      \'remove_extent<%1>', 'remove_all_extents<%1>',
+      \'aligned_storage<%1>', 'aligned_union<%1>', 'decay<%1>',
+      \'remove_cvref<%1>', 'enable_if<%1>', 'conditional<%1>',
+      \'common_type<%1>', 'common_reference<%1>',
+      \'basic_common_reference<%1>', 'underlying_type<%1>',
+      \'result_of<%1>', 'invoke_result<%1>', 'type_identity<%1>'
+      \'conjuction<%1>', 'disjunction<%1>', 'negation<%1>',
+      \'integral_constant<%1>', 'bool_constant<%1>'
+      \]
+call s:RegisterTypes(s:std_types, 'std', 'type_traits')
+" (Almost) all type traits have a shortcut in the form _t
+call map(s:std_types, 'substitute(v:val, "<", "_t<", "")')
+call s:RegisterTypes(s:std_types, 'std', 'type_traits')
+
 
 " - types defined elsewhere {{{4
 let s:std_types = [
@@ -146,6 +223,8 @@ call s:RegisterTypes(['hash<%1>'], 'std', 'functional')
 
 call s:RegisterTypes(['size_t'], 'std',['cstddef', 'cstdio', 'cstring', 'ctime', 'cstdlib', 'cwchar'])
 " call s:RegisterTypes(['size_t'], '',['stddef.h', 'stdio.', 'string.h', 'time.h', 'wchar.h'])
+
+call s:RegisterTypes(['numeric_limits<%1>'], 'std', ['limits'])
 
 " * Boost types {{{3
 " - types defined in header file w/ same name {{{4

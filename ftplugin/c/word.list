@@ -202,6 +202,7 @@ bad_cast
 bad_optional_access
 bad_typeid
 bad_variant_access
+basic_common_reference
 basic_filebuf
 basic_ios
 basic_iostream
@@ -281,6 +282,7 @@ code
 command
 common
 common_range
+common_reference
 common_reference_with
 common_type
 common_type_t
@@ -559,6 +561,7 @@ has_root_name
 has_root_path
 has_signaling_NaN
 has_stem
+has_unique_object_representation
 has_value
 has_virtual_destructor
 hash
@@ -634,6 +637,7 @@ integral_constant
 interface
 interger_sequence
 invocable
+invoke_result
 io_errc
 ios
 iostream
@@ -643,6 +647,7 @@ iota_view
 is_absolute
 is_abstract
 is_abstract_v
+is_aggregate
 is_always_lock_free
 is_arithmetic
 is_arithmetic_v
@@ -654,6 +659,7 @@ is_baseof
 is_baseof_v
 is_block_file
 is_bounded
+is_bounded_array
 is_character_file
 is_class
 is_class_v
@@ -661,6 +667,7 @@ is_compound
 is_compound_v
 is_const
 is_const_v
+is_constant_evaluated
 is_constructible
 is_constructible_v
 is_convertible
@@ -669,6 +676,7 @@ is_copy_assignable
 is_copy_assignable_v
 is_copy_constructible
 is_copy_constructible_v
+is_corresponding_member
 is_default_constructible
 is_default_constructible_v
 is_destructible
@@ -685,6 +693,7 @@ is_exact
 is_fifo
 is_final
 is_final_v
+is_floating_point
 is_function
 is_function_v
 is_fundamental
@@ -699,6 +708,9 @@ is_iec559
 is_integer
 is_integral
 is_integral_v
+is_invocable
+is_invocable_r
+is_layout_compatible
 is_literal_type
 is_lock_free
 is_lt
@@ -713,12 +725,18 @@ is_move_constructible
 is_neq
 is_nothrow_assignable
 is_nothrow_constructible
+is_nothrow_convertible
+is_nothrow_convertible_v
 is_nothrow_copy_assignable
 is_nothrow_copy_constructible
 is_nothrow_default_constructible
 is_nothrow_destructible
+is_nothrow_invocable
+is_nothrow_invocable_r
 is_nothrow_move_assignable
 is_nothrow_move_constructible
+is_nothrow_swappable
+is_nothrow_swappable_with
 is_null_pointer
 is_object
 is_other
@@ -727,6 +745,8 @@ is_permutation
 is_placeholder
 is_pod
 is_pointer
+is_pointer_inconvertible_base_of
+is_pointer_inconvertible_with_class
 is_polymorphic
 is_reference
 is_regular_file
@@ -734,10 +754,13 @@ is_relative
 is_rvalue_reference
 is_same
 is_scalar
+is_scoped_enum
 is_signed
 is_socket
 is_specialized
 is_standard_layout
+is_swappable
+is_swappable_with
 is_symlink
 is_trivial
 is_trivially_assignable
@@ -749,6 +772,7 @@ is_trivially_default_constructible
 is_trivially_destructible
 is_trivially_move_assignable
 is_trivially_move_constructible
+is_unbounded_array
 is_union
 is_unsigned
 is_void
@@ -1049,6 +1073,7 @@ remove_copy_if_t
 remove_copy_t
 remove_cv
 remove_cv_t
+remove_cvref
 remove_extent
 remove_extent_t
 remove_filename
@@ -1238,6 +1263,7 @@ try_lock
 tuple
 tuple_element
 tuple_size
+type_identity
 type_index
 type_info
 type_traits
