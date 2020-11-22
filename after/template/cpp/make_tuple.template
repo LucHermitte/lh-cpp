@@ -1,0 +1,7 @@
+VimL:" make_tuple File Template, Luc Hermitte, 17th Nov 2020
+VimL:" hint: std::make_tuple(...)
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<tuple>")')
+std::make_tuple(<+ s:SurroundableParam('tuple', 1) +>)<+s:TerminalPlaceHolder()+>
+
