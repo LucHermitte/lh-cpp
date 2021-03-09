@@ -1,6 +1,6 @@
 VimL:" Enum definition Template, Luc Hermitte
 VimL: let s:value_start = '¡'
-VimL:" hint: struct Enum { enum type { ... } };
+VimL:" hint: struct Enum { enum type { ... }; };
 VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'

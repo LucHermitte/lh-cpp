@@ -1,6 +1,6 @@
 VimL:" safe-Enum definition Template, Luc Hermitte
 VimL: let s:value_start = '¡'
-VimL:" hint: struct Enum { enum type { ... } ; private: type m_value; };
+VimL:" hint: struct Enum { enum type { ... }; private: type m_value; }; // + iterable
 VimL: let s:value_end   = '¡'
 VimL: let s:reindent = 1
 VimL: let s:marker_open  = '<+'
