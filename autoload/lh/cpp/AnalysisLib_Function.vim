@@ -799,7 +799,7 @@ function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str) abort
   let params = matchstr(a:str, '^[^(]*(\zs.*\ze)[^)]*$', head_end-1)
   let params_types = ''
   " Loop on the parameters
-  while '' != params
+  while params !~ '^\s*$'
     " Get the parameter field
     let field  = matchstr(params, '^[^,]*')
     let params = matchstr(params, ',\zs.*$')
