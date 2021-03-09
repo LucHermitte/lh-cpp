@@ -746,7 +746,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
     let ns = matchstr(className, '^.*\ze#::#') . '::'
     if ns == '::'
       " Class in global namespace
-      let ns_re = '\%(::\)\='
+      let ns_re = '\%(::\)\=\zs'
     else
       let b = substitute(ns, '[^:]', '', 'g')
       let b = substitute(b, '::', '\\%(', 'g')
