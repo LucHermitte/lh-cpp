@@ -642,8 +642,14 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,classNam
   let className = a:className . (""!=a:className ? '::' : '')
   if className =~ '#::#'
     let ns = matchstr(className, '^.*\ze#::#') . '::'
-    let b = substitute(ns, '[^:]', '', 'g')
-    let b = substitute(b, '::', '\\%(', 'g')
+    if ns == '::'
+      " Class in global namespace
+      let ns_re = '\%(::\)\='
+    else
+      let b = substitute(ns, '[^:]', '', 'g')
+      let b = substitute(b, '::', '\\%(', 'g')
+      let ns_re = b.substitute(ns, '\<\I\i*\>::', '\0\\)\\=', 'g')
+    endif
     let ns_re = b.substitute(ns, '\<\I\i*\>::', '\0\\)\\=', 'g')
     let cl_re = matchstr(className, '#::#\zs.*$')
     let className = ns_re.cl_re
