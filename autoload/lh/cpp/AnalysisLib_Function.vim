@@ -139,6 +139,11 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
       let info.final          = py_info.final
       let info.overriden      = py_info.override
       let info.signature      = py_info.type.spelling
+      if empty(info.return)
+        " Remove "void" from Constructor/Destructor signature
+        " I don't know why libclang add this "void" in te spelling
+        let info.signature = substitute(info.signature, '^void\s*', '', 'g')
+      endif
       let info.fullsignature  = substitute(info.signature, '(', info.name.'(', '')
       let info.parameters     = []
       " TODO: analyse get_tokens() to be more precise
