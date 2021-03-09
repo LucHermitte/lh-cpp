@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  03rd Mar 2020
+" Last Update:  09th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -629,6 +629,7 @@ function! s:Type2Regex(type, param) abort
 endfunction
 
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex2(signature,className) abort
+  call s:Verbose("Sig2regex2(%1, %2)", a:signaturen a:className)
   let function_data = lh#cpp#AnalysisLib_Function#AnalysePrototype(a:signature)
 
   " Return type {{{4
@@ -684,8 +685,8 @@ endfunction
 
 " Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{3
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) abort
+  call s:Verbose("Sig2regex(%1, %2)", a:signature, a:className)
   let g:signature = a:signature
-  let g:className = a:className
   " trim spaces {{{4
   let impl2search = substitute(a:signature, "\\(\\s\\|\n\\)\\+", ' ', 'g')
   " trim comments {{{4
@@ -729,11 +730,17 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   let impl2search = lh#cpp#AnalysisLib_Function#TrimParametersNames(impl2search)
   " class name {{{4
   let className = a:className . (""!=a:className ? '::' : '')
+  let g:className = className
   if className =~ '#::#'
     let ns = matchstr(className, '^.*\ze#::#') . '::'
-    let b = substitute(ns, '[^:]', '', 'g')
-    let b = substitute(b, '::', '\\%(', 'g')
-    let ns_re = b.substitute(ns, '\<\I\i*\>::', '\0\\)\\=', 'g')
+    if ns == '::'
+      " Class in global namespace
+      let ns_re = '\%(::\)\='
+    else
+      let b = substitute(ns, '[^:]', '', 'g')
+      let b = substitute(b, '::', '\\%(', 'g')
+      let ns_re = b.substitute(ns, '\<\I\i*\>::', '\0\\)\\=', 'g')
+    endif
     let cl_re = matchstr(className, '#::#\zs.*$')
     let className = ns_re.cl_re
   endif
