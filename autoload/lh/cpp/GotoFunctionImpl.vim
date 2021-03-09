@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  11th Mar 2020
+" Last Update:  09th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -110,7 +110,7 @@ function! s:get_code_analyser() abort " {{{3
 endfunction
 
 function! s:make_API(kind) abort " {{{3
-  let k_functions = ['get_classname', 'get_prototype', 'proto_to_regex',
+  let k_functions = ['get_namespace', 'get_classname', 'get_prototype', 'proto_to_regex',
         \ 'generate_definition_signature']
   let res = lh#object#make_top_type({'API': a:kind})
   for func in k_functions
@@ -120,6 +120,14 @@ function! s:make_API(kind) abort " {{{3
 endfunction
 
 " Vimscript API {{{3
+function! s:vimscript_get_namespace() dict abort " {{{4
+  " Get the class name, if any -- thanks to cpp_FindContextClass.vim
+  if ! has_key(self, '_namespace')
+    let self._namespace = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), 'namespace')
+  endif
+  return self._namespace
+endfunction
+
 function! s:vimscript_get_classname() dict abort " {{{4
   " Get the class name, if any -- thanks to cpp_FindContextClass.vim
   if ! has_key(self, '_classname')
@@ -159,6 +167,14 @@ function! s:tpl_extent_up_to_assign(tpl_info) abort " {{{4
   return res
 endfunction
 
+function! s:libclang_get_namespace() dict abort " {{{4
+  if ! has_key(self, '_namespace')
+    " TODO: check this is not a list
+    let self._namespace = pyxeval('findNamespace().spelling')
+  endif
+  return self._namespace
+endfunction
+
 function! s:libclang_get_classname() dict abort " {{{4
   if ! has_key(self, '_classname')
     let self._classname = pyxeval('findClass().spelling')
@@ -171,6 +187,7 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
   let returnEndProtoExtent = get(a:opt, 'returnEndProtoExtent', 0)
 
   let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration)
+  call s:Verbose("get_prototype() info: %1", self._info)
   let scope = get(self._info, 'scope', [])
   let namespace = []
   let classname = []
@@ -330,7 +347,9 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
       " Todo: Support looking into other files like the .inl file
 
       " Insert the C++ code at the end of the file
-      call lh#cpp#GotoFunctionImpl#insert_impl(impl)
+      call lh#cpp#GotoFunctionImpl#insert_impl(impl, code_analyser)
+    else
+      call s:Verbose("Implementation for %1 found in %2:%3", code_analyser._proto, expand('%'), line('.'))
     endif
   finally
     let &isk = isk_save
@@ -341,9 +360,10 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
 endfunction
 
 "------------------------------------------------------------------------
-" Function: lh#cpp#GotoFunctionImpl#insert_impl(impl) {{{3
-function! lh#cpp#GotoFunctionImpl#insert_impl(impl) abort
-  let p = s:SearchLineToAddImpl()
+" Function: lh#cpp#GotoFunctionImpl#insert_impl(impl, context) {{{3
+" @param {context} "type" is the code analyser one
+function! lh#cpp#GotoFunctionImpl#insert_impl(impl, context) abort
+  let p = s:SearchLineToAddImpl(a:context)
   if -1 != p
     call s:InsertCodeAtLine(a:impl, p)
     let s:FunctionImpl = a:impl
@@ -532,6 +552,7 @@ endfunction
 "------------------------------------------------------------------------
 " Function: s:BuildFunctionSignature4implFromFunctionInfo " {{{3
 function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
+  call s:Verbose("Build function signature for %1 (in class: %2)", a:info, a:className)
   let re_qualifiers = []
   " 1.a- XXX if you want virtual commented in the implementation: {{{4
   if s:ShowVirtual
@@ -580,6 +601,7 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
 
   " 3- Add '::' to the class name (if any).{{{4
   let className = a:className . (""!=a:className ? '::' : '')
+  let className = substitute(className, '^#::#', '', '')
   " let impl = substitute(impl, '\%(\~\s*\)\=\%(\<\i\+\>\|'.s:k_operators.'\)\('."\n".'\|\s\)*(',
   " \ className.'\0', '')
 
@@ -654,13 +676,14 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   "}}}4
 endfunction
 "------------------------------------------------------------------------
-" Function: s:SearchLineToAddImpl() {{{3
-function! s:SearchLineToAddImpl() abort
+" Function: s:SearchLineToAddImpl(context) {{{3
+" @return line number where the function will be inserted
+function! s:SearchLineToAddImpl(context) abort
   let Position = lh#ft#option#get('FunctionPosition', &ft, 0)
   " Default value for FunctionPosArg may change depending on FunctionPosition
   if type(Position) == type(function('has'))         " -- function (direct) {{{4
     return Position()
-  elseif Position == 1 || type(Position) == type('') " -- search pattern {{{4
+  elseif Position == 1 || Position ==? 'search'      " -- search pattern {{{4
     " Default: EOF
     let FunctionPosArg   = lh#ft#option#get('FunctionPosArg',   &ft, '\%$')
     let s=search(FunctionPosArg)
@@ -671,7 +694,7 @@ function! s:SearchLineToAddImpl() abort
     else
       return s
     endif
-  elseif Position == 0                               " -- offset from end {{{4
+  elseif Position == 0 || Position ==? 'end'         " -- offset from end {{{4
     let FunctionPosArg   = lh#ft#option#get('FunctionPosArg',   &ft, 0)
     return line('$') - FunctionPosArg
   elseif Position == 2                               " -- function (indirect) {{{4
@@ -688,10 +711,16 @@ function! s:SearchLineToAddImpl() abort
       return -1
     endif
     exe "return ".FunctionPosArg."()"
-  elseif Position == 3                               " -- non-automatic insertion {{{4
+  elseif Position == 3 || Position ==? 'no'          " -- non-automatic insertion {{{4
     return -1
+  elseif Position == 4 || Position ==? 'namespace'   " -- non-automatic insertion {{{4
+    let ns = a:context.get_namespace()
+    " TODO: search ns, or using ns
+    " TODO: keep order in sync with class, or sort functions
+    return -1 " for now...
   endif " }}}4
 endfunction
+
 "------------------------------------------------------------------------
 " Function: s:InsertCodeAtLine([code [,line]]) {{{3
 function! s:InsertCodeAtLine(...) abort
