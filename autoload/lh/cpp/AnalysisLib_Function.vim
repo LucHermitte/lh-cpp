@@ -101,13 +101,13 @@ let s:k_not_available = lh#option#unset('libclang cannot tell')
 function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration) abort
   try
     if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
-      " Make sure the cursor is unto something...
+      " Make sure the cursor is onto something...
       if getline('.')[:col('.')-1] =~ '^\s*$'
         normal! ^
       endif
       let py_info = clang#get_symbol('function')
       if py_info is v:none
-        throw "Cannot decode function with libclang"
+        throw "Cannot decode function with libclang."
       endif
       if (get(py_info, 'is_definition', 0) && a:onlyDeclaration)
         return {}
