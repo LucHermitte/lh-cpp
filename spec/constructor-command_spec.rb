@@ -74,6 +74,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   context "when expanding default-constructor", :default_ctr, :default_ctr_cmd do
 
     it "has a pointer attribute" do # {{{3
+      vim.command("let g:cpp_std_flavour = 03")
       # TODO: In C++11, no need for m_bar() if there is a default
       # initialisation at class scope
       # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
@@ -107,6 +108,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   # ====[ copy-constructor {{{2
   context "when expanding copy-constructor", :copy_ctr do
     it "has a pointer attribute" do # {{{3
+      vim.command("let g:cpp_std_flavour = 03")
       # vim.command('Constructor copy')
       vim.echo('lh#cpp#constructors#Main("copy")')
       vim.feedkeys('a\<esc>') # pause
@@ -137,6 +139,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   context "when expanding assignment-operator", :assign_copy do
 
     it "has a pointer attribute" do # {{{3
+      vim.command("let g:cpp_std_flavour = 03")
       vim.command('let g:mocked_confirm = 0')
       # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
       # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
@@ -174,6 +177,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   context "when expanding copy-and-swap", :copy_n_swap do
 
     it "has a pointer attribute" do # {{{3
+      vim.command("let g:cpp_std_flavour = 03")
       vim.command('let g:mocked_confirm = 1')
       # vim.command('Constructor assign')
       vim.echo('lh#cpp#constructors#Main("assign")')

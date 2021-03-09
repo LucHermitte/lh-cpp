@@ -44,6 +44,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   # ===============[ The base class ]=============
 
   specify "clonable_class noncopyable, with implicit definitions", :cpp98, :cpp11, :noncopyable do
+    vim.command("let g:cpp_std_flavour = 03")
     vim.command('silent! unlet g:cpp_noncopyable_class')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
@@ -311,6 +312,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   # ===============[ base class + cloable child ]=============
 
   specify "clonable_class base noncopyable, with implicit definitions + child", :cpp98, :cpp11, :noncopyable, :clonable_child do
+    vim.command("let g:cpp_std_flavour = 03")
     vim.command('silent! unlet g:cpp_noncopyable_class')
     # expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "base"})')).to match(/^$|#include <memory> added/)

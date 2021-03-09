@@ -39,6 +39,7 @@ RSpec.describe "C++ empty-exception class wizard", :empty_exception, :cpp, :clas
 
 
   specify "empty_exception_class noncopyable, with implicit definitions, C++98", :cpp98 do
+    vim.command("let g:cpp_std_flavour = 03")
     expect(vim.command('MuTemplate cpp/empty-exception-class')).to match(/^$|#include <stdexcept> added/)
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */

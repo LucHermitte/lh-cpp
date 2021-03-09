@@ -161,7 +161,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
   # The same with pointer attributes that imply ... copy operations to be
   # explicited
 
-  specify "value-attribute-class copyable, with ptr attributes", :cpp98, :cpp11, :copyable do
+  specify "value-attribute-class copyable, with ptr attributes", :cpp11, :copyable do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"use_copy_and_swap": 0, "attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::auto_ptr<std::string>", "includes":["<memory>", "<string>"], "functions": ["ref_set", "set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
@@ -229,7 +229,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
          * @param[in] foo «foo-explanations»
          * @param«[in]» bar «bar-explanations»
          * «@throw »
-         * @pre `bar != 0`«»
+         * @pre `bar != nullptr`«»
          */
         «Test»(int foo, std::auto_ptr<std::string> bar)
             : m_foo(foo)
@@ -258,7 +258,8 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
   end
 
   # ====[ explicit copy, implicit definitions, copy-n-swap, C++98 {{{2
-  specify "value-attribute-class copyable, with ptr attributes", :cpp98, :cpp11, :copyable, :copy_n_swap do
+  specify "value-attribute-class copyable, with ptr attributes", :cpp98, :copyable, :copy_n_swap do
+    vim.command("let g:cpp_std_flavour = 03")
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"use_copy_and_swap": 1, "attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::auto_ptr<std::string>", "includes":["<memory>", "<string>"], "functions": ["ref_set", "set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')

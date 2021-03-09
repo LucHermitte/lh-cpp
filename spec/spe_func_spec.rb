@@ -219,6 +219,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
   context "when expanding copy-and-swap", :copy_n_swap do
 
     it "asks the user, when the only context is the filename (copy'n'swap choice made by user)" do
+    vim.command("let g:cpp_std_flavour = 03")
       vim.command('let g:mocked_confirm = 1')
       expect(vim.command('MuTemplate cpp/assignment-operator')).to match(/^$/)
         assert_buffer_contents <<-EOF
@@ -245,6 +246,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
 
     it "asks the user, when the only context is the filename" do
+      vim.command("let g:cpp_std_flavour = 03")
       vim.command('let g:cpp_use_copy_and_swap = 1')
       expect(vim.command('MuTemplate cpp/assignment-operator')).to match(/^$/)
         assert_buffer_contents <<-EOF
@@ -271,6 +273,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
 
     it "takes the class name as a parameter (copy'n'swap choice made by user)" do
+      vim.command("let g:cpp_std_flavour = 03")
       vim.command('let g:mocked_confirm = 1')
       expect(vim.command('MuTemplate cpp/assignment-operator FooBar')).to match(/^$/)
         assert_buffer_contents <<-EOF
@@ -297,6 +300,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
 
     it "recognizes it's within a class definition (copy'n'swap choice made by user)" do
+      vim.command("let g:cpp_std_flavour = 03")
       vim.command('let g:mocked_confirm = 1')
       set_buffer_contents <<-EOF
       class Foo {

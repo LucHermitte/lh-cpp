@@ -5,7 +5,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      25th Nov 2015
-" Last Update:  15th Dec 2015
+" Last Update:  09th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Test autoload/lh/snippets.vim functions
@@ -33,6 +33,7 @@ function! s:Test_noexcept() " {{{2
   silent! unlet b:cpp_noexcept
   let $CXXFLAGS = ''
   try
+    let b:cpp_std_flavour = 03
     AssertEquals(lh#cpp#snippets#noexcept(), 'throw()')
     AssertEquals(lh#cpp#snippets#noexcept('false'), 'throw()')
 
@@ -64,6 +65,7 @@ function! s:Test_deleted() " {{{2
   silent! unlet b:cpp_deleted
   let $CXXFLAGS = ''
   try
+    let b:cpp_std_flavour = 03
     AssertEquals(lh#cpp#snippets#deleted(), '/* = delete */')
 
     let b:cpp_std_flavour = 11
@@ -91,6 +93,7 @@ function! s:Test_defaulted() " {{{2
   silent! unlet b:cpp_defaulted
   let $CXXFLAGS = ''
   try
+    let b:cpp_std_flavour = 03
     AssertEquals(lh#cpp#snippets#defaulted(), '/* = default */')
 
     let b:cpp_std_flavour = 11
