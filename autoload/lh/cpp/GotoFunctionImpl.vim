@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  09th Mar 2021
+" Last Update:  10th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -360,10 +360,11 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
 endfunction
 
 "------------------------------------------------------------------------
-" Function: lh#cpp#GotoFunctionImpl#insert_impl(impl, context) {{{3
+" Function: lh#cpp#GotoFunctionImpl#insert_impl(impl [, context]) {{{3
 " @param {context} "type" is the code analyser one
-function! lh#cpp#GotoFunctionImpl#insert_impl(impl, context) abort
-  let p = s:SearchLineToAddImpl(a:context)
+function! lh#cpp#GotoFunctionImpl#insert_impl(impl, ...) abort
+  let context = a:0 > 1 ? a:1 : s:get_code_analyser()
+  let p = s:SearchLineToAddImpl(context)
   if -1 != p
     call s:InsertCodeAtLine(a:impl, p)
     let s:FunctionImpl = a:impl

@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 " Version:      2.3.0
 " Created:      09th Feb 2009
-" Last Update:  04th Mar 2020
+" Last Update:  10th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -326,7 +326,7 @@ function! s:PostInitDialog() abort
 endfunction
 
 " Function: lh#cpp#constructors#_expand_selection(results) {{{3
-function! lh#cpp#constructors#_expand_selection(classname, sig_params, init_list, where_it_started) abort
+function! lh#cpp#constructors#_expand_selection(classname, sig_params, init_list, where_it_started, is_explicit) abort
   " 0- prepare the init-ctr signature
   let len = lh#list#accumulate2(a:sig_params, 0, 'v:1_ + strlen(v:2_)')
    \ + lh#encoding#strlen(a:classname) + 2*len(a:sig_params)
@@ -341,6 +341,9 @@ function! lh#cpp#constructors#_expand_selection(classname, sig_params, init_list
     let header_lines = [substitute(sig, '\s\+', ' ', 'g')]
   endif
   let impl_lines       = deepcopy(header_lines)
+  if a:is_explicit
+    let header_lines[0] = 'explicit ' . header_lines[0]
+  endif
   let header_lines[-1] .= ';'
 
   " 1- insert it in the .h
@@ -371,6 +374,7 @@ endfunction
 function! lh#cpp#constructors#select(results) abort
   call lh#buffer#dialog#quit()
   if len(a:results.selection)==1 && a:results.selection[0]==0
+    " Abort
     return
   endif
   " if exists('s:quit') | :quit | endif
@@ -394,14 +398,14 @@ function! lh#cpp#constructors#select(results) abort
 
     call add(init_list, attrb_name.'('.param_name.')')
     " echomsg string(selected_virt)
-
   endfor
 
 
   let classname = a:results.dialog.classname
-  call lh#cpp#constructors#_expand_selection(a:results.dialog.classname,
+  call lh#cpp#constructors#_expand_selection(classname,
         \ sig_params, init_list,
-        \ a:results.dialog.where_it_started)
+        \ a:results.dialog.where_it_started,
+        \ len(a:results.selection) == 1)
 endfunction
 
 "------------------------------------------------------------------------
