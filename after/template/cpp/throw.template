@@ -1,5 +1,5 @@
 VimL:"{throw default exceptions for project} Template-File, Luc Hermitte
-VimL:" hint: throw std::runtime_error/@throw (depending on context)
+VimL:" hint: throw std::runtime_error("...");\n   // or depending on context\n/** @throw 
 VimL:"
 VimL:" This snippet supports options:
 VimL:" - b:exception_type in the form of a string
@@ -24,7 +24,7 @@ MuT:  else
 MuT:    if s:_exception_type =~ 'std::.*'
 VimL:     call s:AddPostExpandCallback('lh#dev#import#add("<stdexcept>")')
 MuT:    endif
-throw <+s:_exception_type+>(<+lh#function#execute(s:_exception_args, s:_exception_txt)+>);<++>
+throw <+s:_exception_type+>(<+lh#function#execute(s:_exception_args, s:_exception_txt)+>);<+s:TerminalPlaceHolder()+>
 MuT:  endif
 VimL: unlet s:_exception_type
 VimL: unlet s:_exception_txt

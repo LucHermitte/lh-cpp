@@ -152,8 +152,8 @@ function! s:InsertAccessor(className, returnType, signature, instruction, commen
       elseif implPlace == 3 " use the pimpl idiom {{{
         silent AS cpp
         normal! G
-        if exists('*Marker_Txt') && lh#brackets#usemarks()
-          let instruction = Marker_Txt(';;')
+        if exists('*lh#marker#txt') && lh#brackets#usemarks()
+          let instruction = lh#marker#txt(';;')
         else
           let instruction = ';;'
         endif

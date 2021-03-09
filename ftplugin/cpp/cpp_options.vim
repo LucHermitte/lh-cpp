@@ -6,7 +6,7 @@
 " Version:	2.0.0
 "
 "------------------------------------------------------------------------
-" Description:	
+" Description:
 "	Options for C & C++ editing.
 "
 "------------------------------------------------------------------------
@@ -36,8 +36,8 @@ let g:accessor_comment_proxy_set = '/** Proxy-Set accessor to %a */'
 let g:accessor_comment_ref = '/** Ref. accessor to %a */'
 let g:accessor_comment_proxy_ref = '/** Proxy-Ref. accessor to %a */'
 
-" To use markers/placeholders, use Marker_Txt()
-" let g:accessor_comment_get = Marker_Txt('/** Get accessor to %a */')
+" To use markers/placeholders, use lh#marker#txt()
+" let g:accessor_comment_get = lh#marker#txt('/** Get accessor to %a */')
 
 " Luc's Preferences:
 let g:setPrefix  = 'set_'
@@ -157,7 +157,7 @@ elseif g:cpp_FunctionPosition == 2 " {{{
     if "" == g | return -1
     else
       let s = search(s:GroupPattern(g))
-      if 0 == s 
+      if 0 == s
 	echoerr "Can't find group [ ".g." ]!!!"
 	return -1
       else      | return s
@@ -166,7 +166,7 @@ elseif g:cpp_FunctionPosition == 2 " {{{
   endfunction
   " }}}
 endif
-  
+
 " }}}
 " ====================================================================
 " File extensions {{{

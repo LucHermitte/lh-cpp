@@ -4,11 +4,11 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	1.1.0
 " Created:	12th May 2009
-" Last Update:	$Date$
+" Last Update:	05th Jan 2021
 "------------------------------------------------------------------------
-" Description:	
+" Description:
 "  Generative functions for the cpp/abs-rel.template file
-" 
+"
 "------------------------------------------------------------------------
 " Installation:	«install details»
 " History:	«history»
@@ -43,7 +43,7 @@ function! lh#cpp#abs_rel#canonicalortodoxform(clsname, required)
   let text .= a:clsname."(".a:clsname." const& rhs_);\n"
   let text .= "/** Protected Assignment operator.\n*/\n"
   let text .= a:clsname." & operator=(".a:clsname." const& rhs_);"
-  " let text = Marker_Txt("sorry not implemented yet>") . ";\n"
+  " let text = lh#marker#txt("sorry not implemented yet>") . ";\n"
   return text
 endfunction
 "------------------------------------------------------------------------

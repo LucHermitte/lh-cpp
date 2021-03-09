@@ -5,7 +5,7 @@
 " License:      GPLv3 with exceptions
 "               <URL:http://code.google.com/p/lh-vim/wiki/License>
 " Version:      2.1.6
-" Last Update:  03rd Nov 2015
+" Last Update:  05th Jan 2021
 "------------------------------------------------------------------------
 " Description:  «description»
 "
@@ -230,8 +230,8 @@ function! s:Cpp_newHeaderFile(name) abort " {{{3
 
   " Includes
   call s:Cpp_bigLine( s:header_includes_text )
-  if exists('*Marker_Txt')
-    silent put = '// ' . Marker_Txt('Includes')
+  if exists('*lh#marker#txt')
+    silent put = '// ' . lh#marker#txt('Includes')
   endif
   call s:Cpp_emptyLine( 2 )
 
