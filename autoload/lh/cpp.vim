@@ -7,7 +7,7 @@
 " Version:      2.2.1
 let s:k_version = '221'
 " Created:      08th Jun 2014
-" Last Update:  25th Sep 2019
+" Last Update:  09th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Various C++ related functions
@@ -104,7 +104,7 @@ function! lh#cpp#get_flavour()
     endif
   endif
 
-  return 03
+  return 14
 endfunction
 
 " Function: lh#cpp#use_TR1() {{{3
@@ -153,6 +153,16 @@ function! lh#cpp#use_cpp20(...)
   endif
 endfunction
 
+" Function: lh#cpp#use_cpp23([and_no_more = 0]) {{{3
+function! lh#cpp#use_cpp23(...)
+  let flavour = lh#cpp#get_flavour()
+  if a:0 == 0 || a:1 == 0
+    return flavour >= 23
+  else
+    return flavour == 23
+  endif
+endfunction
+
 "------------------------------------------------------------------------
 " ## Internal functions {{{1
 
@@ -167,6 +177,8 @@ function! s:CheckFlavour()
         \ 'cpp14': 14,
         \ 'cpp17': 17,
         \ 'cpp20': 20
+        \ 'cpp23': 23
+        \ 'cpp26': 26
         \ }
   " TODO: use filter!
   for kv in reverse(items(flavours))
@@ -185,6 +197,8 @@ function! s:DecodeStdFlavour(std)
   elseif std =~ '\(14\|1y\)' | return 14
   elseif std =~ '\(17\|1z\)' | return 17
   elseif std =~ '\(20\|2a\)' | return 20
+  elseif std =~ '\(23\|2b\)' | return 23
+  elseif std =~ '\(26\|2c\)' | return 26
   else                       | return 03
   endif
 endfunction
