@@ -176,8 +176,8 @@ function! s:CheckFlavour()
         \ 'cpp11': 11,
         \ 'cpp14': 14,
         \ 'cpp17': 17,
-        \ 'cpp20': 20
-        \ 'cpp23': 23
+        \ 'cpp20': 20,
+        \ 'cpp23': 23,
         \ 'cpp26': 26
         \ }
   " TODO: use filter!
