@@ -67,6 +67,9 @@ function! s:Setup() abort
   AssertEquals(line('$'), 7)
   call setpos('.', [1, 3, 1, 0])
   AssertEquals(line('.'), 3)
+  let attributes = lh#dev#class#attributes('Foo', 1)
+  let attrb_names = sort(lh#list#get(attributes, 'name'))
+  AssertEquals(attrb_names, ['Foo::m_bar', 'Foo::m_foo'])
 endfunction
 
 

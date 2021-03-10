@@ -68,6 +68,8 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     expect(vim.echo('line("$")')).to eq '7'
     expect(vim.echo('setpos(".", [1,3,1,0])')).to eq '0'
     expect(vim.echo('line(".")')).to eq '3'
+    attributes = vim.echo("sort(lh#list#get(lh#dev#class#attributes('Foo', 1), 'name'))")
+    expect(attributes).to eq "['Foo::m_bar', 'Foo::m_foo']"
   end
 
   # ====[ default constructor {{{2
