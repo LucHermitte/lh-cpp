@@ -24,8 +24,8 @@ runtime plugin/mu-template.vim
 runtime plugin/lh-style.vim        " :UseStyle
 runtime spec/support/input-mock.vim
 
-call lh#cpp#GotoFunctionImpl#verbose(1)
-call lh#cpp#AnalysisLib_Function#verbose(1)
+" call lh#cpp#GotoFunctionImpl#verbose(1)
+" call lh#cpp#AnalysisLib_Function#verbose(1)
 
 function! s:BeforeAll() abort
   call lh#window#create_window_with('sp test-constructor.cpp')
@@ -41,6 +41,7 @@ function! s:BeforeAll() abort
   let &l:tags .= ','.b:tags_dirname.'/tags'
   setlocal expandtab
   setlocal sw=4
+  Comment "runtimepath is ".&rtp
 endfunction
 
 function! s:AfterAll() abort
@@ -65,7 +66,7 @@ function! s:Setup() abort
   EOF
 
   AssertEquals(line('$'), 7)
-  call setpos('.', [1, 3, 1, 0])
+  call setpos('.', [0, 3, 1, 0])
   AssertEquals(line('.'), 3)
   let attributes = lh#dev#class#attributes('Foo', 1)
   let attrb_names = sort(lh#list#get(attributes, 'name'))

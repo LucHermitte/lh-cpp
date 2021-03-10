@@ -16,7 +16,8 @@ task :test    => :spec
 
 task :spec do
   # 'spec' is implicitly run as well
-  sh 'rspec ~/.vim-flavor/repos/LucHermitte_vim-UT/spec/UT_spec_v2.rb'
+  sh 'rspec ~/.vim-flavor/repos/LucHermitte_vim-UT/spec'
+  # sh 'rspec ~/.vim-flavor/repos/LucHermitte_vim-UT/spec/UT_spec_v2.rb'
 end
 
 
