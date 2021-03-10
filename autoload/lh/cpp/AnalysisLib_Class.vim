@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  31st Aug 2018
+" Last Update:  10th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -312,11 +312,6 @@ function! lh#cpp#AnalysisLib_Class#search_closest_class(line) abort
   finally
     call session.finalize()
   endtry
-endfunction
-" }}}
-" ==========================================================================
-" Search for templates specs <internal> {{{
-function! s:TemplateSpecs() abort
 endfunction
 " }}}
 " ==========================================================================
