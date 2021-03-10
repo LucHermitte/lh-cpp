@@ -92,6 +92,15 @@ function! lh#cpp#GotoFunctionImpl#debug(expr) abort
   return eval(a:expr)
 endfunction
 
+function! lh#cpp#GotoFunctionImpl#force_api(api) abort
+  " Used to force the API used in tests
+  if empty(a:api)
+    silent! unlet s:forced_api
+  else
+    let s:forced_api = a:api
+  endif
+endfunction
+
 " # Script ID {{{2
 function! s:getSID() abort
   return eval(matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze_getSID$'))
@@ -101,11 +110,14 @@ let s:k_script_name      = s:getSID()
 " ## Functions {{{1
 " # API {{{2
 function! s:get_code_analyser() abort " {{{3
-  if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
+  if exists('s:forced_api')
+    let api_kind = s:forced_api
+  elseif lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
     let api_kind = 'libclang'
   else
     let api_kind = 'vimscript'
   endif
+  " call confirm("Using API: ".api_kind, "&OK", 1)
   return s:make_API(api_kind)
 endfunction
 
