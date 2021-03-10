@@ -80,6 +80,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
       # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
       # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
       # vim.command('Constructor default')
+      expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/init-constructor")')).to match(/init-constructor.template/)
       vim.echo('lh#cpp#constructors#Main("default")')
       # expect(vim.echo('g:step')).to eq('42')
       vim.feedkeys('a\<esc>') # pause
