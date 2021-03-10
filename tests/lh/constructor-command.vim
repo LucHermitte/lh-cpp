@@ -32,7 +32,7 @@ function! s:BeforeAll() abort
   call lh#style#clear()
   " call lh#cpp#GotoFunctionImpl#force_api('vimscript')
   let tpl_dirs = filter(copy(lh#mut#dirs#update()), "isdirectory(v:val)")
-  AssertMatches!(join(tpl_dirs, ','), 'lh-cpp')
+  AssertMatches!(join(lh#mut#dirs#get_templates_for("cpp/init-constructor"), ','), 'init-constructor.template')
   UseStyle breakbeforebraces=stroustrup -ft=c
   UseStyle spacesbeforeparens=control-statements -ft=c
   UseStyle empty_braces=empty -ft=c
