@@ -1,0 +1,3 @@
+VimL:" operator>> File Template, Luc Hermitte <hermitte {at} free {dot} fr>, 11th Mar 2021
+VimL:" hint: istream& operator>>(istream &, class-type)
+VimL: call s:Include('stream-extractor', 'cpp')

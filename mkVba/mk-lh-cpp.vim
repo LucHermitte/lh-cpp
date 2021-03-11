@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.1
 " Created:	06th Nov 2007
-" Last Update:	22nd Nov 2020
+" Last Update:	11th Mar 2021
 "------------------------------------------------------------------------
 let s:version = '2.2.1'
 let s:project = 'lh-cpp'
@@ -93,6 +93,8 @@ after/template/cpp/make_tuple.template
 after/template/cpp/namespace.template
 after/template/cpp/noncopyable.template
 after/template/cpp/operator-binary.template
+after/template/cpp/operator<<.template
+after/template/cpp/operator>>.template
 after/template/cpp/oss.template
 after/template/cpp/otb-sug-latex.template
 after/template/cpp/otb-sug-snippet.template

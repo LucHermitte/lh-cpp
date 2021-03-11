@@ -62,7 +62,9 @@
       * [cpp/destructor](#cppdestructor)
       * [cpp/operator-binary](#cppoperator-binary)
       * [cpp/stream-extractor](#cppstream-extractor)
+      * [cpp/operator>>](#cppstream-extractor)
       * [cpp/stream-inserter](#cppstream-inserter)
+      * [cpp/operator<<](#cppstream-inserter)
     * [Class Patterns](#class-patterns)
       * [cpp/abs-rel](#cppabs-rel)
       * [cpp/abstract-class](#cppabstract-class)
@@ -914,12 +916,14 @@ void swap(T & other);
   * [`cpp/internals/function-comment`](#cppinternalsfunction-comment) snippet
 
 #### cpp/stream-extractor
+#### cpp/operator>> (alias)
 **Produces:** `istream& operator>>(istream &, class-type)`
 
 **Relies on:**
   * [`cpp/internals/stream-common`](#cppinternalsstream-common)
 
 #### cpp/stream-inserter
+#### cpp/operator<< (alias)
 **Produces:** `ostream& operator<<(ostream &, class-type)`
 
 **Relies on:**
