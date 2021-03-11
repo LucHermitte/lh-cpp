@@ -1,6 +1,6 @@
 VimL:" «stream-implementation» File Template, Luc Hermitte
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<'.s:direction.'stream>")')
-{
-VimL: " The space for the second argument is madatory at the moment.
-    return ¡s:stream_param.' '.s:op¡ <+fields+>;
-}
+VimL: " TODO: The { shall be merged if style requires it
+VimL: " The space for the second argument is mandatory at the moment.
+VimL: let s:mut_merge_next_line = 1
+{return <+s:stream_param.' '.s:op+> <+fields+>;}

@@ -1,6 +1,4 @@
 VimL:" C++ stream-inserter (operator<<) Template, Luc Hermitte, 04th Jun 2004
 VimL:" hint: ostream& operator<<(ostream &, class-type)
-VimL: let s:value_start = '¡'
-VimL: let s:value_end   = s:value_start
-VimL: let s:direction   = 'o'
+MuT:  let s:direction   = 'o'
 VimL: call s:Include('stream-common', 'cpp/internals')
