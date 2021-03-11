@@ -22,6 +22,7 @@ set cpo&vim
 
 runtime plugin/common_brackets.vim " :Brackets, used in ftplugin/c/c_snippets.vim
 runtime plugin/misc_map.vim        " :Inoreab, used in ftplugin/c/c_snippets.vim
+runtime plugin/bracketing.base.vim " :SetMarker
 runtime plugin/mu-template.vim
 runtime plugin/lh-style.vim        " :UseStyle
 runtime spec/support/input-mock.vim
