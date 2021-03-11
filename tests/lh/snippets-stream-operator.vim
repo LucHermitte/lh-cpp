@@ -50,6 +50,7 @@ endfunction
 
 function! s:AfterAll() abort
   silent bw! test-stream-operator.cpp
+  runtime autoload/lh/ui.vim
 endfunction
 
 function! s:Setup() abort " {{{2
@@ -70,8 +71,8 @@ function! s:prepare_any_fields_buffer() abort " subscenario fixture {{{3
   public:
 
   private:
-      std::string m_bar;
-      int * m_foo;
+      int * m_foo_bar;
+      std::string m_barFoo;
   };
   EOF
 
@@ -79,8 +80,9 @@ function! s:prepare_any_fields_buffer() abort " subscenario fixture {{{3
   call setpos('.', [0, 3, 1, 0])
   AssertEquals(line('.'), 3)
   let attributes = lh#dev#class#attributes('Foo', 1)
-  let attrb_names = sort(lh#list#get(attributes, 'name'))
-  AssertEquals(attrb_names, ['Foo::m_bar', 'Foo::m_foo'])
+  let attrb_names = lh#list#get(attributes, 'name')
+  " Comment string(attributes)
+  AssertEquals(attrb_names, ['Foo::m_foo_bar', 'Foo::m_barFoo'])
 endfunction
 
 " # Operator<< {{{2
@@ -89,6 +91,7 @@ endfunction
 function! s:Test_inserter_any_fields_empty_east_const() abort
   " east-const is lh-dev default
   call s:prepare_any_fields_buffer()
+  let g:mocked_confirm = 1
   MuTemplate cpp/stream-inserter
   AssertBufferMatch trim << EOF
   #include <ostream>
@@ -99,8 +102,8 @@ function! s:Test_inserter_any_fields_empty_east_const() abort
       }
       <++>
   private:
-      std::string m_bar;
-      int * m_foo;
+      int * m_foo_bar;
+      std::string m_barFoo;
   };
   EOF
 endfunction
@@ -110,6 +113,7 @@ function! s:Test_inserter_any_fields_empty_const_west() abort
   call s:prepare_any_fields_buffer()
 
   let g:cpp_place_const_after_type = 0
+  let g:mocked_confirm = 1
 
   MuTemplate cpp/stream-inserter
   AssertBufferMatch trim << EOF
@@ -121,19 +125,85 @@ function! s:Test_inserter_any_fields_empty_const_west() abort
       }
       <++>
   private:
-      std::string m_bar;
-      int * m_foo;
+      int * m_foo_bar;
+      std::string m_barFoo;
+  };
+  EOF
+endfunction
+
+" Function: s:Test_inserter_any_fields_with_space_east_const() {{{3
+function! s:Test_inserter_any_fields_with_space_east_const() abort
+  " east-const is lh-dev default
+  call s:prepare_any_fields_buffer()
+  let g:mocked_confirm = 2
+  MuTemplate cpp/stream-inserter
+  AssertBufferMatch trim << EOF
+  #include <ostream>
+  class Foo {
+  public:
+      friend std::ostream & operator<<(std::ostream & os, Foo const& v) {
+          return os << v.m_foo_bar << ' ' << v.m_barFoo;
+      }
+      <++>
+  private:
+      int * m_foo_bar;
+      std::string m_barFoo;
+  };
+  EOF
+endfunction
+
+" Function: s:Test_inserter_any_fields_with_names_east_const() {{{3
+function! s:Test_inserter_any_fields_with_names_east_const() abort
+  " east-const is lh-dev default
+  call s:prepare_any_fields_buffer()
+  let g:mocked_confirm = 3
+  MuTemplate cpp/stream-inserter
+  AssertBufferMatch trim << EOF
+  #include <ostream>
+  class Foo {
+  public:
+      friend std::ostream & operator<<(std::ostream & os, Foo const& v) {
+          return os
+              << "foo bar: " << v.m_foo_bar
+              << "bar foo: " << v.m_barFoo;
+      }
+      <++>
+  private:
+      int * m_foo_bar;
+      std::string m_barFoo;
   };
   EOF
 endfunction
 
 "------------------------------------------------------------------------
+" Function: s:Test_inserter_any_fields_as_array_east_const() {{{3
+function! s:Test_inserter_any_fields_as_array_east_const() abort
+  " east-const is lh-dev default
+  call s:prepare_any_fields_buffer()
+  let g:mocked_confirm = 4
+  MuTemplate cpp/stream-inserter
+  AssertBufferMatch trim << EOF
+  #include <ostream>
+  class Foo {
+  public:
+      friend std::ostream & operator<<(std::ostream & os, Foo const& v) {
+          return os << '{' << v.m_foo_bar << ", " << v.m_barFoo << '}';
+      }
+      <++>
+  private:
+      int * m_foo_bar;
+      std::string m_barFoo;
+  };
+  EOF
+endfunction
+
 " # Operator>> {{{2
 
 " Function: s:Test_extractor_any_fields_empty_east_const() {{{3
 function! s:Test_extractor_any_fields_empty_east_const() abort
   " east-const is lh-dev default
   call s:prepare_any_fields_buffer()
+  let g:mocked_confirm = 1
   MuTemplate cpp/stream-extractor
   AssertBufferMatch trim << EOF
   #include <istream>
@@ -144,8 +214,8 @@ function! s:Test_extractor_any_fields_empty_east_const() abort
       }
       <++>
   private:
-      std::string m_bar;
-      int * m_foo;
+      int * m_foo_bar;
+      std::string m_barFoo;
   };
   EOF
 endfunction
@@ -155,6 +225,7 @@ function! s:Test_extractor_any_fields_empty_const_west() abort
   call s:prepare_any_fields_buffer()
 
   let g:cpp_place_const_after_type = 0
+  let g:mocked_confirm = 1
 
   MuTemplate cpp/stream-extractor
   AssertBufferMatch trim << EOF
@@ -166,8 +237,29 @@ function! s:Test_extractor_any_fields_empty_const_west() abort
       }
       <++>
   private:
-      std::string m_bar;
-      int * m_foo;
+      int * m_foo_bar;
+      std::string m_barFoo;
+  };
+  EOF
+endfunction
+
+" Function: s:Test_extractor_any_fields_with_spaces_east_const() {{{3
+function! s:Test_extractor_any_fields_with_spaces_east_const() abort
+  " east-const is lh-dev default
+  call s:prepare_any_fields_buffer()
+  let g:mocked_confirm = 2
+  MuTemplate cpp/stream-extractor
+  AssertBufferMatch trim << EOF
+  #include <istream>
+  class Foo {
+  public:
+      friend std::istream & operator>>(std::istream & is, Foo& v) {
+          return is >> v.m_foo_bar >> v.m_barFoo;
+      }
+      <++>
+  private:
+      int * m_foo_bar;
+      std::string m_barFoo;
   };
   EOF
 endfunction

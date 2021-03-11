@@ -3,7 +3,7 @@ VimL: let s:reindent     = 1
 VimL: let s:marker_open  = '<+'
 VimL: let s:marker_close = '+>'
 MuT:  let s:type = 'std::'.s:direction.'stream'
-MuT:  let s:op = s:direction=='o' ?  '<<' : '>>'
+MuT:  let s:op = s:direction=='o' ? '<<' : '>>'
 MuT:  let s:clsname0 = lh#cpp#AnalysisLib_Class#SearchClassDefinition(line('.'))
 MuT:  let s:friend = ! empty(s:clsname0) ? 'friend ' : ' '
 MuT:  let s:clsname  = lh#ui#input("Template\noperator".s:op." for the class:", s:clsname0)
@@ -15,4 +15,3 @@ VimL: " Todo: check for context-namespaces and trim them from s:clsname
 VimL: " Todo: check for the previous class if s:clsname0 isempty
 VimL: " Todo: options for inline or not ; -> g:implPlace, ...
 VimL: " Todo: ask for simple or complex (Langer/Roguewave) inserter
-VimL: " Todo: Try to detect The attributes of the objet in order to generate the instruction. ; option: separator

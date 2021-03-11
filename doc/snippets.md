@@ -1433,8 +1433,8 @@ C++ classes (values, entities, base classes, interfaces, exceptions, etc).
 
 **Notes:**
   * `s:clsname`: The name of the current class/type is searched with
-    `Cpp_SearchClassDefinition()`, it will be asked to the user if none is
-    found
+    `lh#cpp#AnalysisLib_Class#SearchClassDefinition()`, it will be asked to the
+    user if none is found
   * `s:friend` is assigned to `friend` if a class was found
   * `s:const` is assigned to `const` if a class was found
   * `s:op`, `s:type` and `s:stream_param` are deduced from `s:direction`
@@ -1450,6 +1450,31 @@ C++ classes (values, entities, base classes, interfaces, exceptions, etc).
    return «s:stream_param» «s:op» «fields»;
 }
 ```
+or
+```C++
+{
+   return os << v.field1 << ' ' << v.field2 ...;
+   // or
+   return is >> v.field1 >> v.field2 ...;
+}
+```
+or
+```C++
+{
+   return os << '{' << v.field1 << ", " << v.field2 ... << '}';
+   // not supported for istream
+}
+```
+or
+```C++
+{
+   return os
+       << "field 1" << v.field1
+       << "field 2" << v.field2
+       ...;
+   // not supported for istream
+}
+```
 
 **Parameters**
   * `s:stream_param`: `is` or `os`
@@ -1457,7 +1482,14 @@ C++ classes (values, entities, base classes, interfaces, exceptions, etc).
   * `s:direction`: `i` or `o`
 
 **Options:**
-  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
+  * [`(bpg):({ft}_)place_const_after_type`](options.md#bpgft_place_const_after_type)
+    is used to choose between _east-const_ and _const-west_ style for placing
+    `const`.
+  * [lh-style code formatting](https://lh-style.readthedocs.io/en/latest/code-formatting.html)
+
+**Notes:**
+  * May use [lh-tags](https://github.com/LucHermitte/lh-tags) to list the
+    `class`/`struct` attributes.
 
 **Also includes:**
   * `<istream>` if `s:direction == "i"`
@@ -1478,5 +1510,7 @@ C++ classes (values, entities, base classes, interfaces, exceptions, etc).
   * `s:const`: `const` or empty string
 
 **Options:**
-  * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
+  * [`(bpg):cpp_place_const_after_type`]() is used to choose between
+    _east-const_ and _const-west_ style for placing `const`.
+  * [lh-style code formatting](https://lh-style.readthedocs.io/en/latest/code-formatting.html)
 

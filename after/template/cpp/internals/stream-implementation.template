@@ -1,6 +1,38 @@
 VimL:" «stream-implementation» File Template, Luc Hermitte
 VimL: call s:AddPostExpandCallback('lh#dev#import#add("<'.s:direction.'stream>")')
-VimL: " TODO: The { shall be merged if style requires it
-VimL: " The space for the second argument is mandatory at the moment.
+MuT:  if s:direction == 'o'
+MuT:      let s:__choice = lh#ui#confirm('How fields should be expanded?', ['Do &not expand', 'Separate with &spaces', 'Print n&ames', 'As arra&y'], 1)
+MuT:  else
+MuT:      let s:__choice = lh#ui#confirm('How fields should be read?', ['Do &not expand', 'Separate with &spaces'], 1)
+MuT:  endif
+VimL: "
+VimL: " First expansions are identical
+VimL: let s:op = ' '.s:op.' '
+MuT:  if s:__choice <= 1
+MuT:     let s:__fields = s:op . lh#marker#txt('fields')
+MuT:  elseif s:__choice == 2
+VimL:    " separated with spaces
+MuT:     let s:__attributes = map(lh#dev#class#attributes(s:clsname, 1), '"v.".substitute(v:val.name, ".*:", "", "")')
+MuT:     let s:__fields = s:op.join(s:__attributes, s:direction == 'o' ? s:op."' '".s:op : s:op)
+MuT:  elseif s:__choice == 3
+VimL:    " << "names"
+MuT:     let s:__attributes = map(lh#dev#class#attributes(s:clsname, 1), 'substitute(v:val.name, ".*:", "", "")')
+MuT:     let s:__nl_after_angles = len(s:__attributes) > 1 ? "\n": ''
+MuT:     let s:__dq = '"'
+MuT:     let s:__lines = map(copy(s:__attributes), '"<< ".s:__dq . substitute(lh#naming#to_underscore(lh#naming#variable(v:val)), "_", " ", "g").": ".s:__dq." << v." . v:val')
+MuT:     let s:__fields = s:__nl_after_angles.join(s:__lines, "\n")
+MuT:  elseif s:__choice == 4
+VimL:    " as array
+MuT:     let s:__attributes = map(lh#dev#class#attributes(s:clsname, 1), '"v.".substitute(v:val.name, ".*:", "", "")')
+MuT:     let s:__dq = '"'
+MuT:     let s:__lines = map(copy(s:__attributes), '"<< " . v:val')
+VimL:    " Ignore style on the two {}
+VimL:    let s:content.need_to_reinject_ignored = 1
+MuT:     let s:__open_brace = lh#style#just_ignore_this("'{'", s:content.cache_of_ignored_matches)
+MuT:     let s:__clos_brace = lh#style#just_ignore_this("'}'", s:content.cache_of_ignored_matches)
+MuT:     let s:__fields = ' << '.s:__open_brace.' '.join(s:__lines, ' << ", " ').' << '.s:__clos_brace
+MuT:  endif
+VimL: "
+VimL: " And finally the snippet..
 VimL: let s:mut_merge_next_line = 1
-{return <+s:stream_param.' '.s:op+> <+fields+>;}
+{return <+s:stream_param+><+s:__fields+>;}

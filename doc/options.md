@@ -1,4 +1,4 @@
-## lh-cpp Options
+# lh-cpp Options
 
 ### Contents
 
@@ -50,6 +50,7 @@
     * [`(bpg):({ft}_)multiple_namespaces_on_same_line`](#bpgft_multiple_namespaces_on_same_line)
     * [`(bpg):({ft}_)nl_before_bracket` (deprecated)](#bpgft_nl_before_bracket-deprecated)
     * [`(bpg):({ft}_)nl_before_curlyB` (deprecated)](#bpgft_nl_before_curlyb-deprecated)
+    * [`(bpg):({ft}_)place_const_after_type`](#bpgft_place_const_after_type)
     * [`(bpg):({ft}_)pre_desc_ordered_tags`, `(bpg):({ft}_post_desc_ordered_tags)`](#bpgft_pre_desc_ordered_tags-bpgft_post_desc_ordered_tags)
     * [`(bpg):({ft}_)project_namespace`](#bpgft_project_namespace)
     * [`(bpg):({ft}_)tag_kinds_for_inclusion`](#bpgft_tag_kinds_for_inclusion)
@@ -495,6 +496,15 @@ namespace ns2 {
 
 #### `(bpg):({ft}_)nl_before_bracket` (deprecated)
 #### `(bpg):({ft}_)nl_before_curlyB` (deprecated)
+#### `(bpg):({ft}_)place_const_after_type`
+Used in `lh#dev#cpp#types#const_correct_type()`
+
+Tells whether a _constified_ type is written `east const` or `const west`.
+Note that `lh#dev#cpp#types#const_correct_type()` uses _east const_ style when
+the type to constify is made of at least one indirection level like a raw pointer.
+
+__Default value:__ true, as this is the style I prefer
+
 #### `(bpg):({ft}_)pre_desc_ordered_tags`, `(bpg):({ft}_post_desc_ordered_tags)`
 In [`function-comment` snippet](snippets.md#cppinternalsinternalsfunction-comment), these |List|
 options tell in which order the various documentation information are inserted
@@ -628,7 +638,3 @@ Version of the project. Can be used in Doxygen comment through API function
 
 
 ### TODO: Options to be documented
-##### `(bpg):({ft}_)place_const_after_type`
-Used in `lh#dev#cpp#types#const_correct_type()`
-
-Default: true
