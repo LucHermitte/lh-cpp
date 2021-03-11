@@ -28,8 +28,9 @@ MuT:  endif
 VimL: "1.2- the operator
 MuT:  let s:_op      = s:Param('operator', lh#marker#txt('X'))
 VimL: "1.3- operator parameters
-MuT:  let s:_lhs     = lh#naming#param('lhs')
-MuT:  let s:_rhs     = lh#naming#param('rhs')
+MuT:  let s:_rhs_type = lh#dev#cpp#types#add_const(s:clsname)
+MuT:  let s:_lhs      = lh#naming#param('lhs')
+MuT:  let s:_rhs      = lh#naming#param('rhs')
 VimL: "
 VimL:" 2- the code
-<+s:_friend+><+s:clsname+> operator<+s:_op+>(<+s:clsname+> <+s:_lhs+>, <+s:clsname+> const& <+s:_rhs+>){ return <+s:_lhs+> <+s:_op+>= <+s:_rhs+>; }
+<+s:_friend+><+s:clsname+> operator<+s:_op+>(<+s:clsname+> <+s:_lhs+>, <+s:_rhs_type+>& <+s:_rhs+>){ return <+s:_lhs+> <+s:_op+>= <+s:_rhs+>; }

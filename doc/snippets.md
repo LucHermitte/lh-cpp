@@ -903,6 +903,9 @@ void swap(T & other);
   * `"operator"`: binary operation name, default: «X»
   * `"clsname"`, the class name, default: automatically deduced by
     [`lh#cpp#AnalysisLib_Class#search_closest_class`](API.md#lhcppanalysislib_classsearch_closest_class)
+  * [`(bpg):({ft}_)place_const_after_type`](options.md#bpgft_place_const_after_type)
+    is used to choose between _east-const_ and _const-west_ style for placing
+    `const`.
 
 **Options:**
   * [lh-style naming conventions](https://lh-style.readthedocs.io/en/latest/naming.html)
