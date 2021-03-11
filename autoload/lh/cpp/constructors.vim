@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 " Version:      2.3.0
 " Created:      09th Feb 2009
-" Last Update:  10th Mar 2021
+" Last Update:  11th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -56,49 +56,6 @@ function! lh#cpp#constructors#debug(expr) abort
 endfunction
 
 " # API {{{2
-"Function: s:Attributes(classname) {{{3
-function! s:Attributes(classname) abort
-  " fetch the attributes
-  let attributes = lh#dev#class#attributes(a:classname, 1)
-  " The attributes need to be sorted by their order of definition in the class
-  " definition
-
-  " todo: do not assume the attributes comes from the same file/class
-  if len(attributes) == 0 | return attributes | endif
-  for attr in attributes
-    let signature = attr.cmd
-    let attr['fullsignature' ] = s:Regex2Sig(signature)
-    " ctags doesn't extract attribute type...
-    let attr.type = matchstr(attr.fullsignature, '^\s*\zs.\{-}\s\+\ze\S\+\s*$')
-  endfor
-  unlet attr
-
-  let filename = attributes[0].filename
-  " The buffer may not be associated to a real file, in that case, use its
-  " current content.
-  let bid = bufnr(filename)
-  if bid >= 0
-    let buffer = getbufline(bid, 1, '$')
-  else
-    call lh#assert#true(filereadable(filename), "Cannot read lines from a file that cannot be read...")
-    let buffer = readfile(filename)
-  endif
-  let search = join(lh#list#transform(attributes,[], 'escape(matchstr(v:1_.cmd,"/^\\s*\\zs.*\\ze\\s*;"),"*")'), '\|')
-  call filter(buffer, 'v:val =~ '.string(search))
-  call map(buffer, 'matchstr(v:val,"\\s*\\zs.*\\ze\\s*;")')
-  let sorted_attributes = []
-  for attr in buffer
-    let p = lh#list#Find_if(attributes, 'v:val.fullsignature == '.string(attr))
-    " assert p!=-1
-    if p == -1
-      throw "lh#cpp#constructors.s:Attributes: unexpected attribute: ".string(attr)
-    endif
-    call add(sorted_attributes, attributes[p])
-  endfor
-
-  return sorted_attributes
-endfunction
-
 "Function: lh#cpp#constructors#Main {{{3
 function! lh#cpp#constructors#Main(...) abort
   if a:0 == 0 || a:1 == 'init'
@@ -116,7 +73,7 @@ function! lh#cpp#constructors#InitConstructor() abort
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
-  let attributes = s:Attributes(classname)
+  let attributes = lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(classname)
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
   if !empty(attributes)
@@ -138,7 +95,7 @@ function! lh#cpp#constructors#AssignmentOperator() abort
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
-  let attributes = s:Attributes(classname)
+  let attributes = lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(classname)
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
   " 3- Insert the assignment-operator declaration
@@ -172,7 +129,7 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
   let classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'),'any')
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
-  let attributes = s:Attributes(classname)
+  let attributes = lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(classname)
   let g:attributes = attributes
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
@@ -188,14 +145,7 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
 
   " 4- Go-to its implementation and fill-it
   " Last line inserted should be the constructor signature
-  " 4.1- goto impl is at the right place
-  " MOVETOIMPL doesn't know how to ignore initialization-list
-  " => We don't use the constructor snippets at their full capacity for now,
-  " and thus duplicate their attribute-duplication code.
-  GOTOIMPL
-  " call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource()
-  normal! %
-  " 4.2- Prepare init-list code
+  " 4.1- Prepare init-list code
   let rhs = lh#naming#param('rhs').'.'
   let init_list=[]
   for attribute in attributes
@@ -206,6 +156,14 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
       call add(init_list, attrb_name.'()')
     endif
   endfor
+
+  " 4.1- goto impl is at the right place
+  " MOVETOIMPL doesn't know how to ignore initialization-list
+  " => We don't use the constructor snippets at their full capacity for now,
+  " and thus duplicate their attribute-duplication code.
+  " GOTOIMPL
+  call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource()
+  normal! %
 
   " 4.3- Insert the init-list
   if !empty(init_list)
@@ -233,15 +191,10 @@ function! s:Access(attr) abort
     if     a:attr.access == 'public'    | return '+'
     elseif a:attr.access == 'protected' | return '#'
     elseif a:attr.access == 'private'   | return '-'
-    else                              | return '?'
+    else                                | return '?'
     endif
-  else                                | return '?'
+  else                                  | return '?'
   endif
-endfunction
-
-function! s:Regex2Sig(regex) abort
-  let sig = substitute(a:regex, '\v/\^\s*(.{-})\s*;\s*\$/', '\1', '')
-  return sig
 endfunction
 
 " Function: s:AddToMenu(lines, attrs) {{{3

@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  10th Mar 2021
+" Last Update:  11th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -439,6 +439,56 @@ endfunction
 function! lh#cpp#AnalysisLib_Class#attributes(id) abort
   call lh#common#error_msg("lh#cpp#AnalysisLib_Class#attributes is deprecated, use lh#dev#class#attributes() instead")
   return lh#dev#option#call('class#attributes', &ft, a:id)
+endfunction
+
+" Function: lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(id) {{{3
+function! s:Regex2Sig(regex) abort
+  let sig = substitute(a:regex, '\v/\^\s*(.{-})\s*;\s*\$/', '\1', '')
+  return sig
+endfunction
+
+function! lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(classname) abort
+  " fetch the attributes
+  let attributes = lh#dev#class#attributes(a:classname, 1)
+  " The attributes need to be sorted by their order of definition in the class
+  " definition
+  " Alas, we cannot assume attributes will have the `line` field => analyse
+  " the file
+
+  " todo: do not assume the attributes comes from the same file/class
+  if len(attributes) == 0 | return attributes | endif
+  for attr in attributes
+    let signature = attr.cmd
+    let attr['fullsignature' ] = s:Regex2Sig(signature)
+    " ctags doesn't extract attribute type...
+    let attr.type = matchstr(attr.fullsignature, '^\s*\zs.\{-}\s\+\ze\S\+\s*$')
+  endfor
+  unlet attr
+
+  let filename = attributes[0].filename
+  " The buffer may not be associated to a real file, in that case, use its
+  " current content.
+  let bid = bufnr(filename)
+  if bid >= 0
+    let buffer = getbufline(bid, 1, '$')
+  else
+    call lh#assert#true(filereadable(filename), "Cannot read lines from a file that cannot be read...")
+    let buffer = readfile(filename)
+  endif
+  let search = join(lh#list#transform(attributes,[], 'escape(matchstr(v:1_.cmd,"/^\\s*\\zs.*\\ze\\s*;"),"*")'), '\|')
+  call filter(buffer, 'v:val =~ '.string(search))
+  call map(buffer, 'matchstr(v:val,"\\s*\\zs.*\\ze\\s*;")')
+  let sorted_attributes = []
+  for attr in buffer
+    let p = lh#list#Find_if(attributes, 'v:val.fullsignature == '.string(attr))
+    " assert p!=-1
+    if p == -1
+      throw "lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order: unexpected attribute: ".string(attr)
+    endif
+    call add(sorted_attributes, attributes[p])
+  endfor
+
+  return sorted_attributes
 endfunction
 " }}}1
 " ==========================================================================

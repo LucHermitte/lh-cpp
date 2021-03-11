@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  10th Mar 2021
+" Last Update:  11th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -426,26 +426,27 @@ endfunction
 " Function: s:CheckOptions(...) {{{3
 function! s:CheckOptions(...) abort
   " 0- Check options {{{4
-  let s:ShowVirtual             = lh#ft#option#get('ShowVirtual',       &ft, 1)
-  let s:ShowStatic              = lh#ft#option#get('ShowStatic',        &ft, 1)
-  let s:ShowExplicit            = lh#ft#option#get('ShowExplicit',      &ft, 1)
-  let s:ShowDefaultParams       = lh#ft#option#get('ShowDefaultParams', &ft, 1)
-  let expected_extension        = ''
-  if 0 != a:0
-    let i = 0
-    while i < a:0
-      let i +=  1
-      let varname = substitute(a:{i}, '\(.*\)'.s:option_value, '\1', '')
+  let s:options                   = {}
+  let s:options.ShowVirtual       = lh#ft#option#get('ShowVirtual',       &ft, 1)
+  let s:options.ShowStatic        = lh#ft#option#get('ShowStatic',        &ft, 1)
+  let s:options.ShowExplicit      = lh#ft#option#get('ShowExplicit',      &ft, 1)
+  let s:options.ShowDefaultParams = lh#ft#option#get('ShowDefaultParams', &ft, 1)
+  let expected_extension          = ''
+  for option in a:000
+    if type(option) == type({})
+      call extend(s:options, option, 1)
+    else
+      let varname = substitute(option, '\(.*\)'.s:option_value, '\1', '')
       if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
         if !empty(expected_extension)
           call lh#common#error_msg(
                 \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: extension already set to <'.expected_extension.'>')
           return
         else
-          let expected_extension = a:{i}
+          let expected_extension = option
         endif
       else " }}}4
-        let val = matchstr(a:{i}, s:option_value)
+        let val = matchstr(option, s:option_value)
         if     val == 'on'  | let val = 1
         elseif val == 'off' | let val = 0
         elseif val !~ '\d\+'
@@ -453,12 +454,11 @@ function! s:CheckOptions(...) abort
                 \ 'cpp#GotoFunctionImpl.vim::GrabFromHeaderPasteInSource: Invalid value for parameter : <'.varname.'>')
           return
         endif
-        " exe "let s:".varname."= val"
-        let s:{varname} = val
-        " call confirm(s:{varname}.'='.val, '&ok', 1)
+        let s:options[varname] = val
       endif
-    endwhile
-  endif
+    endif
+    unlet option " necessary for some versions of Vim is the type change
+  endfor
   return expected_extension
 endfunction
 "------------------------------------------------------------------------
@@ -568,17 +568,17 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   call s:Verbose("Build function signature for %1 (in class: %2)", a:info, a:className)
   let re_qualifiers = []
   " 1.a- XXX if you want virtual commented in the implementation: {{{4
-  if s:ShowVirtual
+  if s:options.ShowVirtual
     let re_qualifiers += ['\<virtual\>']
   endif
 
   " 1.b- XXX if you want static commented in the implementation: {{{4
-  if s:ShowStatic
+  if s:options.ShowStatic
     let re_qualifiers += ['\<static\>']
   endif
 
   " 1.b- XXX if you want explicit commented in the implementation: {{{4
-  if s:ShowExplicit
+  if s:options.ShowExplicit
     let re_qualifiers += ['\<explicit\>']
   endif
   let comments = matchstr(a:info.qualifier, join(re_qualifiers, '\|'))
@@ -591,11 +591,11 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   "    1 -> "/* = value */" : commented
   "    2 -> "/*=value*/"    : commented, spaces trimmed
   "    3 -> "/*value*/"     : commented, spaces trimmed, no equal sign
-  if     s:ShowDefaultParams == 0 | let pattern = '\2'
-  elseif s:ShowDefaultParams == 1 | let pattern = '/* = \1 */\2'
-  elseif s:ShowDefaultParams == 2 | let pattern = '/*=\1*/\2'
-  elseif s:ShowDefaultParams == 3 | let pattern = '/*\1*/\2'
-  else                            | let pattern = '\2'
+  if     s:options.ShowDefaultParams == 0 | let pattern = '\2'
+  elseif s:options.ShowDefaultParams == 1 | let pattern = '/* = \1 */\2'
+  elseif s:options.ShowDefaultParams == 2 | let pattern = '/*=\1*/\2'
+  elseif s:options.ShowDefaultParams == 3 | let pattern = '/*\1*/\2'
+  else                                    | let pattern = '\2'
   endif
   "
 
