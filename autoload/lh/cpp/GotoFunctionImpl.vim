@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  11th Mar 2021
+" Last Update:  12th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -158,7 +158,7 @@ function! s:vimscript_get_prototype(opt) dict abort " {{{4
   else
     let self._proto = res
   endif
-  return res
+  return self._proto
 endfunction
 
 function! s:vimscript_proto_to_regex() dict abort " {{{4
@@ -182,14 +182,22 @@ endfunction
 function! s:libclang_get_namespace() dict abort " {{{4
   if ! has_key(self, '_namespace')
     " TODO: check this is not a list
-    let self._namespace = pyxeval('findNamespace().spelling')
+    let self._namespace = pyxeval('getNamespaceName()')
+    if  empty(self._namespace)
+      call lh#common#warning_msg("We cannot use vim-clang+libclang to obtain current namespace, falling back to pure vimscript analysis.")
+      let self._namespace = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), 'namespace')
+    endif
   endif
   return self._namespace
 endfunction
 
 function! s:libclang_get_classname() dict abort " {{{4
   if ! has_key(self, '_classname')
-    let self._classname = pyxeval('findClass().spelling')
+    let self._classname = pyxeval('getClassName()')
+    if  empty(self._classname)
+      call lh#common#warning_msg("We cannot use vim-clang+libclang to obtain current class name, falling back to pure vimscript analysis.")
+      let self._classname = lh#cpp#AnalysisLib_Class#CurrentScope(line('.'), '##')
+    endif
   endif
   return self._classname
 endfunction
@@ -198,35 +206,41 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
   let onlyDeclaration      = get(a:opt, 'onlyDeclaration', 0)
   let returnEndProtoExtent = get(a:opt, 'returnEndProtoExtent', 0)
 
-  let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration)
+  let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration, returnEndProtoExtent)
   call s:Verbose("get_prototype() info: %1", self._info)
+  let self._end_proto = get(self._info, 'end_proto', [])
   let scope = get(self._info, 'scope', [])
   let namespace = []
   let classname = []
   let templates = []
-  for sc in reverse(scope)
-    call s:Verbose("scope: %1", sc)
-    let name = sc.name
-    if sc.kind =~ 'TEMPLATE'
-      let inst     = []
-      let tpl_line = []
-      for tpl in sc.tparams
-        let inst     += [tpl.spelling]
-        let tpl_line += [s:tpl_extent_up_to_assign(tpl)]
-      endfor
-      let name .= '<'.join(inst, ',').'>'
-      let line = 'template<'.join(tpl_line, ',').'>'
-      let templates += [line]
-      let classname += [name]
-    elseif sc.kind =~ 'NAMESPACE'
-      let namespace += [name]
-    else
-      let classname += [name]
-    endif
-  endfor
-  " let self._classname = get(scope, 0, '')
-  let self._namespace = join(namespace, '::')
-  let self._classname = self._namespace . '#::#' . join(classname, '::')
+  if !empty(scope)
+    for sc in reverse(scope)
+      call s:Verbose("scope: %1", sc)
+      let name = sc.name
+      if sc.kind =~ 'TEMPLATE'
+        let inst     = []
+        let tpl_line = []
+        for tpl in sc.tparams
+          let inst     += [tpl.spelling]
+          let tpl_line += [s:tpl_extent_up_to_assign(tpl)]
+        endfor
+        let name .= '<'.join(inst, ',').'>'
+        let line = 'template<'.join(tpl_line, ',').'>'
+        let templates += [line]
+        let classname += [name]
+      elseif sc.kind =~ 'NAMESPACE'
+        let namespace += [name]
+      else
+        let classname += [name]
+      endif
+    endfor
+    " let self._classname = get(scope, 0, '')
+    let self._namespace = join(namespace, '::')
+    let self._classname = self._namespace . '#::#' . join(classname, '::')
+  " else
+    " let's hope _namespace & class are known...
+
+  endif
   let self._templates = templates
   let self._proto     = get(self._info, 'fullsignature', '')
   return self._proto
@@ -263,13 +277,19 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...) abort
     let a_save = @a
     let s      = @/
 
-    let [end_proto, proto] = lh#dev#c#function#get_prototype(line('.'), 0, 1)
+    let code_analyser = s:get_code_analyser()
+    let proto = code_analyser.get_prototype({'onlyDeclaration': 0, 'returnEndProtoExtent': 1})
+    call lh#assert#type(proto).is('')
     if empty(proto)
-      throw "No prototype found under the cursor."
+     throw "No prototype found under the cursor."
     endif
+    ""call s:Verbose("end_proto: marche %1, KO  %2", end_proto, code_analyser._end_proto)
     " move to the start of the definition
-    call setpos('.', end_proto) " this puts us one char behind the definition start
-    if lh#position#char_at_mark('.') !~ '[:{]'
+    call setpos('.', code_analyser._end_proto) " this puts us one char behind the definition start
+    let crt_char = lh#position#char_at_mark('.')
+    if  crt_char == '}'
+      normal! %
+    elseif crt_char !~ '[:{]'
       normal! h
     endif
     if proto[-1:] == ':'
@@ -284,19 +304,18 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...) abort
     let @a = substitute(@a, '^\_s*', '', '')
     " Add the ';' at the end what precedes, but not on a single line
     call search('\S', 'b')
-    silent :exe "normal! A;\<esc>"
+    call setline('.', substitute(getline('.'), '[^;]\zs\s*$', ';', ''))
     " Search the prototype (once again!), from a compatible position (on the
     " closing bracket)
     call search(')', 'b')
-    " TODO: For now, search the protype once again...
     " `"Ad%` sets regtype to "V". When pasted, it introduces a newline
     " => we need to prevent that
     if exists('*setreg')
       call setreg('a', @a, 'v')
     endif
-    :exe "normal! :GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
-    " was:
-    " :exe "normal! \<home>f{\"ac%;\<esc>:GOTOIMPL ".join(a:000, ' ')."\<cr>va{\"ap=a{"
+
+    call call('lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource',
+          \ a:000 + [{'body': @a, 'proto': proto, 'code_analyser': code_analyser}])
   finally
     let @a = a_save
     let @/ = s
@@ -315,16 +334,20 @@ endfunction
 let s:option_value = '\%(on\|off\|\d\+\)$'
 
 function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
-  let code_analyser = s:get_code_analyser()
   let expected_extension = call('s:CheckOptions', a:000)
+  let code_analyser = has_key(s:options, 'code_analyser') ? s:options.code_analyser : s:get_code_analyser()
   let ft = &ft
 
   " 1- Retrieve the context {{{4
   " 1.1- Get the whole prototype of the function (even if on several lines)
-  let proto = code_analyser.get_prototype({'onlyDeclaration': 1})
-  if empty(proto)
-    call lh#common#error_msg('cpp#GotoFunctionImpl.vim: We are not upon the declaration of a function prototype!')
-    return
+  if has_key(s:options, 'proto')
+    let proto = s:options.proto
+  else
+    let proto = code_analyser.get_prototype({'onlyDeclaration': 1})
+    if empty(proto)
+      call lh#common#error_msg('cpp#GotoFunctionImpl.vim: We are not upon the declaration of a function prototype!')
+      return
+    endif
   endif
 
   " 1.2- Get the class name, if any
@@ -434,7 +457,7 @@ function! s:CheckOptions(...) abort
   let expected_extension          = ''
   for option in a:000
     if type(option) == type({})
-      call extend(s:options, option, 1)
+      call extend(s:options, option, 'force')
     else
       let varname = substitute(option, '\(.*\)'.s:option_value, '\1', '')
       if varname !~ 'ShowVirtual\|ShowStatic\|ShowExplicit\|ShowDefaultParams' " Error {{{5
@@ -664,7 +687,25 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
     let tpl = 'template<'.join(tpl_list, ',').">\n"
     let comments = tpl.comments
   endif
-  " 7- Return {{{4
+
+  " 7- Init-list {{{4
+  let s_init_list = ''
+  let init_list = get(s:options, 'init_list', [])
+  if !empty(init_list)
+    let impl_lines=[]
+    call add(impl_lines, ': '.init_list[0])
+    if len(init_list) > 0
+      call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
+    endif
+    " TODO: add heuristic to determine whether init-linit is sort enough to
+    " kept everything on the same line
+    let s_init_list = "\n".join(impl_lines, "\n")."\n"
+  endif
+
+  " 8- function body
+  let body = get(s:options, 'body', '{}')
+
+  " *- Return {{{4
   " TODO: some styles like to put return types and function names on two
   " different lines
   let unstyled = comments
@@ -676,7 +717,8 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
         \ . (a:info.volatile      ? ' volatile' : '')
         \ . (!empty(a:info.throw) ? ' throw ('.join(a:info.throw, ',').')' : '')
         \ . noexcept
-        \ . "{}"
+        \ . s_init_list
+        \ . body
   let styles = lh#style#get(&ft)
 
   let res = unstyled

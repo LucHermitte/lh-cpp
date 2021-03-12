@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  09th Mar 2021
+" Last Update:  12th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -97,8 +97,8 @@ endfunction
 " # Public {{{2
 let s:k_not_available = lh#option#unset('libclang cannot tell')
 
-" " Function: lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration) {{{3
-function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration) abort
+" " Function: lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) {{{3
+function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) abort
   try
     if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
       " Make sure the cursor is onto something...
@@ -189,6 +189,7 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
             \     :                                  'assignment operator'
             \ )
             \ : ''
+      let info.end_proto = [0, info.end.lnum, info.end.col-1, 0]
       return info
     endif
   catch /.*/
@@ -206,8 +207,11 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration)
   endtry
 
   " else: If vim-clang + libclang could not be used....
-  let proto = lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
-  let info  = lh#cpp#AnalysisLib_Function#AnalysePrototype(proto)
+  let proto = lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration, a:returnEndProtoExtent)
+  let fullsignature = a:returnEndProtoExtent ? proto[1] : proto
+  let info  = lh#cpp#AnalysisLib_Function#AnalysePrototype(fullsignature)
+  let info.fullsignature = fullsignature
+  let info.end_proto = a:returnEndProtoExtent ? proto[0] : 42
   return info
 endfunction
 

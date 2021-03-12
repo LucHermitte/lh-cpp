@@ -130,7 +130,7 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
   call s:Verbose ("classname=".classname)
   " 2- Obtain attributes functions
   let attributes = lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(classname)
-  let g:attributes = attributes
+  " let g:attributes = attributes
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
   " 3- Insert the *-constructor declaration
@@ -146,34 +146,27 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
   " 4- Go-to its implementation and fill-it
   " Last line inserted should be the constructor signature
   " 4.1- Prepare init-list code
+  " TODO: add option to choose Uniform Initialization Syntax
   let rhs = lh#naming#param('rhs').'.'
   let init_list=[]
-  for attribute in attributes
-    let attrb_name = matchstr(attribute.fullsignature, '^\s*.\{-}\s\+\zs\S\+\ze\s*$')
-    if a:kind == 'copy'
-      call add(init_list, attrb_name.'('.lh#cpp#snippets#duplicate_param(rhs.attrb_name, attribute.type).')')
-    elseif a:kind == 'default'
-      call add(init_list, attrb_name.'()')
-    endif
-  endfor
+  let attr_type_and_name = map(copy(attributes),
+        \ '[v:val.type, matchstr(v:val.fullsignature, "^\\s*.\\{-}\\s\\+\\zs\\S\\+\\ze\\s*$")]')
+  if a:kind == 'copy'
+    let init_list = map(copy(attr_type_and_name),
+          \ 'v:val[1]."(".lh#cpp#snippets#duplicate_param(rhs.v:val[1], v:val[0]).")"')
+  elseif a:kind == 'default'
+    " TODO:
+    " - Skip attributes that are default constructibles...
+    "   At least we can recognize std containers
+    " - Using {} instead of () may also change everything...
+    let init_list = map(copy(attr_type_and_name), 'v:val[1]."()"')
+  endif
 
-  " 4.1- goto impl is at the right place
+  " 4.2- goto impl is at the right place
   " MOVETOIMPL doesn't know how to ignore initialization-list
   " => We don't use the constructor snippets at their full capacity for now,
   " and thus duplicate their attribute-duplication code.
-  " GOTOIMPL
-  call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource()
-  normal! %
-
-  " 4.3- Insert the init-list
-  if !empty(init_list)
-    let impl_lines=[]
-    call add(impl_lines, ': '.init_list[0])
-    if len(init_list) > 0
-      call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
-    endif
-    call append(line('.')-1, impl_lines)
-  endif
+  call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource({'init_list' : init_list})
 endfunction
 
 " # Internals {{{2
