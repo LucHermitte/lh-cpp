@@ -115,6 +115,12 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration,
 
       let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_noexcept_spec)
       call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
+      let [sThrowSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_throw_spec)
+      if idx_s >= 0
+        let lThrowSpec = split(sThrowSpec, '\s*,\s*', 1)
+      else
+        let lThrowSpec = []
+      endif
 
       let info = {}
       let info.qualifier
@@ -138,7 +144,7 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration,
             \ = py_info.is_defaulted ? '= default'
             \ : py_info.is_deleted   ? '= delete'
             \ : ''
-      let info.throw          = [] " Let's forget about this
+      let info.throw          = lThrowSpec
       let info.noexcept       = sNoexceptSpec
       let info.final          = py_info.final
       let info.overriden      = py_info.override
