@@ -170,6 +170,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
         {
             m_bar = rhs.m_bar;
             m_foo = «duplicate(rhs.m_foo)»;
+            return *this;
         }
       EOF
     end

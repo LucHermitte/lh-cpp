@@ -5,7 +5,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      09th Mar 2021
-" Last Update:  10th Mar 2021
+" Last Update:  12th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Test :Constructor command
@@ -28,7 +28,14 @@ runtime spec/support/input-mock.vim
 " call lh#cpp#AnalysisLib_Function#verbose(1)
 
 function! s:BeforeAll() abort
-  call lh#window#create_window_with('sp test-constructor.cpp')
+  let cleanup = lh#on#exit()
+        \.restore('g:mt_IDontWantTemplatesAutomaticallyInserted')
+  try
+    let g:mt_IDontWantTemplatesAutomaticallyInserted = 1
+    call lh#window#create_window_with('sp test-constructor.cpp')
+  finally
+    call cleanup.finalize()
+  endtry
   call lh#style#clear()
   " call lh#cpp#GotoFunctionImpl#force_api('vimscript')
   let tpl_dirs = filter(copy(lh#mut#dirs#update()), "isdirectory(v:val)")
@@ -41,7 +48,7 @@ function! s:BeforeAll() abort
   let &l:tags .= ','.b:tags_dirname.'/tags'
   setlocal expandtab
   setlocal sw=4
-  Comment "runtimepath is ".&rtp
+  " Comment "runtimepath is ".&rtp
 endfunction
 
 function! s:AfterAll() abort
@@ -154,6 +161,7 @@ function! s:Test_assign_operator() abort
   {
       m_bar = rhs.m_bar;
       m_foo = «duplicate(rhs.m_foo)»;
+      return *this;
   }
 
   EOF

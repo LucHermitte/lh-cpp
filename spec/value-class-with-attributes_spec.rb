@@ -217,6 +217,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
         {
             m_foo = rhs.m_foo;
             m_bar = «duplicate(rhs.m_bar)»;
+            return *this;
         }
         /**
          * Destructor.

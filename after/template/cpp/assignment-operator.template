@@ -22,7 +22,7 @@ VimL:     let s:fn_comments.throw = {"optional": 1}
 VimL:     call s:Include("function-comment", "cpp/internals",s:fn_comments)
 MuT:      let s:attributes = s:Param("attributes", lh#option#unset())
 MuT:      if lh#option#is_set(s:attributes) && !empty(s:attributes)
-MuT:        let s:definition = '{'.join(map(copy(s:attributes), 'lh#naming#member(v:val.name)." = ".lh#cpp#snippets#duplicate_param(s:rhs.".".lh#naming#member(v:val.name), v:val.type).";"'), "\n").'}'
+MuT:        let s:definition = '{'.join(map(copy(s:attributes), 'lh#naming#member(v:val.name)." = ".lh#cpp#snippets#duplicate_param(s:rhs.".".lh#naming#member(v:val.name), v:val.type).";"'), "\n")."\nreturn *this;}"
 MuT:      else
 MuT:        let s:definition = ';'
 MuT:      endif
