@@ -132,6 +132,8 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration,
             " declared explicit
       " TODO: Some outer scopes may be template classes actually
       let info.scope         = py_info.scope
+      " libclang may introduce spaces where there is none
+      " Not sure how to extract everything from the returned type
       let info.return        = py_info.true_kind =~ '\vCONSTRUCTOR|DESTRUCTOR'
             \ ? ''
             \ : py_info.result_type.spelling
@@ -159,9 +161,11 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration,
       " TODO: analyse get_tokens() to be more precise
       let last_line = -1
       for py_param in py_info.parameters
+        let [t, n, d, nl] = s:SplitTypeParam(join(clang#extract_from_extent(py_param.extent, 'Parameter'), "\n"))
         let param = {
               \ 'name'   : py_param.spelling
-              \,'type'   : py_param.type.spelling
+              \,'type0'  : py_param.type.spelling
+              \,'type'   : t
               \,'nl'     : last_line >= 0 && last_line != py_param.extent.start.lnum
               \ }
               " \,'default': s:k_not_available
@@ -191,8 +195,8 @@ function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration,
             \ : py_info.true_kind == 'CursorKind.DESTRUCTOR' ? 'destructor'
             \ : info.name == 'operator='
             \   ? (info.parameters[0].type =~ 'const' ? 'copy-assignment operator'
-            \     :info.parameters[0].type =~ '&&' ? 'move-assignment operator'
-            \     :                                  'assignment operator'
+            \     :info.parameters[0].type =~ '&&'    ? 'move-assignment operator'
+            \     :                                     'assignment operator'
             \ )
             \ : ''
       let info.end_proto = [0, info.end.lnum, info.end.col-1, 0]
