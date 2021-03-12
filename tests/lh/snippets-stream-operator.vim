@@ -30,7 +30,14 @@ runtime spec/support/input-mock.vim
 "=============================================================================
 " ## Fixtures {{{1
 function! s:BeforeAll() abort " {{{2
-  call lh#window#create_window_with('sp test-stream-operator.cpp')
+  let cleanup = lh#on#exit()
+        \.restore('g:mt_IDontWantTemplatesAutomaticallyInserted')
+  try
+    let g:mt_IDontWantTemplatesAutomaticallyInserted = 1
+    call lh#window#create_window_with('sp test-stream-operator.cpp')
+  finally
+    call cleanup.finalize()
+  endtry
   call lh#style#clear()
   " call lh#cpp#GotoFunctionImpl#force_api('vimscript')
   let tpl_dirs = filter(copy(lh#mut#dirs#update()), "isdirectory(v:val)")
