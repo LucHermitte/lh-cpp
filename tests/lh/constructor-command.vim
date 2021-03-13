@@ -5,7 +5,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      09th Mar 2021
-" Last Update:  12th Mar 2021
+" Last Update:  13th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Test :Constructor command
@@ -17,6 +17,8 @@ UTSuite [lh-cpp] Testing :Constructor
 let s:cpo_save=&cpo
 set cpo&vim
 
+" ## Dependencies {{{1
+
 runtime autoload/lh/cpp/constructors.vim
 runtime plugin/common_brackets.vim " :Brackets, used in ftplugin/c/c_snippets.vim
 runtime plugin/misc_map.vim        " :Inoreab, used in ftplugin/c/c_snippets.vim
@@ -27,6 +29,7 @@ runtime spec/support/input-mock.vim
 " call lh#cpp#GotoFunctionImpl#verbose(1)
 " call lh#cpp#AnalysisLib_Function#verbose(1)
 
+" ## Fixtures {{{1
 function! s:BeforeAll() abort
   let cleanup = lh#on#exit()
         \.restore('g:mt_IDontWantTemplatesAutomaticallyInserted')
@@ -80,9 +83,11 @@ function! s:Setup() abort
   AssertEquals(attrb_names, ['Foo::m_bar', 'Foo::m_foo'])
 endfunction
 
-
+" ## Tests {{{1
+"
 "------------------------------------------------------------------------
-function! s:Test_default_ctr() abort
+" # Default constructor {{{2
+function! s:Test_default_ctr() abort " {{{3
   let g:cpp_std_flavour = 03
   AssertEquals(&ft, 'cpp')
   call lh#cpp#constructors#Main("default")
@@ -107,7 +112,8 @@ function! s:Test_default_ctr() abort
 endfunction
 
 "------------------------------------------------------------------------
-function! s:Test_copy_ctr() abort
+" # Copy constructor {{{2
+function! s:Test_copy_ctr() abort " {{{3
   let g:cpp_std_flavour = 03
   AssertEquals(&ft, 'cpp')
   AssertEquals(line('.'), 3)
@@ -137,40 +143,46 @@ function! s:Test_copy_ctr() abort
 endfunction
 
 "------------------------------------------------------------------------
-function! s:Test_assign_operator() abort
-  let g:cpp_std_flavour = 03
-  let g:mocked_confirm = 0
+" # operator= {{{2
+function! s:Test_assign_operator_delete() abort " {{{3
+  let g:cpp_std_flavour = 11
+  let g:mocked_confirm = 1
   AssertEquals(&ft, 'cpp')
   AssertEquals(line('.'), 3)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {
   public:
-      /**
-       * Assignment operator.
-       * @param[in] rhs source data to be copied.
-       * «@throw »
-       */
-      Foo& operator=(Foo const& rhs);
+      Foo& operator=(Foo const&) = delete;
   private:
       std::string m_bar;
       int * m_foo;
   };
-
-  Foo& Foo::operator=(Foo const& rhs)
-  {
-      m_bar = rhs.m_bar;
-      m_foo = «duplicate(rhs.m_foo)»;
-      return *this;
-  }
-
   EOF
 endfunction
 
 "------------------------------------------------------------------------
-function! s:Test_copy_n_swap() abort
+function! s:Test_assign_operator_default() abort " {{{3
+  let g:cpp_std_flavour = 11
+  let g:mocked_confirm = 2
+  AssertEquals(&ft, 'cpp')
+  AssertEquals(line('.'), 3)
+  call lh#cpp#constructors#Main("assign")
+  AssertBufferMatch trim << EOF
+  class Foo {
+  public:
+      Foo& operator=(Foo const&) = default;
+  private:
+      std::string m_bar;
+      int * m_foo;
+  };
+  EOF
+endfunction
+
+"------------------------------------------------------------------------
+function! s:Test_copy_n_swap() abort " {{{3
   let g:cpp_std_flavour = 03
-  let g:mocked_confirm = 1
+  let g:mocked_confirm = 3
   AssertEquals(&ft, 'cpp')
   AssertEquals(line('.'), 3)
   call lh#cpp#constructors#Main("assign")
@@ -211,6 +223,92 @@ function! s:Test_copy_n_swap() abort
   EOF
 endfunction
 
+"------------------------------------------------------------------------
+function! s:Test_assign_operator_list() abort " {{{3
+  let g:cpp_std_flavour = 03
+  let g:mocked_confirm = 4
+  AssertEquals(&ft, 'cpp')
+  AssertEquals(line('.'), 3)
+  call lh#cpp#constructors#Main("assign")
+  AssertBufferMatch trim << EOF
+  class Foo {
+  public:
+      /**
+       * Assignment operator.
+       * @param[in] rhs source data to be copied.
+       * «@throw »
+       */
+      Foo& operator=(Foo const& rhs);
+  private:
+      std::string m_bar;
+      int * m_foo;
+  };
+
+  Foo& Foo::operator=(Foo const& rhs)
+  {
+      m_bar = rhs.m_bar;
+      m_foo = «duplicate(rhs.m_foo)»;
+      return *this;
+  }
+
+  EOF
+endfunction
+
+"------------------------------------------------------------------------
+function! s:Test_assign_operator_empty_def() abort " {{{3
+  let g:cpp_std_flavour = 03
+  let g:mocked_confirm = 5
+  AssertEquals(&ft, 'cpp')
+  AssertEquals(line('.'), 3)
+  call lh#cpp#constructors#Main("assign")
+  AssertBufferMatch trim << EOF
+  class Foo {
+  public:
+      /**
+       * Assignment operator.
+       * @param[in] rhs source data to be copied.
+       * «@throw »
+       */
+      Foo& operator=(Foo const& rhs);
+  private:
+      std::string m_bar;
+      int * m_foo;
+  };
+
+  Foo& Foo::operator=(Foo const& rhs)
+  {
+      «assignments»;
+      return *this;
+  }
+
+  EOF
+endfunction
+
+"------------------------------------------------------------------------
+function! s:Test_assign_operator_declare_only() abort " {{{3
+  let g:cpp_std_flavour = 03
+  let g:mocked_confirm = 6
+  AssertEquals(&ft, 'cpp')
+  AssertEquals(line('.'), 3)
+  call lh#cpp#constructors#Main("assign")
+  AssertBufferMatch trim << EOF
+  class Foo {
+  public:
+      /**
+       * Assignment operator.
+       * @param[in] rhs source data to be copied.
+       * «@throw »
+       */
+      Foo& operator=(Foo const& rhs);
+  private:
+      std::string m_bar;
+      int * m_foo;
+  };
+  EOF
+endfunction
+
+"------------------------------------------------------------------------
+" }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
 "=============================================================================
