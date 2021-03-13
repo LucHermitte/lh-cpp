@@ -9,11 +9,14 @@ VimL: let s:how = get(s:Param("assignment-operator", {}), "how", "")
 MuT:  if s:how =~ "deleted\\|defaulted"
 <+s:clsname+>& operator=(<+s:clsname+> const&) <+lh#cpp#snippets#{s:how}()+>;
 MuT:  else
+VimL:   " s:attributes is a parameter from :Constructor
+MuT:    let s:attributes = s:Param("attributes", lh#option#unset())
+MuT:    let s:has_attributes = lh#option#is_set(s:attributes) && !empty(s:attributes)
 MuT:    let s:use_copyandswap =  s:Param('use_copy_and_swap', lh#option#get('cpp_use_copy_and_swap'))
 MuT:    if lh#option#is_set(s:use_copyandswap)
 MuT:      let s:choice = 3
 MuT:    else
-MuT:      let s:choice = lh#ui#confirm('How should  be implemented?', ['=de&lete', '=de&fault', '&Copy n Swap', 'Assign all &members', "&Empty definition", "Just &declare"], 2)
+MuT:      let s:choice = lh#ui#confirm('How should  be implemented?', ['=de&lete', '=de&fault', '&Copy n Swap'] +(s:has_attributes ? ['Assign all &members'] : []) + ["&Empty definition", "Just &declare"], 2)
 MuT:    endif
 MuT:    if -1 == s:choice
 VimL:     " Do nothing. TODO: "return" a real abort
@@ -31,8 +34,7 @@ VimL:     let s:fn_comments.param = [{"dir": "in", "name": (s:rhs), "text": "sou
 VimL:     let s:fn_comments.throw = {"optional": 1}
 VimL:     call s:Include("function-comment", "cpp/internals",s:fn_comments)
 MuT:      if 4 == s:choice
-MuT:        let s:attributes = s:Param("attributes", lh#option#unset())
-MuT:        if lh#option#is_set(s:attributes) && !empty(s:attributes)
+MuT:        if s:has_attributes
 MuT:          let s:definition = '{'.join(map(copy(s:attributes), 'lh#naming#member(v:val.name)." = ".lh#cpp#snippets#duplicate_param(s:rhs.".".lh#naming#member(v:val.name), v:val.type).";"'), "\n")."\nreturn *this;}"
 MuT:        else
 MuT:          let s:definition = ';'
