@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  19th Dec 2019
+" Last Update:  13th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -434,6 +434,20 @@ function! lh#cpp#snippets#deleted() abort
   else
     return '/* = delete */'
   endif
+endfunction
+
+" Function: lh#cpp#snippets#init_list(list) {{{3
+" TODO:
+" - Add option to support uniform init syntax
+" - Add option to choose where newlines go
+function! lh#cpp#snippets#init_list(list) abort
+  let lines = []
+  let k_fmt = ', %s(%s)'
+  if !empty(a:list)
+    call add(lines, ': '.a:list[0][0])
+    call extend(lines, map(a:list[1:], 'printf(k_fmt, v:val[0], get(v:val, 1, ""))'))
+  endif
+  return "\n".join(lines, "\n")."\n"
 endfunction
 
 " Function: lh#cpp#snippets#duplicate_param(param) {{{3
