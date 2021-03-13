@@ -55,6 +55,7 @@
   * [Classes](#classes)
     * [Class Elements](#class-elements)
       * [cpp/assignment-operator](#cppassignment-operator)
+      * [cpp/operator=](#cppassignment-operator)
       * [cpp/bool-operator](#cppbool-operator)
       * [cpp/copy-and-swap](#cppcopy-and-swap)
       * [cpp/copy-constructor](#cppcopy-constructor)
@@ -763,7 +764,21 @@ BOOST_STATIC_ASSERT(«cond»)
 
 ### Class Elements
 #### cpp/assignment-operator
+#### cpp/operator= (alias)
 **Produces:** `«clsname»& operator=(«clsname» const&);`
+
+If `"how"` parameter isn't specified, the snippet will ask how it should be
+defined:
+- `= delete`
+- `= default`
+- with _copy and swap_ idiom
+- with an explicit assignement of all the member variables
+- with an empty body to fill in manually
+- no definition, only declare the function
+
+The definition will be done inline. If you wish to see them automatically moved
+into an implementation `.cpp` file, prefer to use `:Constructor assign`
+instead.
 
 **Parameters:**
   1. `"clsname"`, the class name, default: automatically deduced by
