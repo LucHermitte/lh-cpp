@@ -8,11 +8,37 @@ VimL: let s:lead = lh#dox#comment_leading_char().' '
 VimL: let s:default_constructor = s:Param('default-constructor', {})
 VimL: let s:how = get(s:default_constructor, 'how', '')
 MuT:  if s:how !~ 'defaulted\|deleted'
-MuT:    let s:fn_comments = get(s:default_constructor, 'comments', {})
-VimL:   call lh#dict#add_new(s:fn_comments, {'brief': 'Default constructor.'})
-VimL:   call lh#dict#add_new(s:fn_comments, {'throw': {'optional': 1}})
-VimL:   call s:Include('function-comment', 'cpp/internals',s:fn_comments)
+VimL:   " s:attr_types_and_names is a parameter from :Constructor
+MuT:    let s:attr_types_and_names = s:Param("attr_types_and_names", lh#option#unset())
+MuT:    let s:has_attributes = lh#option#is_set(s:attr_types_and_names) && !empty(s:attr_types_and_names)
+MuT:    let s:choice = lh#ui#confirm('How should  be implemented?', ['=de&lete', '=de&fault'] + (s:has_attributes ? ['Construct all &members'] : []) + ["&Empty definition", "Just &declare"], 2)
+MuT:    if     1 == s:choice
+MuT:      let s:definition = ' '.lh#cpp#snippets#deleted().';'
+MuT:    elseif 2 == s:choice
+MuT:      let s:definition = ' '.lh#cpp#snippets#defaulted().';'
+MuT:    else
+MuT:      let s:fn_comments = get(s:default_constructor, 'comments', {})
+VimL:     call lh#dict#add_new(s:fn_comments, {'brief': 'Default constructor.'})
+VimL:     call lh#dict#add_new(s:fn_comments, {'throw': {'optional': 1}})
+VimL:     call s:Include('function-comment', 'cpp/internals',s:fn_comments)
+MuT:      if     2+s:has_attributes == s:choice
+MuT:        let s:init_list = lh#cpp#snippets#init_list(map(s:attr_types_and_names, '[v:val[1]]'))
+MuT:      elseif 3+s:has_attributes == s:choice
+MuT:        let s:definition = '{}'
+MuT:      elseif 4+s:has_attributes == s:choice
+MuT:        let s:definition = ';'
+MuT:      endif
+MuT:    endif
 MuT:  else
-VimL:   let s:how = ' '.lh#cpp#snippets#{s:how}()
+MuT:    let s:definition = ' '.lh#cpp#snippets#{s:how}().';'
 MuT:  endif
-<+s:clsname+>()<+s:how+>;
+MuT:  if !empty(get(s:, 'init_list', ''))
+MuT:     let s:can_apply_style_save = get(s:content, 'can_apply_style', 1)
+<+s:clsname+>()
+VimL:    let s:content.can_apply_style = 0
+<+s:init_list+>
+{}
+VimL:    let s:content.can_apply_style = s:can_apply_style_save
+MuT:  else
+<+s:clsname+>()<+s:definition+>
+MuT:  endif

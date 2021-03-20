@@ -163,6 +163,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
 
   specify "value-attribute-class copyable, with ptr attributes", :cpp11, :copyable do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"use_copy_and_swap": 0, "attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::auto_ptr<std::string>", "includes":["<memory>", "<string>"], "functions": ["ref_set", "set", "get"]}]})')).to match(/^$|#include <string> added/)
     vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     # T* will require a destructor in current class

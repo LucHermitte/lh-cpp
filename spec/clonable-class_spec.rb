@@ -31,6 +31,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
     vim.set('sw=4')
     vim.command('silent! unlet g:cpp_explicit_default')
     vim.command('silent! unlet g:cpp_std_flavour')
+    vim.command('silent! unlet g:mocked_confirm')
     clear_buffer
     set_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -46,6 +47,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   specify "clonable_class noncopyable, with implicit definitions", :cpp98, :cpp11, :noncopyable do
     vim.command("let g:cpp_std_flavour = 03")
     vim.command('silent! unlet g:cpp_noncopyable_class')
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -177,6 +179,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   specify "clonable_class C++98 alone", :cpp98, :deleted do
     vim.command('let g:cpp_noncopyable_class=""')
     vim.command('let g:cpp_std_flavour = 03')
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -223,6 +226,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   specify "clonable_class C++11 alone, w/ implicit definition", :cpp11, :deleted do
     vim.command('let g:cpp_noncopyable_class = ""')
     vim.command('let g:cpp_std_flavour = 11')
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -314,6 +318,7 @@ RSpec.describe "C++ clonable class wizard", :clonable, :cpp, :class do
   specify "clonable_class base noncopyable, with implicit definitions + child", :cpp98, :cpp11, :noncopyable, :clonable_child do
     vim.command("let g:cpp_std_flavour = 03")
     vim.command('silent! unlet g:cpp_noncopyable_class')
+    vim.command('let g:mocked_confirm = 4')
     # expect(vim.command('MuTemplate cpp/clonable-class')).to match(/^$|#include <memory> added/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/clonable-class", {"clsname": "base"})')).to match(/^$|#include <memory> added/)
     # vim.feedkeys('\<esc>G')

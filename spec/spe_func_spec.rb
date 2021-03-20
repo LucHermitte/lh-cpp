@@ -42,6 +42,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
   # ====[ default constructor {{{2
   context "when expanding default-constructor", :default_ctr do
     it "asks the user, when the only context is the filename" do
+      vim.command('let g:mocked_confirm = 4')
       expect(vim.command('MuTemplate cpp/default-constructor')).to match(/^$/)
         assert_buffer_contents <<-EOF
         /**
@@ -53,6 +54,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
     end
 
     it "takes the class name as a parameter" do
+      vim.command('let g:mocked_confirm = 4')
       expect(vim.command('MuTemplate cpp/default-constructor FooBar')).to match(/^$/)
         assert_buffer_contents <<-EOF
         /**
@@ -74,6 +76,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
 
       };
       EOF
+      vim.command('let g:mocked_confirm = 4')
       expect(vim.echo('line("$")')).to eq '3'
       expect(vim.echo('setpos(".", [1,2,1,0])')).to eq '0'
       expect(vim.echo('line(".")')).to eq '2'
@@ -162,6 +165,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
 
     it "asks the user, when the only context is the filename" do
       vim.command('let g:cpp_use_copy_and_swap = 0')
+      vim.command('let g:mocked_confirm = 5')
       expect(vim.command('MuTemplate cpp/assignment-operator')).to match(/^$/)
         assert_buffer_contents <<-EOF
         /**
@@ -220,7 +224,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
 
     it "asks the user, when the only context is the filename (copy'n'swap choice made by user)" do
     vim.command("let g:cpp_std_flavour = 03")
-      vim.command('let g:mocked_confirm = 1')
+      vim.command('let g:mocked_confirm = 3')
       expect(vim.command('MuTemplate cpp/assignment-operator')).to match(/^$/)
         assert_buffer_contents <<-EOF
         /**
@@ -274,7 +278,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
 
     it "takes the class name as a parameter (copy'n'swap choice made by user)" do
       vim.command("let g:cpp_std_flavour = 03")
-      vim.command('let g:mocked_confirm = 1')
+      vim.command('let g:mocked_confirm = 3')
       expect(vim.command('MuTemplate cpp/assignment-operator FooBar')).to match(/^$/)
         assert_buffer_contents <<-EOF
         /**
@@ -301,7 +305,7 @@ RSpec.describe "Special functions", :cpp, :spe_func do
 
     it "recognizes it's within a class definition (copy'n'swap choice made by user)" do
       vim.command("let g:cpp_std_flavour = 03")
-      vim.command('let g:mocked_confirm = 1')
+      vim.command('let g:mocked_confirm = 3')
       set_buffer_contents <<-EOF
       class Foo {
 

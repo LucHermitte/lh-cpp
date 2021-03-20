@@ -29,6 +29,7 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
     vim.set('sw=4')
     vim.command('silent! unlet g:cpp_explicit_default')
     vim.command('silent! unlet g:cpp_std_flavour')
+    vim.command('silent! unlet g:mocked_confirm')
     clear_buffer
     set_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -41,6 +42,7 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
 
   specify "abstract-class noncopyable, with implicit definitions", :cpp98, :cpp11, :noncopyable do
     vim.command('silent! unlet g:cpp_noncopyable_class')
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('MuTemplate cpp/abstract-class')).to match(/^$|#include <boost\/noncopyable.hpp> added/)
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -121,6 +123,7 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
   specify "abstract-class C++98 alone", :cpp98, :deleted do
     vim.command('let g:cpp_noncopyable_class=""')
     vim.command('let g:cpp_std_flavour = 03')
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
@@ -164,6 +167,7 @@ RSpec.describe "C++ abstract class wizard", :abstract, :cpp, :class do
   specify "abstract-class C++11 alone, w/ implicit definition", :cpp11, :deleted do
     vim.command('let g:cpp_noncopyable_class = ""')
     vim.command('let g:cpp_std_flavour = 11')
+    vim.command('let g:mocked_confirm = 4')
     expect(vim.command('MuTemplate cpp/abstract-class')).to eq ""
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
