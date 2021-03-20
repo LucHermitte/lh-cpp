@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  13th Mar 2021
+" Last Update:  20th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -442,9 +442,10 @@ endfunction
 " - Add option to choose where newlines go
 function! lh#cpp#snippets#init_list(list) abort
   let lines = []
+  let k_fmt0 = ': %s(%s)'
   let k_fmt = ', %s(%s)'
   if !empty(a:list)
-    call add(lines, ': '.a:list[0][0])
+    call add(lines, printf(k_fmt0, a:list[0][0], get(a:list[0], 1, '')))
     call extend(lines, map(a:list[1:], 'printf(k_fmt, v:val[0], get(v:val, 1, ""))'))
   endif
   return "\n".join(lines, "\n")."\n"
