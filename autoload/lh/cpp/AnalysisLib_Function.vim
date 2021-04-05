@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  12th Mar 2021
+" Last Update:  05th Apr 2021
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -98,112 +98,182 @@ endfunction
 let s:k_not_available = lh#option#unset('libclang cannot tell')
 
 " " Function: lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) {{{3
+function! lh#cpp#AnalysisLib_Function#_libclang_get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) abort
+  " Make sure the cursor is onto something...
+  if getline('.')[:col('.')-1] =~ '^\s*$'
+    normal! ^
+  endif
+  let py_info = clang#get_symbol('function')
+  if py_info is v:none
+    throw "Cannot decode a function with libclang."
+  endif
+  if (get(py_info, 'is_definition', 0) && a:onlyDeclaration)
+    return {}
+  endif
+
+  let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_noexcept_spec)
+  call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
+  let [sThrowSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_throw_spec)
+  if idx_s >= 0
+    let lThrowSpec = split(sThrowSpec, '\s*,\s*', 1)
+  else
+    let lThrowSpec = []
+  endif
+
+  let info = {}
+  let info.qualifier
+        \ = py_info.static   ? 'static'
+        \ : py_info.virtual  ? 'virtual'
+        \ : py_info.explicit ? 'explicit'
+        \ : ''
+  " As of 9, libclang still cannot tell whether a constructor is
+  " declared explicit
+  " TODO: Some outer scopes may be template classes actually
+  let info.scope         = py_info.scope
+  " libclang may introduce spaces where there is none
+  " Not sure how to extract everything from the returned type
+  let info.return        = py_info.true_kind =~ '\vCONSTRUCTOR|DESTRUCTOR'
+        \ ? ''
+        \ : py_info.result_type.spelling
+  let info.name          = py_info.spelling
+  " let info.constexpr     = s:k_not_available
+  let info.const         = py_info.const
+  let info.volatile      = py_info.type.spelling =~ '\v<volatile>'
+  let info.ref_qualifier = py_info.type.ref_qualifier
+  let info.pure          = py_info.pure
+  let info.special_definition
+        \ = py_info.is_defaulted ? '= default'
+        \ : py_info.is_deleted   ? '= delete'
+        \ : ''
+  let info.throw          = lThrowSpec
+  let info.noexcept       = sNoexceptSpec
+  let info.final          = py_info.final
+  let info.overriden      = py_info.override
+  let info.signature      = py_info.type.spelling
+  if empty(info.return)
+    " Remove "void" from Constructor/Destructor signature
+    " I don't know why libclang add this "void" in te spelling
+    let info.signature = substitute(info.signature, '^void\s*', '', 'g')
+  endif
+  let info.fullsignature  = substitute(info.signature, '(', info.name.'(', '')
+  let info.parameters     = []
+  " TODO: analyse get_tokens() to be more precise
+  let last_line = -1
+  for py_param in py_info.parameters
+    let full = join(clang#extract_from_extent(py_param.extent, 'Parameter'), "\n")
+    " libclang does tell the default value
+    " so if there is a default value, it'd be after the parameter name only
+    " (need to ignore cases like "type<stuf=42>")
+    " TODO: if parameter has no name, do not try the next matchlist()
+    let [all, head, def; rest] = matchlist(full, '\v(.{-}<'.(py_param.spelling).'>[^=]{-})%(\s*\=\s*(.*))=')
+    " Using function#_analyse_parameter to get full type spelling (without any
+    " alteration like merged spaces). While the function also returns the
+    " default, it's likelly to be less precise than the previous test that
+    " knows the parameter name.
+    let pa = lh#dev#option#call('function#_analyse_parameter', &ft, full, 0)
+    let nl =   last_line == -1 && getline(py_param.extent.start.lnum)[:py_param.extent.start.col] =~ '^\s*$'
+          \ || last_line != py_param.extent.start.lnum
+    let param = {
+          \ 'name'            : py_param.spelling
+          \,'type'            : py_param.type.spelling
+          \,'type_as_typed'   : pa.type
+          \,'nl'              : nl
+          \,'full_spelling'   : full
+          \,'full_wo_default' : head
+          \ }
+    if !empty(def)
+      let param.default = def
+      let param.default_vimscript = pa.default
+    endif
+    " \,'default': s:k_not_available
+    let info.parameters += [param]
+    let last_line = py_param.extent.end.lnum
+  endfor
+  let info.tparams       = []
+  " TODO: analyse get_tokens() to be more precise
+  let last_line = py_info.extent.start.lnum
+  for py_param in py_info.template_parameters
+    let param = {
+          \ 'spelling' : py_param.spelling
+          \,'what'     : py_param.what
+          \,'extent'   : py_param.extent
+          \,'nl'       : last_line >= 0 && last_line != py_param.extent.start.lnum
+          \ }
+    " \,'default': s:k_not_available
+    let info.tparams += [param]
+    let last_line = py_param.extent.end.lnum
+  endfor
+  " TODO: analyse get_tokens() to know whether there is a new line after
+  " template<....>, the type, the func name...
+  let info.special_func
+        \ = py_info.true_kind == 'CursorKind.CONSTRUCTOR' ? py_info.constructor_kind . (empty(py_info.constructor_kind)?'':' ').'constructor'
+        \ : py_info.true_kind == 'CursorKind.DESTRUCTOR' ? 'destructor'
+        \ : info.name == 'operator='
+        \   ? (info.parameters[0].type =~ 'const' ? 'copy-assignment operator'
+        \     :info.parameters[0].type =~ '&&'    ? 'move-assignment operator'
+        \     :                                     'assignment operator'
+        \ )
+        \ : ''
+  if py_info.is_definition
+    call lh#assert#value(py_info.children).has_key('CursorKind.COMPOUND_STMT')
+    let body_extent = py_info.children['CursorKind.COMPOUND_STMT'][0].extent
+    call s:Verbose('body_extent: %1', body_extent)
+    let info.body_extent = body_extent
+
+    " Extract init-list in case of a constructor
+    if py_info.true_kind == 'CursorKind.CONSTRUCTOR'
+      let full_extent = py_info.extent
+      let mrefs = get(py_info.children, 'CursorKind.MEMBER_REF', [])
+      call s:Verbose("Member refs: %1", mrefs)
+      if !empty(mrefs)  " there is an initialiser-list!
+        let mref_extents = lh#list#get(mrefs, 'extent')
+        call s:Verbose('full_extent: %1', full_extent)
+        call s:Verbose('mref_extents: %1', mref_extents)
+        let k_fact = 1000000
+        let starts = map(copy(mref_extents), 'v:val.start.lnum * k_fact + v:val.start.col')
+        let first_mref = min(starts)
+        let col = first_mref % k_fact
+        call cursor(first_mref / k_fact, col)
+        call s:Verbose("Cursor: %1", getcurpos())
+        if 0
+          let colon_pos = searchpos('\v\_s*:\_s*%#', 'bWnc')
+        else
+         if  search('\v\)(\s*noexcept)=\zs', 'bWc') == 0
+           let colon_pos = [0,0]
+         else
+           exe "normal! \<right>"
+           let colon_pos = getcurpos()[1:]
+         endif
+        endif
+        call s:Verbose('starts: %1', starts)
+        call s:Verbose('1srt mref: %1', first_mref)
+        call s:Verbose('colon_pos: %1', colon_pos)
+        if colon_pos == [0, 0]
+          call lh#common#warning_msg('Cannot find the start of the initialiser-list...')
+        else
+          let info.init_list_extent = {'filename': body_extent.filename,
+                \ 'start': {'lnum': colon_pos[0], 'col': colon_pos[1]},
+                \ 'end' : clang#prev_position(body_extent.start)}
+        endif
+      endif
+    endif
+  endif
+  let info.start = py_info.extent.start
+  let info.end   = py_info.extent.end
+  let info.end_proto = [0, info.end.lnum, info.end.col-1, 0]
+  return info
+endfunction
+
 function! lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) abort
   try
     if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
-      " Make sure the cursor is onto something...
-      if getline('.')[:col('.')-1] =~ '^\s*$'
-        normal! ^
+      let info = lh#cpp#AnalysisLib_Function#_libclang_get_function_info(a:lineno, a:onlyDeclaration, a:returnEndProtoExtent)
+      if !empty(info)
+        return info
       endif
-      let py_info = clang#get_symbol('function')
-      if py_info is v:none
-        throw "Cannot decode function with libclang."
-      endif
-      if (get(py_info, 'is_definition', 0) && a:onlyDeclaration)
-        return {}
-      endif
-
-      let [sNoexceptSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_noexcept_spec)
-      call s:Verbose("sNoexceptSpec: %1 ∈ [%2, %3]", sNoexceptSpec, idx_s, idx_e)
-      let [sThrowSpec, idx_s, idx_e] = lh#string#matchstrpos(py_info.type.spelling, s:re_throw_spec)
-      if idx_s >= 0
-        let lThrowSpec = split(sThrowSpec, '\s*,\s*', 1)
-      else
-        let lThrowSpec = []
-      endif
-
-      let info = {}
-      let info.qualifier
-            \ = py_info.static   ? 'static'
-            \ : py_info.virtual  ? 'virtual'
-            \ : py_info.explicit ? 'explicit'
-            \ : ''
-            " As of 9, libclang still cannot tell whether a constructor is
-            " declared explicit
-      " TODO: Some outer scopes may be template classes actually
-      let info.scope         = py_info.scope
-      " libclang may introduce spaces where there is none
-      " Not sure how to extract everything from the returned type
-      let info.return        = py_info.true_kind =~ '\vCONSTRUCTOR|DESTRUCTOR'
-            \ ? ''
-            \ : py_info.result_type.spelling
-      let info.name          = py_info.spelling
-      " let info.constexpr     = s:k_not_available
-      let info.const         = py_info.const
-      let info.volatile      = py_info.type.spelling =~ '\v<volatile>'
-      let info.pure          = py_info.pure
-      let info.special_definition
-            \ = py_info.is_defaulted ? '= default'
-            \ : py_info.is_deleted   ? '= delete'
-            \ : ''
-      let info.throw          = lThrowSpec
-      let info.noexcept       = sNoexceptSpec
-      let info.final          = py_info.final
-      let info.overriden      = py_info.override
-      let info.signature      = py_info.type.spelling
-      if empty(info.return)
-        " Remove "void" from Constructor/Destructor signature
-        " I don't know why libclang add this "void" in te spelling
-        let info.signature = substitute(info.signature, '^void\s*', '', 'g')
-      endif
-      let info.fullsignature  = substitute(info.signature, '(', info.name.'(', '')
-      let info.parameters     = []
-      " TODO: analyse get_tokens() to be more precise
-      let last_line = -1
-      for py_param in py_info.parameters
-        let [t, n, d, nl] = s:SplitTypeParam(join(clang#extract_from_extent(py_param.extent, 'Parameter'), "\n"))
-        let param = {
-              \ 'name'   : py_param.spelling
-              \,'type0'  : py_param.type.spelling
-              \,'type'   : t
-              \,'nl'     : last_line >= 0 && last_line != py_param.extent.start.lnum
-              \ }
-              " \,'default': s:k_not_available
-        let info.parameters += [param]
-        let last_line = py_param.extent.end.lnum
-      endfor
-      let info.tparams       = []
-      " TODO: analyse get_tokens() to be more precise
-      let last_line = py_info.extent.start.lnum
-      for py_param in py_info.template_parameters
-        let param = {
-              \ 'spelling' : py_param.spelling
-              \,'what'     : py_param.what
-              \,'extent'   : py_param.extent
-              \,'nl'       : last_line >= 0 && last_line != py_param.extent.start.lnum
-              \ }
-              " \,'default': s:k_not_available
-        let info.tparams += [param]
-        let last_line = py_param.extent.end.lnum
-      endfor
-      " TODO: analyse get_tokens() to know whether there is a new line after
-      " template<....>, the type, the func name...
-      let info.start = py_info.extent.start
-      let info.end   = py_info.extent.end
-      let info.special_func
-            \ = py_info.true_kind == 'CursorKind.CONSTRUCTOR' ? py_info.constructor_kind . (empty(py_info.constructor_kind)?'':' ').'constructor'
-            \ : py_info.true_kind == 'CursorKind.DESTRUCTOR' ? 'destructor'
-            \ : info.name == 'operator='
-            \   ? (info.parameters[0].type =~ 'const' ? 'copy-assignment operator'
-            \     :info.parameters[0].type =~ '&&'    ? 'move-assignment operator'
-            \     :                                     'assignment operator'
-            \ )
-            \ : ''
-      let info.end_proto = [0, info.end.lnum, info.end.col-1, 0]
-      return info
     endif
   catch /.*/
-    call lh#common#warning_msg("We cannot use vim-clang+libclang to decode function prototype, falling back to pure vimscript analysis. ".v:exception)
+    call lh#common#warning_msg("We cannot use vim-clang+libclang to decode function prototype, falling back to pure vimscript analysis: ".v:exception)
     if s:verbose
       let qf = lh#exception#decode(v:throwpoint).as_qf('')
       let qf[0].text = substitute(qf[0].text, '^\.\.\.', v:exception, '')
@@ -232,7 +302,7 @@ endfunction
 " * Retrieve the const modifier even when it is not on the same line as the
 "   ')'.
 function! lh#cpp#AnalysisLib_Function#GetFunctionPrototype(lineno, onlyDeclaration) abort
-  " deprecated
+  call lh#notify#deprecated('lh#cpp#AnalysisLib_Function#GetFunctionPrototype', 'lh#dev#c#function#get_prototype')
   return lh#dev#c#function#get_prototype(a:lineno, a:onlyDeclaration)
 endfunction
 
@@ -271,15 +341,6 @@ function! lh#cpp#AnalysisLib_Function#get_prototype(pos, onlyDeclaration) abort
 endfunction
 " }}}3
 
-"------------------------------------------------------------------------
-" Function: s:SplitTypeParam(typed_param) {{{3
-" @return 4-uple -> [parameter-type, parameter-name, default-value, new-line-before]
-" @under deprecation...
-function! s:SplitTypeParam(typed_param) abort
-  let pa = lh#dev#option#call('function#_analyse_parameter', &ft, a:typed_param)
-  return [pa.type, pa.name, pa.default, pa.nl]
-endfunction
-" }}}3
 "------------------------------------------------------------------------
 " Function: lh#cpp#AnalysisLib_Function#GetListOfParams(prototype, mustCleanSpace) {{{3
 " todo: beware of exception specifications

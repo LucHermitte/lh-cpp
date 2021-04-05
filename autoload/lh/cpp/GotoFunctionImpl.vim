@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  12th Mar 2021
+" Last Update:  05th Apr 2021
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -118,6 +118,7 @@ function! s:get_code_analyser() abort " {{{3
     let api_kind = 'vimscript'
   endif
   " call confirm("Using API: ".api_kind, "&OK", 1)
+  call s:Verbose("Using %1 API", api_kind)
   return s:make_API(api_kind)
 endfunction
 
@@ -208,6 +209,9 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
 
   let self._info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), onlyDeclaration, returnEndProtoExtent)
   call s:Verbose("get_prototype() info: %1", self._info)
+  if empty(self._info.name)
+    return ''
+  endif
   let self._end_proto = get(self._info, 'end_proto', [])
   let scope = get(self._info, 'scope', [])
   let namespace = []
@@ -237,13 +241,46 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
     " let self._classname = get(scope, 0, '')
     let self._namespace = join(namespace, '::')
     let self._classname = self._namespace . '#::#' . join(classname, '::')
-  " else
-    " let's hope _namespace & class are known...
-
+  else
+    let self._namespace = ''
+    let self._classname = ''
   endif
   let self._templates = templates
-  let self._proto     = get(self._info, 'fullsignature', '')
+  " TODO: We cannot return fullsignature as it messes east const types
+  " let self._proto     = get(self._info, 'fullsignature', '')
+  let self._proto     = s:generate_signature_from_info(self._info, {})
   return self._proto
+endfunction
+
+function! s:generate_signature_from_info(info, opts) abort " {{{4
+  " Unfortunatelly, in many places we cannot use _info.fullsignature as
+  " - parenthesis in return type will mess function name
+  " - types will be const-westified
+  let res = ''
+  let res .= get(a:opts, 'return', 0) ? a:info.return. ' ' : ''
+
+  " Function name
+  let res .= (a:info.name) . '('
+
+  " Parameters
+  let s_params = map(copy(a:info.parameters), 'v:val.type_as_typed')
+  let res .= join(s_params, ', ')
+  let res .= ')'
+
+  " Qualifiers
+  let res .= a:info.volatile ? ' volatile' : ''
+  let res .= a:info.const    ? ' const'    : ''
+  let res .= a:info.ref_qualifier == 'lvalue' ? '&'
+        \  : a:info.ref_qualifier == 'rvalue' ? '&&'
+        \  :                                    ''
+
+  " Exception specifications
+  let res .= !empty(a:info.noexcept) ? ' '.a:info.noexcept : ''
+  if get(a:opts, 'throws', 0) && !empty(a:info.throw)
+    let res .= ' throw('.join(a:info.throw, ', ').')'
+  endif
+
+  return res
 endfunction
 
 function! s:libclang_proto_to_regex() dict abort " {{{4
@@ -281,41 +318,60 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...) abort
     let proto = code_analyser.get_prototype({'onlyDeclaration': 0, 'returnEndProtoExtent': 1})
     call lh#assert#type(proto).is('')
     if empty(proto)
-     throw "No prototype found under the cursor."
+      throw "No function definition found under the cursor."
     endif
+    let params = {'proto': proto, 'code_analyser': code_analyser}
     ""call s:Verbose("end_proto: marche %1, KO  %2", end_proto, code_analyser._end_proto)
     " move to the start of the definition
-    call setpos('.', code_analyser._end_proto) " this puts us one char behind the definition start
-    let crt_char = lh#position#char_at_mark('.')
-    if  crt_char == '}'
-      normal! %
-    elseif crt_char !~ '[:{]'
-      normal! h
-    endif
-    if proto[-1:] == ':'
-      " select everything till the open bracket.
-      " this won't work with C++11 initialiser-lists extended to {}
-      silent exe "normal! \"ad/{\<cr>"
+    if has_key(code_analyser._info, 'init_list_extent')
+      let e_init = code_analyser._info.init_list_extent
+      call s:Verbose("Init-list extent: %1", e_init)
+      let l_definition = clang#cut_extent(e_init, (code_analyser._info.name) . ' init list')
+      call s:Verbose("Init-list: %1", l_definition)
+      let nl = (e_init.start.col == 1) ? "\n" : ''
+      let params.init_list = lh#style#just_ignore_this(nl.join(l_definition, "\n"))
+
+      let e_body = code_analyser._info.body_extent
+      call s:Verbose("Body extent: %1", e_body)
+      let l_definition = clang#cut_extent(e_init, (code_analyser._info.name) . ' init list')
+      let nl = (e_init.end.lnum == e_body.start.lnum) ? '' : "\n"
+      let params.body = lh#style#just_ignore_this(nl.join(l_definition, "\n"))
+
+      call cursor(e_init.start.lnum, e_init.start.col)
     else
-      let @a = ''
+      call setpos('.', code_analyser._end_proto) " this puts us one char behind the definition start
+      let crt_char = lh#position#char_at_mark('.')
+      if  crt_char == '}'
+        normal! %
+      elseif crt_char !~ '[:{]'
+        normal! h
+      endif
+      if proto[-1:] == ':'
+        " select everything till the open bracket.
+        " this won't work with C++11 initialiser-lists extended to {}
+        silent exe "normal! \"ad/{\<cr>"
+      else
+        let @a = ''
+      endif
+      silent normal! "Ad%
+      " For some reason, the previous command insert a leading newline
+      let @a = substitute(@a, '^\_s*', '', '')
+      " `"Ad%` sets regtype to "V". When pasted, it introduces a newline
+      " => we need to prevent that
+      if exists('*setreg')
+        call setreg('a', @a, 'v')
+      endif
+      let definition = @a
     endif
-    silent normal! "Ad%
-    " For some reason, the previous command insert a leading newline
-    let @a = substitute(@a, '^\_s*', '', '')
     " Add the ';' at the end what precedes, but not on a single line
     call search('\S', 'b')
     call setline('.', substitute(getline('.'), '[^;]\zs\s*$', ';', ''))
     " Search the prototype (once again!), from a compatible position (on the
     " closing bracket)
-    call search(')', 'b')
-    " `"Ad%` sets regtype to "V". When pasted, it introduces a newline
-    " => we need to prevent that
-    if exists('*setreg')
-      call setreg('a', @a, 'v')
-    endif
+    " call search(')', 'b') -- don't need it anymore
 
     call call('lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource',
-          \ a:000 + [{'body': @a, 'proto': proto, 'code_analyser': code_analyser}])
+          \ a:000 + [params])
   finally
     let @a = a_save
     let @/ = s
@@ -587,7 +643,7 @@ endfunction
 
 "------------------------------------------------------------------------
 " Function: s:BuildFunctionSignature4implFromFunctionInfo " {{{3
-function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
+function! s:BuildFunctionSignature4implFromFunctionInfo(info, className) abort
   call s:Verbose("Build function signature for %1 (in class: %2)", a:info, a:className)
   let re_qualifiers = []
   " 1.a- XXX if you want virtual commented in the implementation: {{{4
@@ -610,15 +666,15 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   endif
 
   " 2- Handle default params, if any. {{{4
-  "    0 -> ""              : ignored
-  "    1 -> "/* = value */" : commented
-  "    2 -> "/*=value*/"    : commented, spaces trimmed
-  "    3 -> "/*value*/"     : commented, spaces trimmed, no equal sign
+  "    0 -> ""               : ignored
+  "    1 -> " /* = value */" : commented
+  "    2 -> " /*=value*/"    : commented, spaces trimmed
+  "    3 -> " /*value*/"     : commented, spaces trimmed, no equal sign
   if     s:options.ShowDefaultParams == 0 | let pattern = '\2'
-  elseif s:options.ShowDefaultParams == 1 | let pattern = '/* = \1 */\2'
-  elseif s:options.ShowDefaultParams == 2 | let pattern = '/*=\1*/\2'
-  elseif s:options.ShowDefaultParams == 3 | let pattern = '/*\1*/\2'
-  else                                    | let pattern = '\2'
+  elseif s:options.ShowDefaultParams == 1 | let pattern = ' /* = \1 */\2'
+  elseif s:options.ShowDefaultParams == 2 | let pattern = ' /*=\1*/\2'
+  elseif s:options.ShowDefaultParams == 3 | let pattern = ' /*\1*/\2'
+  else                                    | let pattern = ' \2'
   endif
   "
 
@@ -627,12 +683,14 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
     call s:Verbose("Parameter: %1", param)
     " TODO: param type may need to be fully-qualified, see 4.2
     let sParam = (get(param, 'nl', 0) ? "\n" : '')
-          \ . (param.type) . ' ' . (param.name)
+          \ . get(param, 'full_wo_default', (param.type) . ' ' . (param.name))
           \ . substitute(get(param, 'default', ''), '\(.\+\)', pattern, '')
     " echo "param=".param
     call add(implParams, sParam)
   endfor
   let implParamsStr = join(implParams, ', ')
+  " trim ", $"
+  let implParamsStr = substitute(implParamsStr, ",\\zs\\s*\\ze\n", '', 'g')
   " @todo: exceptions specifications
 
   " 3- Add '::' to the class name (if any).{{{4
@@ -692,18 +750,27 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
   let s_init_list = ''
   let init_list = get(s:options, 'init_list', [])
   if !empty(init_list)
-    let impl_lines=[]
-    call add(impl_lines, ': '.init_list[0])
-    if len(init_list) > 0
-      call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
+    if type(init_list) == type('')
+      let s_init_list = init_list
+    else
+      let impl_lines=[]
+      call add(impl_lines, ': '.init_list[0])
+      if len(init_list) > 0
+        call extend(impl_lines, lh#list#transform(init_list[1:], [], '", ".v:1_'))
+      endif
+      " TODO: add heuristic to determine whether init-linit is sort enough to
+      " kept everything on the same line
+      let s_init_list = "\n".join(impl_lines, "\n")."\n"
     endif
-    " TODO: add heuristic to determine whether init-linit is sort enough to
-    " kept everything on the same line
-    let s_init_list = "\n".join(impl_lines, "\n")."\n"
   endif
 
   " 8- function body
   let body = get(s:options, 'body', '{}')
+
+  " 9- ref_qualifier
+  let ref_qualifier  = a:info.ref_qualifier == 'lvalue' ? '&'
+        \            : a:info.ref_qualifier == 'rvalue' ? '&&'
+        \            :                                    ''
 
   " *- Return {{{4
   " TODO: some styles like to put return types and function names on two
@@ -715,6 +782,7 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info,className) abort
         \ . '('.implParamsStr . ')'
         \ . (a:info.const         ? ' const'    : '')
         \ . (a:info.volatile      ? ' volatile' : '')
+        \ . ref_qualifier
         \ . (!empty(a:info.throw) ? ' throw ('.join(a:info.throw, ',').')' : '')
         \ . noexcept
         \ . s_init_list
