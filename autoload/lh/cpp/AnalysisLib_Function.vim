@@ -171,8 +171,10 @@ function! lh#cpp#AnalysisLib_Function#_libclang_get_function_info(lineno, onlyDe
     " default, it's likelly to be less precise than the previous test that
     " knows the parameter name.
     let pa = lh#dev#option#call('function#_analyse_parameter', &ft, full, 0)
-    let nl =   last_line == -1 && getline(py_param.extent.start.lnum)[:py_param.extent.start.col] =~ '^\s*$'
-          \ || last_line != py_param.extent.start.lnum
+    let lnum = py_param.extent.start.lnum
+    let col  = py_param.extent.start.col
+    let nl =   (last_line == -1 && lh#encoding#strpart(getline(lnum), 0, col-1) =~ '^\s*$')
+          \ || (last_line >=  0 && last_line != lnum)
     let param = {
           \ 'name'            : py_param.spelling
           \,'type'            : py_param.type.spelling
