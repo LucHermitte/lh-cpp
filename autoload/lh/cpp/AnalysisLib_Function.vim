@@ -813,7 +813,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   let impl2search = substitute(impl2search,
         \ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
   " Extract throw specs {{{4
-  let throw_specs = matchstr(impl2search, '\v\)\s*\zs(throw|noexcept).*$')
+  " let throw_specs = matchstr(impl2search, '\v\)\s*\zs(throw|noexcept).*$')
   " Trim the variables names {{{4
   " Todo: \(un\)signed \(short\|long\) \(int\|float\|double\)
   "       const, *
@@ -847,7 +847,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   let g:impl2search1 = impl2search
 
   " Reinject throw specs {{{4
-  let impl2search .= ' '.throw_specs
+  " let impl2search .= ' '.throw_specs
   " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{4
   " let impl2search = substitute(' \zs'.impl2search, ' ',
   let impl2search = substitute(impl2search, ' ',
