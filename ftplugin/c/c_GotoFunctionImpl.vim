@@ -1,5 +1,5 @@
 " ========================================================================
-" File:		ftplugin/cpp/cpp_GotoFunctionImpl.vim                 {{{1
+" File:		ftplugin/c/c_GotoFunctionImpl.vim                 {{{1
 " Authors:	{{{2
 " 		From an original mapping by Leif Wickland (VIM-TIP#335)
 " 		See: http://vim.sourceforge.net/tip_view.php?tip_id=335
@@ -25,9 +25,9 @@
 " 	- :PASTEIMPL
 " 	- :MOVETOIMPL
 " Mappings:
-" 	- ;GI
-" 	- ;PI
-" 	- ;MI
+" 	- <localleader>GI
+" 	- <localleader>PI
+" 	- <localleader>MI
 " }}}2
 "------------------------------------------------------------------------
 " Installation:	See |lh-cpp-readme.txt|
@@ -237,37 +237,23 @@ command! -buffer -nargs=* MOVETOIMPL call lh#cpp#GotoFunctionImpl#MoveImpl(<f-ar
 
 " Mappings: {{{2
 " normal mode mapping ; still possible to set parameters
-nnoremap <buffer> <Plug>GotoImpl	:GOTOIMPL<SPACE>
-nnoremap <buffer> <Plug>PasteImpl	:PASTEIMPL<CR>
-nnoremap <buffer> <Plug>MoveToImpl	:MOVETOIMPL<CR>
+nnoremap <buffer> <Plug>GotoImpl	:<c-u>GOTOIMPL<SPACE>
+nnoremap <buffer> <Plug>PasteImpl	:<c-u>PASTEIMPL<CR>
+nnoremap <buffer> <Plug>MoveToImpl	:<c-u>MOVETOIMPL<CR>
 
 if !hasmapto('<Plug>GotoImpl', 'n')
-  nmap <buffer> ;GI <Plug>GotoImpl
+  nmap <buffer> <unique> <localleader>GI <Plug>GotoImpl
   " <LeftMouse> is used to position the cursor first
-  nmap <buffer> <M-LeftMouse>  <LeftMouse><Plug>GotoImpl<CR>
+  nmap <silent> <buffer> <unique> <M-LeftMouse>  <LeftMouse><Plug>GotoImpl<CR>
 endif
 if !hasmapto('<Plug>PasteImpl', 'n')
-  nmap <buffer> ;PI <Plug>PasteImpl
-  nmap <buffer> <M-RightMouse> <LeftMouse><Plug>PasteImpl
+  nmap <silent> <buffer> <unique> <localleader>PI <Plug>PasteImpl
+  nmap <silent> <buffer> <unique> <M-RightMouse> <LeftMouse><Plug>PasteImpl
 endif
 if !hasmapto('<Plug>MoveToImpl', 'n')
-  nmap <buffer> ;MI <Plug>MoveToImpl
+  nmap <silent> <buffer> <unique> <localleader>MI <Plug>MoveToImpl
   " <LeftMouse> is used to position the cursor first
-  " nmap <buffer> <M-LeftMouse>  <LeftMouse><Plug>MoveToImpl<CR>
-endif
-" insert mode mapping ; use global parameters
-inoremap <buffer> <Plug>GotoImpl	<C-O>:GOTOIMPL<CR>
-inoremap <buffer> <Plug>PasteImpl	<C-O>:PASTEIMPL<CR>
-if !hasmapto('<Plug>GotoImpl', 'i')
-  imap <buffer> <C-X>GI <Plug>GotoImpl
-  imap <buffer> <M-LeftMouse>  <LeftMouse><Plug>GotoImpl
-endif
-if !hasmapto('<Plug>PasteImpl', 'i')
-  imap <buffer> <C-X>PI <Plug>PasteImpl
-  imap <buffer> <M-RightMouse> <LeftMouse><Plug>PasteImpl
-endif
-if !hasmapto('<Plug>MoveToImpl', 'i')
-  imap <buffer> <C-X>MI <Plug>MoveToImpl
+  " nmap <silent> <buffer> <unique> <M-LeftMouse>  <LeftMouse><Plug>MoveToImpl<CR>
 endif
 
 " }}}1
