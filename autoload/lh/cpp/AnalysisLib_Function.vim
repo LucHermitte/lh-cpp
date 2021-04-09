@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  05th Apr 2021
+" Last Update:  09th Apr 2021
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -170,7 +170,11 @@ function! lh#cpp#AnalysisLib_Function#_libclang_get_function_info(lineno, onlyDe
     " alteration like merged spaces). While the function also returns the
     " default, it's likelly to be less precise than the previous test that
     " knows the parameter name.
-    let pa = lh#dev#option#call('function#_analyse_parameter', &ft, full, 0)
+    let clean_param = full
+    let clean_param = substitute(clean_param, '//.\{-}\n', '', 'g')
+    let clean_param = substitute(clean_param, '/\*\_.\{-}\*/', '', 'g')
+
+    let pa = lh#dev#option#call('function#_analyse_parameter', &ft, clean_param, {'expected_param_name': py_param.spelling, 'must_clean_space': 0})
     let lnum = py_param.extent.start.lnum
     let col  = py_param.extent.start.col
     let nl =   (last_line == -1 && lh#encoding#strpart(getline(lnum), 0, col-1) =~ '^\s*$')
@@ -777,8 +781,8 @@ endfunction
 
 " Function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) {{{3
 function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className) abort
-  call s:Verbose("Sig2regex(%1, %2)", a:signature, a:className)
-  let g:signature = a:signature
+  call s:Verbose("Sig2regex(signature='%1', class='%2')", a:signature, a:className)
+  let g:lh#cpp#AnalysisLib_Function#debug_signature = a:signature
   " trim spaces {{{4
   let impl2search = substitute(a:signature, "\\(\\s\\|\n\\)\\+", ' ', 'g')
   " trim comments {{{4
@@ -808,7 +812,7 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   let impl2search = substitute(impl2search, '^\s*\|\s*;\s*$', '', 'g')
   " Default parameters -> comment => ignored along with spaces {{{4
   " -> recognize "=" to strip what follows when not operator[-+*/=!^]=
-  let impl2search = substitute(impl2search, '\%(\<operator\>\s*\([-+*/=!^%]\s*\)\=\)\@<!=[^,)]\+', '', 'g')
+  " let impl2search = substitute(impl2search, '\%(\<operator\>\s*\([-+*/=!^%]\s*\)\=\)\@<!=[^,)]\+', '', 'g')
   " virtual, static and explicit -> comment => ignored along with spaces {{{4
   let impl2search = substitute(impl2search,
         \ '\_s*\<\%(virtual\|static\|explicit\)\>\_s*', '', 'g')
@@ -821,22 +825,22 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   "       class<xxx,yyy> (scope or type)
   let impl2search = lh#cpp#AnalysisLib_Function#TrimParametersNames(impl2search)
   " class name {{{4
-  let className = a:className . (""!=a:className ? '::' : '')
-  let g:className = className
-  if className =~ '#::#'
-    let ns = matchstr(className, '^.*\ze#::#') . '::'
+  let classname = a:classname . (""!=a:classname ? '::' : '')
+  let g:classname = classname
+  if classname =~ '#::#'
+    let ns = matchstr(classname, '^.*\ze#::#') . '::'
     if ns == '::'
-      " Class in global namespace
+      " class in global namespace
       let ns_re = '\%(::\)\=\zs'
     else
       let b = substitute(ns, '[^:]', '', 'g')
       let b = substitute(b, '::', '\\%(', 'g')
-      let ns_re = b.substitute(ns, '\<\I\i*\>::', '\0\\)\\=', 'g')
+      let ns_re = b.substitute(ns, '\<\i\i*\>::', '\0\\)\\=', 'g')
     endif
-    let cl_re = matchstr(className, '#::#\zs.*$')
-    let className = ns_re.cl_re
+    let cl_re = matchstr(classname, '#::#\zs.*$')
+    let classname = ns_re.cl_re
   endif
-  let className   = substitute(className, '\s*::\s*', ' :: ', 'g')
+  let classname   = substitute(classname, '\s*::\s*', ' :: ', 'g')
   " let g:className = className
   " and finally inject the class name patten in the search pattern
   " NB: operators have a special treatment
@@ -860,6 +864,73 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   let res = {'regex':impl2search, 'ispure':isPure, 'isWithoutDefinition': isWithoutDefinition}
   return res
 endfunction "}}}4
+
+" Function: lh#cpp#AnalysisLib_Function#generate_search_regex_from_function_info(info) {{{3
+function! lh#cpp#AnalysisLib_Function#generate_search_regex_from_function(info) abort
+  call s:Verbose('search regex from %1', a:info)
+  let g:lh#cpp#AnalysisLib_Function#debug_info = a:info
+  let regex  = ''
+  " Scope {{{4
+  let has_ns = 0
+  let parts = []
+  for sc in reverse(copy(get(a:info, 'scope', [])))
+    if sc.kind =~? 'namespace'
+      let has_ns = 1
+      let parts += ['\%('.(sc.name).' :: \)\=']
+    else
+      let parts += [sc.name . ' :: ']
+    endif
+  endfor
+  if !has_ns
+    " class in global namespace
+    call insert(parts, '\%( :: \)\=\zs', 0)
+  endif
+  let classname = join(parts, '')
+  let regex .= classname
+
+  " Function name {{{4
+  " - protect ~ in destructor name      {{{5
+  let name = escape(a:info.name, '~')
+  " - '[,' '],' pointers                {{{5
+  let name = substitute(name, '\s*\([[\]*]\)\s*', ' \1 ', 'g')
+  " - operator*                         {{{5
+  let name = substitute(name, 'operator\s*\*', 'operator \\*', '')
+  " - <, >, =, (, ), ',' and references {{{5
+  let name = substitute(name, '\s*\([-+*/%^=<>!]=\|&&\|||\|[<>=(),&]\)\s*', ' \1 ', 'g')
+  " }}}5
+  let regex .= name
+
+  " Parameters {{{4
+  let regex .= ' ( '
+  let params = []
+  for p in a:info.parameters
+    " TODO: handle C arrays and functions
+    let str = substitute(p.type_as_typed, '\s*\([-+*/%^=<>!]=\|&&\|||\|[<>=(),&]\)\s*', ' \1 ', 'g') . ' \%(\<\I\i*\>\)\='
+    let params += [str]
+  endfor
+  let regex .= join(params, ' , ') . ' )'
+
+  " Extra qualifiers {{{4
+  let regex .= a:info.const    ? ' const'    : ''
+  let regex .= a:info.volatile ? ' volatile' : ''
+  let regex .= a:info.ref_qualifier == 'lvalue' ? ' &'
+        \  : a:info.ref_qualifier == 'rvalue' ? ' &&'
+        \                                     : ''
+
+  let regex .= empty(a:info.noexcept) ? '' : ' '.a:info.noexcept
+
+  " Spaces & comments -> '\(\_s\|/\*.\{-}\*/\|//.*$\)*' and \i {{{4
+  let full_regex = substitute(regex, ' ',
+        \ '\\%(\\_s\\|/\\*.\\{-}\\*/\\|//.*$\\)*', 'g')
+  " Note: \%(\) is like \(\) but the subexpressions are not counted.
+  " Note: ' \zs' inserted at the start of the regex helps ignore any comments
+  " before the signature of the function.
+
+  " Return {{{4
+  let res = {'regex': full_regex, 'simple_re': regex,
+        \ 'ispure': a:info.pure, 'isWithoutDefinition': !empty(a:info.special_definition)}
+  return res
+endfunction
 "------------------------------------------------------------------------
 " Function: s:TrimParametersNames(str) {{{3
 " Some constant regexes {{{4
@@ -922,7 +993,9 @@ function! lh#cpp#AnalysisLib_Function#TrimParametersNames(str) abort
   endwhile
 
   " Return the final regex to search.
-  return substitute(head . strpart(params_types,1) . tail, '\s\s\+', ' ', 'g')
+  let res = substitute(head . strpart(params_types,1) . tail, '\s\s\+', ' ', 'g')
+  call s:Verbose("param2regex: %1  ---> %2", a:str, res)
+  return res
 endfunction
 " }}}3
 "------------------------------------------------------------------------

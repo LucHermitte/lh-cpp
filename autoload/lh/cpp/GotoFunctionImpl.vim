@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  05th Apr 2021
+" Last Update:  09th Apr 2021
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -218,7 +218,7 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
   let classname = []
   let templates = []
   if !empty(scope)
-    for sc in reverse(scope)
+    for sc in reverse(copy(scope))
       call s:Verbose("scope: %1", sc)
       let name = sc.name
       if sc.kind =~ 'TEMPLATE'
@@ -249,6 +249,7 @@ function! s:libclang_get_prototype(opt, ...) dict abort " {{{4
   " TODO: We cannot return fullsignature as it messes east const types
   " let self._proto     = get(self._info, 'fullsignature', '')
   let self._proto     = s:generate_signature_from_info(self._info, {})
+  call s:Verbose("_proto = %1", self._proto)
   return self._proto
 endfunction
 
@@ -263,7 +264,8 @@ function! s:generate_signature_from_info(info, opts) abort " {{{4
   let res .= (a:info.name) . '('
 
   " Parameters
-  let s_params = map(copy(a:info.parameters), 'v:val.type_as_typed')
+  " let s_params = map(copy(a:info.parameters), 'v:val.type_as_typed')
+  let s_params = map(copy(a:info.parameters), 'v:val.full_wo_default')
   let res .= join(s_params, ', ')
   let res .= ')'
 
@@ -284,6 +286,9 @@ function! s:generate_signature_from_info(info, opts) abort " {{{4
 endfunction
 
 function! s:libclang_proto_to_regex() dict abort " {{{4
+  let impl2search = lh#cpp#AnalysisLib_Function#generate_search_regex_from_function(self._info)
+  let g:lh#cpp#GotoFunctionImpl#debug_impl2search  = impl2search
+  return impl2search
   " TODO: problems to fix
   " - libclang adds complete type scopes
   " - libclang returns west-const qualified types
@@ -439,8 +444,10 @@ function! lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource(...) abort
 
       " Insert the C++ code at the end of the file
       call lh#cpp#GotoFunctionImpl#insert_impl(impl, code_analyser)
+      " call lh#common#warning_msg(printf('Empty body generated for `%s`', code_analyser._proto))
     else
       call s:Verbose("Implementation for %1 found in %2:%3", code_analyser._proto, expand('%'), line('.'))
+      " call lh#common#warning_msg(printf('Definition for `%s` found in %s:%s', code_analyser._proto, expand('%'), line('.')))
     endif
   finally
     let &isk = isk_save
@@ -506,10 +513,10 @@ endfunction
 function! s:CheckOptions(...) abort
   " 0- Check options {{{4
   let s:options                   = {}
-  let s:options.ShowVirtual       = lh#ft#option#get('ShowVirtual',       &ft, 1)
-  let s:options.ShowStatic        = lh#ft#option#get('ShowStatic',        &ft, 1)
-  let s:options.ShowExplicit      = lh#ft#option#get('ShowExplicit',      &ft, 1)
-  let s:options.ShowDefaultParams = lh#ft#option#get('ShowDefaultParams', &ft, 1)
+  let s:options.ShowVirtual       = lh#option#get('ShowVirtual',       1)
+  let s:options.ShowStatic        = lh#option#get('ShowStatic',        1)
+  let s:options.ShowExplicit      = lh#option#get('ShowExplicit',      1)
+  let s:options.ShowDefaultParams = lh#option#get('ShowDefaultParams', 1)
   let expected_extension          = ''
   for option in a:000
     if type(option) == type({})
@@ -742,7 +749,10 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info, className) abort
   if !empty(get(a:info, 'tparams', []))
     " let g:tparams = a:info.tparams
     let tpl_list = map(copy(a:info.tparams), 's:tpl_extent_up_to_assign(v:val)')
-    let tpl = 'template<'.join(tpl_list, ',').">\n"
+    " TODO: Add style options for:
+    " - "template <" VS "template<"
+    " - ", " VS ","
+    let tpl = 'template <'.join(tpl_list, ', ').">\n"
     let comments = tpl.comments
   endif
 
@@ -768,8 +778,9 @@ function! s:BuildFunctionSignature4implFromFunctionInfo(info, className) abort
   let body = get(s:options, 'body', '{}')
 
   " 9- ref_qualifier
-  let ref_qualifier  = a:info.ref_qualifier == 'lvalue' ? '&'
-        \            : a:info.ref_qualifier == 'rvalue' ? '&&'
+  let rq = get(a:info, 'ref_qualifier', '')
+  let ref_qualifier  = rq == 'lvalue' ? '&'
+        \            : rq == 'rvalue' ? '&&'
         \            :                                    ''
 
   " *- Return {{{4

@@ -5,7 +5,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      02nd Apr 2021
-" Last Update:  05th Apr 2021
+" Last Update:  09th Apr 2021
 "------------------------------------------------------------------------
 " Description:
 "       Test :GOTOIMPL and :MOVEIMPL
@@ -82,6 +82,7 @@ endfunction
 "
 " * if libclang
 " - template function
+"   - variadic template
 " - template class
 " - template func in template class
 "
@@ -136,6 +137,67 @@ function! s:Test_empty_int_function() abort
   AssertEq(line('.'), 3)
 endfunction
 
+" Function: s:Test_empty_single_arg() {{{2
+function! s:Test_empty_int_function() abort
+  SetBufferContent trim << EOF
+  int myfunc2(int i);
+  EOF
+  :1
+  GOTOIMPL
+  AssertBufferMatches! trim << EOF
+  int myfunc2(int i);
+
+  int myfunc2(int i)
+  {}
+  EOF
+
+  " Test search
+  :1
+  GOTOIMPL
+  AssertEq(line('.'), 3)
+endfunction
+
+" Function: s:Test_function_with_default_values() {{{2
+function! s:Test_function_with_default_values() abort
+  SetBufferContent trim << EOF
+  #include <string>
+  int myfunc(
+      std::string const              s2,
+      std::string      &             s3,
+      std::string     && /* h=heh */ s4,
+      std::string const&             s1 = "",
+      int                            i1 = 5,
+      double                         d  = 4.);
+  EOF
+  :2
+  GOTOIMPL
+  AssertBufferMatches! trim << EOF
+  #include <string>
+  int myfunc(
+      std::string const              s2,
+      std::string      &             s3,
+      std::string     && /* h=heh */ s4,
+      std::string const&             s1 = "",
+      int                            i1 = 5,
+      double                         d  = 4.);
+
+  int myfunc(
+      std::string const              s2,
+      std::string      &             s3,
+      std::string     && /* h=heh */ s4,
+      std::string const&             s1 /* = "" */,
+      int                            i1 /* = 5 */,
+      double                         d /* = 4. */)
+  {}
+  EOF
+
+  " Test search
+  :2
+  GOTOIMPL
+  AssertEq(line('.'), 10)
+endfunction
+
+"------------------------------------------------------------------------
 " Function: s:Test_function() {{{2
 function! s:Test_function() abort
   SetBufferContent trim << EOF
@@ -177,6 +239,120 @@ function! s:Test_function() abort
 endfunction
 
 "------------------------------------------------------------------------
+" Function: s:Test_noexcept_function() {{{2
+function! s:Test_noexcept_function() abort
+  SetBufferContent trim << EOF
+  #include <string>
+  int myfunc(
+      std::string const& s1,
+      std::string const  s2,
+      std::string      & s3,
+      std::string     && s4,
+      int                i1,
+      double             d) noexcept;
+  EOF
+  :2
+  GOTOIMPL
+  AssertBufferMatches! trim << EOF
+  #include <string>
+  int myfunc(
+      std::string const& s1,
+      std::string const  s2,
+      std::string      & s3,
+      std::string     && s4,
+      int                i1,
+      double             d) noexcept;
+
+  int myfunc(
+      std::string const& s1,
+      std::string const  s2,
+      std::string      & s3,
+      std::string     && s4,
+      int                i1,
+      double             d) noexcept
+  {}
+  EOF
+
+  " Test search
+  :2
+  GOTOIMPL
+  AssertEq(line('.'), 10)
+endfunction
+
+"------------------------------------------------------------------------
+" Function: s:Test_tpl_function() {{{2
+function! s:Test_tpl_function() abort
+  SetBufferContent trim << EOF
+  template <int I, typename T>
+  int myfunc2(T v);
+  EOF
+  :2
+  GOTOIMPL
+  AssertBufferMatches! trim << EOF
+  template <int I, typename T>
+  int myfunc2(T v);
+
+  template <int I, typename T>
+  int myfunc2(T v)
+  {}
+  EOF
+
+  " Test search
+  :2
+  GOTOIMPL
+  AssertEq(line('.'), 5)
+endfunction
+
+" Function: s:Test_tpl_function_with_template_bool_type() {{{2
+function! s:Test_tpl_function_with_template_bool_type() abort
+  SetBufferContent trim << EOF
+  template <bool> struct sometype{ int i;};
+  template <int I>
+  int myfunc2(sometype<I==42> i);
+  EOF
+  :3
+  GOTOIMPL
+  AssertBufferMatches! trim << EOF
+  template <bool> struct sometype{ int i;};
+  template <int I>
+  int myfunc2(sometype<I==42> i);
+
+  template <int I>
+  int myfunc2(sometype<I==42> i)
+  {}
+  EOF
+
+  " Test search
+  :3
+  GOTOIMPL
+  AssertEq(line('.'), 6)
+endfunction
+
+" Function: s:Test_tpl_function_with_template_bool_type_and_def_value() {{{2
+function! s:Test_tpl_function_with_template_bool_type_and_def_value() abort
+  SetBufferContent trim << EOF
+  template <bool> struct sometype{ int i;};
+  template <int I>
+  int myfunc2(sometype<I==42> i = 12);
+  EOF
+  :3
+  GOTOIMPL
+  AssertBufferMatches! trim << EOF
+  template <bool> struct sometype{ int i;};
+  template <int I>
+  int myfunc2(sometype<I==42> i = 12);
+
+  template <int I>
+  int myfunc2(sometype<I==42> i /* = 12 */)
+  {}
+  EOF
+
+  " Test search
+  :3
+  GOTOIMPL
+  AssertEq(line('.'), 6)
+endfunction
+
 " }}}1
 "------------------------------------------------------------------------
 let &cpo=s:cpo_save
