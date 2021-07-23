@@ -708,19 +708,20 @@ oss << «»;
   * `<sstream>`
 
 #### cpp/sort
-**Produces:** `std::sort(range.begin(), range.end());`
+**Produces:** `std::sort(container.begin(), container.end());`
 
 **Parameters:**
-  * _range_, default: «range»
+  * _container_, default: «container»
 
 **Surround:**
   1. The selection can be surrounded to become the range name
 
 **Also includes:**
   * `<algorithm>`
+  * `<iterator>` -- see [`cpp/internals/get-b-e`](#cppinternalsget-b-e)
 
-**TODO:**
-  * Use `cpp/b-e` snippet
+**Variation Points/Relies on:**
+  * [`cpp/internals/get-b-e`](#cppinternalsget-b-e) snippet
 
 #### cpp/starts_with
 **Produces:** `boost::algorithm::starts_with(«input», «prefix_searched»)`
