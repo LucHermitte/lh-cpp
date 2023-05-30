@@ -1,0 +1,11 @@
+VimL:" make_unique File Template, Luc Hermitte, 30th May 2023
+VimL:" hint: std::make_unique<>()
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<memory>")')
+MuT:  let s:_select = s:SurroundRaw(1, '<+type>(<+parameters+>)')
+MuT:  let s:_type   = matchstr(s:_select, '^[^(]*')
+MuT:  let s:_params = matchstr(s:_select, '(\zs.*\ze)')
+std::make_unique<¡s:_type¡>(¡s:_params¡) <++>
