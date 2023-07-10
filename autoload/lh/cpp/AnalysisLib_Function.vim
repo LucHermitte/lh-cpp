@@ -98,6 +98,38 @@ endfunction
 let s:k_not_available = lh#option#unset('libclang cannot tell')
 
 " " Function: lh#cpp#AnalysisLib_Function#get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) {{{3
+" Global fields:
+" - "name"               = name of the function
+" - "qualifier"          = "static" | "virtual" | "explicit"
+" - "scope"              = reversed list of "name", "kind", ["tparams"]
+" - "return"             = "" or spelling of the return type
+" - "throw"              = C++98 complete throw-specification, if any
+" - "noexcept"           = C++11 exception specification
+" - "signature"          = As returned by libclang (-> const-westified)
+" - "fullsignature"      = Reconstructed to match exact spelling in declaration
+" - "parameters"         = List of parameters
+"                          - "name"            : parameter name
+"                          - "type"            : west-constified type
+"                          - "type_as_typed"   : type exactly as it was spelled
+"                          - "nl"              : bool (newline ?)
+"                          - "full_spelling"   : exact spelling of everything
+"                          - "full_wo_default" : exact spelling of everything
+"                                                but the default value
+" - "tparams"            = List of template parameters
+          \ 'spelling' : py_param.spelling
+          \,'what'     : py_param.what
+          \,'extent'   : py_param.extent
+          \,'nl'       : last_line >= 0 && last_line != py_param.extent.start.lnum
+" - "body_extent"        = extent of the body
+" Fields that makes sense only w/ member functions
+" - "pure"               = bool
+" - "final"              = bool
+" - "overriden"          = bool
+" - "special_definition" = "= default" | "= delete"
+" - "const"              = bool
+" - "volatile"           = bool
+" - "ref_qualifier"      = "" | "lvalue" | "rvalue"
+" - "special_func"       =
 function! lh#cpp#AnalysisLib_Function#_libclang_get_function_info(lineno, onlyDeclaration, returnEndProtoExtent) abort
   " Make sure the cursor is onto something...
   if getline('.')[:col('.')-1] =~ '^\s*$'
@@ -825,10 +857,10 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
   "       class<xxx,yyy> (scope or type)
   let impl2search = lh#cpp#AnalysisLib_Function#TrimParametersNames(impl2search)
   " class name {{{4
-  let classname = a:classname . (""!=a:classname ? '::' : '')
-  let g:classname = classname
-  if classname =~ '#::#'
-    let ns = matchstr(classname, '^.*\ze#::#') . '::'
+  let className = a:className . (""!=a:className ? '::' : '')
+  let g:className = className
+  if className =~ '#::#'
+    let ns = matchstr(className, '^.*\ze#::#') . '::'
     if ns == '::'
       " class in global namespace
       let ns_re = '\%(::\)\=\zs'
@@ -837,10 +869,10 @@ function! lh#cpp#AnalysisLib_Function#SignatureToSearchRegex(signature,className
       let b = substitute(b, '::', '\\%(', 'g')
       let ns_re = b.substitute(ns, '\<\i\i*\>::', '\0\\)\\=', 'g')
     endif
-    let cl_re = matchstr(classname, '#::#\zs.*$')
-    let classname = ns_re.cl_re
+    let cl_re = matchstr(className, '#::#\zs.*$')
+    let className = ns_re.cl_re
   endif
-  let classname   = substitute(classname, '\s*::\s*', ' :: ', 'g')
+  let className   = substitute(className, '\s*::\s*', ' :: ', 'g')
   " let g:className = className
   " and finally inject the class name patten in the search pattern
   " NB: operators have a special treatment
