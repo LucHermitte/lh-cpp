@@ -844,14 +844,17 @@ If you don't like this feature ~
 <    * or in a |local_vimrc|: >
       :AddStyle -b -ft=c -prio=10 ( \n(\n
 (*) You want some "\n" between ')' and '{':
-    Easy: tell it to |:AddStyle|
-    * in $HOME/.vim/after/plugin/my-style.vim: >
-      :AddStyle -ft=c -prio=10 { \n{\n
-<    * or in a |local_vimrc|: >
-      :AddStyle -b -ft=c -prio=10 { \n{\n
+    The best way is to use an indenting style that adds the newlines. This can
+    be done globally thanks to: >
+      :UseStyle breakbeforebraces=Allman -ft=c
+<   or in a |local_vimrc|: >
+      :UseStyle breakbeforebraces=Allman -ft=c -buffer
+<  or through your `.editorconfig` file. See
+  https://lh-style.readthedocs.io/en/latest/code-formatting.html#usestyle-style-family-value-buffer-ft-ft-prio-prio
+  documentation.
 (*) You don't want the control statements to be expanded:
-    Then, don't install |c_set.vim| and |cpp_set.vim|. Instead look and take
-    the stuff you could be interested in, like for instance some vim-|options|.
+    In that case you can add the following in your |.vimrc|: >
+      :let g:lh_cpp_snippets = 0
 
 If you only see~
 >
