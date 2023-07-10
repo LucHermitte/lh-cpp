@@ -5,7 +5,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      08th Apr 2016
-" Last Update:  17th Dec 2019
+" Last Update:  10th Jul 2023
 "------------------------------------------------------------------------
 " Description:
 "       Various functions to analyse C and C++ codes
@@ -112,6 +112,10 @@ endfunction
 function! lh#cpp#analyse#get_info(...) abort
   if lh#has#plugin('autoload/clang.vim') && clang#can_plugin_be_used()
     let py_info = call('clang#get_symbol', a:000)
+
+    if ! py_info
+      return lh#option#unset("Sorry vim-clang cannot be used on this signature")
+    endif
 
     let info = {}
     let info.is_function   = 0
