@@ -3,7 +3,7 @@
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " Version:      2.2.0
-" Last Update:  07th Mar 2017
+" Last Update:  01st Dec 2022
 "
 "------------------------------------------------------------------------
 " Description:
@@ -47,7 +47,7 @@ let b:did_ftplugin = 1
 "  setlocal cindent
 "
 setlocal cinoptions=g0,t0,h1s,i0
-if has('patch-7.3-202')
+if has('patch-7.3.202')
   setlocal cinoptions+=N-s
 endif
 setlocal suffixesadd+=.hpp,.cpp,.C,.h++,.c++,.hh
