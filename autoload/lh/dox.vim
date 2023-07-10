@@ -7,7 +7,7 @@
 let s:k_version = 221
 " Version:	2.2.1
 " Created:      22nd Feb 2011
-" Last Update:  17th Dec 2019
+" Last Update:  10th Jul 2023
 "------------------------------------------------------------------------
 " Description:
 "       Set of functions to generate Doxygen tags in respect of the current
@@ -252,7 +252,7 @@ function! lh#dox#doxygenize() abort
     " Obtain informations from the function at the current cursor position.
     let info = lh#cpp#analyse#get_info('documentable')
     if lh#option#is_unset(info)
-      let info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), 0)
+      let info = lh#cpp#AnalysisLib_Function#get_function_info(line('.'), 0, 0)
     endif
 
     " Build data to insert
