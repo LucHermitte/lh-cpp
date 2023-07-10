@@ -5,7 +5,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      16th Dec 2015
-" Last Update:  20th Apr 2016
+" Last Update:  19th Nov 2019
 "------------------------------------------------------------------------
 " Description:	C++ syntax enhancements
 " (*) detect C casts in C++
@@ -19,7 +19,7 @@ let s:k_version = '220'
 " }}}1
 "=============================================================================
 " {{{1 Syntax definitions
-if get(g:, 'cpp_no_hl_c_cast', 0)
+if get(g:, 'cpp_no_hl_c_cast', 1)
   finish
 endif
 
