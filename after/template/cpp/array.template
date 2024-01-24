@@ -1,0 +1,9 @@
+VimL:" array File Template, Luc Hermitte, 24th Jan 2024
+VimL:" hint: std::array<>
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call s:AddPostExpandCallback('lh#dev#import#add("<array>")')
+MuT:  let s:type = s:SurroundableParam('type', 1)
+std::array<<+s:type+>><+s:TerminalPlaceHolder()+>
