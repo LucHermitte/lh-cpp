@@ -7,7 +7,7 @@
 " Version:      2.2.0
 let s:k_version = '220'
 " Created:      15th Apr 2008
-" Last Update:  08th Mar 2018
+" Last Update:  30th Jan 2024
 "------------------------------------------------------------------------
 " Description:  Snippets of C++ Control Statements
 "
@@ -63,7 +63,7 @@ inoremap <buffer> <m-t> <c-r>=lh#map#insert_seq('<m-t>', '\<c-r\>=lh#cpp#snippet
 "------------------------------------------------------------------------
 "--- namespace ---------------------------------------------------{{{4
 "--,ns insert "namespace" statement
-  Inoreabbr <buffer> namespace <C-R>=lh#cpp#snippets#insert_if_not_after('namespace ',
+  Inoreabbr <buffer> <silent> namespace <C-R>=lh#cpp#snippets#insert_if_not_after('namespace ',
         \ '\<c-f\>namespace <+namespace+>{<++>}// namespace <+namespace+>', 'using')<cr>
   " Inoreabbr <buffer> namespace <C-R>=lh#cpp#snippets#insert_if_not_after('namespace ',
         " \ '\<c-f\>namespace !cursorhere! {!mark!}!mark!', 'using')<cr>
