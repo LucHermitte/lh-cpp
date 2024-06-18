@@ -2,9 +2,9 @@
 " File:		ftplugin/c/c_set.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	2.1.3
-let s:k_version = 213
-" Last Update:	28th Oct 2015
+" Version:	2.1.4
+let s:k_version = 214
+" Last Update:	04th Jun 2024
 "
 " Purpose:	ftplugin for C (-like) programming
 "
@@ -45,7 +45,7 @@ let b:did_ftplugin = 1
 "
 setlocal formatoptions=croql
 setlocal cindent
-setlocal cinoptions=g0,t0
+setlocal cinoptions=g0,t0,m1
 setlocal define=^\(#\s*define\|[a-z]*\s*const\(expr\)\=\s*[a-z]*\)
 setlocal comments=sr:/*,mb:*,exl:*/,:///,://
 " setlocal isk+=#		" so #if is considered as a keyword, etc
@@ -85,7 +85,7 @@ endif
 " flist (Dr Chips)
 ""so <sfile>:p:h/flistmaps.vim
 if filereadable(expand("hints"))
-  au BufNewFile,BufReadPost *.h,*.ti,*.inl,*.c,*.C,*.cpp,*.CPP,*.cxx
+  au BufNewFile,BufReadPost *.h,*.ti,*.inl,*.c,*.C,*.cpp,*.CPP,*.cxx,*.hxx
 	\ so hints<CR>
 endif
 
