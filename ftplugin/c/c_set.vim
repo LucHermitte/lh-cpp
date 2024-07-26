@@ -2,8 +2,8 @@
 " File:		ftplugin/c/c_set.vim
 " Author:	Luc Hermitte <MAIL:hermitte {at} free {dot} fr>
 " 		<URL:http://code.google.com/p/lh-vim/>
-" Version:	2.1.4
-let s:k_version = 214
+" Version:	2.1.5
+let s:k_version = 215
 " Last Update:	26th Jul 2024
 "
 " Purpose:	ftplugin for C (-like) programming
@@ -16,10 +16,9 @@ let s:k_version = 214
 " 		VIM >= 6.00 only
 " ========================================================================
 
-" 4 log:
+" 26th Jul 2024: hide indenting style behind lhcpp_use_lh_style
 " 14th Apr 2007: &isk-=-
-" for changelog: 02nd Jun 2006 -> suffixesadd
-
+" 02nd Jun 2006: suffixesadd
 
 " ========================================================================
 " Buffer local definitions {{{1
@@ -43,9 +42,14 @@ let b:did_ftplugin = 1
 " Note: these options can be overrided into a ftplugin placed in an after/
 " directory.
 "
-setlocal formatoptions=croql
-setlocal cindent
-setlocal cinoptions=g0,t0,m1,(0
+" Set g:lhcpp_use_lh_style to 1/v:true to use my prefered style
+if get(g:, 'lhcpp_use_lh_style', 0)
+  setlocal formatoptions=croql
+  setlocal cindent
+  setlocal cinoptions=g0,t0,m1,(0
+  " setlocal nosmd
+endif
+
 setlocal define=^\(#\s*define\|[a-z]*\s*const\(expr\)\=\s*[a-z]*\)
 setlocal comments=sr:/*,mb:*,exl:*/,:///,://
 " setlocal isk+=#		" so #if is considered as a keyword, etc
@@ -57,7 +61,6 @@ setlocal isk=#,a-z,A-Z,48-57,_
 setlocal suffixesadd+=.h,.c
 
 setlocal cmdheight=3
-setlocal nosmd
 
 " Dictionary from Dr.-Ing. Fritz Mehner
 let s:dictionary=expand("<sfile>:p:h").'/word.list'
@@ -77,16 +80,9 @@ setlocal complete-=i
 ""so <sfile>:p:h/LoadHeaderFile.vim
 if exists("*LoadHeaderFile")
   nnoremap <buffer> <buffer> <C-F12>
-	\ :call LoadHeaderFile(getline('.'),0)<cr>
+        \ :call LoadHeaderFile(getline('.'),0)<cr>
   inoremap <buffer> <buffer> <C-F12>
-	\ <esc>:call LoadHeaderFile(getline('.'),0)<cr>
-endif
-
-" flist (Dr Chips)
-""so <sfile>:p:h/flistmaps.vim
-if filereadable(expand("hints"))
-  au BufNewFile,BufReadPost *.h,*.ti,*.inl,*.c,*.C,*.cpp,*.CPP,*.cxx,*.hxx
-	\ so hints<CR>
+        \ <esc>:call LoadHeaderFile(getline('.'),0)<cr>
 endif
 
 " }}}

@@ -11,7 +11,8 @@
 " }}}1
 " ========================================================================
 
-" for changelog: 02nd Jun 2006 -> suffixesadd
+" 26th Jul 2024: hide indenting style behind lhcpp_use_lh_style
+" 02nd Jun 2006: suffixesadd
 
 " ========================================================================
 " Buffer local definitions {{{1
@@ -43,14 +44,19 @@ let b:did_ftplugin = 1
 " ------------------------------------------------------------------------
 " Options to set {{{2
 " ------------------------------------------------------------------------
-"  setlocal formatoptions=croql
-"  setlocal cindent
-"
-setlocal cinoptions=g0,t0,h1s,i0,m1,(0
-if has('patch-7.3.202')
-  setlocal cinoptions+=N-s
+" Set g:lhcpp_use_lh_style to 1/v:true to use my prefered style
+if get(g:, 'lhcpp_use_lh_style', 0)
+  "  setlocal formatoptions=croql
+  "  setlocal cindent
+  "
+  setlocal cinoptions=g0,t0,h1s,i0,m1,(0
+  if has('patch-7.3.202')
+    setlocal cinoptions+=N-s
+  endif
 endif
-setlocal suffixesadd+=.hpp,.cpp,.C,.h++,.c++,.hh,.hxx,.cxx
+
+" .txx is used by old version of OTB
+setlocal suffixesadd+=.hpp,.cpp,.C,.h++,.c++,.hh,.hxx,.cxx,.txx
 
 " Emulate [[ and ]] in C++
 nnoremap <silent> <buffer> [[ :call lh#dev#_goto_function_begin()<cr>
@@ -68,15 +74,6 @@ if has("gui_win32")
         \ "All Files (*.*)\t*.*\n"
 endif
 " }}}2
-
-" ========================================================================
-" General definitions {{{1
-" ========================================================================
-if exists("g:loaded_cpp_set") && !exists('g:force_reload_cpp_ftp')
-  let &cpo = s:cpo_save
-  finish
-endif
-let g:loaded_cpp_set = 1
 
 let &cpo = s:cpo_save
 " }}}1
