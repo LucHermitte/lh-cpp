@@ -4,7 +4,7 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	2.1.4
 let s:k_version = 214
-" Last Update:	04th Jun 2024
+" Last Update:	26th Jul 2024
 "
 " Purpose:	ftplugin for C (-like) programming
 "
@@ -45,7 +45,7 @@ let b:did_ftplugin = 1
 "
 setlocal formatoptions=croql
 setlocal cindent
-setlocal cinoptions=g0,t0,m1
+setlocal cinoptions=g0,t0,m1,(0
 setlocal define=^\(#\s*define\|[a-z]*\s*const\(expr\)\=\s*[a-z]*\)
 setlocal comments=sr:/*,mb:*,exl:*/,:///,://
 " setlocal isk+=#		" so #if is considered as a keyword, etc
