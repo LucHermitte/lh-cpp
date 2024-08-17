@@ -4,7 +4,7 @@
 " 		<URL:http://code.google.com/p/lh-vim/>
 " Version:	2.1.5
 let s:k_version = 215
-" Last Update:	26th Jul 2024
+" Last Update:	17th Aug 2024
 "
 " Purpose:	ftplugin for C (-like) programming
 "
@@ -46,7 +46,7 @@ let b:did_ftplugin = 1
 if get(g:, 'lhcpp_use_lh_style', 0)
   setlocal formatoptions=croql
   setlocal cindent
-  setlocal cinoptions=g0,t0,m1,(0
+  setlocal cinoptions=g0,t0,m1,(0,W2s
   " setlocal nosmd
 endif
 

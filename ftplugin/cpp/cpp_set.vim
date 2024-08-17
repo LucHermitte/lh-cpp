@@ -3,7 +3,7 @@
 " Author:       Luc Hermitte <EMAIL:hermitte {at} free {dot} fr>
 "               <URL:http://github.com/LucHermitte/lh-cpp>
 " Version:      2.2.0
-" Last Update:  26th Jul 2024
+" Last Update:  17th Aug 2024
 "
 "------------------------------------------------------------------------
 " Description:
@@ -49,7 +49,7 @@ if get(g:, 'lhcpp_use_lh_style', 0)
   "  setlocal formatoptions=croql
   "  setlocal cindent
   "
-  setlocal cinoptions=g0,t0,h1s,i0,m1,(0
+  setlocal cinoptions=g0,t0,h1s,i0,m1,(0,W2s
   if has('patch-7.3.202')
     setlocal cinoptions+=N-s
   endif
