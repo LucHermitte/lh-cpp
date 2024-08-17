@@ -5,7 +5,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      02nd Apr 2021
-" Last Update:  09th Apr 2021
+" Last Update:  17th Aug 2024
 "------------------------------------------------------------------------
 " Description:
 "       Test :GOTOIMPL and :MOVEIMPL
@@ -48,6 +48,7 @@ function! s:BeforeAll() abort
   let &l:tags .= ','.b:tags_dirname.'/tags'
   setlocal expandtab
   setlocal sw=2
+  setlocal cinoptions=g0,t0,h1s,i0,m1,(0,W2s
   " Comment "runtimepath is ".&rtp
 endfunction
 
