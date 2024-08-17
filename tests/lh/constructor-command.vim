@@ -5,7 +5,7 @@
 " Version:      2.2.1.
 let s:k_version = '221'
 " Created:      09th Mar 2021
-" Last Update:  13th Mar 2021
+" Last Update:  20th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Test :Constructor command
@@ -56,6 +56,7 @@ endfunction
 
 function! s:AfterAll() abort
   silent bw! test-constructor.cpp
+  runtime autoload/lh/ui.vim
 endfunction
 
 function! s:Setup() abort
@@ -66,6 +67,7 @@ function! s:Setup() abort
   call lh#let#unlet('g:cpp_use_copy_and_swap')
 
   SetBufferContent trim << EOF
+  #include <string>
   class Foo {
   public:
 
@@ -75,9 +77,9 @@ function! s:Setup() abort
   };
   EOF
 
-  AssertEquals(line('$'), 7)
-  call setpos('.', [0, 3, 1, 0])
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('$'), 8)
+  call setpos('.', [0, 4, 1, 0])
+  AssertEquals(line('.'), 4)
   let attributes = lh#dev#class#attributes('Foo', 1)
   let attrb_names = sort(lh#list#get(attributes, 'name'))
   AssertEquals(attrb_names, ['Foo::m_bar', 'Foo::m_foo'])
@@ -87,11 +89,48 @@ endfunction
 "
 "------------------------------------------------------------------------
 " # Default constructor {{{2
-function! s:Test_default_ctr() abort " {{{3
-  let g:cpp_std_flavour = 03
+function! s:Test_default_ctr_deleted() abort " {{{3
+  let g:cpp_std_flavour = 11
+  let g:mocked_confirm = [1, 2]
   AssertEquals(&ft, 'cpp')
   call lh#cpp#constructors#Main("default")
   AssertBufferMatch trim << EOF
+  class Foo {
+  public:
+      Foo() = delete;
+  private:
+      std::string m_bar;
+      int * m_foo;
+  };
+  EOF
+endfunction
+
+"------------------------------------------------------------------------
+function! s:Test_default_ctr_defaulted() abort " {{{3
+  let g:cpp_std_flavour = 11
+  let g:mocked_confirm = [2, 2]
+  AssertEquals(&ft, 'cpp')
+  call lh#cpp#constructors#Main("default")
+  AssertBufferMatch trim << EOF
+  class Foo {
+  public:
+      Foo() = default;
+  private:
+      std::string m_bar;
+      int * m_foo;
+  };
+  EOF
+endfunction
+
+"------------------------------------------------------------------------
+UTPlay Test_default_ctr_list
+function! s:Test_default_ctr_list() abort " {{{3
+  let g:cpp_std_flavour = 03
+  let g:mocked_confirm = [3, 2]
+  AssertEquals(&ft, 'cpp')
+  call lh#cpp#constructors#Main("default")
+  AssertBufferMatch trim << EOF
+  #include <string>
   class Foo {
   public:
       /**
@@ -115,8 +154,9 @@ endfunction
 " # Copy constructor {{{2
 function! s:Test_copy_ctr() abort " {{{3
   let g:cpp_std_flavour = 03
+  let g:mocked_confirm = [2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   " Try a pause...
   exe "normal! a\<esc>"
   call lh#cpp#constructors#Main("copy")
@@ -146,9 +186,9 @@ endfunction
 " # operator= {{{2
 function! s:Test_assign_operator_delete() abort " {{{3
   let g:cpp_std_flavour = 11
-  let g:mocked_confirm = 1
+  let g:mocked_confirm = [1, 2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {
@@ -164,9 +204,9 @@ endfunction
 "------------------------------------------------------------------------
 function! s:Test_assign_operator_default() abort " {{{3
   let g:cpp_std_flavour = 11
-  let g:mocked_confirm = 2
+  let g:mocked_confirm = [2, 2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {
@@ -182,9 +222,9 @@ endfunction
 "------------------------------------------------------------------------
 function! s:Test_copy_n_swap() abort " {{{3
   let g:cpp_std_flavour = 03
-  let g:mocked_confirm = 3
+  let g:mocked_confirm = [3, 2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {
@@ -226,9 +266,9 @@ endfunction
 "------------------------------------------------------------------------
 function! s:Test_assign_operator_list() abort " {{{3
   let g:cpp_std_flavour = 03
-  let g:mocked_confirm = 4
+  let g:mocked_confirm = [4, 2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {
@@ -257,9 +297,9 @@ endfunction
 "------------------------------------------------------------------------
 function! s:Test_assign_operator_empty_def() abort " {{{3
   let g:cpp_std_flavour = 03
-  let g:mocked_confirm = 5
+  let g:mocked_confirm = [5, 2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {
@@ -287,9 +327,9 @@ endfunction
 "------------------------------------------------------------------------
 function! s:Test_assign_operator_declare_only() abort " {{{3
   let g:cpp_std_flavour = 03
-  let g:mocked_confirm = 6
+  let g:mocked_confirm = [6, 2]
   AssertEquals(&ft, 'cpp')
-  AssertEquals(line('.'), 3)
+  AssertEquals(line('.'), 4)
   call lh#cpp#constructors#Main("assign")
   AssertBufferMatch trim << EOF
   class Foo {

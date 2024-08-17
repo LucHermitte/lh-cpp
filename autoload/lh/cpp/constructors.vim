@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/blob/master/License.md>
 " Version:      2.3.0
 " Created:      09th Feb 2009
-" Last Update:  11th Mar 2021
+" Last Update:  20th Mar 2021
 "------------------------------------------------------------------------
 " Description:
 "       Helper MMIs to generate constructors
@@ -119,7 +119,10 @@ function! lh#cpp#constructors#AssignmentOperator() abort
     while line('.') > 1 && getline('.') =~ '\v^\s*\{|^\s*$'
       normal! k
     endwhile
-    call lh#cpp#GotoFunctionImpl#MoveImpl()
+    let where = lh#ui#confirm('Where shall we put the definition?', ['&Inline', 'In a .&cpp'], 1)
+    if where == 2
+      call lh#cpp#GotoFunctionImpl#MoveImpl()
+    endif
   endif
 endfunction
 
@@ -131,14 +134,20 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
   " 2- Obtain attributes functions
   let attributes = lh#cpp#AnalysisLib_Class#attributes_sorted_by_decl_order(classname)
   " let g:attributes = attributes
+  let attr_types_and_names = map(copy(attributes),
+        \ '[v:val.type, matchstr(v:val.fullsignature, "^\\s*.\\{-}\\s\\+\\zs\\S\\+\\ze\\s*$")]')
   call s:Verbose ("attributes=".join(attributes,"\n"))
 
   " 3- Insert the *-constructor declaration
+  let params = {}
+  let params.clsname = classname
+  let params.attributes = attributes
+  let params.attr_types_and_names = attr_types_and_names
   try
     let cleanup = lh#on#exit()
           \.restore('g:mt_jump_to_first_markers')
     let g:mt_jump_to_first_markers = 0
-    exe 'MuTemplate cpp/'.a:kind.'-constructor'
+    call lh#mut#expand_and_jump(0, 'cpp/'.a:kind.'-constructor', params)
   finally
     call cleanup.finalize()
   endtry
@@ -149,24 +158,32 @@ function! lh#cpp#constructors#GenericConstructor(kind) abort
   " TODO: add option to choose Uniform Initialization Syntax
   let rhs = lh#naming#param('rhs').'.'
   let init_list=[]
-  let attr_type_and_name = map(copy(attributes),
-        \ '[v:val.type, matchstr(v:val.fullsignature, "^\\s*.\\{-}\\s\\+\\zs\\S\\+\\ze\\s*$")]')
   if a:kind == 'copy'
-    let init_list = map(copy(attr_type_and_name),
+    let init_list = map(copy(attr_types_and_names),
           \ 'v:val[1]."(".lh#cpp#snippets#duplicate_param(rhs.v:val[1], v:val[0]).")"')
+  elseif a:kind == 'move'
+    let init_list = map(copy(attr_types_and_names),
+          \ 'v:val[1]."(".lh#cpp#snippets#move_param(rhs.v:val[1], v:val[0]).")"')
   elseif a:kind == 'default'
     " TODO:
     " - Skip attributes that are default constructibles...
     "   At least we can recognize std containers
     " - Using {} instead of () may also change everything...
-    let init_list = map(copy(attr_type_and_name), 'v:val[1]."()"')
+    " let init_list = map(copy(attr_types_and_names), 'v:val[1]."()"')
   endif
 
   " 4.2- goto impl is at the right place
   " MOVETOIMPL doesn't know how to ignore initialization-list
   " => We don't use the constructor snippets at their full capacity for now,
   " and thus duplicate their attribute-duplication code.
-  call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource({'init_list' : init_list})
+  " call lh#cpp#GotoFunctionImpl#GrabFromHeaderPasteInSource({'init_list' : init_list})
+  if getline('.') =~ '}$'
+    " Test to how avoid asking when defaulted/deleted/just declared...
+    let where = lh#ui#confirm('Where shall we put the definition?', ['&Inline', 'In a .&cpp'], 1)
+    if where == 2
+      call lh#cpp#GotoFunctionImpl#MoveImpl()
+    endif
+  endif
 endfunction
 
 " # Internals {{{2

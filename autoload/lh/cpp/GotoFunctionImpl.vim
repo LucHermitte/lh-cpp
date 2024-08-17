@@ -7,7 +7,7 @@
 " Version:      2.3.0
 let s:k_version = '230'
 " Created:      07th Oct 2006
-" Last Update:  09th Apr 2021
+" Last Update:  17th Aug 2024
 "------------------------------------------------------------------------
 " Description:
 "       Implementation functions for ftplugin/cpp/cpp_GotoImpl
@@ -330,17 +330,20 @@ function! lh#cpp#GotoFunctionImpl#MoveImpl(...) abort
     " move to the start of the definition
     if has_key(code_analyser._info, 'init_list_extent')
       let e_init = code_analyser._info.init_list_extent
+      let e_body = code_analyser._info.body_extent
+
+      " 1- body because is appears later
+      call s:Verbose("Body extent: %1", e_body)
+      let l_definition = clang#cut_extent(e_body, code_analyser._info.name . ' body')
+      let nl = (e_init.end.lnum == e_body.start.lnum) ? '' : "\n"
+      let params.body = lh#style#just_ignore_this(nl.join(l_definition, "\n"))
+
+      " 2- init-list because it appear before
       call s:Verbose("Init-list extent: %1", e_init)
-      let l_definition = clang#cut_extent(e_init, (code_analyser._info.name) . ' init list')
+      let l_definition = clang#cut_extent(e_init, code_analyser._info.name . ' init list')
       call s:Verbose("Init-list: %1", l_definition)
       let nl = (e_init.start.col == 1) ? "\n" : ''
       let params.init_list = lh#style#just_ignore_this(nl.join(l_definition, "\n"))
-
-      let e_body = code_analyser._info.body_extent
-      call s:Verbose("Body extent: %1", e_body)
-      let l_definition = clang#cut_extent(e_init, (code_analyser._info.name) . ' init list')
-      let nl = (e_init.end.lnum == e_body.start.lnum) ? '' : "\n"
-      let params.body = lh#style#just_ignore_this(nl.join(l_definition, "\n"))
 
       call cursor(e_init.start.lnum, e_init.start.col)
     else
