@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/License.md>
 " Version:	2.2.1
 " Created:	06th Nov 2007
-" Last Update:	28th Nov 2019
+" Last Update:	27th Aug 2024
 "------------------------------------------------------------------------
 let s:version = '2.2.1'
 let s:project = 'lh-cpp'
@@ -21,7 +21,7 @@ finally
   let &rtp = save_rtp
 endtry
 finish
-VimFlavor
+Flavorfile
 addon-info.json
 after/plugin/a.vim
 after/template/c/assert.template
