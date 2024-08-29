@@ -20,6 +20,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     vim.command('UseStyle breakbeforebraces=stroustrup -ft=c')
     vim.command('UseStyle spacesbeforeparens=control-statements -ft=c')
     vim.command('UseStyle empty_braces=nl -ft=c')
+    vim.command('let g:cpp_nullptr = "NULL"')
   end
 
   # ====[ Always executed before each test {{{2
@@ -48,7 +49,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
   specify "value-attribute-class copyable", :cpp98, :cpp11, :copyable do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
-    vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
+    # vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
     #include <string>
@@ -101,7 +102,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
     vim.command('let g:cpp_std_flavour=11')
     vim.command("let g:cpp_explicit_default = 1")
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
-    vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
+    # vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
     #include <string>
@@ -164,7 +165,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
   specify "value-attribute-class copyable, with ptr attributes", :cpp98, :cpp11, :copyable do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"use_copy_and_swap": 0, "attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::auto_ptr<std::string>", "includes":["<memory>", "<string>"], "functions": ["ref_set", "set", "get"]}]})')).to match(/^$|#include <string> added/)
-    vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
+    # vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     # T* will require a destructor in current class
     # auto_ptr<> will require a destructor in current class, even empty
     # unique_ptr<>, doesn't require anything
@@ -261,7 +262,7 @@ RSpec.describe "C++ Value class w/ attributes wizard", :cpp, :class, :value, :wi
   specify "value-attribute-class copyable, with ptr attributes", :cpp98, :cpp11, :copyable, :copy_n_swap do
     expect(vim.echo('lh#mut#dirs#get_templates_for("cpp/value-class")')).to match(/value-class.template/)
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/value-class", {"use_copy_and_swap": 1, "attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "std::auto_ptr<std::string>", "includes":["<memory>", "<string>"], "functions": ["ref_set", "set", "get"]}]})')).to match(/^$|#include <string> added/)
-    vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
+    # vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     # T* will require a destructor in current class
     # auto_ptr<> will require a destructor in current class, even empty
     # unique_ptr<>, doesn't require anything

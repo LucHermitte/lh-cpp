@@ -43,7 +43,7 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
 
   specify "attribute-class copy-neutral, C++98", :cpp98 do
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "str", "type": "string", "functions": ["set", "get"]}, {"name": "bar", "type": "Bar", "includes":"bar.h"}]})')).to match(/^$|#include <string> added/)
-    vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
+    # vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
     #include <string>
@@ -93,7 +93,7 @@ RSpec.describe "C++ class w/ attributes wizard", :cpp, :class, :with_attributes 
   specify "attribute-class copy-neutral, C++11", :cpp11 do
     vim.command('silent! let g:cpp_std_flavour=11')
     expect(vim.command('call lh#mut#expand_and_jump(0, "cpp/internals/class-skeleton", {"attributes": [{"name": "foo", "type": "int"}, {"name": "bar", "type": "string", "functions": ["set", "get"]}]})')).to match(/^$|#include <string> added/)
-    vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
+    # vim.feedkeys('\<c-\>\<c-n>:silent! $call append("$", ["",""])\<cr>G')
     assert_buffer_contents <<-EOF
     /** File Header line to trick auto-inclusion */
     #include <string>
