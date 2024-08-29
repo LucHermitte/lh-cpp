@@ -120,7 +120,7 @@ Vimrunner::RSpec.configure do |config|
       puts "WARNING: this flavor of vim won't permit to support redo"
     end
 
-    pp vim.echo('"mut-dir -> " . lh#mut#dirs#update()')
+    pp vim.echo('"mut-dir -> " . string(lh#mut#dirs#update())')
 
     # The returned value is the Client available in the tests.
     vim
