@@ -15,12 +15,21 @@ module Vimrunner
         command("runtime #{script_path}")
     end
 
+    def append_rtp(dir)
+      dir_path = Path.new(dir)
+      if File.directory?(dir.to_s)
+        append_runtimepath(dir)
+      else
+        puts "Path #{dir_path} doesn't exist => ignored"
+      end
+    end
+
     def prepend_rtp(dir)
       dir_path = Path.new(dir)
       if File.directory?(dir.to_s)
         prepend_runtimepath(dir)
       else
-        pp "Path #{dir_path} doesn't exist"
+        puts "Path #{dir_path} doesn't exist => ignored"
       end
     end
   end
@@ -58,7 +67,6 @@ Vimrunner::RSpec.configure do |config|
   config.start_vim do
     vim = Vimrunner::Server.new(:executable => Vimrunner::Platform.best_vim, :vimrc => vimrc).start
     vim.add_plugin(vim_flavor_path, 'bootstrap.vim')
-    vim.prepend_rtp(vim_plugin_path+'/after')
     vim.prepend_rtp(vim_plugin_path)
 
     # lh-UT
@@ -99,9 +107,10 @@ Vimrunner::RSpec.configure do |config|
 
     # mu-template
     mu_template_path = File.expand_path('../../../mu-template@lh', __FILE__)
-    vim.prepend_rtp(mu_template_path+'/after')
+    vim.append_rtp(mu_template_path+'/after')
     vim.prepend_rtp(mu_template_path)
     vim.runtime('plugin/mu-template.vim')
+    vim.append_rtp(vim_plugin_path+'/after')
 
     pp vim.echo('"RTP -> " . &rtp')
     vim.command('set shm=')
@@ -110,6 +119,9 @@ Vimrunner::RSpec.configure do |config|
     if has_redo != "1"
       puts "WARNING: this flavor of vim won't permit to support redo"
     end
+
+    pp vim.echo('"mut-dir -> " . lh#mut#dirs#update()')
+
     # The returned value is the Client available in the tests.
     vim
   end
