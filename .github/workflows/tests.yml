@@ -55,7 +55,7 @@ jobs:
       id: cache-ctags
       with:
         path: $HOME/local
-        key: ${{ runner.os }}-ctags-$CTAGS_VERSION
+        key: ${{ runner.os }}-ctags-${{ env.CTAGS_VERSION }}
 
     # If cache is missed, re-install universal-ctags
     - name: Install Universal ctags
@@ -64,6 +64,7 @@ jobs:
         git clone https://github.com/universal-ctags/ctags.git
         cd ctags
         git checkout tags/$CTAGS_VERSION
+        builtin type -P brew &> /dev/null && brew install automake
         ./autogen.sh
         ./configure --prefix=$HOME/local
         make -j 4 install
