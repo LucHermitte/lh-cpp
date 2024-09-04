@@ -6,5 +6,7 @@ filetype plugin on
 filetype indent on
 syntax on
 
+set rtp-=~/.vim
+set rtp-=~/.vim/after
 set noswapfile nobackup
 set loadplugins

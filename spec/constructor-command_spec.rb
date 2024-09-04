@@ -75,6 +75,8 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   context "when expanding default-constructor", :default_ctr do
 
     it "has a pointer attribute" do # {{{3
+      pp vim.echo('execute("scriptnames")')
+      pp vim.echo('execute("set")')
       # TODO: In C++11, no need for m_bar() if there is a default
       # initialisation at class scope
       expect(vim.echo('lh#list#get(lh#dev#class#attributes("Foo"), "name")')).to eq("['Foo::m_bar', 'Foo::m_foo']")
