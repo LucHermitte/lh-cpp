@@ -2,3 +2,5 @@ tags
 *.sw*
 *~
 *.pyc
+tests/lh/*.log
+*.lock

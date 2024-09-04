@@ -34,6 +34,7 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
     vim.set('ft=cpp')
     vim.set('expandtab')
     vim.set('sw=4')
+    vim.set('isk&vim')
     vim.command('silent! unlet g:cpp_explicit_default')
     vim.command('silent! unlet g:cpp_std_flavour')
     vim.command('silent! unlet g:mocked_input')
@@ -74,9 +75,11 @@ RSpec.describe ":Constructor command", :cpp, :ctr_cmd do
   context "when expanding default-constructor", :default_ctr do
 
     it "has a pointer attribute" do # {{{3
+      pp vim.echo('execute("scriptnames")')
+      pp vim.echo('execute("set")')
       # TODO: In C++11, no need for m_bar() if there is a default
       # initialisation at class scope
-      # expect(vim.echo('lh#dev#class#attributes("Foo")')).to eq('m_bar')
+      expect(vim.echo('lh#list#get(lh#dev#class#attributes("Foo"), "name")')).to eq("['Foo::m_bar', 'Foo::m_foo']")
       # expect(vim.echo('lh#cpp#constructors#debug("s:Attributes(\"Foo\")")')).to eq('m_bar')
       # vim.command('Constructor default')
       vim.echo('lh#cpp#constructors#Main("default")')
