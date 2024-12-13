@@ -1,0 +1,12 @@
+VimL:" disable-copy File Template, Luc Hermitte, 13th Dec 2024
+VimL:" hint: Disable copy construction and assignment
+VimL: let s:value_start = '¡'
+VimL: let s:value_end   = s:value_start
+VimL: let s:marker_open  = '<+'
+VimL: let s:marker_close = '+>'
+VimL: call lh#dict#add_new(s:Param('copy-constructor', {}), {'how': 'deleted'})
+VimL: call lh#dict#add_new(s:Param('assignment-operator', {}), {'how': 'deleted'})
+MuT:  let s:special_functions = ['assignment-operator', 'copy-constructor']
+MuT:  let s:spe_func_data = map(copy(s:special_functions), "extend(s:Param(v:val, {}), {'kind': v:val})")
+VimL: " for spe in s:spe_func_data | call lh#dict#add_new(spe, s:default_explicit) | endfor
+VimL: for fn in s:spe_func_data | call s:Include("function", "cpp/internals", {"function": fn}) | endfor
