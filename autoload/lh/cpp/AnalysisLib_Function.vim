@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 " Version:      2.3.0
 " Created:      05th Oct 2006
-" Last Update:  09th Apr 2021
+" Last Update:  02nd Jan 2025
 "------------------------------------------------------------------------
 " Description:
 "       This plugin defines VimL functions specialized in the analysis of C++
@@ -44,6 +44,8 @@
 " History:
 "       v2.3.0
 "       (*) Improve/fix Vim based :Override command
+"       (*) Handle pyxeval('None') that returns a different value
+"           between vim and nvim.
 "       v2.2.0
 "       (*) Add detection of final, override, constexpr, noexept, volatile,
 "          =default, =delete
@@ -136,7 +138,7 @@ function! lh#cpp#AnalysisLib_Function#_libclang_get_function_info(lineno, onlyDe
     normal! ^
   endif
   let py_info = clang#get_symbol('function')
-  if py_info is v:none
+  if type(py_info) == type(v:null) " v:none doesn't exist in neovim, and pyxeval('None') returns v:null w/ nvim, and v:none w/ vim...
     throw "Cannot decode a function with libclang."
   endif
   if (get(py_info, 'is_definition', 0) && a:onlyDeclaration)
