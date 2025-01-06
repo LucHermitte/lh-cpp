@@ -7,7 +7,7 @@
 " Version:      2.2.0.
 let s:k_version = '220'
 " Created:      03rd Nov 2015
-" Last Update:  20th Mar 2021
+" Last Update:  06th Jan 2025
 "------------------------------------------------------------------------
 " Description:
 "       Tool functions to help write snippets (ftplugin/c/c_snippets.vim)
@@ -84,7 +84,9 @@ function! lh#cpp#snippets#insert_return() abort
   let c = col('.') - 1
   let l = getline('.')
   let l = strpart(l, c)
-  if l =~ '^\s*$'
+  if synIDattr(synID(line('.'),col('.')-1,1),'name') =~ 'doxygen\|comment'
+    return lh#dox#tag('return ')
+  elseif l =~ '^\s*$'
     return lh#map#build_map_seq('return ;!mark!\<esc\>==0:call lh#cpp#snippets#_goto_return_semicolon()\<cr\>i')
   else
     let spacesLen = strlen(matchstr(l, '^\s*'))
