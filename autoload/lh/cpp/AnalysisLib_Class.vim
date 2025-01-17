@@ -6,7 +6,7 @@
 "               <URL:http://github.com/LucHermitte/lh-cpp/tree/master/License.md>
 let s:k_version = 220
 " Version:      2.2.0
-" Last Update:  11th Mar 2021
+" Last Update:  17th Jan 2025
 "------------------------------------------------------------------------
 " Description:
 "       Library C++ ftplugin.
@@ -96,7 +96,7 @@ set cpo&vim
 " Internal constant regexes {{{1
 " Note: this regex can be tricked with nasty comments
 let s:id              = '\(\<\I\i*\>\)'
-let s:class_token     = '\<\(class\|struct\|enum\|union\)\>'
+let s:class_token     = '\<\(enum\s\+class\|class\|struct\|enum\|union\)\>'
 let s:class_part      = s:class_token  . '\_s\+' . s:id
 let s:namespace_token = '\<\(namespace\)\>\_s\+'
 let s:namespace_part  = s:namespace_token . s:id
@@ -170,7 +170,6 @@ function! s:CurrentScope(bMove, scope_type) abort
   call s:Verbose('+-> s:CurrentScope(%1) at %2', a:, getpos('.'))
   let flag = a:bMove ? 'bW' : 'bnW'
   let pos = 'call cursor(' . line('.') . ',' . col('.') . ')'
-  let result = line('.')
   try
     while 1
       " First, search for current block start
@@ -199,7 +198,7 @@ function! s:CurrentScope(bMove, scope_type) abort
         call lh#assert#value(r2[0]).is_gt(0)
         if r2 == last_pos[1:2]
           " This was a searched scope
-          call s:Verbose('|  +-> This was searched scope => return %1', result)
+          call s:Verbose('|   +-> This was a searched scope => return %1', result)
           return result
         endif
         call s:Verbose('|   +-> The previous scope start (%1) is not compatible with the current scope found (%2)', lh#position#getcur(), last_pos)
@@ -246,6 +245,7 @@ function! s:SearchClassOrNamespaceDefinition(class_or_ns) abort
       let current_scope = substitute(line,
             \ '^.\{-}'.s:{a:class_or_ns}_part.'.*$', '\2', '')
       let scope = '::' . current_scope . scope
+      call s:Verbose('|   +-> Current scope found: %1', current_scope)
     endif
   endwhile
   return substitute (scope, '^:\+', '', 'g')
@@ -289,6 +289,72 @@ function! lh#cpp#AnalysisLib_Class#CurrentScope(lineNo, scope_type) abort
   endif
   exe a:lineNo
   return scope
+endfunction
+" }}}
+" ==========================================================================
+" {{{
+" Search for the direct englobbing bracketed scope, and return its type
+" (namespace, class, struct, enum, enum class or union).
+" In case of functions, lambda, initializer list, an empty string is returned.
+" Function: lh#cpp#AnalysisLib_Class#get_kind_of_direct_englobbing_brackets(lnum) {{{3
+function! lh#cpp#AnalysisLib_Class#get_kind_of_direct_englobbing_brackets(lnum) abort
+  if a:lnum != line('.') " To avoid moving the cursor if it's already on the correct line
+    exe a:lnum
+  endif
+  call s:Verbose('#get_kind_of_direct_englobbing_brackets(%1)', a:lnum)
+  let cleanup = lh#on#exit()
+        \.restore_cursor()
+  try
+    let lnum = s:SearchBracket()
+    if lnum <= 0 | return '' | endif
+
+    let scope = s:FirstScope(1, 'class', lnum)
+    if !empty(scope) | return scope | endif
+    return s:FirstScope(1, 'namespace', lnum)
+  finally
+    call cleanup.finalize()
+  endtry
+endfunction
+
+function! s:FirstScope(bMove, scope_type, lnum_upper_brackets) abort
+  call s:Verbose('+-> s:FirstScope(%1) at %2', a:, getpos('.'))
+  " let flag = a:bMove ? 'bW' : 'bnW'
+
+  " Then, check whether this is the kind of scoping block we are looking for
+  let start = substitute(s:both_part, '(', '%(', 'g') . s:{a:scope_type}_open
+  let last_pos = lh#position#getcur()
+  let result = searchpair(
+        \ start, '', '{', 'bW',
+        \ s:k_skip_comments.'&&'.s:k_skip_using_ns)
+  call s:Verbose('|   +-> searchpair(%1, "", "{", %2, skip comments & using) -> %3', start, 'bW', result)
+  if result > 0
+    try
+      " Be sure this is the exact token searched (s:both_part searches
+      " everything)
+      let pat = '.\{-}'.s:{a:scope_type}_token.'.\{-}'
+      let match_info = matchlist(getline(result), pat)
+      let token_type = get(match_info, 1, '')
+      call s:Verbose("|   +-> %3 ~> %4: '%1' =~ '%2'", getline(result), pat, getline(result) =~ '.*'.s:{a:scope_type}_token.'.*' ? 'True': 'False', string(token_type))
+      if empty(token_type)
+        return ''
+      endif
+      " Check that if we search this last thing in the other direction then
+      " we go to the last_pos
+      let r2 = searchpairpos(start, '', '{', 'Wn',
+            \ s:k_skip_comments.'&&'.s:k_skip_using_ns)
+      call lh#assert#value(r2[0]).is_gt(0)
+      if r2 == last_pos[1:2]
+        " This was a searched scope
+        call s:Verbose('|   +-> This was a searched scope => return %1', result)
+        return token_type
+      endif
+      call s:Verbose('|   +-> The previous scope start (%1) is not compatible with the current scope found (%2)', lh#position#getcur(), last_pos)
+    finally
+      call setpos('.', last_pos) " go back in case we need to search again
+      call s:Verbose("|   -> cursor restored to %1", lh#position#getcur())
+    endtry
+  endif
+  return ''
 endfunction
 " }}}
 " ==========================================================================
