@@ -51,7 +51,7 @@ function! s:fix_indent(lnum) abort
     endif
 
     " Check the exact context
-    let context = lh#cpp#AnalysisLib_Class#get_kind_of_direct_englobbing_brackets(a:lnum)
+    let context = lh#cpp#AnalysisLib_Class#get_kind_of_direct_outer_scope(a:lnum)
     if !empty(context)
       let &cinoptions = old_cino
       set cinoptions+=+0

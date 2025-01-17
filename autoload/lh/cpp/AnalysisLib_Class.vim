@@ -293,15 +293,15 @@ endfunction
 " }}}
 " ==========================================================================
 " {{{
-" Search for the direct englobbing bracketed scope, and return its type
+" Search for the direct outer bracketed scope, and return its type
 " (namespace, class, struct, enum, enum class or union).
 " In case of functions, lambda, initializer list, an empty string is returned.
-" Function: lh#cpp#AnalysisLib_Class#get_kind_of_direct_englobbing_brackets(lnum) {{{3
-function! lh#cpp#AnalysisLib_Class#get_kind_of_direct_englobbing_brackets(lnum) abort
+" Function: lh#cpp#AnalysisLib_Class#get_kind_of_direct_outer_scope(lnum) {{{3
+function! lh#cpp#AnalysisLib_Class#get_kind_of_direct_outer_scope(lnum) abort
   if a:lnum != line('.') " To avoid moving the cursor if it's already on the correct line
     exe a:lnum
   endif
-  call s:Verbose('#get_kind_of_direct_englobbing_brackets(%1)', a:lnum)
+  call s:Verbose('#get_kind_of_direct_outer_scope(%1)', a:lnum)
   let cleanup = lh#on#exit()
         \.restore_cursor()
   try
